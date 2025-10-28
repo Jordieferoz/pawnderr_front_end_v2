@@ -1,0 +1,12 @@
+.heading1 {
+  @apply text-[36px] leading-[40px] lg:text-[36px];
+}
+.subtitle1 {
+  @apply text-sm leading-[18px] lg:text-sm;
+}
+.paragraph1 {
+  @apply text-base lg:text-base;
+}
+.paragraph1_bold {
+  @apply text-base font-bold lg:text-base;
+}
