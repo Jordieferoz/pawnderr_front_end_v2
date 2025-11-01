@@ -1,0 +1,132 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    },
+    "import/resolver": {
+      "node": {
+        "paths": ["src"],
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    },
+    "tailwindcss": {
+      "callees": ["classnames", "clsx", "ctl"],
+      "config": "tailwind.config.js",
+      "cssFiles": [
+        "**/*.css",
+        "!**/node_modules",
+        "!**/.*",
+        "!**/dist",
+        "!**/build"
+      ],
+      "cssFilesRefreshRate": 5000,
+      "removeDuplicates": true,
+      "skipClassAttribute": true,
+      "whitelist": ["bg-[\\w-]+", "text-[\\w-]+", "ring-[\\w-]+"],
+      "tags": [],
+      "classRegex": "^class(Name)?$"
+    }
+  },
+  "env": {
+    "browser": true,
+    "amd": true,
+    "node": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "next",
+    "prettier",
+    "plugin:react/recommended",
+    "plugin:prettier/recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:tailwindcss/recommended",
+    "next/core-web-vitals"
+  ],
+  "plugins": ["simple-import-sort", "prettier", "react-hooks"],
+  "rules": {
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-unused-vars": "warn",
+    "@typescript-eslint/ban-ts-ignore": "off",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "prettier/prettier": [
+      "error",
+      { "ts-ignore": "allow-with-description" },
+      {
+        "usePrettierrc": true
+      }
+    ],
+    "react/react-in-jsx-scope": "off",
+    "react/prop-types": "off",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error",
+    "react/no-unescaped-entities": 0,
+    "@typescript-eslint/naming-convention": [
+      "error",
+      {
+        "selector": "variable",
+        "format": ["camelCase", "PascalCase", "UPPER_CASE", "snake_case"],
+        "leadingUnderscore": "allow"
+      },
+      {
+        "selector": "function",
+        "format": ["camelCase", "PascalCase"]
+      },
+      {
+        "selector": "class",
+        "format": ["PascalCase"]
+      },
+      {
+        "selector": "parameter",
+        "format": ["camelCase", "PascalCase", "snake_case"],
+        "leadingUnderscore": "allow"
+      },
+      {
+        "selector": "typeLike",
+        "format": ["PascalCase"]
+      },
+      {
+        "selector": "interface",
+        "format": ["PascalCase"]
+      },
+      {
+        "selector": "enum",
+        "format": ["UPPER_CASE"]
+      }
+    ]
+  },
+  "ignorePatterns": [
+    "node_modules",
+    ".next",
+    "out",
+    "dist",
+    "coverage",
+    "public",
+    "*.log",
+    "package-lock.json",
+    "yarn.lock",
+    "pnpm-lock.yaml",
+    "tailwind.config.ts",
+    "postcss.config.mjs",
+    ".env",
+    ".env.local",
+    ".env.development",
+    ".env.test",
+    ".env.production",
+    "*.min.js",
+    "*.min.css",
+    "*.generated.*",
+    ".DS_Store"
+  ]
+}
