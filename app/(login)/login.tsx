@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import Link from "next/link";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
+import { Controller, useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { InputField } from "@/ui_components/Shared";
 import { images } from "@/utils/images";
 import {
@@ -34,7 +35,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
     reValidateMode: "onChange",
     defaultValues: isSignup
       ? { email: "", password: "", confirmPassword: "" }
-      : { email: "", password: "" },
+      : { email: "", password: "", rememberMe: false },
   });
 
   const password = watch("password");
@@ -54,7 +55,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
   }, [password, isSignup, confirmPassword, trigger]);
 
   return (
-    <div className="relative min-h-[100dvh] px-5 py-12 lg:px-8">
+    <div className="relative min-h-[100dvh] px-5 pt-12 pb-0 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <Link href={"/"} className="mb-7.5 flex justify-center">
           <Image
@@ -65,11 +66,11 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
             alt="PAWnderr Logo"
           />
         </Link>
-        <h1 className="heading1 text-dark-brown mb-3 px-6 text-center">
+        <h1 className="display3 text-accent-900 mb-3 px-6 text-center">
           {isSignup ? "Create Your PAWnderr Profile" : "Welcome Back"}
         </h1>
         <p
-          className={`subtitle1 text-light-grey px-7 text-center ${isSignup ? "mb-10" : "mb-16"}`}
+          className={`body_regular text-grey-500 px-7 text-center ${isSignup ? "mb-10" : "mb-16"}`}
         >
           {isSignup
             ? "Because every connection starts with a simple hello."
@@ -110,9 +111,16 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
         </button>
       </div>
 
-      <p className="text-dark-grey paragraph1 mb-8 text-center">
-        -Or use your Email-
-      </p>
+      <div className="relative mb-8">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-neutral-white"></div>
+        </div>
+        <div className="relative flex justify-center">
+          <p className="bg-white px-4 text-grey-500 body_medium text-center uppercase">
+            Or use your Email
+          </p>
+        </div>
+      </div>
 
       <form
         className="mb-7 flex flex-col gap-6"
@@ -125,7 +133,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
             name="email"
             render={({ field }) => (
               <InputField
-                label="Email"
+                label="Email Address"
                 placeholder="Email"
                 type="email"
                 {...field}
@@ -197,6 +205,36 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
           </div>
         )}
 
+        {!isSignup && (
+          <div className="flex items-center justify-between px-1 mb-2">
+            <div className="flex items-center gap-2">
+              <Controller
+                control={control}
+                name="rememberMe"
+                render={({ field }) => (
+                  <Checkbox
+                    checked={!!field.value}
+                    onCheckedChange={field.onChange}
+                    id="rememberMe"
+                  />
+                )}
+              />
+              <label
+                htmlFor="rememberMe"
+                className="body_medium text-dark-grey cursor-pointer"
+              >
+                Remember me
+              </label>
+            </div>
+            <Link
+              href="/forgot-password"
+              className="button2 text-accent-900 font-medium hover:underline"
+            >
+              Forgot password?
+            </Link>
+          </div>
+        )}
+
         <Button
           type="submit"
           disabled={!isValid || isSubmitting}
@@ -207,11 +245,11 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
       </form>
 
       <div className="mb-10 text-center">
-        <p className="paragraph1_bold text-grey-200">
+        <p className="paragraph1_bold text-accent-1000">
           {isSignup ? "Already have an account?" : " New to PAWnderr?"}{" "}
           <Link
             href={isSignup ? "/sign-in" : "/sign-up"}
-            className="text-yellow"
+            className="text-primary-theme"
           >
             {isSignup ? "Sign In" : "Create an Account"}
           </Link>

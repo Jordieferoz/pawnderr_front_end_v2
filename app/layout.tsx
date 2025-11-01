@@ -1,41 +1,17 @@
-// app/layout.tsx
-import type { Metadata, Viewport } from 'next';
-import { Fredoka } from 'next/font/google';
-import localFont from 'next/font/local';
+import type { Metadata, Viewport } from "next";
+import { Fredoka, Source_Sans_3 } from "next/font/google";
 
-import './styles/globals.css';
+import "./styles/globals.css";
 
 export const metadata: Metadata = {
-  title: 'Pawnderr',
-  description: 'Pawnderr',
+  title: "Pawnderr",
+  description: "Pawnderr",
 };
 
 export const viewport: Viewport = { maximumScale: 1 };
 
-const fredoka = Fredoka({ subsets: ['latin'], display: 'swap' });
-
-const sourceSansPro = localFont({
-  src: [
-    {
-      path: './fonts/SourceSansPro-Regular.ttf',
-      weight: '400',
-      style: 'normal',
-    },
-    {
-      path: './fonts/SourceSansPro-SemiBold.ttf',
-      weight: '600',
-      style: 'normal',
-    },
-    {
-      path: './fonts/SourceSansPro-Bold.ttf',
-      weight: '700',
-      style: 'normal',
-    },
-  ],
-  variable: '--font-source-sans',
-  display: 'swap',
-  fallback: ['system-ui', 'Arial', 'sans-serif'],
-});
+const fredoka = Fredoka({ subsets: ["latin"], display: "swap" });
+const sourceSans3 = Source_Sans_3({ subsets: ["latin"], display: "swap" });
 
 export default function RootLayout({
   children,
@@ -43,10 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html
-      lang="en"
-      className={`${fredoka.className} ${sourceSansPro.variable}`}
-    >
+    <html lang="en" className={`${fredoka.className} ${sourceSans3.className}`}>
       <body className="min-h-[100dvh]">{children}</body>
     </html>
   );

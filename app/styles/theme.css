@@ -1,9 +1,62 @@
 @theme {
-  --color-dark-brown: #5c4033;
-  --color-light-grey: #9b9b9b;
-  --color-dark-grey: #333333;
-  --color-grey-100: #e9e9e9;
-  --color-grey-200: #73665c;
-  --color-yellow: #ffb510;
-  --color-blue: #004aad;
+  --color-primary-theme: #ffb510;
+  --color-primary-100: #ced0f9;
+  --color-primary-200: #b6b9f6;
+  --color-primary-300: #9ea2f3;
+  --color-primary-400: #6d73ec;
+  --color-primary-500: #0c16e0;
+  --color-primary-600: #070d86;
+  --color-primary-700: #05095a;
+  --color-primary-800: #040743;
+  --color-primary-900: #02042d;
+  --color-accent-100: #fff3cd;
+  --color-accent-200: #ffecb5;
+  --color-accent-300: #ffe69c;
+  --color-accent-400: #ffda6a;
+  --color-accent-500: #ffc107;
+  --color-accent-600: #cc9a06;
+  --color-accent-700: #997404;
+  --color-accent-800: #664d03;
+  --color-accent-900: #4d3a02;
+  --color-accent-1000: #73665c;
+  --color-secondary-100: #d5f2e3;
+  --color-secondary-200: #ffb6c1;
+  --color-secondary-300: #ffe6b3;
+  --color-secondary-400: #e8e5ff;
+  --color-secondary-500: #5aa0ff;
+  --color-secondary-600: #ff6f91;
+  --color-success: #2ecc71;
+  --color-warning: #f4c542;
+  --color-error: #e74c3c;
+  --color-info: #3498db;
+  --color-light-grey: #f6f6f6;
+  --color-medium-grey: #cfcfcf;
+  --color-grey-500: #888888;
+  --color-dark-grey: #555555;
+  --color-dark-black: #1e1e1e;
+  --color-neutral-white: #b4b4b4;
+  --color-grey-100: #d7dbec;
+  --color-grey-200: #a1a7c4;
+  --color-yellow-start: #fff8e1;
+  --color-yellow-end: #ffd54f;
+  --color-blue-start: #e8edff;
+  --color-blue-end: #c5cae9;
+  --color-pink-start: #ffe6eb;
+  --color-pink-end: #ffb6c1;
 }
+
+/* gradient implementation
+
+<div class="bg-gradient-to-r from-yellow-start to-yellow-end">
+  Yellow gradient
+</div>
+
+
+<div class="bg-gradient-to-r from-blue-start to-blue-end">
+  Blue gradient
+</div>
+
+
+<div class="bg-gradient-to-r from-pink-start to-pink-end">
+  Pink gradient
+</div> */

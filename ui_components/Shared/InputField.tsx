@@ -1,11 +1,11 @@
-import { FC, useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff } from "lucide-react";
+import { FC, useState } from "react";
 
-import { Input } from '@/components/ui/input';
+import { Input } from "@/components/ui/input";
 
-import { Label } from '../../components/ui/label';
+import { Label } from "../../components/ui/label";
 
-import { IInputFieldProps } from './types';
+import { IInputFieldProps } from "./types";
 
 const InputField: FC<IInputFieldProps> = (props) => {
   const {
@@ -32,17 +32,17 @@ const InputField: FC<IInputFieldProps> = (props) => {
   return (
     <div className="relative flex flex-col gap-3">
       {label && (
-        <Label htmlFor={id} className={`paragraph1 ${labelClassName || ''}`}>
+        <Label htmlFor={id} className={`body_large ${labelClassName || ""}`}>
           {label}
         </Label>
       )}
 
       <div className="relative">
         <Input
-          type={isPassword && showPassword ? 'text' : type}
+          type={isPassword && showPassword ? "text" : type}
           id={id}
           name={name}
-          className={`${className ?? ''} ${rightIcon ? 'pr-12' : ''} pr-10`}
+          className={`${className ?? ""} ${rightIcon ? "pr-12" : ""} pr-10`}
           placeholder={placeholder}
           onChange={onChange}
           disabled={disabled}
