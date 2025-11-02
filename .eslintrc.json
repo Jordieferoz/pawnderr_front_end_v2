@@ -17,23 +17,6 @@
         "paths": ["src"],
         "extensions": [".js", ".jsx", ".ts", ".tsx"]
       }
-    },
-    "tailwindcss": {
-      "callees": ["classnames", "clsx", "ctl"],
-      "config": "tailwind.config.js",
-      "cssFiles": [
-        "**/*.css",
-        "!**/node_modules",
-        "!**/.*",
-        "!**/dist",
-        "!**/build"
-      ],
-      "cssFilesRefreshRate": 5000,
-      "removeDuplicates": true,
-      "skipClassAttribute": true,
-      "whitelist": ["bg-[\\w-]+", "text-[\\w-]+", "ring-[\\w-]+"],
-      "tags": [],
-      "classRegex": "^class(Name)?$"
     }
   },
   "env": {
