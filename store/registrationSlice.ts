@@ -15,13 +15,18 @@ export interface RegistrationData {
   nicknames?: string;
   petGender: string;
   age?: string;
-  energyLevel?: string;
+  energyLevel?: string[];
   favoriteActivities?: string[];
   vaccinationStatus?: string;
   funFact?: string;
   barkography?: string;
   // Step 4 - Matching Pet
-  interestedIn: string;
+  interestedIn: string[];
+  playDateVibe: string[];
+  ageRange: [number, number];
+  preferredBreeds: "exact_match" | "open_to_all" | undefined;
+  distanceRadius: string;
+  personalityPreference: string[];
   step: number;
 }
 
@@ -36,13 +41,18 @@ const initialState: RegistrationData = {
   nicknames: "",
   petGender: "",
   age: "",
-  energyLevel: "",
+  energyLevel: [],
   favoriteActivities: [],
   vaccinationStatus: "",
   funFact: "",
   barkography: "",
-  interestedIn: "",
-  step: 1,
+  interestedIn: [],
+  playDateVibe: [],
+  ageRange: [0, 15],
+  preferredBreeds: undefined,
+  distanceRadius: "",
+  personalityPreference: [],
+  step: 4,
 };
 
 const registrationSlice = createSlice({

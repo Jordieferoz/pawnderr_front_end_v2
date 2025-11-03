@@ -16,7 +16,7 @@ import { images } from "@/utils/images";
 import {
   petProfileSchema,
   type PetProfileValues,
-} from "@/utils/schemas/registration";
+} from "@/utils/schemas/registrationSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FC, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -47,7 +47,7 @@ const DoggoPersonalForm: FC = () => {
       nicknames: "",
       petGender: undefined,
       age: "",
-      energyLevel: undefined,
+      energyLevel: [],
       favoriteActivities: [],
       vaccinationStatus: "",
       funFact: "",
@@ -61,11 +61,15 @@ const DoggoPersonalForm: FC = () => {
   ) => {
     const file = e.target.files?.[0];
     if (file) {
-      const newSlots = [...imageSlots];
-      newSlots[index] = file;
-      setImageSlots(newSlots);
-      // Update form value if needed
-      setValue("images", newSlots.filter(Boolean), { shouldValidate: true });
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        const newSlots = [...imageSlots];
+        newSlots[index] = base64String;
+        setImageSlots(newSlots);
+        setValue("images", newSlots.filter(Boolean), { shouldValidate: true });
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -96,6 +100,7 @@ const DoggoPersonalForm: FC = () => {
                 className="cursor-pointer"
               >
                 <img
+                  className="w-20 h-20 object-cover rounded-2xl"
                   src={
                     img
                       ? typeof img === "string"
@@ -103,9 +108,8 @@ const DoggoPersonalForm: FC = () => {
                         : URL.createObjectURL(img)
                       : images.addPetPhoto.src
                   }
-                  alt={`Pet image ${idx + 1}`}
-                  className="w-20 h-20 object-cover rounded-2xl"
                 />
+
                 <input
                   id={`image-upload-${idx}`}
                   type="file"
@@ -247,14 +251,15 @@ const DoggoPersonalForm: FC = () => {
         {/* Energy Level */}
         <div className="flex flex-col gap-2">
           <label className="block text-sm font-medium text-dark-grey">
-            Energy Level
+            Energy Level{" "}
+            <span className="text-neutral-white"> (Select at least 1)</span>
           </label>
           <Controller
             control={control}
             name="energyLevel"
             render={({ field }) => (
               <ToggleGroup
-                type="single"
+                type="multiple"
                 value={field.value ?? ""}
                 onValueChange={field.onChange}
                 className="flex gap-3 flex-wrap"

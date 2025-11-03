@@ -7,7 +7,7 @@ import { setStep, updateStepData } from "@/store/registrationSlice";
 import {
   userDetailsSchema,
   type UserDetailsValues,
-} from "@/utils/schemas/registration";
+} from "@/utils/schemas/registrationSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FC, useEffect } from "react";
 import { Controller, Resolver, useForm } from "react-hook-form";

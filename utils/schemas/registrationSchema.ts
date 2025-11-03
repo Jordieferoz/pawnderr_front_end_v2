@@ -30,9 +30,7 @@ export const petProfileSchema = z.object({
   nicknames: z.string().max(100).optional(),
   petGender: z.enum(["male", "female"], { message: "Select pet gender" }),
   age: z.string().min(1, "Age is required"),
-  energyLevel: z.enum(["Chill", "Playful", "Zoomies All Day", "Balanced"], {
-    message: "Select energy level",
-  }),
+  energyLevel: z.array(z.string()).min(1, "Select at least 1 energy level"),
   favoriteActivities: z
     .array(z.string())
     .min(3, "Select at least 3 activities"),
@@ -43,12 +41,26 @@ export const petProfileSchema = z.object({
 
 // Example schemas for steps 4 and 5 (adjust if needed)
 export const matchingPetSchema = z.object({
-  interestedIn: z.enum(["playdate", "mating", "dog party"], {
-    message: "Select the pet interest",
-  }),
-  playDateVibe: z.enum(["playdate", "mating", "dog party"], {
-    message: "Select the pet interest",
-  }),
+  interestedIn: z.array(z.string()).min(1, "Select at least 1 pet interest"),
+  playDateVibe: z.array(z.string()).min(1, "Select at least 1 playdate vibe"),
+  ageRange: z
+    .tuple([z.number(), z.number()])
+    .refine(([min, max]) => min <= max, { message: "Invalid age range" }),
+  preferredBreeds: z
+    .enum(["exact_match", "open_to_all"])
+    .optional()
+    .refine((val) => val !== undefined, {
+      message: "Please select preferred breed",
+    }),
+  distanceRadius: z
+    .enum(["5", "10", "20", "30-35"])
+    .optional()
+    .refine((val) => val !== undefined, {
+      message: "Select a distance radius",
+    }),
+  personalityPreference: z
+    .array(z.string())
+    .min(1, "Select at least 1 personality preference"),
 });
 
 export const step5Schema = z.object({

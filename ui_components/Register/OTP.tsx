@@ -7,7 +7,7 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { updateStepData } from "@/store/registrationSlice";
-import { otpSchema, type OtpValues } from "@/utils/schemas/registration";
+import { otpSchema, type OtpValues } from "@/utils/schemas/registrationSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FC } from "react";
 import { Controller, useForm } from "react-hook-form";

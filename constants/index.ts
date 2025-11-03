@@ -23,15 +23,19 @@ export const vaccinationOptions = [
   { value: "not_vaccinated", label: "Not Vaccinated" },
 ];
 
+export const interestedIn = ["Playdate", "Mating", "Dog Party"];
+export const playDateVibe = [
+  "Party in The Park",
+  "Zoomie Zone",
+  "Swim & Splash",
+  "Home Sweet Home",
+  "Restaurant Rendezvous",
+];
 export const personalityPreference = [
-  "Belly Rubs/cuddles",
-  "Car Rides",
-  "Playing Fetch",
-  "Sleeping all Day",
-  "Going on walks",
-  "Swimtime",
-  "Rolling in the Grass",
-  "Chasing cats, squirrels etc.",
-  "Chewing Toys",
-  "Digging for treasure",
+  "The Social Butterfly",
+  "The Cuddler",
+  "The Adventure Seeker",
+  "The Introvert",
+  "The Gentle Giant",
+  "The Playtime Pro",
 ];

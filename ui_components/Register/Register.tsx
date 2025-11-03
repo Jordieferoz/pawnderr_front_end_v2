@@ -13,7 +13,7 @@ const totalSteps = 5;
 
 const Register: FC = () => {
   const step = useSelector((state: RootState) => state.registration.step);
-  // const formData = useSelector((state: RootState) => state.registration);
+  const formData = useSelector((state: RootState) => state.registration);
   // console.log(formData, "formData");
   const progressValue = (step / totalSteps) * 100;
 
