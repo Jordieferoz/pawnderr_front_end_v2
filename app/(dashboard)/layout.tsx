@@ -1,8 +1,6 @@
-'use client';
+"use client";
 
-function Header() {
-  return <header className="">Header</header>;
-}
+import { Header } from "@/ui_components/Dashboard";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (

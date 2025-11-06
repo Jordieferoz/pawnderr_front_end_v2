@@ -1,3 +1,4 @@
-import InputField from './InputField';
+import Footer from "./Footer";
+import InputField from "./InputField";
 
-export { InputField };
+export { Footer, InputField };

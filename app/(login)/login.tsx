@@ -16,15 +16,16 @@ import {
   signUpSchema,
   type SignUpValues,
 } from "@/utils/schemas/auth";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 type Mode = "signin" | "signup";
 
 export function Login({ mode = "signin" }: { mode?: Mode }) {
   const router = useRouter();
+  const pathname = usePathname();
   const isSignup = mode === "signup";
   const schema = isSignup ? signUpSchema : signInSchema;
-
+  console.log(pathname, "pathname");
   const {
     control,
     handleSubmit,
@@ -46,7 +47,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
     : undefined;
 
   const onSubmit = async () => {
-    router.push("/register");
+    router.push("/dashboard");
     // Submit to server action or API
     // e.g., await signUp(values) or signIn(values)
   };

@@ -1,7 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Fredoka, Source_Sans_3 } from "next/font/google";
 
-import { ReduxProvider } from "@/store/Provide";
+import { ReduxProvider } from "@/store/Provider";
+import { Footer } from "@/ui_components/Shared";
 import "./styles/globals.css";
 
 export const metadata: Metadata = {
@@ -23,7 +24,10 @@ export default function RootLayout({
     <html lang="en" className={`${fredoka.className} ${sourceSans3.className}`}>
       <body className="min-h-[100dvh]">
         {" "}
-        <ReduxProvider>{children}</ReduxProvider>
+        <ReduxProvider>
+          {children}
+          <Footer />
+        </ReduxProvider>
       </body>
     </html>
   );

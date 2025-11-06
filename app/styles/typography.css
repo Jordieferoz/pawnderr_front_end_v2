@@ -36,6 +36,10 @@
     @apply text-[16px] leading-[1.1] font-normal  md:text-[18px] lg:text-[20px];
     font-family: "Fredoka", sans-serif;
   }
+  .tp_small_medium {
+    @apply text-[12px] font-medium;
+    font-family: "Fredoka", sans-serif;
+  }
 
   .body_large {
     @apply text-[16px] leading-[1.4] font-normal font-['Source_Sans_3'] md:text-[18px] lg:text-[20px];
@@ -47,6 +51,10 @@
   }
   .body_medium {
     @apply text-[14px] leading-[1.4] font-medium font-['Source_Sans_3'] md:text-[16px];
+    font-family: "Source Sans 3", sans-serif;
+  }
+  .body_small {
+    @apply text-[12px] leading-[1.4] font-normal font-['Source_Sans_3'] md:text-[14px];
     font-family: "Source Sans 3", sans-serif;
   }
   .body_small {

@@ -1,0 +1,24 @@
+import { images } from "@/utils/images";
+import Link from "next/link";
+import { FC } from "react";
+
+const Header: FC = () => {
+  return (
+    <header className="fixed p-8 w-full left-0 top-0 flex items-center justify-between gap-4">
+      <Link href={"/"}>
+        <img src={images.logo.src} alt="logo" className="w-[86px]" />
+      </Link>
+      <Link
+        href={"/profile"}
+        className="rounded-full bg-light-grey w-10 h-10 flex items-center justify-center cursor-pointer"
+      >
+        <img
+          src={images.doggoProfilePlaceholder.src}
+          className="rounded-full w-9 h-9 object-cover"
+        />
+      </Link>
+    </header>
+  );
+};
+
+export default Header;
