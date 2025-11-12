@@ -6,6 +6,11 @@ import authPattern from "public/assets/images/auth_pattern.svg";
 import backBtn from "public/assets/images/back.svg";
 import discover from "public/assets/images/discover.svg";
 import discoverActive from "public/assets/images/discover_active.svg";
+import doggo1 from "public/assets/images/doggo1.png";
+import doggo2 from "public/assets/images/doggo2.png";
+import doggo3 from "public/assets/images/doggo3.png";
+import doggo4 from "public/assets/images/doggo4.png";
+import doggo5 from "public/assets/images/doggo5.png";
 import doggoProfilePlaceholder from "public/assets/images/doggo_profile_placeholder.png";
 import facebook from "public/assets/images/facebook.svg";
 import google from "public/assets/images/google.svg";
@@ -37,6 +42,11 @@ export type ImageType =
   | "messagesActive"
   | "pawnderr"
   | "pawnderrActive"
+  | "doggo1"
+  | "doggo2"
+  | "doggo3"
+  | "doggo4"
+  | "doggo5"
   | "backBtn";
 
 export type NextImage = {
@@ -65,4 +75,9 @@ export const images: Record<ImageType, NextImage> = {
   messagesActive,
   pawnderr,
   pawnderrActive,
+  doggo1,
+  doggo2,
+  doggo3,
+  doggo4,
+  doggo5,
 };
