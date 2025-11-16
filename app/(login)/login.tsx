@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import Cookies from "js-cookie";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
@@ -46,10 +47,17 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
     ? watch("confirmPassword" as keyof SignUpValues)
     : undefined;
 
-  const onSubmit = async () => {
+  const onSubmit = async (data: SignInValues | SignUpValues) => {
+    // Set authentication cookie
+    Cookies.set("isAuthenticated", "true", {
+      expires: 7, // 7 days
+      path: "/",
+      sameSite: "lax",
+    });
+
+    // Navigate to dashboard
     router.push("/dashboard");
-    // Submit to server action or API
-    // e.g., await signUp(values) or signIn(values)
+    router.refresh();
   };
 
   useEffect(() => {
