@@ -6,6 +6,7 @@ import authPattern from "public/assets/images/auth_pattern.svg";
 import backBtn from "public/assets/images/back.svg";
 import discover from "public/assets/images/discover.svg";
 import discoverActive from "public/assets/images/discover_active.svg";
+import dislike from "public/assets/images/dislike.svg";
 import doggo1 from "public/assets/images/doggo1.png";
 import doggo2 from "public/assets/images/doggo2.png";
 import doggo3 from "public/assets/images/doggo3.png";
@@ -14,11 +15,13 @@ import doggo5 from "public/assets/images/doggo5.png";
 import doggoProfilePlaceholder from "public/assets/images/doggo_profile_placeholder.png";
 import facebook from "public/assets/images/facebook.svg";
 import google from "public/assets/images/google.svg";
+import like from "public/assets/images/like.svg";
 import logo from "public/assets/images/logo.svg";
 import matches from "public/assets/images/matches.svg";
 import matchesActive from "public/assets/images/matches_active.svg";
 import messages from "public/assets/images/messages.svg";
 import messagesActive from "public/assets/images/messages_active.svg";
+import pawYellow from "public/assets/images/paw_yellow.svg";
 import pawnderr from "public/assets/images/pawnderr.svg";
 import pawnderrActive from "public/assets/images/pawnderr_active.svg";
 import x from "public/assets/images/x.svg";
@@ -47,6 +50,9 @@ export type ImageType =
   | "doggo3"
   | "doggo4"
   | "doggo5"
+  | "dislike"
+  | "like"
+  | "pawYellow"
   | "backBtn";
 
 export type NextImage = {
@@ -80,4 +86,7 @@ export const images: Record<ImageType, NextImage> = {
   doggo3,
   doggo4,
   doggo5,
+  dislike,
+  like,
+  pawYellow,
 };

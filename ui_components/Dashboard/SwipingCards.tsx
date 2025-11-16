@@ -1,37 +1,52 @@
 "use client";
 import { images } from "@/utils/images";
-import React, { useMemo, useRef } from "react";
+import React, { useMemo, useState } from "react";
 import TinderCard from "react-tinder-card";
 
 type Card = {
   name: string;
+  info: string;
   url: string;
+  desc: string;
 };
 
 const cardsData: Card[] = [
   {
-    name: "Ada Lovelace",
+    name: "Buddy",
+    info: "(Male, 2 Years)",
     url: images.doggo1.src,
+    desc: "A cheerful retriever who loves belly rubs and chasing tennis balls.",
   },
   {
-    name: "Alan Turing",
+    name: "Luna",
+    info: "(Female, 1.5 Years)",
     url: images.doggo2.src,
+    desc: "A playful husky with bright blue eyes and endless energy for adventures.",
   },
   {
-    name: "Grace Hopper",
+    name: "Rocky",
+    info: "(Male, 3 Years)",
     url: images.doggo3.src,
+    desc: "This gentle giant loves naps in the sun and snuggling on cold days.",
   },
   {
-    name: "Linus Torvalds",
+    name: "Daisy",
+    info: "(Female, 2.5 Years)",
     url: images.doggo4.src,
+    desc: "Smart, loyal, and always ready to pose for the camera — a real charmer.",
   },
   {
-    name: "Linus Torvalds",
+    name: "Max",
+    info: "(Male, 1 Year)",
     url: images.doggo5.src,
+    desc: "Small in size but big in personality, Max never misses a treat!",
   },
 ];
 
 export default function SwipingCards() {
+  const [cards, setCards] = useState(cardsData);
+  const [currentIndex, setCurrentIndex] = useState(cardsData.length - 1);
+
   const childRefs = useMemo(
     () =>
       Array(cardsData.length)
@@ -40,98 +55,141 @@ export default function SwipingCards() {
     []
   );
 
-  // Keeps track of the current card index
-  const currentIndexRef = useRef(cardsData.length - 1);
+  const canSwipe = currentIndex >= 0;
 
-  // Imperatively trigger swipes
-  const swipe = async (dir: "left" | "right") => {
-    if (currentIndexRef.current >= 0) {
-      await childRefs[currentIndexRef.current].current.swipe(dir); // swipe the card!
-      currentIndexRef.current -= 1;
+  const swipe = (dir: "left" | "right") => {
+    if (canSwipe && currentIndex >= 0 && childRefs[currentIndex]?.current) {
+      childRefs[currentIndex].current.swipe(dir);
     }
   };
 
-  // Example event handler
-  const handleSwipe = (dir: string, name: string) => {
-    // You can handle swipe logic here (API call, state update, etc.)
-    // console.log(`${name} was swiped ${dir}`);
+  const handleSwipe = (dir: string, name: string, index: number) => {
+    console.log(`You swiped ${dir} on ${name}`);
+    setCurrentIndex((prevIndex) => prevIndex - 1);
+  };
+
+  const onCardLeftScreen = (name: string) => {
+    console.log(`${name} left the screen`);
   };
 
   return (
-    <div style={{ width: 340, margin: "0 auto" }}>
-      <div style={{ height: 405, position: "relative" }}>
-        {cardsData.map((card, idx) => (
-          <TinderCard
-            ref={childRefs[idx]}
-            key={card.name}
-            onSwipe={(dir) => handleSwipe(dir, card.name)}
-            preventSwipe={["up", "down"]}
-          >
+    <div className="w-[340px] h-[520px] relative mx-auto">
+      <div className="relative h-full">
+        {cards.map((card, idx) => {
+          const isActive = idx <= currentIndex;
+          const isTop = idx === currentIndex;
+          const isSecond = idx === currentIndex - 1;
+
+          if (!isActive) return null;
+
+          let translateY = 0;
+          let translateX = 0;
+          let scale = 1;
+          let opacity = 1;
+          let rotateZ = 0;
+
+          if (isSecond) {
+            translateY = -85;
+            translateX = 30;
+            scale = 0.85;
+            opacity = 0.8;
+            rotateZ = -3;
+          }
+
+          return (
             <div
+              key={card.name}
+              className="absolute top-0 left-1/2 -translate-x-1/2 w-full"
               style={{
-                backgroundImage: `url(${card.url})`,
-                backgroundSize: "cover",
-                width: 320,
-                height: 400,
-                borderRadius: 20,
-                boxShadow: "0 10px 20px rgba(0,0,0,0.1)",
-                display: "flex",
-                alignItems: "flex-end",
-                justifyContent: "center",
-                color: "#fff",
-                padding: 24,
-                margin: "0 auto",
-                position: "absolute",
+                zIndex: idx,
+                pointerEvents: isTop ? "auto" : "none",
               }}
             >
-              <h3>{card.name}</h3>
+              <TinderCard
+                ref={childRefs[idx]}
+                onSwipe={(dir) => handleSwipe(dir, card.name, idx)}
+                onCardLeftScreen={() => onCardLeftScreen(card.name)}
+                preventSwipe={["up", "down"]}
+                swipeRequirementType="position"
+                swipeThreshold={100}
+                flickOnSwipe={true}
+                className="absolute"
+              >
+                <div
+                  className="relative w-[340px] h-[420px] rounded-[24px] border-[5px] border-white 
+                    shadow-[0px_4px_10px_0px_rgba(0,0,0,0.1)] flex items-end justify-center overflow-hidden"
+                  style={{
+                    transform: `translateY(${translateY}px) translateX(${translateX}px) scale(${scale}) rotate(${rotateZ}deg)`,
+                    opacity,
+                    transition: isTop
+                      ? "none"
+                      : "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                    transformOrigin: "center bottom",
+                  }}
+                >
+                  <img
+                    src={card.url}
+                    alt={card.name}
+                    className="w-full h-full absolute top-0 left-0 rounded-[24px] object-cover"
+                    draggable="false"
+                  />
+
+                  <div className="absolute inset-0 card_gradient rounded-[24px]" />
+
+                  <div className="absolute bottom-17 left-6 right-6 z-10 text-white">
+                    <h3 className="text-2xl font-semibold leading-tight">
+                      {card.name}{" "}
+                      <span className="text-base font-normal opacity-90">
+                        {card.info}
+                      </span>
+                    </h3>
+                    <p className="text-sm opacity-90 mt-1 max-w-[280px] leading-snug">
+                      {card.desc}
+                    </p>
+                  </div>
+                </div>
+              </TinderCard>
             </div>
-          </TinderCard>
-        ))}
+          );
+        })}
       </div>
-      <div
-        style={{
-          marginTop: 24,
-          display: "flex",
-          justifyContent: "center",
-          gap: 24,
-        }}
-      >
+
+      <div className="flex justify-center items-center gap-5 absolute bottom-17 left-1/2 -translate-x-1/2 z-[1000]">
         <button
-          type="button"
           onClick={() => swipe("left")}
-          // style={{
-          //   background: "#ec5e6f",
-          //   color: "#fff",
-          //   fontWeight: "bold",
-          //   border: "none",
-          //   fontSize: 24,
-          //   padding: "12px 32px",
-          //   borderRadius: 32,
-          //   cursor: "pointer",
-          //   boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-          // }}
+          disabled={!canSwipe}
+          className="bg-white rounded-full w-[55px] h-[55px] flex items-center justify-center shadow-md hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Nope
+          <img src={images.dislike.src} alt="Dislike" className="w-5 h-5" />
+        </button>
+        <button className="bg-primary-500 rounded-full w-[68px] h-[68px] flex items-center justify-center shadow-md hover:scale-105 transition-transform">
+          <img
+            src={images.pawYellow.src}
+            alt="Super like"
+            className="h-[36px]"
+          />
         </button>
         <button
-          type="button"
           onClick={() => swipe("right")}
-          // style={{
-          //   background: "#76e2b3",
-          //   color: "#222",
-          //   fontWeight: "bold",
-          //   border: "none",
-          //   fontSize: 24,
-          //   padding: "12px 32px",
-          //   borderRadius: 32,
-          //   cursor: "pointer",
-          //   boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-          // }}
+          disabled={!canSwipe}
+          className="bg-white rounded-full w-[55px] h-[55px] flex items-center justify-center shadow-md hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Like
+          <img src={images.like.src} alt="Like" className="w-[33px] h-[33px]" />
         </button>
       </div>
+
+      {!canSwipe && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="bg-white rounded-2xl p-8 shadow-lg text-center">
+            <p className="text-xl font-semibold text-gray-800">
+              No more dogs to view! 🐕
+            </p>
+            <p className="text-sm text-gray-600 mt-2">
+              Check back later for more matches
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
