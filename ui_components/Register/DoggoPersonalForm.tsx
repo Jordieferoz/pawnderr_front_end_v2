@@ -27,7 +27,7 @@ import { InputField } from "../Shared";
 const DoggoPersonalForm: FC = () => {
   const dispatch = useDispatch();
 
-  const [imageSlots, setImageSlots] = useState<(File | string | null)[]>([
+  const [imageSlots, setImageSlots] = useState<(string | null)[]>([
     null,
     null,
     null,
@@ -67,7 +67,9 @@ const DoggoPersonalForm: FC = () => {
         const newSlots = [...imageSlots];
         newSlots[index] = base64String;
         setImageSlots(newSlots);
-        setValue("images", newSlots.filter(Boolean), { shouldValidate: true });
+        setValue("images", newSlots.filter(Boolean) as string[], {
+          shouldValidate: true,
+        });
       };
       reader.readAsDataURL(file);
     }
@@ -133,11 +135,16 @@ const DoggoPersonalForm: FC = () => {
                 onChange={(e) => {
                   const file = e.target.files?.[0];
                   if (file) {
-                    const newSlots = [...imageSlots, file];
-                    setImageSlots(newSlots);
-                    setValue("images", newSlots.filter(Boolean), {
-                      shouldValidate: true,
-                    });
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                      const base64String = reader.result as string;
+                      const newSlots = [...imageSlots, base64String];
+                      setImageSlots(newSlots);
+                      setValue("images", newSlots.filter(Boolean) as string[], {
+                        shouldValidate: true,
+                      });
+                    };
+                    reader.readAsDataURL(file);
                   }
                 }}
               />

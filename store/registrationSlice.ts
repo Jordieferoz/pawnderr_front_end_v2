@@ -52,7 +52,7 @@ const initialState: RegistrationData = {
   preferredBreeds: undefined,
   distanceRadius: "",
   personalityPreference: [],
-  step: 4,
+  step: 1,
 };
 
 const registrationSlice = createSlice({

@@ -1,9 +1,8 @@
-// // middleware.ts
-
 import { NextRequest, NextResponse } from "next/server";
 
-const LOGIN_PATH = "/sign-in"; // since (login)/sign-in is rendered at /sign-in
-const DASHBOARD_PATH = "/dashboard"; // (dashboard)/dashboard is at /dashboard
+const LOGIN_PATH = "/sign-in";
+const DASHBOARD_PATH = "/dashboard";
+const REGISTER_PATH = "/register";
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -20,10 +19,17 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL(DASHBOARD_PATH, req.url));
   }
 
+  // Protect dashboard - require authentication
   if (pathname.startsWith(DASHBOARD_PATH) && !isAuthenticated) {
     return NextResponse.redirect(new URL(LOGIN_PATH, req.url));
   }
 
+  // Protect register route - require authentication
+  if (pathname === REGISTER_PATH && !isAuthenticated) {
+    return NextResponse.redirect(new URL(LOGIN_PATH, req.url));
+  }
+
+  // Redirect authenticated users away from sign-in/sign-up pages
   if ((pathname === LOGIN_PATH || pathname === "/sign-up") && isAuthenticated) {
     return NextResponse.redirect(new URL(DASHBOARD_PATH, req.url));
   }
@@ -32,25 +38,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/dashboard/:path*", "/sign-in", "/sign-up"],
+  matcher: ["/", "/dashboard/:path*", "/sign-in", "/sign-up", "/register"],
 };
-
-// export async function middleware(req: NextRequest) {
-//   const { pathname } = req.nextUrl;
-
-//   // Temporarily disable token checks for testing
-//   if (pathname === "/" || pathname.startsWith("/dashboard")) {
-//     // Always allow and redirect to dashboard
-//     if (pathname !== "/dashboard") {
-//       return NextResponse.redirect(new URL("/dashboard", req.url));
-//     }
-//     return NextResponse.next();
-//   }
-
-//   // You can also disable login redirects for sign-in pages during test
-//   if (pathname === "/sign-in" || pathname === "/sign-up") {
-//     return NextResponse.redirect(new URL("/dashboard", req.url));
-//   }
-
-//   return NextResponse.next();
-// }

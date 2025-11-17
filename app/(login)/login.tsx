@@ -48,16 +48,20 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
     : undefined;
 
   const onSubmit = async (data: SignInValues | SignUpValues) => {
-    // Set authentication cookie
+    // Set authentication cookie for BOTH signup and signin
     Cookies.set("isAuthenticated", "true", {
       expires: 7, // 7 days
       path: "/",
       sameSite: "lax",
     });
 
-    // Navigate to dashboard
-    router.push("/dashboard");
-    router.refresh();
+    if (isSignup) {
+      router.push("/register");
+      router.refresh(); // Ensure middleware re-evaluates with new cookie
+    } else {
+      router.push("/dashboard");
+      router.refresh();
+    }
   };
 
   useEffect(() => {
@@ -67,7 +71,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
   }, [password, isSignup, confirmPassword, trigger]);
 
   return (
-    <div className="relative min-h-[100dvh] px-5 pt-12 pb-0 lg:px-8">
+    <div className="relative min-h-[100dvh] px-5 pt-12 pb-20 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <Link href={"/"} className="mb-7.5 flex justify-center">
           <Image

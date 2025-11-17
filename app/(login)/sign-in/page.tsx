@@ -1,6 +1,11 @@
-import { Suspense } from 'react';
+import { Suspense } from "react";
 
-import { Login } from '../login';
+import { Login } from "../login";
+
+export const metadata = {
+  title: "Pawnderr - Sign in",
+  description: "Pawnderr - Sign in",
+};
 
 export default function SignInPage() {
   return (

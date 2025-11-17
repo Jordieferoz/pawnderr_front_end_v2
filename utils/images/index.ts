@@ -14,6 +14,7 @@ import doggo4 from "public/assets/images/doggo4.png";
 import doggo5 from "public/assets/images/doggo5.png";
 import doggoProfilePlaceholder from "public/assets/images/doggo_profile_placeholder.png";
 import facebook from "public/assets/images/facebook.svg";
+import filterIcon from "public/assets/images/filter_icon.svg";
 import google from "public/assets/images/google.svg";
 import like from "public/assets/images/like.svg";
 import logo from "public/assets/images/logo.svg";
@@ -53,6 +54,7 @@ export type ImageType =
   | "dislike"
   | "like"
   | "pawYellow"
+  | "filterIcon"
   | "backBtn";
 
 export type NextImage = {
@@ -89,4 +91,5 @@ export const images: Record<ImageType, NextImage> = {
   dislike,
   like,
   pawYellow,
+  filterIcon,
 };

@@ -50,16 +50,25 @@ const menuItems = [
 
 const Footer: FC = () => {
   const pathname = usePathname();
+
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
   const navRef = useRef<HTMLElement>(null);
   const itemRefs = useRef<(HTMLAnchorElement | null)[]>([]);
 
+  // Hide footer on authentication pages
+  const hiddenRoutes = ["/sign-in", "/sign-up", "/register"];
+  if (hiddenRoutes.includes(pathname)) {
+    return null;
+  }
+
   useEffect(() => {
     const activeIndex = menuItems.findIndex((item) => item.href === pathname);
-    if (activeIndex !== -1 && navRef.current && itemRefs.current[activeIndex]) {
-      const navRect = navRef.current.getBoundingClientRect();
-      const activeRect = itemRefs.current[activeIndex]!.getBoundingClientRect();
+    if (activeIndex === -1) return;
 
+    const navRect = navRef.current?.getBoundingClientRect();
+    const activeRect = itemRefs.current[activeIndex]?.getBoundingClientRect();
+
+    if (navRect && activeRect) {
       setIndicatorStyle({
         left: activeRect.left - navRect.left,
         width: activeRect.width,
@@ -83,13 +92,14 @@ const Footer: FC = () => {
 
         {menuItems.map((item, index) => {
           const active = pathname === item.href;
+
           return (
             <Link
+              key={item.key}
+              href={item.href}
               ref={(el) => {
                 itemRefs.current[index] = el;
               }}
-              href={item.href}
-              key={item.key}
               className={`flex-1 text-center no-underline select-none ${
                 active ? "text-neutral-900" : "text-gray-400"
               }`}
@@ -103,8 +113,11 @@ const Footer: FC = () => {
                     className="block"
                   />
                 </div>
+
                 <p
-                  className={`tp_small_medium mt-1 ${active ? "text-accent-500" : "text-neutral-white"}`}
+                  className={`tp_small_medium mt-1 ${
+                    active ? "text-accent-500" : "text-neutral-white"
+                  }`}
                 >
                   {item.label}
                 </p>

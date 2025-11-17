@@ -18,8 +18,8 @@ const Register: FC = () => {
   const progressValue = (step / totalSteps) * 100;
 
   return (
-    <div className="relative min-h-[100dvh] px-5 pt-12 pb-0 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+    <div className="relative min-h-[100dvh] px-5 pt-12 pb-20 lg:px-8">
+      <div className="mx-auto w-full md:max-w-md">
         <Progress value={progressValue} />
 
         <Link href={"/"} className="mb-1 mt-6 flex justify-center">
