@@ -1,9 +1,9 @@
-import Link from 'next/link';
-import { CircleIcon } from 'lucide-react';
+import { CircleIcon } from "lucide-react";
+import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-[100dvh] items-center justify-center">
+    <div className="flex min-h-screen items-center justify-center">
       <div className="max-w-md space-y-8 p-4 text-center">
         <div className="flex justify-center">
           <CircleIcon className="size-12 text-orange-500" />

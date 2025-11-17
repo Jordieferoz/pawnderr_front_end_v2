@@ -23,7 +23,7 @@ export default function RootLayout({
 
   return (
     <html lang="en" className={`${fredoka.className} ${sourceSans3.className}`}>
-      <body className="min-h-[100dvh]">
+      <body>
         <ReduxProvider>
           {children}
           {!shouldHideFooter && <Footer />}

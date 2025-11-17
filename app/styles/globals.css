@@ -8,7 +8,7 @@
 
 @layer base {
   body {
-    @apply bg-white text-black;
+    @apply bg-white text-black h-full;
     font-family: "Source Sans 3", sans-serif;
   }
 }

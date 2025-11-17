@@ -26,7 +26,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
   const pathname = usePathname();
   const isSignup = mode === "signup";
   const schema = isSignup ? signUpSchema : signInSchema;
-  console.log(pathname, "pathname");
+
   const {
     control,
     handleSubmit,
