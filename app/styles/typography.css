@@ -19,6 +19,10 @@
     @apply text-[32px] leading-[1.1] font-normal  md:text-[40px] lg:text-[48px];
     font-family: "Fredoka", sans-serif;
   }
+  .display4_medium {
+    @apply text-[32px] leading-[1.1] font-medium  md:text-[40px] lg:text-[48px];
+    font-family: "Fredoka", sans-serif;
+  }
 
   .heading1 {
     @apply text-[28px] leading-[1.1] font-normal  md:text-[32px] lg:text-[40px];
