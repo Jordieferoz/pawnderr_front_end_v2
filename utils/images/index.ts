@@ -25,6 +25,7 @@ import messagesActive from "public/assets/images/messages_active.svg";
 import pawYellow from "public/assets/images/paw_yellow.svg";
 import pawnderr from "public/assets/images/pawnderr.svg";
 import pawnderrActive from "public/assets/images/pawnderr_active.svg";
+import pawnderrPlus from "public/assets/images/pawnderr_plus.svg";
 import x from "public/assets/images/x.svg";
 
 export type ImageType =
@@ -55,6 +56,7 @@ export type ImageType =
   | "like"
   | "pawYellow"
   | "filterIcon"
+  | "pawnderrPlus"
   | "backBtn";
 
 export type NextImage = {
@@ -92,4 +94,5 @@ export const images: Record<ImageType, NextImage> = {
   like,
   pawYellow,
   filterIcon,
+  pawnderrPlus,
 };

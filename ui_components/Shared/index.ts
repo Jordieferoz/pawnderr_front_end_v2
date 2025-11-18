@@ -1,4 +1,5 @@
-import Footer from "./Footer";
+import CustomAvatar from "./CustomAvatar";
 import InputField from "./InputField";
+import MobileMenu from "./MobileMenu";
 
-export { Footer, InputField };
+export { CustomAvatar, InputField, MobileMenu };

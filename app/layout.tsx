@@ -4,7 +4,7 @@ import { Fredoka, Source_Sans_3 } from "next/font/google";
 import { usePathname } from "next/navigation";
 
 import { ReduxProvider } from "@/store/Provider";
-import { Footer } from "@/ui_components/Shared";
+import { MobileMenu } from "@/ui_components/Shared";
 import "./styles/globals.css";
 
 const fredoka = Fredoka({ subsets: ["latin"], display: "swap" });
@@ -18,15 +18,15 @@ export default function RootLayout({
   const pathname = usePathname();
 
   // Define routes where Footer should NOT appear
-  const hideFooterRoutes = ["/sign-up", "/sign-in", "/register"];
-  const shouldHideFooter = hideFooterRoutes.includes(pathname);
+  const hideMobileMenuRoutes = ["/sign-up", "/sign-in", "/register"];
+  const shouldHideMobileMenu = hideMobileMenuRoutes.includes(pathname);
 
   return (
     <html lang="en" className={`${fredoka.className} ${sourceSans3.className}`}>
       <body>
         <ReduxProvider>
           {children}
-          {!shouldHideFooter && <Footer />}
+          {!shouldHideMobileMenu && <MobileMenu />}
         </ReduxProvider>
       </body>
     </html>

@@ -1,4 +1,4 @@
-import { Header } from "@/ui_components/Dashboard";
+import { MobileHeader } from "@/ui_components/Dashboard";
 
 export const metadata = {
   title: "Pawnderr - Dashboard",
@@ -7,7 +7,7 @@ export const metadata = {
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <section className="min-h-screen">
-      <Header />
+      <MobileHeader />
       {children}
     </section>
   );

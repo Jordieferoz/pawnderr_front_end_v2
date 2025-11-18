@@ -1,4 +1,4 @@
-import Header from "./Header";
+import MobileHeader from "./MobileHeader";
 import SwipeCards from "./SwipingCards";
 
-export { Header, SwipeCards };
+export { MobileHeader, SwipeCards };

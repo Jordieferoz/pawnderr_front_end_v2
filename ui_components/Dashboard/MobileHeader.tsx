@@ -2,7 +2,7 @@ import { images } from "@/utils/images";
 import Link from "next/link";
 import { FC } from "react";
 
-const Header: FC = () => {
+const MobileHeader: FC = () => {
   return (
     <header className="fixed px-8 py-5 w-full left-0 top-0 flex items-center justify-between gap-4 z-50 bg-white">
       <Link href={"/"}>
@@ -21,4 +21,4 @@ const Header: FC = () => {
   );
 };
 
-export default Header;
+export default MobileHeader;

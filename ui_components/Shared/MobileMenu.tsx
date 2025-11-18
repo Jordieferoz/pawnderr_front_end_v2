@@ -48,7 +48,7 @@ const menuItems = [
   },
 ];
 
-const Footer: FC = () => {
+const MobileMenu: FC = () => {
   const pathname = usePathname();
 
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
@@ -130,4 +130,4 @@ const Footer: FC = () => {
   );
 };
 
-export default Footer;
+export default MobileMenu;
