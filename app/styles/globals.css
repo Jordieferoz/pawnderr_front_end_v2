@@ -12,7 +12,14 @@
     font-family: "Source Sans 3", sans-serif;
   }
 }
+html,
+body {
+  height: 100%;
+}
 
+[data-vaul-drawer][data-vaul-drawer-direction="bottom"]::after {
+  display: none;
+}
 .card_gradient {
   background: linear-gradient(
     180deg,

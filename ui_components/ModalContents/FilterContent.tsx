@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -9,14 +11,14 @@ import {
   matchingPetSchema,
 } from "@/utils/schemas/registrationSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-import router from "next/router";
+import { useRouter } from "next/navigation";
 
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
 const FilterContent = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const {
     control,
     handleSubmit,
@@ -40,7 +42,7 @@ const FilterContent = () => {
   };
 
   return (
-    <div className="">
+    <>
       <div className="flex items-center gap-3">
         <img src={images.backBtn.src} className="w-10 h-10" />
         <h4 className="display4_medium text-accent-900">Filter</h4>
@@ -235,7 +237,7 @@ const FilterContent = () => {
           Match Preferences
         </Button>
       </form>
-    </div>
+    </>
   );
 };
 

@@ -1,10 +1,10 @@
 "use client";
 
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Drawer, DrawerContent, DrawerHeader } from "@/components/ui/drawer";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { X } from "lucide-react";
 import { ReactNode, useCallback } from "react";
-import { Dialog, DialogContent } from "../../components/ui/dialog";
 
 interface ModalProps {
   open: boolean;
@@ -24,9 +24,7 @@ const Modal = ({ open, setOpen, content, className }: ModalProps) => {
   if (isMobile) {
     return (
       <Drawer open={open} onOpenChange={setOpen}>
-        <DrawerContent
-          className={`flex h-auto max-h-[100vh] flex-col !rounded-t-2xl bg-white px-8 py-4 sm:px-6 ${className || ""} pt-0`}
-        >
+        <DrawerContent className={``}>
           {/* Fixed Header */}
           <DrawerHeader
             className={`relative flex flex-shrink-0 justify-center`}
