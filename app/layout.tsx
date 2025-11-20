@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { ReduxProvider } from "@/store/Provider";
 import { MobileMenu } from "@/ui_components/Shared";
 import "./styles/globals.css";
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />;
 
 const fredoka = Fredoka({ subsets: ["latin"], display: "swap" });
 const sourceSans3 = Source_Sans_3({ subsets: ["latin"], display: "swap" });

@@ -13,6 +13,7 @@ import doggo3 from "public/assets/images/doggo3.png";
 import doggo4 from "public/assets/images/doggo4.png";
 import doggo5 from "public/assets/images/doggo5.png";
 import doggoProfilePlaceholder from "public/assets/images/doggo_profile_placeholder.png";
+import editIcon from "public/assets/images/edit_icon.svg";
 import facebook from "public/assets/images/facebook.svg";
 import filterIcon from "public/assets/images/filter_icon.svg";
 import google from "public/assets/images/google.svg";
@@ -57,6 +58,7 @@ export type ImageType =
   | "pawYellow"
   | "filterIcon"
   | "pawnderrPlus"
+  | "editIcon"
   | "backBtn";
 
 export type NextImage = {
@@ -95,4 +97,5 @@ export const images: Record<ImageType, NextImage> = {
   pawYellow,
   filterIcon,
   pawnderrPlus,
+  editIcon,
 };

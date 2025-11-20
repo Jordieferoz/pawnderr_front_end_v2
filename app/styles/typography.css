@@ -32,6 +32,10 @@
     @apply text-[24px] leading-[1.1] font-normal  md:text-[28px] lg:text-[32px];
     font-family: "Fredoka", sans-serif;
   }
+  .heading2_medium {
+    @apply text-[24px] leading-[1.1] font-medium  md:text-[28px] lg:text-[32px];
+    font-family: "Fredoka", sans-serif;
+  }
   .heading3 {
     @apply text-[20px] leading-[1.1] font-normal  md:text-[22px] lg:text-[24px];
     font-family: "Fredoka", sans-serif;
@@ -42,13 +46,17 @@
   }
   .tp_small_medium {
     @apply text-[12px] font-medium;
-    font-family: "Fredoka", sans-serif;
   }
 
+  .body_large_medium {
+    @apply text-[16px] leading-[1.4] font-medium font-['Source_Sans_3'] md:text-[18px] lg:text-[20px];
+    font-family: "Fredoka", sans-serif;
+  }
   .body_large {
     @apply text-[16px] leading-[1.4] font-normal font-['Source_Sans_3'] md:text-[18px] lg:text-[20px];
     font-family: "Source Sans 3", sans-serif;
   }
+
   .body_regular {
     @apply text-[14px] leading-[1.4] font-normal font-['Source_Sans_3'] md:text-[16px];
     font-family: "Source Sans 3", sans-serif;

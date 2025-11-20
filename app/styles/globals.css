@@ -27,3 +27,7 @@ body {
     #333333 93.29%
   );
 }
+
+.common_container {
+  @apply px-8 md:px-10;
+}

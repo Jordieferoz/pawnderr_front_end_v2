@@ -142,7 +142,7 @@ export default function SwipingCards() {
   };
 
   return (
-    <div className="w-[340px] h-[520px] relative mx-auto">
+    <div className="w-full max-w-[340px] h-[520px] relative mx-auto">
       <div className="relative h-full">
         {cards.map((card, idx) => {
           const isActive = idx <= currentIndex;
@@ -162,8 +162,8 @@ export default function SwipingCards() {
               }}
             >
               <div
-                className="relative w-[340px] h-[420px] rounded-[24px] border-[5px] border-white 
-                  shadow-[0px_4px_10px_0px_rgba(0,0,0,0.1)] flex items-end justify-center overflow-hidden"
+                className="relative w-full max-w-[340px] h-[420px] rounded-[24px] border-[5px] border-white 
+                  shadow-[0px_4px_10px_0px_rgba(0,0,0,0.1)] flex items-end justify-center overflow-hidden mx-auto"
                 style={{
                   transition: isTop
                     ? "none"
