@@ -18,3 +18,7 @@ export interface IInfoCardListItem {
   left: string;
   right: string;
 }
+
+export interface IProfileHeaderProps {
+  title: string;
+}

@@ -4,6 +4,7 @@ import addMore from "public/assets/images/add_more.svg";
 import addPetPhoto from "public/assets/images/add_pet_photo.svg";
 import authPattern from "public/assets/images/auth_pattern.svg";
 import backBtn from "public/assets/images/back.svg";
+import chevronRight from "public/assets/images/chevron_right.svg";
 import discover from "public/assets/images/discover.svg";
 import discoverActive from "public/assets/images/discover_active.svg";
 import dislike from "public/assets/images/dislike.svg";
@@ -63,6 +64,7 @@ export type ImageType =
   | "editIcon"
   | "starWhite"
   | "starBlack"
+  | "chevronRight"
   | "backBtn";
 
 export type NextImage = {
@@ -104,4 +106,5 @@ export const images: Record<ImageType, NextImage> = {
   editIcon,
   starWhite,
   starBlack,
+  chevronRight,
 };

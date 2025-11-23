@@ -1,3 +1,5 @@
+import { EditProfile } from "@/ui_components/Profile";
+
 export default function ProfileEditPage() {
-  return <></>;
+  return <EditProfile />;
 }

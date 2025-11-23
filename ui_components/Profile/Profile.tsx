@@ -20,14 +20,14 @@ const Profile: FC = () => {
 
   return (
     <div className="profile_wrapper common_container">
-      <div className="flex items-center justify-between mb-7">
+      <div className="flex items-center my-4 justify-between mb-7">
         <div className="flex items-center gap-3">
           <img
             onClick={() => router.back()}
             className="w-10 h-10"
             src={images.backBtn.src}
           />
-          <h4 className="display4_medium my-4 text-accent-900">Profile</h4>
+          <h4 className="display4_medium  text-accent-900">Profile</h4>
         </div>
         <img
           className="cursor-pointer"

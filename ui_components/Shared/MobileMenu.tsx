@@ -61,8 +61,26 @@ const MobileMenu: FC = () => {
     return null;
   }
 
+  // Helper to decide which menuItem is active for indicator & styles
+  const isItemActive = (itemHref: string, itemKey: string) => {
+    if (itemKey === "discover") {
+      // Dashboard tab is active on /dashboard and /profile
+      return (
+        pathname === "/dashboard" ||
+        pathname === "/profile" ||
+        pathname.startsWith("/dashboard/") ||
+        pathname.startsWith("/profile/")
+      );
+    }
+
+    // Default behavior for others
+    return pathname === itemHref || pathname.startsWith(`${itemHref}/`);
+  };
+
   useEffect(() => {
-    const activeIndex = menuItems.findIndex((item) => item.href === pathname);
+    const activeIndex = menuItems.findIndex((item) =>
+      isItemActive(item.href, item.key)
+    );
     if (activeIndex === -1) return;
 
     const navRect = navRef.current?.getBoundingClientRect();
@@ -91,7 +109,7 @@ const MobileMenu: FC = () => {
         />
 
         {menuItems.map((item, index) => {
-          const active = pathname === item.href;
+          const active = isItemActive(item.href, item.key);
 
           return (
             <Link
