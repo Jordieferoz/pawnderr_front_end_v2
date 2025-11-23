@@ -27,7 +27,7 @@ const Profile: FC = () => {
             className="w-10 h-10"
             src={images.backBtn.src}
           />
-          <h4 className="display4_medium  text-accent-900">Profile</h4>
+          <h4 className="display4_medium text-accent-900">Profile</h4>
         </div>
         <img
           className="cursor-pointer"

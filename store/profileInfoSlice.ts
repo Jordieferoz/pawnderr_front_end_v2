@@ -52,7 +52,7 @@ const initialState: IProfileData = {
   preferredBreeds: undefined,
   distanceRadius: "",
   personalityPreference: [],
-  step: 1,
+  step: 0,
 };
 
 const profileInfoSlice = createSlice({
