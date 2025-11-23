@@ -39,9 +39,9 @@ const menuItems = [
     imgWidth: 24,
   },
   {
-    key: "pawnderr",
-    label: "PAWnderr+",
-    href: "/pawnderr",
+    key: "upgrade",
+    label: "Upgrade",
+    href: "/upgrade",
     img: images.pawnderr.src,
     imgActive: images.pawnderrActive.src,
     imgWidth: 26,
