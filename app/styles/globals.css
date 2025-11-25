@@ -16,7 +16,15 @@ html,
 body {
   height: 100%;
 }
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  overflow-y: scroll; /* or auto */
+}
 
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
 [data-vaul-drawer][data-vaul-drawer-direction="bottom"]::after {
   display: none;
 }

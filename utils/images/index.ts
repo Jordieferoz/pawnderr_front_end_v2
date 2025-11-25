@@ -2,9 +2,13 @@ import activities from "public/assets/images/activities.svg";
 import activitiesActive from "public/assets/images/activities_active.svg";
 import addMore from "public/assets/images/add_more.svg";
 import addPetPhoto from "public/assets/images/add_pet_photo.svg";
+import alert from "public/assets/images/alert.svg";
+import attachment from "public/assets/images/attachment.svg";
 import authPattern from "public/assets/images/auth_pattern.svg";
 import backBtn from "public/assets/images/back.svg";
+import block from "public/assets/images/block.svg";
 import chevronRight from "public/assets/images/chevron_right.svg";
+import chevronRightGrey from "public/assets/images/chevron_right_grey.svg";
 import discover from "public/assets/images/discover.svg";
 import discoverActive from "public/assets/images/discover_active.svg";
 import dislike from "public/assets/images/dislike.svg";
@@ -15,6 +19,7 @@ import doggo4 from "public/assets/images/doggo4.png";
 import doggo5 from "public/assets/images/doggo5.png";
 import doggoProfilePlaceholder from "public/assets/images/doggo_profile_placeholder.png";
 import editIcon from "public/assets/images/edit_icon.svg";
+import ellipsisHorizontal from "public/assets/images/ellipsis_horizontal.svg";
 import facebook from "public/assets/images/facebook.svg";
 import filterIcon from "public/assets/images/filter_icon.svg";
 import google from "public/assets/images/google.svg";
@@ -28,6 +33,9 @@ import pawYellow from "public/assets/images/paw_yellow.svg";
 import pawnderr from "public/assets/images/pawnderr.svg";
 import pawnderrActive from "public/assets/images/pawnderr_active.svg";
 import pawnderrPlus from "public/assets/images/pawnderr_plus.svg";
+import searchGrey from "public/assets/images/search_grey.svg";
+import send from "public/assets/images/send.svg";
+import smiley from "public/assets/images/smiley.svg";
 import starBlack from "public/assets/images/star_black.svg";
 import starWhite from "public/assets/images/star_white.svg";
 import x from "public/assets/images/x.svg";
@@ -65,6 +73,14 @@ export type ImageType =
   | "starWhite"
   | "starBlack"
   | "chevronRight"
+  | "searchGrey"
+  | "ellipsisHorizontal"
+  | "send"
+  | "smiley"
+  | "attachment"
+  | "alert"
+  | "block"
+  | "chevronRightGrey"
   | "backBtn";
 
 export type NextImage = {
@@ -107,4 +123,12 @@ export const images: Record<ImageType, NextImage> = {
   starWhite,
   starBlack,
   chevronRight,
+  searchGrey,
+  ellipsisHorizontal,
+  send,
+  smiley,
+  attachment,
+  alert,
+  block,
+  chevronRightGrey,
 };

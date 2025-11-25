@@ -12,11 +12,12 @@ import {
 } from "@/utils/schemas/registrationSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import { FC } from "react";
 
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
-const FilterContent = () => {
+const FilterContent: FC = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const {

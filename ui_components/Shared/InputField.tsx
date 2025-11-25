@@ -26,6 +26,7 @@ const InputField: FC<IInputFieldProps> = (props) => {
     disabled,
     isPassword,
     rightIcon,
+    leftIcon,
     maxLength,
   } = props;
 
@@ -44,7 +45,7 @@ const InputField: FC<IInputFieldProps> = (props) => {
           type={isPassword && showPassword ? "text" : type}
           id={id}
           name={name}
-          className={`${className ?? ""} ${rightIcon ? "pr-12" : ""} pr-10`}
+          className={`${className ?? ""} ${rightIcon ? "pr-12" : ""} ${leftIcon ? "pl-12" : ""} pr-10`}
           placeholder={placeholder}
           onChange={onChange}
           disabled={disabled}
@@ -57,7 +58,13 @@ const InputField: FC<IInputFieldProps> = (props) => {
         {rightIcon && (
           <img
             src={rightIcon}
-            className="absolute top-1/2 right-6 z-10 h-4 w-4 -translate-y-1/2"
+            className="absolute top-1/2 right-5 z-10 h-4 w-4 -translate-y-1/2"
+          />
+        )}
+        {leftIcon && (
+          <img
+            src={leftIcon}
+            className="absolute top-1/2 left-5 z-10 h-5 w-5 -translate-y-1/2"
           />
         )}
         {isPassword && (

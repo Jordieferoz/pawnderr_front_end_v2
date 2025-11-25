@@ -29,7 +29,7 @@ const InfoCard: FC<IInfoCardProps> = ({
               key={index}
               className="flex justify-between items-start w-full"
             >
-              <p className="body_large_medium text-grey-500">{item.left}</p>
+              <p className="body_large_medium text-grey-700">{item.left}</p>
               <p className="body_large_medium text-dark-grey2 text-right">
                 {item.right}
               </p>

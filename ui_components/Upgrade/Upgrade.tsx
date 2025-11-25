@@ -56,7 +56,7 @@ const Upgrade = () => {
             features={FEATURES}
           />
         </div>
-        <div className="">
+        <div className="hidden md:block">
           <PricingCard
             type={"annually"}
             price={isAnnual ? "Annual pricing UI here" : "₹199/Month"}

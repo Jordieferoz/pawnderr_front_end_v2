@@ -1,4 +1,4 @@
-import { ChangeEvent } from 'react';
+import { ChangeEvent } from "react";
 
 export interface IInputFieldProps {
   type?: string;
@@ -13,10 +13,11 @@ export interface IInputFieldProps {
   error?: boolean;
   value?: string | number;
   errorMsg?: string | React.ReactElement;
-  autoComplete?: 'on' | 'off';
+  autoComplete?: "on" | "off";
   autofocus?: boolean;
   disabled?: boolean;
   isPassword?: boolean;
   rightIcon?: string;
+  leftIcon?: string;
   maxLength?: number;
 }

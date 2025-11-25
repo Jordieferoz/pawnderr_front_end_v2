@@ -18,7 +18,7 @@ const ProfileCard: FC<IProfileCardProps> = ({
           {gender}, {age} Years
         </span>
       </h3>
-      <p className="text-grey-500 heading3 leading-snug pb-4">
+      <p className="text-grey-700 heading3 leading-snug pb-4">
         {breed}, {location}
       </p>
     </div>

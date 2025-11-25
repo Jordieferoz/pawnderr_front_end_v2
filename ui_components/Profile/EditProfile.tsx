@@ -31,21 +31,21 @@ const EditProfile: FC = () => {
         {step === 0 && (
           <ul className="py-5 px-6 bg-white shadow-[0px_4px_16.4px_0px_#0000001A] rounded-xl">
             <li
-              className="py-4 px-5 border-b last:border-0 border-grey-500 flex items-center justify-between cursor-pointer"
+              className="py-4 px-5 border-b last:border-0 border-grey-700 flex items-center justify-between cursor-pointer"
               onClick={() => dispatch(setStep(1))}
             >
               <p className="body_large_medium">Personal Information</p>
               <img src={images.chevronRight.src} className="w-2" />
             </li>
             <li
-              className="py-4 px-5 border-b last:border-0 border-grey-500 flex items-center justify-between cursor-pointer"
+              className="py-4 px-5 border-b last:border-0 border-grey-700 flex items-center justify-between cursor-pointer"
               onClick={() => dispatch(setStep(2))}
             >
               <p className="body_large_medium">Pet Information</p>
               <img src={images.chevronRight.src} className="w-2" />
             </li>
             <li
-              className="py-4 px-5 border-b last:border-0 border-grey-500 flex items-center justify-between cursor-pointer"
+              className="py-4 px-5 border-b last:border-0 border-grey-700 flex items-center justify-between cursor-pointer"
               onClick={() => dispatch(setStep(3))}
             >
               <p className="body_large_medium">Match Preferences</p>
