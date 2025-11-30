@@ -11,6 +11,10 @@
     @apply text-[48px] leading-[1.1] font-normal  md:text-[64px] lg:text-[80px];
     font-family: "Fredoka", sans-serif;
   }
+  .display2_medium {
+    @apply text-[48px] leading-[1.1] font-medium  md:text-[64px] lg:text-[80px];
+    font-family: "Fredoka", sans-serif;
+  }
   .display3 {
     @apply text-[40px] leading-[1.1] font-normal  md:text-[48px] lg:text-[64px];
     font-family: "Fredoka", sans-serif;
@@ -25,6 +29,10 @@
   }
 
   .heading1 {
+    @apply text-[28px] leading-[1.1] font-normal  md:text-[32px] lg:text-[40px];
+    font-family: "Fredoka", sans-serif;
+  }
+  .heading1_medium {
     @apply text-[28px] leading-[1.1] font-normal  md:text-[32px] lg:text-[40px];
     font-family: "Fredoka", sans-serif;
   }
@@ -45,7 +53,7 @@
     font-family: "Fredoka", sans-serif;
   }
   .heading4 {
-    @apply text-base leading-[1.1] font-normal  md:text-[18px] lg:text-xl;
+    @apply text-base leading-[22px] font-normal  md:text-[18px] lg:text-xl;
     font-family: "Fredoka", sans-serif;
   }
   .tp_small_medium {
