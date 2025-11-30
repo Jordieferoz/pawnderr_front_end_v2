@@ -44,12 +44,9 @@ export const personalityPreference = [
 ];
 
 export const tabs = [
-  { id: "likes-me", label: "Likes Me", count: 4 },
-  { id: "you-like", label: "You Like", count: 4 },
-  { id: "viewed-profile", label: "Who viewed Profile", count: 0 },
-  { id: "suitable-1", label: "Suitable", count: 10 },
-  { id: "suitable-2", label: "Suitable", count: 10 },
-  { id: "suitable-3", label: "Suitable", count: 10 },
+  { id: "likes-me", label: "Who Likes Me", count: 4 },
+  { id: "you-like", label: "You Like Them", count: 4 },
+  { id: "viewed-profile", label: "Profiles Near Me", count: 0 },
 ];
 
 export const cardsData: ICard[] = [
