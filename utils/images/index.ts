@@ -7,6 +7,7 @@ import attachment from "public/assets/images/attachment.svg";
 import authPattern from "public/assets/images/auth_pattern.svg";
 import backBtn from "public/assets/images/back.svg";
 import block from "public/assets/images/block.svg";
+import chatYellow from "public/assets/images/chat_yellow.svg";
 import chevronRight from "public/assets/images/chevron_right.svg";
 import chevronRightGrey from "public/assets/images/chevron_right_grey.svg";
 import discover from "public/assets/images/discover.svg";
@@ -20,6 +21,7 @@ import doggo5 from "public/assets/images/doggo5.png";
 import doggoProfilePlaceholder from "public/assets/images/doggo_profile_placeholder.png";
 import editIcon from "public/assets/images/edit_icon.svg";
 import ellipsisHorizontal from "public/assets/images/ellipsis_horizontal.svg";
+import eyeBlue from "public/assets/images/eye_blue.svg";
 import facebook from "public/assets/images/facebook.svg";
 import filterIcon from "public/assets/images/filter_icon.svg";
 import google from "public/assets/images/google.svg";
@@ -81,6 +83,8 @@ export type ImageType =
   | "alert"
   | "block"
   | "chevronRightGrey"
+  | "eyeBlue"
+  | "chatYellow"
   | "backBtn";
 
 export type NextImage = {
@@ -131,4 +135,6 @@ export const images: Record<ImageType, NextImage> = {
   alert,
   block,
   chevronRightGrey,
+  eyeBlue,
+  chatYellow,
 };
