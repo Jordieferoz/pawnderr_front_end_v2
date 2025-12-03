@@ -26,7 +26,9 @@ import facebook from "public/assets/images/facebook.svg";
 import filterIcon from "public/assets/images/filter_icon.svg";
 import google from "public/assets/images/google.svg";
 import like from "public/assets/images/like.svg";
+import loginBg from "public/assets/images/login_bg.png";
 import logo from "public/assets/images/logo.svg";
+import logoBig from "public/assets/images/logo_big.svg";
 import matches from "public/assets/images/matches.svg";
 import matchesActive from "public/assets/images/matches_active.svg";
 import messages from "public/assets/images/messages.svg";
@@ -85,6 +87,8 @@ export type ImageType =
   | "chevronRightGrey"
   | "eyeBlue"
   | "chatYellow"
+  | "logoBig"
+  | "loginBg"
   | "backBtn";
 
 export type NextImage = {
@@ -137,4 +141,6 @@ export const images: Record<ImageType, NextImage> = {
   chevronRightGrey,
   eyeBlue,
   chatYellow,
+  logoBig,
+  loginBg,
 };
