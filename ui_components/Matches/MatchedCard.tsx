@@ -20,6 +20,30 @@ const cardsData: Card[] = [
     details:
       "Golden Retriever\nLoves long walks\nFully vaccinated\nWeight: 25kg",
   },
+  {
+    name: "Buddy",
+    info: "(Male, 2 Years)",
+    url: images.doggo1.src,
+    desc: "A cheerful retriever who loves belly rubs and chasing tennis balls.",
+    details:
+      "Golden Retriever\nLoves long walks\nFully vaccinated\nWeight: 25kg",
+  },
+  {
+    name: "Buddy",
+    info: "(Male, 2 Years)",
+    url: images.doggo1.src,
+    desc: "A cheerful retriever who loves belly rubs and chasing tennis balls.",
+    details:
+      "Golden Retriever\nLoves long walks\nFully vaccinated\nWeight: 25kg",
+  },
+  {
+    name: "Buddy",
+    info: "(Male, 2 Years)",
+    url: images.doggo1.src,
+    desc: "A cheerful retriever who loves belly rubs and chasing tennis balls.",
+    details:
+      "Golden Retriever\nLoves long walks\nFully vaccinated\nWeight: 25kg",
+  },
 ];
 
 const FlipCard: FC<{ card: Card }> = ({ card }) => {
