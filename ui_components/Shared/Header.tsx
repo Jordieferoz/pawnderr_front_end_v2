@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { headerMenuItems } from "@/constants";
 import { images } from "@/utils/images";
 import Link from "next/link";
@@ -71,6 +72,11 @@ const Header: FC = () => {
               src={images.doggoProfilePlaceholder.src}
               className="rounded-full w-9 h-9 object-cover"
             />
+          </Link>
+          <Link href={"/upgrade"} className="cursor-pointer">
+            <Button>
+              <img src={images.pawnderBlack.src} /> PAWnderr+
+            </Button>
           </Link>
         </ul>
       </nav>

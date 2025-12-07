@@ -39,6 +39,7 @@ import matchesActive from "public/assets/images/matches_active.svg";
 import messages from "public/assets/images/messages.svg";
 import messagesActive from "public/assets/images/messages_active.svg";
 import pawYellow from "public/assets/images/paw_yellow.svg";
+import pawnderBlack from "public/assets/images/pawnder_black.svg";
 import pawnderr from "public/assets/images/pawnderr.svg";
 import pawnderrActive from "public/assets/images/pawnderr_active.svg";
 import pawnderrPlus from "public/assets/images/pawnderr_plus.svg";
@@ -111,6 +112,7 @@ export type ImageType =
   | "discoverBg"
   | "discoverLeftPattern"
   | "discoverRightPattern"
+  | "pawnderBlack"
   | "backBtn";
 
 export type NextImage = {
@@ -176,4 +178,5 @@ export const images: Record<ImageType, NextImage> = {
   discoverBg,
   discoverLeftPattern,
   discoverRightPattern,
+  pawnderBlack,
 };
