@@ -1,52 +1,9 @@
 "use client";
 
-import { images } from "@/utils/images";
+import { mobileMenuItems } from "@/constants";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FC, useEffect, useRef, useState } from "react";
-
-const menuItems = [
-  {
-    key: "matches",
-    label: "Matches",
-    href: "/matches",
-    img: images.matches.src,
-    imgActive: images.matchesActive.src,
-    imgWidth: 18,
-  },
-  {
-    key: "activities",
-    label: "Activities",
-    href: "/activities",
-    img: images.activities.src,
-    imgActive: images.activitiesActive.src,
-    imgWidth: 21,
-  },
-  {
-    key: "discover",
-    label: "Discover",
-    href: "/dashboard",
-    img: images.discover.src,
-    imgActive: images.discoverActive.src,
-    imgWidth: 38,
-  },
-  {
-    key: "messages",
-    label: "Messages",
-    href: "/messages",
-    img: images.messages.src,
-    imgActive: images.messagesActive.src,
-    imgWidth: 24,
-  },
-  {
-    key: "upgrade",
-    label: "Upgrade",
-    href: "/upgrade",
-    img: images.pawnderr.src,
-    imgActive: images.pawnderrActive.src,
-    imgWidth: 26,
-  },
-];
 
 const MobileMenu: FC = () => {
   const pathname = usePathname();
@@ -78,7 +35,7 @@ const MobileMenu: FC = () => {
   };
 
   useEffect(() => {
-    const activeIndex = menuItems.findIndex((item) =>
+    const activeIndex = mobileMenuItems.findIndex((item) =>
       isItemActive(item.href, item.key)
     );
     if (activeIndex === -1) return;
@@ -95,7 +52,7 @@ const MobileMenu: FC = () => {
   }, [pathname]);
 
   return (
-    <footer className="fixed left-0 bottom-0 w-full bg-white border-t border-gray-100 z-50">
+    <footer className="fixed left-0 bottom-0 w-full bg-white border-t border-gray-100 z-50 md:hidden">
       <nav
         ref={navRef}
         className="relative flex justify-between max-w-[520px] mx-auto py-4 px-0"
@@ -108,7 +65,7 @@ const MobileMenu: FC = () => {
           }}
         />
 
-        {menuItems.map((item, index) => {
+        {mobileMenuItems.map((item, index) => {
           const active = isItemActive(item.href, item.key);
 
           return (

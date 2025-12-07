@@ -12,6 +12,9 @@ import chevronRight from "public/assets/images/chevron_right.svg";
 import chevronRightGrey from "public/assets/images/chevron_right_grey.svg";
 import discover from "public/assets/images/discover.svg";
 import discoverActive from "public/assets/images/discover_active.svg";
+import discoverBg from "public/assets/images/discover_bg.png";
+import discoverLeftPattern from "public/assets/images/discover_left_pattern.svg";
+import discoverRightPattern from "public/assets/images/discover_right_pattern.png";
 import dislike from "public/assets/images/dislike.svg";
 import doggo1 from "public/assets/images/doggo1.png";
 import doggo2 from "public/assets/images/doggo2.png";
@@ -105,6 +108,9 @@ export type ImageType =
   | "userFormBg"
   | "userRightBlur"
   | "userLeftBlur"
+  | "discoverBg"
+  | "discoverLeftPattern"
+  | "discoverRightPattern"
   | "backBtn";
 
 export type NextImage = {
@@ -167,4 +173,7 @@ export const images: Record<ImageType, NextImage> = {
   userFormBg,
   userRightBlur,
   userLeftBlur,
+  discoverBg,
+  discoverLeftPattern,
+  discoverRightPattern,
 };

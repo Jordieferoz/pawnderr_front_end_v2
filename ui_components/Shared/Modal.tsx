@@ -4,7 +4,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Drawer, DrawerContent, DrawerHeader } from "@/components/ui/drawer";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { X } from "lucide-react";
-import { ReactNode, useCallback } from "react";
+import { FC, ReactNode, useCallback } from "react";
 
 interface ModalProps {
   open: boolean;
@@ -13,7 +13,7 @@ interface ModalProps {
   className?: string;
 }
 
-const Modal = ({ open, setOpen, content, className }: ModalProps) => {
+const Modal: FC<ModalProps> = ({ open, setOpen, content, className }) => {
   const isMobile = useIsMobile();
 
   // Separate handler for close button - always allow closing via button

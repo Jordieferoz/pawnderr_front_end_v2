@@ -4,7 +4,7 @@ import { FC } from "react";
 
 const MobileHeader: FC = () => {
   return (
-    <header className="fixed py-3 w-full left-0 top-0 z-50 bg-white">
+    <header className="fixed py-3 w-full left-0 top-0 z-50 bg-white md:hidden">
       <nav className="container mx-auto common_container flex items-center justify-between gap-4">
         <Link href={"/"}>
           <img src={images.logo.src} alt="logo" className="w-[86px]" />

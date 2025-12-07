@@ -75,3 +75,81 @@ export const cardsData: ICard[] = [
       "Golden Retriever\nLoves long walks\nFully vaccinated\nWeight: 25kg",
   },
 ];
+
+export const mobileMenuItems = [
+  {
+    key: "matches",
+    label: "Matches",
+    href: "/matches",
+    img: images.matches.src,
+    imgActive: images.matchesActive.src,
+    imgWidth: 18,
+  },
+  {
+    key: "activities",
+    label: "Activities",
+    href: "/activities",
+    img: images.activities.src,
+    imgActive: images.activitiesActive.src,
+    imgWidth: 21,
+  },
+  {
+    key: "discover",
+    label: "Discover",
+    href: "/dashboard",
+    img: images.discover.src,
+    imgActive: images.discoverActive.src,
+    imgWidth: 38,
+  },
+  {
+    key: "messages",
+    label: "Messages",
+    href: "/messages",
+    img: images.messages.src,
+    imgActive: images.messagesActive.src,
+    imgWidth: 24,
+  },
+  {
+    key: "upgrade",
+    label: "Upgrade",
+    href: "/upgrade",
+    img: images.pawnderr.src,
+    imgActive: images.pawnderrActive.src,
+    imgWidth: 26,
+  },
+];
+export const headerMenuItems = [
+  {
+    key: "discover",
+    label: "Discover",
+    href: "/dashboard",
+    img: images.discover.src,
+    imgActive: images.discoverActive.src,
+    imgWidth: 38,
+  },
+  {
+    key: "matches",
+    label: "Matches",
+    href: "/matches",
+    img: images.matches.src,
+    imgActive: images.matchesActive.src,
+    imgWidth: 18,
+  },
+  {
+    key: "activities",
+    label: "Activities",
+    href: "/activities",
+    img: images.activities.src,
+    imgActive: images.activitiesActive.src,
+    imgWidth: 21,
+  },
+
+  {
+    key: "messages",
+    label: "Messages",
+    href: "/messages",
+    img: images.messages.src,
+    imgActive: images.messagesActive.src,
+    imgWidth: 24,
+  },
+];

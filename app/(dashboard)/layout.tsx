@@ -1,4 +1,5 @@
 import { MobileHeader } from "@/ui_components/Dashboard";
+import { Header } from "@/ui_components/Shared";
 
 export const metadata = {
   title: "Pawnderr - Dashboard",
@@ -7,8 +8,9 @@ export const metadata = {
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <section className="min-h-screen overflow-clip">
+      <Header />
       <MobileHeader />
-      <main className="container mx-auto py-20">{children}</main>
+      <main className="relative min-h-screen">{children}</main>
     </section>
   );
 }
