@@ -8,7 +8,12 @@ import { FC } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IBackBtnRegisterProps } from "./types";
 
-const BackBtnRegister: FC<IBackBtnRegisterProps> = ({ title, desc, note }) => {
+const BackBtnRegister: FC<IBackBtnRegisterProps> = ({
+  title,
+  desc,
+  note,
+  titleClassName,
+}) => {
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -23,8 +28,11 @@ const BackBtnRegister: FC<IBackBtnRegisterProps> = ({ title, desc, note }) => {
   };
 
   return (
-    <div className="relative">
-      <div className="cursor-pointer mb-5" onClick={handleBackClick}>
+    <div className="relative md:static">
+      <div
+        className="cursor-pointer mb-5 md:absolute md:top-6 md:left-6"
+        onClick={handleBackClick}
+      >
         <Image
           src={images.backBtn.src}
           alt="back"
@@ -36,9 +44,15 @@ const BackBtnRegister: FC<IBackBtnRegisterProps> = ({ title, desc, note }) => {
         />
       </div>
 
-      <h2 className="mb-2 display3 text-accent-900 pr-16">{title}</h2>
-      <p className="mb-4.5 body_large text-neutral-white pr-16">{desc}</p>
-      {note && <p className="text-sm italic">{note}</p>}
+      <h2
+        className={`mb-2 display3 text-accent-900 md:px-18 md:text-center pr-16 md:whitespace-pre-line ${titleClassName ?? ""}`}
+      >
+        {title}
+      </h2>
+      <p className="mb-4.5 body_large text-neutral-white md:px-18 md:text-center pr-16 md:whitespace-pre-line">
+        {desc}
+      </p>
+      {note && <p className="text-sm italic md:px-18 md:text-center">{note}</p>}
     </div>
   );
 };

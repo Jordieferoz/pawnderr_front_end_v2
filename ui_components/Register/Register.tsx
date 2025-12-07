@@ -18,11 +18,25 @@ const Register: FC = () => {
   const progressValue = (step / totalSteps) * 100;
 
   return (
-    <div className="relative  px-5 pt-12 pb-20 lg:px-8">
-      <div className="mx-auto w-full md:max-w-md">
-        <Progress value={progressValue} />
+    <div className="relative min-h-[100dvh] px-5 pt-12 pb-20 md:px-8">
+      <Link
+        href={"/"}
+        className="mb-7.5 md:flex justify-center hidden relative z-20"
+      >
+        <Image
+          src={images.logoBig.src}
+          className="logo w-[250px]"
+          width={147}
+          height={97}
+          alt="PAWnderr Logo"
+        />
+      </Link>
+      <div className="sm:mx-auto sm:w-full sm:max-w-[766px] md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] rounded-4xl md:px-20 md:py-14 relative z-20">
+        <div className="md:hidden">
+          <Progress value={progressValue} />
+        </div>
 
-        <Link href={"/"} className="mb-1 mt-6 flex justify-center">
+        <Link href={"/"} className="mb-1 mt-6 flex justify-center md:hidden">
           <Image
             src={images.logo.src}
             className="logo w-30"
@@ -36,6 +50,35 @@ const Register: FC = () => {
         {step === 2 && <OTP />}
         {step === 3 && <DoggoPersonalForm />}
         {step === 4 && <MatchingPetForm />}
+      </div>
+      {step === 1 ? (
+        <img
+          src={images.userFormBg.src}
+          className="absolute -top-10 left-0 w-full z-10 pointer-events-none hidden md:block"
+        />
+      ) : step === 2 ? (
+        <img
+          src={images.userFormBg.src}
+          className="absolute -top-10 left-0 w-full z-10 pointer-events-none hidden md:block"
+        />
+      ) : step === 3 ? (
+        <img
+          src={images.userFormBg.src}
+          className="absolute -top-10 left-0 w-full z-10 pointer-events-none hidden md:block"
+        />
+      ) : step === 4 ? (
+        <img
+          src={images.userFormBg.src}
+          className="absolute -top-10 left-0 w-full z-10 pointer-events-none hidden md:block"
+        />
+      ) : null}
+      <div className="hidden md:block fixed right-6 bottom-6">
+        <Progress
+          variant="circular"
+          value={progressValue}
+          size={56}
+          strokeWidth={5}
+        />
       </div>
     </div>
   );

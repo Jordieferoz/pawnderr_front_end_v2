@@ -49,6 +49,7 @@ const MatchingPetForm: FC = () => {
         title="What Kind of Pet Are You Looking to Connect With?"
         desc="Tell us what kind of companion would be a great match for your pet."
         note="*Remember: More information = Better matches"
+        titleClassName="md:!px-0"
       />
 
       <form

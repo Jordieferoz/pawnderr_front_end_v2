@@ -22,6 +22,14 @@ body {
   overflow-y: scroll; /* or auto */
 }
 
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
 .hide-scrollbar::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Opera */
 }
@@ -38,4 +46,8 @@ body {
 
 .common_container {
   @apply px-8 md:px-10;
+}
+
+textarea {
+  resize: none;
 }

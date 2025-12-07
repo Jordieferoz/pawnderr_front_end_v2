@@ -72,10 +72,6 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
 
   return (
     <div className="relative min-h-[100dvh] px-5 pt-12 pb-20 md:px-8">
-      <img
-        src={images.loginBg.src}
-        className="absolute -top-10 left-0 w-full z-0 pointer-events-none hidden md:block"
-      />
       <Link
         href={"/"}
         className="mb-7.5 md:flex justify-center hidden relative"
@@ -88,7 +84,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
           alt="PAWnderr Logo"
         />
       </Link>
-      <div className="sm:mx-auto sm:w-full sm:max-w-[766px] md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] rounded-4xl md:px-20 md:py-14 relative">
+      <div className="sm:mx-auto sm:w-full sm:max-w-[766px] md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] rounded-4xl md:px-20 md:py-14 relative z-20">
         <Link href={"/"} className="mb-7.5 flex justify-center md:hidden">
           <Image
             src={images.logo.src}
@@ -288,7 +284,37 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
           </div>
         </div>
       </div>
-      {/* <img src={images.green_right_blur.} /> */}
+      {isSignup ? (
+        <>
+          <img
+            src={images.loginBg.src}
+            className="absolute -top-10 left-0 w-full z-10 pointer-events-none hidden md:block"
+          />
+          <img
+            src={images.greenRightBlur.src}
+            className="absolute right-0 bottom-10 z-0 hidden md:block"
+          />
+          <img
+            src={images.greenLeftBlur.src}
+            className="absolute left-0 bottom-10 z-0 hidden md:block"
+          />
+        </>
+      ) : (
+        <>
+          <img
+            src={images.signupBg.src}
+            className="absolute -top-10 left-0 w-full z-10 pointer-events-none hidden md:block"
+          />
+          <img
+            src={images.signupRightBlur.src}
+            className="absolute right-0 bottom-10 z-0 hidden md:block"
+          />
+          <img
+            src={images.signupLeftBlur.src}
+            className="absolute left-0 bottom-10 z-0 hidden md:block"
+          />
+        </>
+      )}
     </div>
   );
 }

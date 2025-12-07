@@ -44,12 +44,12 @@ const UserDetailsForm: FC = () => {
   return (
     <div>
       <BackBtnRegister
-        title="Hi There! Let’s Get to Know You."
-        desc="Before we start fetching the perfect match, tell us a bit about yourself and your Pet."
+        title={"Let’s Get to \n Know You."}
+        desc={`Before we start fetching the perfect match, tell us a \n bit about yourself and your Pet.`}
       />
 
       <form
-        className="mb-7 flex flex-col gap-6"
+        className="mb-7 flex flex-col gap-6 md:px-30"
         onSubmit={handleSubmit(onSubmit)}
         noValidate
       >

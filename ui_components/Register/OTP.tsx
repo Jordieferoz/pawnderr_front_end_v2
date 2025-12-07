@@ -40,7 +40,7 @@ const OTP: FC = () => {
         desc="Enter the verification code we just sent on your Mobile Number."
       />
       <form
-        className="mb-7 flex flex-col gap-6"
+        className="mb-7 flex flex-col gap-6 md:px-30"
         onSubmit={handleSubmit(onSubmit)}
         noValidate
       >

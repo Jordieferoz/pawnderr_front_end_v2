@@ -82,13 +82,13 @@ const DoggoPersonalForm: FC = () => {
   return (
     <div>
       <BackBtnRegister
-        title="Tell Us About Your Doggo"
+        title={"Tell Us About \n Your Doggo"}
         desc="Help us understand your pet’s personality, habits, and quirks."
         note="*Remember: More information = Better matches"
       />
 
       <form
-        className="my-7 flex flex-col gap-6"
+        className="my-7 flex flex-col gap-6 md:px-20"
         onSubmit={handleSubmit(onSubmit)}
         noValidate
       >
@@ -150,7 +150,7 @@ const DoggoPersonalForm: FC = () => {
               />
             </label>
           </div>
-          <label className="block text-sm font-medium text-neutral-white mb-2">
+          <label className="block text-sm font-medium text-neutral-white mb-2 md:text-center">
             Upload some cute photos (Size ≤ 100KB)
           </label>
           {errors.images && (

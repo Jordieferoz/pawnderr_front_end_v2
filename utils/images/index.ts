@@ -25,6 +25,8 @@ import eyeBlue from "public/assets/images/eye_blue.svg";
 import facebook from "public/assets/images/facebook.svg";
 import filterIcon from "public/assets/images/filter_icon.svg";
 import google from "public/assets/images/google.svg";
+import greenLeftBlur from "public/assets/images/green_left_blur.svg";
+import greenRightBlur from "public/assets/images/green_right_blur.svg";
 import like from "public/assets/images/like.svg";
 import loginBg from "public/assets/images/login_bg.png";
 import logo from "public/assets/images/logo.svg";
@@ -39,9 +41,15 @@ import pawnderrActive from "public/assets/images/pawnderr_active.svg";
 import pawnderrPlus from "public/assets/images/pawnderr_plus.svg";
 import searchGrey from "public/assets/images/search_grey.svg";
 import send from "public/assets/images/send.svg";
+import signupBg from "public/assets/images/signup_bg.svg";
+import signupLeftBlur from "public/assets/images/signup_left_blur.svg";
+import signupRightBlur from "public/assets/images/signup_right_blur.svg";
 import smiley from "public/assets/images/smiley.svg";
 import starBlack from "public/assets/images/star_black.svg";
 import starWhite from "public/assets/images/star_white.svg";
+import userFormBg from "public/assets/images/user_form_bg.svg";
+import userLeftBlur from "public/assets/images/user_left_blur.svg";
+import userRightBlur from "public/assets/images/user_right_blur.svg";
 import x from "public/assets/images/x.svg";
 
 export type ImageType =
@@ -89,6 +97,14 @@ export type ImageType =
   | "chatYellow"
   | "logoBig"
   | "loginBg"
+  | "greenRightBlur"
+  | "greenLeftBlur"
+  | "signupBg"
+  | "signupRightBlur"
+  | "signupLeftBlur"
+  | "userFormBg"
+  | "userRightBlur"
+  | "userLeftBlur"
   | "backBtn";
 
 export type NextImage = {
@@ -143,4 +159,12 @@ export const images: Record<ImageType, NextImage> = {
   chatYellow,
   logoBig,
   loginBg,
+  greenRightBlur,
+  greenLeftBlur,
+  signupBg,
+  signupRightBlur,
+  signupLeftBlur,
+  userFormBg,
+  userRightBlur,
+  userLeftBlur,
 };
