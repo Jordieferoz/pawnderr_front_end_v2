@@ -4,6 +4,7 @@ export interface IActivityCardProps {
 }
 
 export type ICard = {
+  id: number;
   name: string;
   info: string;
   url: string;

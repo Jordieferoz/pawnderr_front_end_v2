@@ -37,7 +37,7 @@
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.511.0",
     "motion": "^12.23.24",
-    "next": "^15.5.4",
+    "next": "^15.5.7",
     "next-auth": "^4.24.11",
     "postcss": "^8.5.3",
     "radix-ui": "^1.4.2",

@@ -15,9 +15,20 @@ const ActivityCard: FC<IActivityCardProps> = ({ className, cards }) => {
 
   return (
     <div className={`w-full max-w-6xl mx-auto p-4 pt-12 ${className ?? ""}`}>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-14">
+      <div
+        className={`grid gap-14 ${
+          cards?.length === 1
+            ? "grid-cols-1 justify-items-center"
+            : cards?.length === 2
+              ? "grid-cols-1 sm:grid-cols-2 justify-items-center"
+              : "grid-cols-1 sm:grid-cols-2 md:grid-cols-3"
+        }`}
+      >
         {cards?.map((card) => (
-          <div className="flex flex-col items-center gap-4 relative perspective-[1000px]">
+          <div
+            key={card.id} // Add a key prop
+            className="flex flex-col items-center gap-4 relative perspective-[1000px] max-w-md w-full"
+          >
             <div
               className="relative w-full h-[420px] rounded-[24px] border-[5px] border-white shadow-[0px_4px_10px_rgba(0,0,0,0.1)] transition-all duration-700 ease-in-out hover:shadow-[0px_8px_25px_rgba(0,0,0,0.2)] [transform-style:preserve-3d] cursor-pointer group"
               style={{

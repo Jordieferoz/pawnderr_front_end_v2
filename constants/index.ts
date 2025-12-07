@@ -51,6 +51,7 @@ export const tabs = [
 
 export const cardsData: ICard[] = [
   {
+    id: 1,
     name: "Buddy",
     info: "(Male, 2 Years)",
     url: images.doggo1.src,
@@ -59,6 +60,7 @@ export const cardsData: ICard[] = [
       "Golden Retriever\nLoves long walks\nFully vaccinated\nWeight: 25kg",
   },
   {
+    id: 2,
     name: "Buddy",
     info: "(Male, 2 Years)",
     url: images.doggo1.src,
@@ -67,6 +69,7 @@ export const cardsData: ICard[] = [
       "Golden Retriever\nLoves long walks\nFully vaccinated\nWeight: 25kg",
   },
   {
+    id: 3,
     name: "Buddy",
     info: "(Male, 2 Years)",
     url: images.doggo1.src,
