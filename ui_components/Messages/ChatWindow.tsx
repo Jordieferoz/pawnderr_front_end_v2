@@ -62,10 +62,10 @@ const ChatWindow: FC<ChatWindowProps> = ({ name, avatar }) => {
     dispatch(openMessageActionModal());
   };
   return (
-    <div className="bg-white rounded-xl px-4 shadow-[0px_4px_16.4px_0px_#0000001A] h-[calc(75vh-120px)] flex flex-col">
+    <div className="bg-white md:bg-transparent flex-1 rounded-xl md:rounded-[0px] px-4 md:px-0 md:border-l md:border-black/10 md:h-full relative shadow-[0px_4px_16.4px_0px_#0000001A] h-[calc(75vh-120px)] md:shadow-none flex flex-col">
       {/* Header */}
-      <div className="flex items-center gap-3 px-1 py-3 border-b border-black/10">
-        <img src={avatar} className="w-8 h-8 rounded-full" />
+      <div className="flex items-center gap-3 md:px-3 px-1 py-3 border-b border-black/10">
+        <img src={avatar} className="w-8 h-8 rounded-full object-cover" />
         <h2 className="heading3_medium text-accent-900">{name}</h2>
 
         <div
@@ -76,7 +76,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ name, avatar }) => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-2 space-y-4 pb-5 hide-scrollbar">
+      <div className="flex-1 overflow-y-auto px-2 md:px-4 space-y-4 pb-5 hide-scrollbar">
         <div className="text-center tp_small_medium text-dark-grey my-5">
           Today 04:43
         </div>
@@ -108,7 +108,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ name, avatar }) => {
       </div>
 
       {/* Message Input */}
-      <div className="fixed bottom-[88px] left-0 right-0 py-3 bg-white border-t shadow-[0px_-6px_11px_0px_#8787871C] border-black/10 ">
+      <div className="fixed md:absolute md:bottom-[0px] bottom-[88px] left-0 right-0 py-3 md:border-0 bg-white md:rounded-b-[40px] border-t shadow-[0px_-6px_11px_0px_#8787871C] md:shadow-none border-black/10 ">
         <div className="common_container flex items-center gap-3">
           <img src={images.attachment.src} />
 

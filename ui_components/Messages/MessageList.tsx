@@ -77,7 +77,7 @@ const MessageList: FC = () => {
               className="w-12 h-12 shrink-0 object-cover rounded-full"
             />
             <div className="w-full">
-              <div className="flex items-center gap-2 justify-between mb-2">
+              <div className="flex items-center gap-2 justify-between mb-2 md:mb-0.5">
                 <h3 className="heading3_medium text-accent-900">{item.name}</h3>
                 <p className="tp_small_medium text-neutral-white">
                   {item.timestamp}

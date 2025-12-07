@@ -1,6 +1,6 @@
 "use client";
 
-import { ChatWindow } from "@/ui_components/Messages";
+import { ChatWindow, Messages } from "@/ui_components/Messages";
 import {
   BlockModal,
   MessageActionModal,
@@ -19,20 +19,14 @@ export default function ChatPage({
   const { id } = use(params);
 
   return (
-    <div className="message_wrapper common_container">
-      <div className="flex items-center my-4 justify-between mb-7">
-        <div className="flex items-center gap-3">
-          <img
-            onClick={() => router.back()}
-            className="w-10 h-10"
-            src={images.backBtn.src}
-          />
-          <h4 className="display4_medium text-accent-900">Messages</h4>
+    <div className="message_wrapper">
+      <div className="flex gap-2 bg-white/[94%] border border-black/10 rounded-[40px]">
+        <div className="hidden md:flex md:basis-sn">
+          <Messages />
         </div>
+        <ChatWindow name="Jeff" avatar={images.doggo1.src} />
+        <MessageActionModal />
       </div>
-
-      <ChatWindow name="Jeff" avatar={images.doggo1.src} />
-      <MessageActionModal />
       <ReportModal />
       <BlockModal />
     </div>
