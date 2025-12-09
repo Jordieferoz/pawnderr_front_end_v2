@@ -1,42 +1,59 @@
-import { NextRequest, NextResponse } from "next/server";
+import { withAuth } from "next-auth/middleware";
+import { NextResponse } from "next/server";
 
-const LOGIN_PATH = "/sign-in";
-const DASHBOARD_PATH = "/dashboard";
-const REGISTER_PATH = "/register";
+export default withAuth(
+  function middleware(req) {
+    const token = req.nextauth.token;
+    const isAuth = !!token;
+    const isAuthPage =
+      req.nextUrl.pathname.startsWith("/sign-in") ||
+      req.nextUrl.pathname.startsWith("/sign-up");
 
-export async function middleware(req: NextRequest) {
-  const { pathname } = req.nextUrl;
-
-  // Check for authentication cookie
-  const isAuthenticated = req.cookies.get("isAuthenticated")?.value === "true";
-
-  console.log("Middleware check:", { pathname, isAuthenticated });
-
-  if (pathname === "/") {
-    if (!isAuthenticated) {
-      return NextResponse.redirect(new URL(LOGIN_PATH, req.url));
+    // If user is authenticated and tries to access auth pages, redirect to dashboard
+    if (isAuthPage) {
+      if (isAuth) {
+        return NextResponse.redirect(new URL("/dashboard", req.url));
+      }
+      return NextResponse.next();
     }
-    return NextResponse.redirect(new URL(DASHBOARD_PATH, req.url));
+
+    // For all other pages, let withAuth handle it
+    return NextResponse.next();
+  },
+  {
+    callbacks: {
+      authorized: ({ req, token }) => {
+        const isAuthPage =
+          req.nextUrl.pathname.startsWith("/sign-in") ||
+          req.nextUrl.pathname.startsWith("/sign-up") ||
+          req.nextUrl.pathname.startsWith("/forgot-password");
+
+        // Allow access to auth pages without token
+        if (isAuthPage) {
+          return true;
+        }
+
+        // For protected pages, require token
+        return !!token;
+      },
+    },
+    pages: {
+      signIn: "/sign-in",
+    },
   }
+);
 
-  // Protect dashboard - require authentication
-  if (pathname.startsWith(DASHBOARD_PATH) && !isAuthenticated) {
-    return NextResponse.redirect(new URL(LOGIN_PATH, req.url));
-  }
-
-  // Protect register route - require authentication
-  if (pathname === REGISTER_PATH && !isAuthenticated) {
-    return NextResponse.redirect(new URL(LOGIN_PATH, req.url));
-  }
-
-  // Redirect authenticated users away from sign-in/sign-up pages
-  if ((pathname === LOGIN_PATH || pathname === "/sign-up") && isAuthenticated) {
-    return NextResponse.redirect(new URL(DASHBOARD_PATH, req.url));
-  }
-
-  return NextResponse.next();
-}
-
+// Configure which routes to protect
 export const config = {
-  matcher: ["/", "/dashboard/:path*", "/sign-in", "/sign-up", "/register"],
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public files (images, etc)
+     */
+    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+  ],
 };

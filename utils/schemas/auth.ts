@@ -1,3 +1,5 @@
+// utils/schemas/auth.ts
+
 import { z } from "zod";
 
 // Sign-in schema with rememberMe
