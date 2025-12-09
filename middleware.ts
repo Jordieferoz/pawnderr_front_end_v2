@@ -40,7 +40,7 @@ export default withAuth(
     pages: {
       signIn: "/sign-in",
     },
-  }
+  },
 );
 
 // Configure which routes to protect

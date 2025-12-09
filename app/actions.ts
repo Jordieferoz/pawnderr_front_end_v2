@@ -10,7 +10,7 @@ type SignUpResult = {
 
 export async function signUpAction(
   _prevState: unknown,
-  formData: FormData
+  formData: FormData,
 ): Promise<SignUpResult> {
   // Convert FormData to an object of strings (all values will be string)
   const dataRaw = Object.fromEntries(formData);

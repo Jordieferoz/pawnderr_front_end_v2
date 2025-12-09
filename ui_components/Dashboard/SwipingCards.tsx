@@ -47,7 +47,7 @@ export default function SwipingCards() {
   const [cards, setCards] = useState(cardsData);
   const [currentIndex, setCurrentIndex] = useState(cardsData.length - 1);
   const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | null>(
-    null
+    null,
   );
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -56,7 +56,7 @@ export default function SwipingCards() {
       Array(cardsData.length)
         .fill(0)
         .map(() => React.createRef<HTMLDivElement>()),
-    []
+    [],
   );
 
   const canSwipe = currentIndex >= 0;
@@ -118,7 +118,7 @@ export default function SwipingCards() {
     {
       axis: "x",
       filterTaps: true,
-    }
+    },
   );
 
   const programmaticSwipe = (dir: "left" | "right") => {

@@ -9,6 +9,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <img
         className="absolute w-full left-0 top-0 hidden md:flex pointer-events-none z-[-1]"
         src={images.discoverBg.src}
+        alt="discover_pattern"
       />
     </div>
   );

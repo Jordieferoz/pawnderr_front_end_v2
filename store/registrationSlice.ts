@@ -64,7 +64,7 @@ const registrationSlice = createSlice({
     },
     updateStepData: (
       state,
-      action: PayloadAction<Partial<RegistrationData>>
+      action: PayloadAction<Partial<RegistrationData>>,
     ) => {
       Object.assign(state, action.payload);
     },

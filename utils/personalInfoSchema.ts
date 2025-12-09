@@ -6,7 +6,7 @@ export const userDetailsSchema = z.object({
   name: z.string().min(1, "Name is required"),
   gender: z.preprocess(
     (val) => (val === "" ? undefined : val),
-    z.enum(["male", "female", "other", ""], "Please select a gender")
+    z.enum(["male", "female", "other", ""], "Please select a gender"),
   ),
   phoneNumber: z.string().min(1, "Phone number is required"),
   location: z.string().min(1, "Location is required"),

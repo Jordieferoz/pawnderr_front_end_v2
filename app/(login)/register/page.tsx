@@ -1,5 +1,6 @@
-import { Register } from "@/ui_components/Register";
 import { Suspense } from "react";
+
+import { Register } from "@/ui_components/Register";
 
 export const metadata = {
   title: "Pawnderr - Register",

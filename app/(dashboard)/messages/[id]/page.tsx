@@ -7,17 +7,8 @@ import {
   ReportModal,
 } from "@/ui_components/Modals";
 import { images } from "@/utils/images";
-import { useRouter } from "next/navigation";
-import { use } from "react";
 
-export default function ChatPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const router = useRouter();
-  const { id } = use(params);
-
+export default function ChatPage() {
   return (
     <div className="message_wrapper">
       <div className="flex gap-2 bg-white/[94%] border border-black/10 rounded-[40px]">

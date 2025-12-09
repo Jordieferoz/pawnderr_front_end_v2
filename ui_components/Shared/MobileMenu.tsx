@@ -36,7 +36,7 @@ const MobileMenu: FC = () => {
 
   useEffect(() => {
     const activeIndex = mobileMenuItems.findIndex((item) =>
-      isItemActive(item.href, item.key)
+      isItemActive(item.href, item.key),
     );
     if (activeIndex === -1) return;
 

@@ -1,12 +1,13 @@
 "use client";
 
-import { SessionProvider } from "next-auth/react";
+import "./styles/globals.css";
+
 import { Fredoka, Source_Sans_3 } from "next/font/google";
 import { usePathname } from "next/navigation";
+import { SessionProvider } from "next-auth/react";
 
 import { ReduxProvider } from "@/store/Provider";
 import { MobileMenu } from "@/ui_components/Shared";
-import "./styles/globals.css";
 
 const fredoka = Fredoka({ subsets: ["latin"], display: "swap" });
 const sourceSans3 = Source_Sans_3({ subsets: ["latin"], display: "swap" });

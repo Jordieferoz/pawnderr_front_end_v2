@@ -1,10 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
@@ -93,7 +93,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
 
           if (result?.error) {
             setApiError(
-              "Account created but login failed. Please sign in manually."
+              "Account created but login failed. Please sign in manually.",
             );
             // Redirect to sign in page after 2 seconds
             setTimeout(() => {
@@ -140,7 +140,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
         setApiError(
           isSignup
             ? "Failed to create account. Please try again."
-            : "Invalid email or password. Please try again."
+            : "Invalid email or password. Please try again.",
         );
       }
     }
@@ -307,7 +307,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
                       type="password"
                       {...field}
                       aria-invalid={Boolean(
-                        "confirmPassword" in errors && errors.confirmPassword
+                        "confirmPassword" in errors && errors.confirmPassword,
                       )}
                       aria-describedby={
                         "confirmPassword" in errors && errors.confirmPassword

@@ -33,7 +33,7 @@ function axiosInstanceCreator(baseURL: string | undefined, accessKey?: string) {
     },
     function (error: AxiosError) {
       return Promise.reject(error);
-    }
+    },
   );
 
   axiosInstance.interceptors.response.use(
@@ -46,7 +46,7 @@ function axiosInstanceCreator(baseURL: string | undefined, accessKey?: string) {
     },
     function (error: AxiosError) {
       return Promise.reject(error);
-    }
+    },
   );
 
   return axiosInstance;

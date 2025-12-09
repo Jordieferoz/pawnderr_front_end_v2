@@ -1,8 +1,9 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
 import * as React from "react";
+
+import { cn } from "@/lib/utils";
 
 export function RadioGroup({
   className,
@@ -26,7 +27,7 @@ export function RadioGroupItem({
       data-slot="radio-group-item"
       className={cn(
         `aspect-square size-5 shrink-0 rounded-full border border-black/20 transition-all duration-200 outline-none data-[state=checked]:border-[3px] data-[state=checked]:border-[#FFC632] focus-visible:ring-[3px] focus-visible:ring-[#FFC632]/40 disabled:cursor-not-allowed disabled:opacity-50`,
-        className
+        className,
       )}
       {...props}
     />

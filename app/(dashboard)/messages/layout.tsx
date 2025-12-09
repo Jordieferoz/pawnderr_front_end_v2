@@ -1,8 +1,9 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import { CustomAvatar } from "@/ui_components/Shared";
 import { images } from "@/utils/images";
-import { useRouter } from "next/navigation";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               onClick={() => router.back()}
               className="w-10 h-10"
               src={images.backBtn.src}
+              alt="back"
             />
             <h4 className="display4_medium text-accent-900">Messages</h4>
           </div>
@@ -59,6 +61,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <img
         className="absolute w-full left-0 top-0 hidden md:flex pointer-events-none z-[-1]"
         src={images.discoverBg.src}
+        alt="messages_pattern"
       />
     </div>
   );

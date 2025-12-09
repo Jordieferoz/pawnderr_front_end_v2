@@ -12,7 +12,7 @@ const MessageActionModal = () => {
   return (
     <Modal
       open={useSelector(
-        (state: RootState) => state.modal.isMessageActionModalOpen
+        (state: RootState) => state.modal.isMessageActionModalOpen,
       )}
       setOpen={(val) => {
         if (!val) dispatch(closeMessageActionModal());

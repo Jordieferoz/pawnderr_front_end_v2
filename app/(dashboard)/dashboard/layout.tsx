@@ -9,14 +9,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <img
         className="absolute w-full left-0 top-0 hidden md:flex pointer-events-none z-[-1]"
         src={images.discoverBg.src}
+        alt="pattern1"
       />
       <img
         className="absolute left-0 top-0 hidden md:flex pointer-events-none z-[-1]"
         src={images.discoverLeftPattern.src}
+        alt="pattern2"
       />
       <img
         className="absolute right-0 bottom-0 hidden md:flex pointer-events-none z-[-1]"
         src={images.discoverRightPattern.src}
+        alt="pattern3"
       />
     </div>
   );
