@@ -1,5 +1,10 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { FC, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -13,12 +18,8 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { activities, energyLevels, vaccinationOptions } from "@/constants";
 import { updateStepData } from "@/store/registrationSlice";
 import { images } from "@/utils/images";
-
 import { petProfileSchema, PetProfileValues } from "@/utils/personalInfoSchema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { FC, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
+
 import { InputField } from "../Shared";
 
 const PetInformation: FC = () => {

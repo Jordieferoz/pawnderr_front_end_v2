@@ -1,5 +1,11 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { FC, useEffect, useState } from "react";
+import { Controller, Resolver, useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+
 import { Button } from "@/components/ui/button";
 import { Toggle } from "@/components/ui/toggle";
 import { genderOptions } from "@/constants";
@@ -10,13 +16,9 @@ import {
   userDetailsSchema,
   type UserDetailsValues,
 } from "@/utils/schemas/registrationSchema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
-import { FC, useEffect, useState } from "react";
-import { Controller, Resolver, useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
-import { BackBtnRegister } from ".";
+
 import { InputField } from "../Shared";
+import { BackBtnRegister } from ".";
 
 const UserDetailsForm: FC = () => {
   const dispatch = useDispatch();
@@ -100,19 +102,19 @@ const UserDetailsForm: FC = () => {
               phoneNumber: data.phoneNumber,
               location: data.location,
               step: 2,
-            })
+            }),
           );
 
           // signupStorage.clear();
         } else {
           setApiError(
-            "Registration successful but authentication tokens missing."
+            "Registration successful but authentication tokens missing.",
           );
         }
       } else {
         setApiError(
           response.data?.message ||
-            "Failed to create account. Please try again."
+            "Failed to create account. Please try again.",
         );
       }
     } catch (error: any) {

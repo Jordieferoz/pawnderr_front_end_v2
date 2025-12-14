@@ -1,5 +1,11 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { FC, useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+
 import { Button } from "@/components/ui/button";
 import {
   InputOTP,
@@ -10,18 +16,14 @@ import { RootState } from "@/store";
 import { updateStepData } from "@/store/registrationSlice";
 import { fetchPets } from "@/utils/api";
 import { otpSchema, type OtpValues } from "@/utils/schemas/registrationSchema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
-import { FC, useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
+
 import { BackBtnRegister } from ".";
 
 const OTP: FC = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const registrationData = useSelector(
-    (state: RootState) => state.registration
+    (state: RootState) => state.registration,
   );
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -80,7 +82,7 @@ const OTP: FC = () => {
           otp: data.otp,
           isVerified: true,
           step: 3,
-        })
+        }),
       );
     } catch (error: any) {
       console.error("OTP verification error:", error);
@@ -122,7 +124,7 @@ const OTP: FC = () => {
           isActive: user.isActive,
           profileCompletion: user.profileCompletion,
           step: 2,
-        })
+        }),
       );
     }
   }, [router, registrationData.userId, dispatch]);

@@ -1,6 +1,7 @@
-import { images } from "@/utils/images";
 import Link from "next/link";
 import { FC } from "react";
+
+import { images } from "@/utils/images";
 
 const MobileHeader: FC = () => {
   return (

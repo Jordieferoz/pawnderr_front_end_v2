@@ -1,12 +1,14 @@
 "use client";
 
-import { Progress } from "@/components/ui/progress";
-import { RootState } from "@/store";
-import { images } from "@/utils/images";
 import Image from "next/image";
 import Link from "next/link";
 import { FC } from "react";
 import { useSelector } from "react-redux";
+
+import { Progress } from "@/components/ui/progress";
+import { RootState } from "@/store";
+import { images } from "@/utils/images";
+
 import { DoggoPersonalForm, MatchingPetForm, OTP, UserDetailsForm } from ".";
 
 const totalSteps = 5;

@@ -1,13 +1,14 @@
 "use client";
 
+import { FC } from "react";
+import { useDispatch } from "react-redux";
+
 import {
   closeMessageActionModal,
   openBlockModal,
   openReportModal,
 } from "@/store/modalSlice";
 import { images } from "@/utils/images";
-import { FC } from "react";
-import { useDispatch } from "react-redux";
 
 const MessageActionContent: FC = () => {
   const dispatch = useDispatch();

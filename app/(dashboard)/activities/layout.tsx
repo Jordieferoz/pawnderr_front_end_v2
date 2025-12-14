@@ -1,3 +1,5 @@
+import React from "react";
+
 import { images } from "@/utils/images";
 
 export default function Layout({ children }: { children: React.ReactNode }) {

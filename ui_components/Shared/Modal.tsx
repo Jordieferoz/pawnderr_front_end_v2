@@ -1,10 +1,11 @@
 "use client";
 
+import { X } from "lucide-react";
+import { FC, ReactNode, useCallback } from "react";
+
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Drawer, DrawerContent, DrawerHeader } from "@/components/ui/drawer";
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { X } from "lucide-react";
-import { FC, ReactNode, useCallback } from "react";
 
 interface ModalProps {
   open: boolean;

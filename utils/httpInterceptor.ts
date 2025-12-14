@@ -7,6 +7,7 @@ import axios, {
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from "axios";
+
 import { TApiResponse } from "./types";
 
 export const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -40,7 +41,7 @@ function axiosInstanceCreator(baseURL: string | undefined, accessKey?: string) {
     },
     function (error: AxiosError) {
       return Promise.reject(error);
-    }
+    },
   );
 
   axiosInstance.interceptors.response.use(
@@ -53,7 +54,7 @@ function axiosInstanceCreator(baseURL: string | undefined, accessKey?: string) {
     },
     function (error: AxiosError) {
       return Promise.reject(error);
-    }
+    },
   );
 
   return axiosInstance;

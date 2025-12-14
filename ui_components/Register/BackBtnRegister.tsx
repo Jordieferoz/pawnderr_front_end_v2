@@ -1,11 +1,13 @@
 "use client";
 
-import { RootState } from "@/store";
-import { images } from "@/utils/images";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { FC } from "react";
 import { useDispatch, useSelector } from "react-redux";
+
+import { RootState } from "@/store";
+import { images } from "@/utils/images";
+
 import { IBackBtnRegisterProps } from "./types";
 
 const BackBtnRegister: FC<IBackBtnRegisterProps> = ({

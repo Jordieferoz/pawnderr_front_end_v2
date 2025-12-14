@@ -59,7 +59,7 @@ export const config = {
 */
 
 // 🚧 TEMPORARY: Allow all routes during development
-export function middleware(req: any) {
+export function middleware() {
   return NextResponse.next();
 }
 

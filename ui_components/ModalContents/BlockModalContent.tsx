@@ -1,8 +1,9 @@
 "use client";
 
+import { FC } from "react";
+
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { FC } from "react";
 
 const BlockModalContent: FC = () => {
   return (

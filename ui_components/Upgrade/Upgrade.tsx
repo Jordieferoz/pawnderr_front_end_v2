@@ -1,10 +1,12 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { images } from "@/utils/images";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+
 import PricingCard from "./PricingCard";
 import { PricingType } from "./types";
 

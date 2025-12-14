@@ -1,6 +1,8 @@
+import { FC } from "react";
+
 import { Button } from "@/components/ui/button";
 import { images } from "@/utils/images";
-import { FC } from "react";
+
 import { PricingCardProps } from "./types";
 
 const PricingCard: FC<PricingCardProps> = ({ type, features }) => {
@@ -15,7 +17,7 @@ const PricingCard: FC<PricingCardProps> = ({ type, features }) => {
       }`}
     >
       <div className="flex items-center gap-2 mb-5">
-        <img src={images.pawYellow.src} className="w-6" />
+        <img src={images.pawYellow.src} className="w-6" alt="pawnderr" />
         <h2
           className={`heading2_medium ${type === "annually" ? "text-dark-grey" : "text-white"}`}
         >
@@ -35,6 +37,7 @@ const PricingCard: FC<PricingCardProps> = ({ type, features }) => {
                   ? images.starBlack.src
                   : images.starWhite.src
               }
+              alt="billing"
             />
             {feature}
           </li>

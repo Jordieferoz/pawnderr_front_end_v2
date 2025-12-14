@@ -1,9 +1,10 @@
 "use client";
 
-import { mobileMenuItems } from "@/constants";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FC, useEffect, useRef, useState } from "react";
+
+import { mobileMenuItems } from "@/constants";
 
 const MobileMenu: FC = () => {
   const pathname = usePathname();

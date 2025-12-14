@@ -1,9 +1,11 @@
 "use client";
 
-import { openMessageActionModal } from "@/store/modalSlice";
-import { images } from "@/utils/images";
 import { FC } from "react";
 import { useDispatch } from "react-redux";
+
+import { openMessageActionModal } from "@/store/modalSlice";
+import { images } from "@/utils/images";
+
 import { InputField } from "../Shared";
 
 interface Message {

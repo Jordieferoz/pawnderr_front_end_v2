@@ -1,12 +1,14 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import { FC, useState } from "react";
+import { useDispatch } from "react-redux";
+
 import { Button } from "@/components/ui/button";
 import { cardsData, tabs } from "@/constants";
 import { openFilterModal } from "@/store/modalSlice";
 import { images } from "@/utils/images";
-import { useRouter } from "next/navigation";
-import { FC, useState } from "react";
-import { useDispatch } from "react-redux";
+
 import ActivityCard from "./ActivityCard";
 
 const Activities: FC = () => {

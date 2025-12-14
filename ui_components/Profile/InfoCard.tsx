@@ -1,4 +1,5 @@
 import { FC } from "react";
+
 import { IInfoCardProps } from "./types";
 
 const InfoCard: FC<IInfoCardProps> = ({

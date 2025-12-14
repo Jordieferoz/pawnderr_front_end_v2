@@ -1,5 +1,11 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { FC, useEffect, useState } from "react";
+import { Controller, Resolver, useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+
 import { Button } from "@/components/ui/button";
 import { Toggle } from "@/components/ui/toggle";
 import { genderOptions } from "@/constants";
@@ -11,15 +17,10 @@ import {
   userDetailsSchema,
   type UserDetailsValues,
 } from "@/utils/schemas/registrationSchema";
-
 import { tokenStorage } from "@/utils/token-storage";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
-import { FC, useEffect, useState } from "react";
-import { Controller, Resolver, useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { BackBtnRegister } from ".";
+
 import { InputField } from "../Shared";
+import { BackBtnRegister } from ".";
 
 const UserDetailsForm: FC = () => {
   const dispatch = useDispatch();
@@ -27,7 +28,7 @@ const UserDetailsForm: FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const registrationData = useSelector(
-    (state: RootState) => state.registration
+    (state: RootState) => state.registration,
   );
 
   const {
@@ -120,20 +121,20 @@ const UserDetailsForm: FC = () => {
 
               // Move to next step
               step: 2,
-            })
+            }),
           );
 
           // Clear signup credentials
           signupStorage.clear();
         } else {
           setApiError(
-            "Registration successful but authentication tokens missing."
+            "Registration successful but authentication tokens missing.",
           );
         }
       } else {
         setApiError(
           response.data?.message ||
-            "Failed to create account. Please try again."
+            "Failed to create account. Please try again.",
         );
       }
     } catch (error: any) {

@@ -1,12 +1,14 @@
 "use client";
 
-import { openFilterModal } from "@/store/modalSlice";
-import { images } from "@/utils/images";
 import { useRouter } from "next/navigation";
 import { FC } from "react";
 import { useDispatch } from "react-redux";
-import { MatchedCard } from ".";
+
+import { openFilterModal } from "@/store/modalSlice";
+import { images } from "@/utils/images";
+
 import { CustomAvatar } from "../Shared";
+import { MatchedCard } from ".";
 
 const Matches: FC = () => {
   const router = useRouter();

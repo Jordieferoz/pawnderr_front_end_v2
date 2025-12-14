@@ -30,7 +30,7 @@ const authOptions = {
                 email: credentials.email,
                 password: credentials.password,
               }),
-            }
+            },
           );
 
           if (!response.ok) {

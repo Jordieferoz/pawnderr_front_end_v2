@@ -1,7 +1,9 @@
 "use client";
-import { images } from "@/utils/images";
 import { useRouter } from "next/navigation";
 import { FC, useState } from "react";
+
+import { images } from "@/utils/images";
+
 import { IActivityCardProps } from "./types";
 
 const ActivityCard: FC<IActivityCardProps> = ({ className, cards }) => {

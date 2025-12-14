@@ -1,18 +1,19 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Toggle } from "@/components/ui/toggle";
-import { genderOptions } from "@/constants";
-import { setStep, updateStepData } from "@/store/profileInfoSlice";
-
-import {
-  userDetailsSchema,
-  UserDetailsValues,
-} from "@/utils/personalInfoSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FC, useEffect } from "react";
 import { Controller, Resolver, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
+
+import { Button } from "@/components/ui/button";
+import { Toggle } from "@/components/ui/toggle";
+import { genderOptions } from "@/constants";
+import { setStep, updateStepData } from "@/store/profileInfoSlice";
+import {
+  userDetailsSchema,
+  UserDetailsValues,
+} from "@/utils/personalInfoSchema";
+
 import { InputField } from "../Shared";
 
 const PersonalInfo: FC = () => {

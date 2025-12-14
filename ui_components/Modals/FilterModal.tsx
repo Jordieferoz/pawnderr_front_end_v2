@@ -1,8 +1,10 @@
 "use client";
 
+import { useDispatch, useSelector } from "react-redux";
+
 import { RootState } from "@/store";
 import { closeFilterModal } from "@/store/modalSlice";
-import { useDispatch, useSelector } from "react-redux";
+
 import { FilterContent } from "../ModalContents";
 import { Modal } from "../Shared";
 

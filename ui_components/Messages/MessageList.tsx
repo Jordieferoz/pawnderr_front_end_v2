@@ -1,8 +1,9 @@
 "use client";
 
-import { images } from "@/utils/images";
 import { useRouter } from "next/navigation";
 import { FC } from "react";
+
+import { images } from "@/utils/images";
 
 interface IMessageItem {
   chatId: string;

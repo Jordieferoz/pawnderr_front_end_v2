@@ -1,21 +1,20 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
-import { updateStepData } from "@/store/registrationSlice";
-
 import { zodResolver } from "@hookform/resolvers/zod";
-
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { interestedIn, personalityPreference, playDateVibe } from "@/constants";
-import {
-  matchingPetSchema,
-  PetMatchingProfileValues,
-} from "@/utils/personalInfoSchema";
 import { useRouter } from "next/navigation";
 import { FC } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
+
+import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { interestedIn, personalityPreference, playDateVibe } from "@/constants";
+import { updateStepData } from "@/store/registrationSlice";
+import {
+  matchingPetSchema,
+  PetMatchingProfileValues,
+} from "@/utils/personalInfoSchema";
 
 const MatchPreferences: FC = () => {
   const dispatch = useDispatch();

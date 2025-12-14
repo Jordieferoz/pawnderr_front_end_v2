@@ -1,10 +1,12 @@
 "use client";
 
+import { useDispatch } from "react-redux";
+
 import { openFilterModal } from "@/store/modalSlice";
 import SwipingCards from "@/ui_components/Dashboard/SwipingCards";
 import { CustomAvatar } from "@/ui_components/Shared";
 import { images } from "@/utils/images";
-import { useDispatch } from "react-redux";
+
 import { FilterModal } from "../Modals";
 
 const Discover = () => {

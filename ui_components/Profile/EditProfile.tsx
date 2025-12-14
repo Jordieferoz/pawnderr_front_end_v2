@@ -1,11 +1,13 @@
 "use client";
 
-import { RootState } from "@/store";
-import { setStep } from "@/store/profileInfoSlice";
-import { images } from "@/utils/images";
 import { useRouter } from "next/navigation";
 import { FC, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+
+import { RootState } from "@/store";
+import { setStep } from "@/store/profileInfoSlice";
+import { images } from "@/utils/images";
+
 import { MatchPreferences, PetInformation, ProfileHeader } from ".";
 import PersonalInfo from "./PersonalInfo";
 

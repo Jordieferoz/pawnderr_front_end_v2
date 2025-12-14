@@ -2,6 +2,7 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
+
 import modalReducer from "./modalSlice";
 import profileReducer from "./profileInfoSlice";
 import registrationReducer from "./registrationSlice";
@@ -22,12 +23,12 @@ const profilePersistConfig = {
 // Create persisted reducers
 const persistedRegistrationReducer = persistReducer(
   registrationPersistConfig,
-  registrationReducer
+  registrationReducer,
 );
 
 const persistedProfileReducer = persistReducer(
   profilePersistConfig,
-  profileReducer
+  profileReducer,
 );
 
 // Combine reducers

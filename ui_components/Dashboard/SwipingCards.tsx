@@ -1,7 +1,8 @@
 "use client";
-import { images } from "@/utils/images";
 import { useDrag } from "@use-gesture/react";
 import React, { useMemo, useState } from "react";
+
+import { images } from "@/utils/images";
 
 type Card = {
   name: string;

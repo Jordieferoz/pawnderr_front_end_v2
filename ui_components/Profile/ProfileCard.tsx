@@ -1,4 +1,5 @@
 import { FC } from "react";
+
 import { IProfileCardProps } from "./types";
 
 const ProfileCard: FC<IProfileCardProps> = ({
