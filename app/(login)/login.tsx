@@ -1,17 +1,17 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { signIn } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { InputField } from "@/ui_components/Shared";
-import { registerAuth } from "@/utils/api";
+import { signupStorage } from "@/utils/auth-storage";
 import { images } from "@/utils/images";
 import {
   signInSchema,
@@ -73,37 +73,14 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
       const sanitizedEmail = sanitizeInput(data.email);
 
       if (isSignup) {
-        // Sign up flow
+        // Sign up flow - store credentials and navigate to /register
         const signupData = data as SignUpValues;
-        const payload = {
-          email: sanitizedEmail,
-          password: signupData.password,
-          confirmPassword: signupData.confirmPassword,
-        };
 
-        const response = await registerAuth(payload);
+        // Store credentials using signupStorage helper
+        signupStorage.set(sanitizedEmail, signupData.password);
 
-        // After successful signup, automatically sign in with NextAuth
-        if (response.data?.accessToken) {
-          const result = await signIn("credentials", {
-            email: sanitizedEmail,
-            password: signupData.password,
-            redirect: false,
-          });
-
-          if (result?.error) {
-            setApiError(
-              "Account created but login failed. Please sign in manually.",
-            );
-            // Redirect to sign in page after 2 seconds
-            setTimeout(() => {
-              router.push("/sign-in");
-            }, 2000);
-          } else if (result?.ok) {
-            router.push("/register");
-            router.refresh();
-          }
-        }
+        // Navigate to register page
+        router.push("/register");
       } else {
         // Sign in flow using NextAuth
         const signinData = data as SignInValues;
@@ -139,8 +116,8 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
       } else {
         setApiError(
           isSignup
-            ? "Failed to create account. Please try again."
-            : "Invalid email or password. Please try again.",
+            ? "Failed to proceed. Please try again."
+            : "Invalid email or password. Please try again."
         );
       }
     }
@@ -307,7 +284,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
                       type="password"
                       {...field}
                       aria-invalid={Boolean(
-                        "confirmPassword" in errors && errors.confirmPassword,
+                        "confirmPassword" in errors && errors.confirmPassword
                       )}
                       aria-describedby={
                         "confirmPassword" in errors && errors.confirmPassword

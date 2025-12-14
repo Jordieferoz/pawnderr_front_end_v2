@@ -1,7 +1,7 @@
+// app/api/auth/[...nextauth]/route.ts
+
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
-
-import { userLogin } from "@/utils/api";
 
 const authOptions = {
   providers: [
@@ -17,18 +17,36 @@ const authOptions = {
         }
 
         try {
-          const response = await userLogin({
-            email: credentials.email,
-            password: credentials.password,
-          });
+          // ✅ Call your backend API directly with fetch
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "access-token": "key", // Your access key
+              },
+              body: JSON.stringify({
+                email: credentials.email,
+                password: credentials.password,
+              }),
+            }
+          );
 
-          if (response.data?.accessToken) {
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || "Invalid credentials");
+          }
+
+          const data = await response.json();
+
+          if (data?.accessToken) {
             return {
-              id: response.data.user?.id || credentials.email,
+              id: data.user?.id || credentials.email,
               email: credentials.email,
-              name: response.data.user?.name || null,
-              image: response.data.user?.image || null,
-              accessToken: response.data.accessToken,
+              name: data.user?.name || null,
+              image: data.user?.image || null,
+              accessToken: data.accessToken,
             };
           }
 

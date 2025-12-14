@@ -1,390 +1,310 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { activities, energyLevels, vaccinationOptions } from "@/constants";
+import { Toggle } from "@/components/ui/toggle";
+import { genderOptions } from "@/constants";
+import { RootState } from "@/store";
 import { updateStepData } from "@/store/registrationSlice";
-import { images } from "@/utils/images";
+import { registerAuth } from "@/utils/api";
+import { signupStorage } from "@/utils/auth-storage";
 import {
-  petProfileSchema,
-  type PetProfileValues,
+  userDetailsSchema,
+  type UserDetailsValues,
 } from "@/utils/schemas/registrationSchema";
+
+import { tokenStorage } from "@/utils/token-storage";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FC, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
+import { FC, useEffect, useState } from "react";
+import { Controller, Resolver, useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
 import { BackBtnRegister } from ".";
 import { InputField } from "../Shared";
 
-const DoggoPersonalForm: FC = () => {
+const UserDetailsForm: FC = () => {
   const dispatch = useDispatch();
-
-  const [imageSlots, setImageSlots] = useState<(string | null)[]>([
-    null,
-    null,
-    null,
-  ]);
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
+  const registrationData = useSelector(
+    (state: RootState) => state.registration
+  );
 
   const {
     control,
     handleSubmit,
     formState: { errors, isValid },
     setValue,
-  } = useForm<PetProfileValues>({
-    resolver: zodResolver(petProfileSchema),
+  } = useForm<UserDetailsValues>({
+    resolver: zodResolver(userDetailsSchema) as Resolver<UserDetailsValues>,
     mode: "onChange",
     defaultValues: {
-      images: [],
-      petName: "",
-      nicknames: "",
-      petGender: undefined,
-      age: "",
-      energyLevel: [],
-      favoriteActivities: [],
-      vaccinationStatus: "",
-      funFact: "",
-      barkography: "",
+      name: registrationData.name || "",
+      gender: registrationData.gender || "",
+      phoneNumber: registrationData.phoneNumber || "",
+      location: registrationData.location || "",
     },
   });
 
-  const handleImageUpload = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    index: number,
-  ) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result as string;
-        const newSlots = [...imageSlots];
-        newSlots[index] = base64String;
-        setImageSlots(newSlots);
-        setValue("images", newSlots.filter(Boolean) as string[], {
-          shouldValidate: true,
-        });
-      };
-      reader.readAsDataURL(file);
+  useEffect(() => {
+    // Check if user already completed this step (has tokens in sessionStorage)
+    if (tokenStorage.hasValidSession() && registrationData.userId) {
+      // User already registered, check if they should move forward
+      if (registrationData.step > 1) {
+        router.push("/register"); // Will route to correct step based on Redux state
+        return;
+      }
     }
-  };
 
-  const onSubmit = (data: PetProfileValues) => {
-    dispatch(updateStepData({ ...data, step: 4 }));
+    // Check if signup credentials exist (fresh registration)
+    const credentials = signupStorage.get();
+    if (!credentials && !registrationData.userId) {
+      router.push("/sign-up");
+    }
+  }, [router, registrationData.userId, registrationData.step]);
+
+  // Restore form values from Redux (persisted in localStorage)
+  useEffect(() => {
+    if (registrationData.name) setValue("name", registrationData.name);
+    if (registrationData.gender) setValue("gender", registrationData.gender);
+    if (registrationData.phoneNumber)
+      setValue("phoneNumber", registrationData.phoneNumber);
+    if (registrationData.location)
+      setValue("location", registrationData.location);
+  }, [registrationData, setValue]);
+
+  const onSubmit = async (data: UserDetailsValues) => {
+    setApiError(null);
+    setIsSubmitting(true);
+
+    try {
+      const credentials = signupStorage.get();
+
+      if (!credentials) {
+        setApiError("Session expired. Please sign up again.");
+        setTimeout(() => router.push("/sign-up"), 2000);
+        return;
+      }
+
+      const response = await registerAuth({
+        email: credentials.email,
+        password: credentials.password,
+        name: data.name,
+        phone: data.phoneNumber,
+        gender: data.gender,
+      });
+
+      if (response.statusCode === 200 || response.statusCode === 201) {
+        const userData = response.data?.data;
+
+        if (userData?.accessToken && userData?.refreshToken) {
+          // Store tokens in sessionStorage (expires when tab closes)
+          tokenStorage.setAccessToken(userData.accessToken);
+          tokenStorage.setRefreshToken(userData.refreshToken);
+
+          // Update Redux (will be persisted to localStorage automatically)
+          dispatch(
+            updateStepData({
+              // Authentication data
+              email: userData.email,
+              userId: userData.id,
+              isVerified: userData.is_verified,
+              isActive: userData.is_active,
+              profileCompletion: userData.profile_completion_percentage,
+
+              // Step 1 form data
+              name: data.name,
+              gender: data.gender,
+              phoneNumber: data.phoneNumber,
+              location: data.location,
+
+              // Move to next step
+              step: 2,
+            })
+          );
+
+          // Clear signup credentials
+          signupStorage.clear();
+        } else {
+          setApiError(
+            "Registration successful but authentication tokens missing."
+          );
+        }
+      } else {
+        setApiError(
+          response.data?.message ||
+            "Failed to create account. Please try again."
+        );
+      }
+    } catch (error: any) {
+      console.error("Registration error:", error);
+
+      if (error?.response?.data?.message) {
+        setApiError(error.response.data.message);
+      } else if (error?.message) {
+        setApiError(error.message);
+      } else {
+        setApiError("Failed to create account. Please try again.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div>
       <BackBtnRegister
-        title={"Tell Us About \n Your Doggo"}
-        desc="Help us understand your pet’s personality, habits, and quirks."
-        note="*Remember: More information = Better matches"
+        title={"Let's Get to \n Know You."}
+        desc={`Before we start fetching the perfect match, tell us a \n bit about yourself and your Pet.`}
       />
 
+      {apiError && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg md:mx-30">
+          <p className="text-sm text-red-600 text-center">{apiError}</p>
+        </div>
+      )}
+
       <form
-        className="my-7 flex flex-col gap-6 md:px-20"
+        className="mb-7 flex flex-col gap-6 md:px-30"
         onSubmit={handleSubmit(onSubmit)}
         noValidate
       >
-        {/* Upload Images */}
-        <div>
-          <div className="flex gap-3 mb-4 flex-wrap">
-            {imageSlots.map((img, idx) => (
-              <label
-                key={idx}
-                htmlFor={`image-upload-${idx}`}
-                className="cursor-pointer"
-              >
-                <img
-                  className="w-20 h-20 object-cover rounded-2xl"
-                  src={
-                    img
-                      ? typeof img === "string"
-                        ? img
-                        : URL.createObjectURL(img)
-                      : images.addPetPhoto.src
-                  }
-                />
-
-                <input
-                  id={`image-upload-${idx}`}
-                  type="file"
-                  accept="image/*"
-                  hidden
-                  onChange={(e) => handleImageUpload(e, idx)}
-                />
-              </label>
-            ))}
-            <label htmlFor="image-upload-add" className="cursor-pointer">
-              <img
-                src={images.addMore.src}
-                alt="Add pet images"
-                className="w-18 h-18"
-              />
-              <input
-                id="image-upload-add"
-                type="file"
-                accept="image/*"
-                hidden
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    const reader = new FileReader();
-                    reader.onloadend = () => {
-                      const base64String = reader.result as string;
-                      const newSlots = [...imageSlots, base64String];
-                      setImageSlots(newSlots);
-                      setValue("images", newSlots.filter(Boolean) as string[], {
-                        shouldValidate: true,
-                      });
-                    };
-                    reader.readAsDataURL(file);
-                  }
-                }}
-              />
-            </label>
-          </div>
-          <label className="block text-sm font-medium text-neutral-white mb-2 md:text-center">
-            Upload some cute photos (Size ≤ 100KB)
-          </label>
-          {errors.images && (
-            <p className="mt-1 text-sm text-red-500">{errors.images.message}</p>
-          )}
-        </div>
-
-        {/* Pet Name */}
         <div className="relative">
           <Controller
             control={control}
-            name="petName"
+            name="name"
             render={({ field }) => (
               <InputField
-                label="Pet’s Name"
-                placeholder="Enter your Pet’s Name"
+                label="Name"
+                placeholder="Your full name"
                 type="text"
                 {...field}
-                aria-invalid={!!errors.petName}
-                aria-describedby={errors.petName ? "petname-error" : undefined}
+                aria-invalid={!!errors.name}
+                aria-describedby={errors.name ? "name-error" : undefined}
               />
             )}
           />
-          {errors.petName && (
-            <p id="petname-error" className="mt-1 text-sm text-red-500">
-              {errors.petName.message}
+          {errors.name && (
+            <p id="name-error" className="mt-1 text-sm text-red-500">
+              {errors.name.message}
             </p>
           )}
         </div>
 
-        {/* Nicknames */}
-        <div className="relative">
-          <label className="block text-sm font-medium text-dark-grey mb-1">
-            Nickname(s)
-          </label>
-          <Controller
-            control={control}
-            name="nicknames"
-            render={({ field }) => (
-              <Textarea
-                {...field}
-                className="w-full"
-                placeholder="Enter Nickname(s)"
-                aria-invalid={!!errors.nicknames}
-              />
-            )}
-          />
-          {errors.nicknames && (
-            <p className="mt-1 text-sm text-red-500">
-              {errors.nicknames.message}
-            </p>
-          )}
-        </div>
-
-        {/* Gender */}
         <div className="flex flex-col gap-2">
-          <label className="block text-sm font-medium text-dark-grey">
-            Pets a
+          <label className="block text-sm font-medium text-gray-700">
+            Gender
           </label>
           <Controller
             control={control}
-            name="petGender"
+            name="gender"
             render={({ field }) => (
-              <ToggleGroup
-                type="single"
-                value={field.value ?? ""}
-                onValueChange={field.onChange}
-                className="flex gap-4"
-              >
-                <ToggleGroupItem value="male">Male</ToggleGroupItem>
-                <ToggleGroupItem value="female">Female</ToggleGroupItem>
-              </ToggleGroup>
+              <div className="flex gap-4">
+                {genderOptions.map(({ label, value }) => (
+                  <Toggle
+                    key={value}
+                    pressed={field.value === value}
+                    onPressedChange={(pressed) => {
+                      if (pressed) field.onChange(value);
+                    }}
+                    aria-label={label}
+                    type="button"
+                  >
+                    {label}
+                  </Toggle>
+                ))}
+              </div>
             )}
           />
-          {errors.petGender && (
-            <p className="mt-1 text-sm text-red-500">
-              {errors.petGender.message}
-            </p>
+          {errors.gender && (
+            <p className="mt-1 text-sm text-red-500">{errors.gender.message}</p>
           )}
         </div>
 
-        {/* Age */}
         <div className="relative">
           <Controller
             control={control}
-            name="age"
+            name="phoneNumber"
             render={({ field }) => (
               <InputField
-                label="Age"
-                placeholder="Enter your Pet’s Age"
-                type="number"
+                label="Phone Number (Used for Verification Only)"
+                placeholder="+1234567890"
+                type="tel"
                 {...field}
-                aria-invalid={!!errors.age}
-                aria-describedby={errors.age ? "age-error" : undefined}
+                aria-invalid={!!errors.phoneNumber}
+                aria-describedby={
+                  errors.phoneNumber ? "phone-error" : undefined
+                }
               />
             )}
           />
-          {errors.age && (
-            <p id="age-error" className="mt-1 text-sm text-red-500">
-              {errors.age.message}
+          {errors.phoneNumber && (
+            <p id="phone-error" className="mt-1 text-sm text-red-500">
+              {errors.phoneNumber.message}
             </p>
           )}
         </div>
 
-        {/* Energy Level */}
-        <div className="flex flex-col gap-2">
-          <label className="block text-sm font-medium text-dark-grey">
-            Energy Level{" "}
-            <span className="text-neutral-white"> (Select at least 1)</span>
-          </label>
+        <div className="relative">
           <Controller
             control={control}
-            name="energyLevel"
+            name="location"
             render={({ field }) => (
-              <ToggleGroup
-                type="multiple"
-                value={field.value ?? ""}
-                onValueChange={field.onChange}
-                className="flex gap-3 flex-wrap"
+              <InputField
+                label="Location"
+                placeholder="Select your Location"
+                type="text"
+                {...field}
+                aria-invalid={!!errors.location}
+                aria-describedby={
+                  errors.location ? "location-error" : undefined
+                }
+              />
+            )}
+          />
+          {errors.location && (
+            <p id="location-error" className="mt-1 text-sm text-red-500">
+              {errors.location.message}
+            </p>
+          )}
+        </div>
+
+        <Button
+          type="submit"
+          disabled={!isValid || isSubmitting}
+          suppressHydrationWarning
+        >
+          {isSubmitting ? (
+            <span className="flex items-center gap-2">
+              <svg
+                className="animate-spin h-5 w-5"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
               >
-                {energyLevels.map((level) => (
-                  <ToggleGroupItem key={level} value={level}>
-                    {level}
-                  </ToggleGroupItem>
-                ))}
-              </ToggleGroup>
-            )}
-          />
-          {errors.energyLevel && (
-            <p className="mt-1 text-sm text-red-500">
-              {errors.energyLevel.message}
-            </p>
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              Creating Account...
+            </span>
+          ) : (
+            "Next"
           )}
-        </div>
-
-        {/* Favorite Activities */}
-        <div className="flex flex-col gap-2">
-          <label className="block text-sm font-medium text-dark-grey">
-            Favorite Activities{" "}
-            <span className="text-neutral-white"> (Select at least 3)</span>
-          </label>
-          <Controller
-            control={control}
-            name="favoriteActivities"
-            render={({ field }) => (
-              <ToggleGroup
-                type="multiple"
-                value={field.value}
-                onValueChange={field.onChange}
-                className="flex flex-wrap gap-3"
-              >
-                {activities.map((activity) => (
-                  <ToggleGroupItem key={activity} value={activity}>
-                    {activity}
-                  </ToggleGroupItem>
-                ))}
-              </ToggleGroup>
-            )}
-          />
-          {errors.favoriteActivities && (
-            <p className="mt-1 text-sm text-red-500">
-              {errors.favoriteActivities.message}
-            </p>
-          )}
-        </div>
-
-        {/* Vaccination Status */}
-        <div className="relative">
-          <label className="block text-sm font-medium text-dark-grey mb-1">
-            Vaccination Status
-            <span className="text-neutral-white"> (optional)</span>
-          </label>
-          <Controller
-            control={control}
-            name="vaccinationStatus"
-            render={({ field }) => (
-              <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Vaccination status" />
-                </SelectTrigger>
-                <SelectContent>
-                  {vaccinationOptions.map((opt) => (
-                    <SelectItem key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          />
-        </div>
-
-        {/* Fun Fact or Habit */}
-        <div className="relative">
-          <label className="block text-sm font-medium text-dark-grey mb-1">
-            Fun Fact or Habit
-          </label>
-          <Controller
-            control={control}
-            name="funFact"
-            render={({ field }) => (
-              <Textarea
-                {...field}
-                className="w-full"
-                placeholder="Fun Fact or Habit"
-              />
-            )}
-          />
-        </div>
-
-        {/* Barkography */}
-        <div className="relative">
-          <label className="block text-sm font-medium text-dark-grey mb-1">
-            Bark-o-graphy
-          </label>
-          <Controller
-            control={control}
-            name="barkography"
-            render={({ field }) => (
-              <Textarea
-                {...field}
-                className="w-full"
-                placeholder="Short Bio (aka Bark-o-graphy)"
-              />
-            )}
-          />
-        </div>
-
-        <Button type="submit" disabled={!isValid} suppressHydrationWarning>
-          Next
         </Button>
       </form>
     </div>
   );
 };
 
-export default DoggoPersonalForm;
+export default UserDetailsForm;

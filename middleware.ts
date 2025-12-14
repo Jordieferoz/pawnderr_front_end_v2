@@ -7,7 +7,8 @@ export default withAuth(
     const isAuth = !!token;
     const isAuthPage =
       req.nextUrl.pathname.startsWith("/sign-in") ||
-      req.nextUrl.pathname.startsWith("/sign-up");
+      req.nextUrl.pathname.startsWith("/sign-up") ||
+      req.nextUrl.pathname.startsWith("/register"); // Added /register
 
     // If user is authenticated and tries to access auth pages, redirect to dashboard
     if (isAuthPage) {
@@ -26,7 +27,8 @@ export default withAuth(
         const isAuthPage =
           req.nextUrl.pathname.startsWith("/sign-in") ||
           req.nextUrl.pathname.startsWith("/sign-up") ||
-          req.nextUrl.pathname.startsWith("/forgot-password");
+          req.nextUrl.pathname.startsWith("/forgot-password") ||
+          req.nextUrl.pathname.startsWith("/register"); // Added /register
 
         // Allow access to auth pages without token
         if (isAuthPage) {
@@ -40,7 +42,7 @@ export default withAuth(
     pages: {
       signIn: "/sign-in",
     },
-  },
+  }
 );
 
 // Configure which routes to protect

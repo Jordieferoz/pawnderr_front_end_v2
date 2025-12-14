@@ -4,12 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Toggle } from "@/components/ui/toggle";
 import { genderOptions } from "@/constants";
 import { setStep, updateStepData } from "@/store/registrationSlice";
+import { registerAuth } from "@/utils/api";
+import { signupStorage } from "@/utils/auth-storage";
 import {
   userDetailsSchema,
   type UserDetailsValues,
 } from "@/utils/schemas/registrationSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FC, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { FC, useEffect, useState } from "react";
 import { Controller, Resolver, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { BackBtnRegister } from ".";
@@ -17,10 +20,19 @@ import { InputField } from "../Shared";
 
 const UserDetailsForm: FC = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
 
   useEffect(() => {
     dispatch(setStep(1));
-  }, [dispatch]);
+
+    // Check if signup credentials exist
+    const credentials = signupStorage.get();
+    if (!credentials) {
+      router.push("/sign-up");
+    }
+  }, [dispatch, router]);
 
   const {
     control,
@@ -37,16 +49,98 @@ const UserDetailsForm: FC = () => {
     },
   });
 
-  const onSubmit = (data: UserDetailsValues) => {
-    dispatch(updateStepData({ ...data, step: 2 }));
-  };
+  const onSubmit = async (data: UserDetailsValues) => {
+    setApiError(null);
+    setIsSubmitting(true);
 
+    try {
+      const credentials = signupStorage.get();
+
+      if (!credentials) {
+        setApiError("Session expired. Please sign up again.");
+        setTimeout(() => router.push("/sign-up"), 2000);
+        return;
+      }
+
+      const response = await registerAuth({
+        email: credentials.email,
+        password: credentials.password,
+        name: data.name,
+        phone: data.phoneNumber,
+        gender: data.gender,
+      });
+
+      if (response.statusCode === 200 || response.statusCode === 201) {
+        const userData = response.data?.data;
+
+        if (userData?.accessToken && userData?.refreshToken) {
+          // Store tokens
+          sessionStorage.setItem("accessToken", userData.accessToken);
+          sessionStorage.setItem("refreshToken", userData.refreshToken);
+
+          // Store complete user profile data
+          const userProfile = {
+            id: userData.id,
+            email: userData.email,
+            name: userData.name,
+            phone: userData.phone,
+            gender: userData.gender,
+            isActive: userData.is_active,
+            isVerified: userData.is_verified,
+            profileCompletion: userData.profile_completion_percentage,
+          };
+
+          sessionStorage.setItem("userData", JSON.stringify(userProfile));
+
+          // Update Redux for registration flow
+          dispatch(
+            updateStepData({
+              ...userProfile,
+              password: credentials.password,
+              phoneNumber: data.phoneNumber,
+              location: data.location,
+              step: 2,
+            })
+          );
+
+          // signupStorage.clear();
+        } else {
+          setApiError(
+            "Registration successful but authentication tokens missing."
+          );
+        }
+      } else {
+        setApiError(
+          response.data?.message ||
+            "Failed to create account. Please try again."
+        );
+      }
+    } catch (error: any) {
+      console.error("Registration error:", error);
+
+      if (error?.response?.data?.message) {
+        setApiError(error.response.data.message);
+      } else if (error?.message) {
+        setApiError(error.message);
+      } else {
+        setApiError("Failed to create account. Please try again.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   return (
     <div>
       <BackBtnRegister
-        title={"Let’s Get to \n Know You."}
+        title={"Let's Get to \n Know You."}
         desc={`Before we start fetching the perfect match, tell us a \n bit about yourself and your Pet.`}
       />
+
+      {apiError && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg md:mx-30">
+          <p className="text-sm text-red-600 text-center">{apiError}</p>
+        </div>
+      )}
 
       <form
         className="mb-7 flex flex-col gap-6 md:px-30"
@@ -157,8 +251,38 @@ const UserDetailsForm: FC = () => {
           )}
         </div>
 
-        <Button type="submit" disabled={!isValid} suppressHydrationWarning>
-          Next
+        <Button
+          type="submit"
+          disabled={!isValid || isSubmitting}
+          suppressHydrationWarning
+        >
+          {isSubmitting ? (
+            <span className="flex items-center gap-2">
+              <svg
+                className="animate-spin h-5 w-5"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              Creating Account...
+            </span>
+          ) : (
+            "Next"
+          )}
         </Button>
       </form>
     </div>

@@ -5,7 +5,7 @@ import { TResponse } from "./types";
 export const globalGetService = <TParamType, U>(
   url: string,
   params: TParamType,
-  instance: keyof typeof API_INSTANCES = "mainInstance",
+  instance: keyof typeof API_INSTANCES = "mainInstance"
 ): Promise<TResponse<U>> => {
   return new Promise(function (resolve, reject) {
     API_INSTANCES[instance]({
@@ -30,7 +30,7 @@ export const globalGetService = <TParamType, U>(
 export const globalPostService = <TDataType, U>(
   url: string,
   data: TDataType,
-  instance: keyof typeof API_INSTANCES = "mainInstance",
+  instance: keyof typeof API_INSTANCES = "mainInstance"
 ): Promise<TResponse<U>> => {
   return new Promise(function (resolve, reject) {
     API_INSTANCES[instance]({
@@ -55,7 +55,7 @@ export const globalPostService = <TDataType, U>(
 export const globalDeleteService = <TParamType, U>(
   url: string,
   params: TParamType,
-  instance: keyof typeof API_INSTANCES = "mainInstance",
+  instance: keyof typeof API_INSTANCES = "mainInstance"
 ): Promise<TResponse<U>> => {
   return new Promise(function (resolve, reject) {
     API_INSTANCES[instance]({
@@ -82,7 +82,7 @@ export const globalApiService = <TDataType, TApiResponse>(
   data: TDataType,
   method: string,
   instance: keyof typeof API_INSTANCES = "mainInstance",
-  userId?: string,
+  userId?: string
 ): Promise<TResponse<TApiResponse>> => {
   return new Promise(function (resolve, reject) {
     const config: any = {
