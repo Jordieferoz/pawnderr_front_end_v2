@@ -55,7 +55,7 @@ const PetInformation: FC = () => {
 
   const handleImageUpload = (
     e: React.ChangeEvent<HTMLInputElement>,
-    index: number,
+    index: number
   ) => {
     const file = e.target.files?.[0];
     if (file) {

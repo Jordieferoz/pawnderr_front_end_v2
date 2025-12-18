@@ -31,14 +31,12 @@ const BackBtnRegister: FC<IBackBtnRegisterProps> = ({
 
   return (
     <div className="relative md:static">
-      <div
-        className="cursor-pointer mb-5 md:absolute md:top-6 md:left-6"
-        onClick={handleBackClick}
-      >
+      <div className="mb-5 md:absolute md:top-6 md:left-6">
         <Image
+          onClick={handleBackClick}
           src={images.backBtn.src}
           alt="back"
-          className="w-10 h-10 rounded-full"
+          className="w-10 h-10 rounded-full cursor-pointer "
           width={40}
           height={40}
           role="button"

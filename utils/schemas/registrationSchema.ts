@@ -24,43 +24,33 @@ export const otpSchema = z.object({
 export const petProfileSchema = z.object({
   images: z
     .array(z.any())
-    .min(1, "Upload at least 1 photo")
-    .max(6, "You can upload up to 6 photos"),
+    .min(5, "Upload at least 5 photos")
+    .max(10, "You can upload up to 10 photos"),
   petName: z.string().min(1, "Pet's Name is required"),
   nicknames: z.string().max(100).optional(),
   petGender: z.enum(["male", "female"], { message: "Select pet gender" }),
   age: z.string().min(1, "Age is required"),
-  energyLevel: z.array(z.string()).min(1, "Select at least 1 energy level"),
-  favoriteActivities: z
-    .array(z.string())
-    .min(3, "Select at least 3 activities"),
+  breed: z.number({ message: "Select a breed" }),
+  attributes: z.record(
+    z.string(),
+    z.array(z.number()).min(1, "This field is required"),
+  ),
   vaccinationStatus: z.string().optional(),
   funFact: z.string().max(200).optional(),
   barkography: z.string().max(300).optional(),
 });
 
-// Example schemas for steps 4 and 5 (adjust if needed)
+// utils/schemas/registrationSchema.ts
+
 export const matchingPetSchema = z.object({
-  interestedIn: z.array(z.string()).min(1, "Select at least 1 pet interest"),
-  playDateVibe: z.array(z.string()).min(1, "Select at least 1 playdate vibe"),
-  ageRange: z
-    .tuple([z.number(), z.number()])
-    .refine(([min, max]) => min <= max, { message: "Invalid age range" }),
-  preferredBreeds: z
-    .enum(["exact_match", "open_to_all"])
-    .optional()
-    .refine((val) => val !== undefined, {
-      message: "Please select preferred breed",
+  preferenceSelections: z
+    .record(z.string(), z.number())
+    .refine((data) => Object.keys(data).length >= 5, {
+      message: "Please complete all preference selections",
     }),
-  distanceRadius: z
-    .enum(["5", "10", "20", "30-35"])
-    .optional()
-    .refine((val) => val !== undefined, {
-      message: "Select a distance radius",
-    }),
-  personalityPreference: z
-    .array(z.string())
-    .min(1, "Select at least 1 personality preference"),
+  minAge: z.number().min(0).max(15),
+  maxAge: z.number().min(0).max(15),
+  preferredBreedIds: z.array(z.number()).optional(),
 });
 
 export const step5Schema = z.object({
