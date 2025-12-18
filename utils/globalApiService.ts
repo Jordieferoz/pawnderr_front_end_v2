@@ -1,3 +1,5 @@
+// utils/globalApiService.ts
+
 import { AxiosResponse } from "axios";
 
 import API_INSTANCES from "./httpInterceptor";

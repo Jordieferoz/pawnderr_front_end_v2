@@ -1,3 +1,5 @@
+// utils/api/index.ts
+
 import { globalGetService, globalPostService } from "../globalApiService";
 import { TResponse } from "../types";
 import { PhotoUploadResponse } from "./types";

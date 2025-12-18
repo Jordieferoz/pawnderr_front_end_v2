@@ -16,7 +16,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
+import { DualRangeSlider } from "@/components/ui/dual-range-slider";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { RootState } from "@/store";
 import { petPreferencesInfo } from "@/utils/api";
@@ -122,6 +122,20 @@ const MatchingPetForm: FC = () => {
     );
   };
 
+  // Handle age range change from dual slider
+  const handleAgeRangeChange = (values: number[]) => {
+    const [min, max] = values;
+    setValue("minAge", min, { shouldValidate: true });
+    setValue("maxAge", max, { shouldValidate: true });
+
+    dispatch(
+      updateStepData({
+        minAge: min,
+        maxAge: max
+      })
+    );
+  };
+
   const onSubmit = async (data: PetMatchingProfileValues) => {
     if (!petId) {
       showToast({
@@ -161,8 +175,7 @@ const MatchingPetForm: FC = () => {
             preferenceSelections: data.preferenceSelections,
             minAge: data.minAge,
             maxAge: data.maxAge,
-            preferredBreedIds: data.preferredBreedIds,
-            step: 5
+            preferredBreedIds: data.preferredBreedIds
           })
         );
 
@@ -219,30 +232,34 @@ const MatchingPetForm: FC = () => {
         noValidate
       >
         {/* Dynamic Preference Types */}
-        {preferenceTypes.map((preferenceType) => (
-          <div key={preferenceType.id} className="flex flex-col gap-2">
-            <label className="block body_large text-dark-grey">
-              {preferenceType.name}
-            </label>
-            <Controller
-              control={control}
-              name={`preferenceSelections.${preferenceType.id}`}
-              render={({ field }) => (
-                <ToggleGroup
-                  type="single"
-                  value={field.value?.toString() ?? ""}
-                  onValueChange={(value) => {
-                    const optionId = value ? parseInt(value) : 0;
-                    field.onChange(optionId);
-                    if (value) {
-                      handlePreferenceChange(preferenceType.id, optionId);
-                    }
-                  }}
-                  className="flex flex-wrap gap-3"
-                >
-                  {preferenceType.options
-                    .sort((a, b) => a.display_order - b.display_order)
-                    .map((option) => (
+        {preferenceTypes.map((preferenceType) => {
+          // Create a copy before sorting to avoid mutation
+          const sortedOptions = [...preferenceType.options].sort(
+            (a, b) => a.display_order - b.display_order
+          );
+
+          return (
+            <div key={preferenceType.id} className="flex flex-col gap-2">
+              <label className="block body_large text-dark-grey">
+                {preferenceType.name}
+              </label>
+              <Controller
+                control={control}
+                name={`preferenceSelections.${preferenceType.id}`}
+                render={({ field }) => (
+                  <ToggleGroup
+                    type="single"
+                    value={field.value?.toString() ?? ""}
+                    onValueChange={(value) => {
+                      const optionId = value ? parseInt(value) : 0;
+                      field.onChange(optionId);
+                      if (value) {
+                        handlePreferenceChange(preferenceType.id, optionId);
+                      }
+                    }}
+                    className="flex flex-wrap gap-3"
+                  >
+                    {sortedOptions.map((option) => (
                       <ToggleGroupItem
                         key={option.id}
                         value={option.id.toString()}
@@ -250,76 +267,42 @@ const MatchingPetForm: FC = () => {
                         {option.value}
                       </ToggleGroupItem>
                     ))}
-                </ToggleGroup>
-              )}
+                  </ToggleGroup>
+                )}
+              />
+            </div>
+          );
+        })}
+
+        {/* Age Range Dual Slider */}
+
+        <div className="flex flex-col gap-3 relative">
+          <div className="flex justify-between items-center mb-2">
+            <label className="block body_large text-dark-grey">Age Range</label>
+            <span className="body_large text-dark-grey">
+              {watchedMinAge}yr - {watchedMaxAge}yrs
+            </span>
+          </div>
+          <div className="w-full">
+            <DualRangeSlider
+              value={[watchedMinAge, watchedMaxAge]}
+              onValueChange={handleAgeRangeChange}
+              min={0}
+              max={15}
+              step={1}
+              className="w-full"
             />
           </div>
-        ))}
-
-        {/* Age Range Sliders */}
-        <div className="flex flex-col gap-3">
-          <label className="block body_large text-dark-grey">
-            Age Range: {watchedMinAge}yr - {watchedMaxAge}yrs
-          </label>
-          <div className="space-y-4">
-            {/* Min Age Slider */}
-            <div>
-              <label className="text-sm text-gray-600 mb-2 block">
-                Minimum Age
-              </label>
-              <Controller
-                control={control}
-                name="minAge"
-                render={({ field }) => (
-                  <Slider
-                    min={0}
-                    max={15}
-                    step={1}
-                    value={[field.value]}
-                    onValueChange={(value) => {
-                      field.onChange(value[0]);
-                      dispatch(updateStepData({ minAge: value[0] }));
-                    }}
-                    className="w-full"
-                  />
-                )}
-              />
-            </div>
-
-            {/* Max Age Slider */}
-            <div>
-              <label className="text-sm text-gray-600 mb-2 block">
-                Maximum Age
-              </label>
-              <Controller
-                control={control}
-                name="maxAge"
-                render={({ field }) => (
-                  <Slider
-                    min={0}
-                    max={15}
-                    step={1}
-                    value={[field.value]}
-                    onValueChange={(value) => {
-                      field.onChange(value[0]);
-                      dispatch(updateStepData({ maxAge: value[0] }));
-                    }}
-                    className="w-full"
-                  />
-                )}
-              />
-            </div>
-          </div>
-          {errors.minAge && (
-            <p className="mt-1 text-sm text-red-500">{errors.minAge.message}</p>
-          )}
-          {errors.maxAge && (
-            <p className="mt-1 text-sm text-red-500">{errors.maxAge.message}</p>
+          {(errors.minAge || errors.maxAge) && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.minAge?.message || errors.maxAge?.message}
+            </p>
           )}
         </div>
 
         <Button
           type="submit"
+          className="mt-5"
           disabled={!isValid || isSubmitting}
           suppressHydrationWarning
         >

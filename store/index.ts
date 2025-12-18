@@ -1,11 +1,13 @@
 // store/index.ts
-import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
+
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
 
 import modalReducer from "./modalSlice";
 import profileReducer from "./profileInfoSlice";
 import registrationReducer from "./registrationSlice";
+import userReducer from "./userSlice"; // ADD THIS
 
 // Persist config for registration slice - persist everything
 const registrationPersistConfig = {
@@ -20,6 +22,13 @@ const profilePersistConfig = {
   storage
 };
 
+// Persist config for user slice - ADD THIS
+const userPersistConfig = {
+  key: "user",
+  storage
+  // Persist all user data
+};
+
 // Create persisted reducers
 const persistedRegistrationReducer = persistReducer(
   registrationPersistConfig,
@@ -31,10 +40,14 @@ const persistedProfileReducer = persistReducer(
   profileReducer
 );
 
+// ADD THIS
+const persistedUserReducer = persistReducer(userPersistConfig, userReducer);
+
 // Combine reducers
 const rootReducer = combineReducers({
   registration: persistedRegistrationReducer,
   profileInfo: persistedProfileReducer,
+  user: persistedUserReducer, // ADD THIS
   modal: modalReducer // Modal state doesn't need persistence
 });
 

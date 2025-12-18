@@ -1,4 +1,4 @@
-// httpInterceptor.ts
+// utils/httpInterceptor.ts
 
 import axios, {
   AxiosError,
@@ -31,11 +31,11 @@ function axiosInstanceCreator(baseURL: string | undefined, accessKey?: string) {
         }
       }
 
-      // Add Bearer token if available (for authenticated requests)
-      const token = sessionStorage.getItem("accessToken");
-      if (token) {
-        config.headers["Authorization"] = `Bearer ${token}`;
-      }
+      // // Add Bearer token if available (for authenticated requests)
+      // const token = sessionStorage.getItem("accessToken");
+      // if (token) {
+      //   config.headers["Authorization"] = `Bearer ${token}`;
+      // }
 
       return config;
     },
