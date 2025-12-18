@@ -1,6 +1,9 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  userDetailsSchema,
+  UserDetailsValues
+} from "@/utils/personalInfoSchema";
 import { FC, useEffect } from "react";
 import { Controller, Resolver, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
@@ -9,10 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Toggle } from "@/components/ui/toggle";
 import { genderOptions } from "@/constants";
 import { setStep, updateStepData } from "@/store/profileInfoSlice";
-import {
-  userDetailsSchema,
-  UserDetailsValues,
-} from "@/utils/personalInfoSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { InputField } from "../Shared";
 
@@ -26,7 +26,7 @@ const PersonalInfo: FC = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors, isValid }
   } = useForm<UserDetailsValues>({
     resolver: zodResolver(userDetailsSchema) as Resolver<UserDetailsValues>,
     mode: "onChange",
@@ -34,8 +34,8 @@ const PersonalInfo: FC = () => {
       name: "",
       gender: "",
       phoneNumber: "",
-      location: "",
-    },
+      location: ""
+    }
   });
 
   const onSubmit = (data: UserDetailsValues) => {

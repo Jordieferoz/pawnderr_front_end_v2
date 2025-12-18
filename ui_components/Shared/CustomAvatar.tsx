@@ -25,7 +25,7 @@ const CustomAvatar: React.FC<ICustomAvatarProps> = ({
   onComplete,
   name,
   showPlus = false,
-  plusIcon,
+  plusIcon
 }) => {
   const [timeLeft, setTimeLeft] = useState(durationSeconds);
 
@@ -73,7 +73,7 @@ const CustomAvatar: React.FC<ICustomAvatarProps> = ({
                 background: `conic-gradient(from 0deg, #FFB510 ${progress}deg, rgba(255,181,16,0.2) ${progress}deg)`,
                 WebkitMask:
                   "radial-gradient(farthest-side, transparent calc(100% - 1.5px), white calc(100% - 1.5px))",
-                mask: "radial-gradient(farthest-side, transparent calc(100% - 1.5px), white calc(100% - 1.5px))",
+                mask: "radial-gradient(farthest-side, transparent calc(100% - 1.5px), white calc(100% - 1.5px))"
               }}
             />
           ) : (
@@ -83,7 +83,7 @@ const CustomAvatar: React.FC<ICustomAvatarProps> = ({
                 background: gender === "female" ? "#ec4899" : "#3b82f6",
                 WebkitMask:
                   "radial-gradient(farthest-side, transparent calc(100% - 1.5px), white calc(100% - 1.5px))",
-                mask: "radial-gradient(farthest-side, transparent calc(100% - 1.5px), white calc(100% - 1.5px))",
+                mask: "radial-gradient(farthest-side, transparent calc(100% - 1.5px), white calc(100% - 1.5px))"
               }}
             />
           )}

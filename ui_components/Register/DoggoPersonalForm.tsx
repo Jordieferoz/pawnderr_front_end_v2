@@ -5,11 +5,11 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from "@/components/ui/select";
 import {
   petProfileSchema,
-  type PetProfileValues,
+  type PetProfileValues
 } from "@/utils/schemas/registrationSchema";
 import { useRouter } from "next/navigation";
 import { FC, useEffect, useMemo, useState } from "react";
@@ -52,10 +52,10 @@ const DoggoPersonalForm: FC = () => {
     null,
     null,
     null,
-    null,
+    null
   ]);
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState<{
+  const [, setUploadProgress] = useState<{
     current: number;
     total: number;
   } | null>(null);
@@ -100,9 +100,9 @@ const DoggoPersonalForm: FC = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors },
     setValue,
-    reset,
+    reset
   } = useForm<PetProfileValues>({
     resolver: zodResolver(petProfileSchema),
     mode: "onChange",
@@ -116,8 +116,8 @@ const DoggoPersonalForm: FC = () => {
       attributes: getDefaultAttributeValues(),
       vaccinationStatus: "",
       funFact: "",
-      barkography: "",
-    },
+      barkography: ""
+    }
   });
 
   // Count uploaded images
@@ -146,7 +146,7 @@ const DoggoPersonalForm: FC = () => {
         const restoredSlots: (ImageSlot | null)[] = registrationData.images.map(
           (url, idx) => ({
             url,
-            temporaryId: registrationData.temporaryPhotoIds?.[idx] || "",
+            temporaryId: registrationData.temporaryPhotoIds?.[idx] || ""
           })
         );
 
@@ -177,7 +177,7 @@ const DoggoPersonalForm: FC = () => {
         attributes: attributesForForm,
         vaccinationStatus: registrationData.vaccinationStatus || "",
         funFact: registrationData.funFact || "",
-        barkography: registrationData.barkography || "",
+        barkography: registrationData.barkography || ""
       });
     }
   }, [router, registrationData, reset, metadata]);
@@ -230,7 +230,7 @@ const DoggoPersonalForm: FC = () => {
         const { temporary_photo_id, url } = uploadResponse.data;
         return {
           url: url ?? "",
-          temporaryId: temporary_photo_id,
+          temporaryId: temporary_photo_id
         };
       }
 
@@ -334,7 +334,7 @@ const DoggoPersonalForm: FC = () => {
         dispatch(
           updateStepData({
             images: validUrls,
-            temporaryPhotoIds: validTempIds,
+            temporaryPhotoIds: validTempIds
           })
         );
 
@@ -344,7 +344,7 @@ const DoggoPersonalForm: FC = () => {
       if (newSlots.length < files.length) {
         showToast({
           type: "error",
-          message: `${files.length - newSlots.length} image(s) failed to upload. Please try again.`,
+          message: `${files.length - newSlots.length} image(s) failed to upload. Please try again.`
         });
       }
     } catch (error: any) {
@@ -352,7 +352,7 @@ const DoggoPersonalForm: FC = () => {
 
       showToast({
         type: "error",
-        message: `Failed to upload images. Please try again.`,
+        message: `Failed to upload images. Please try again.`
       });
     } finally {
       setIsUploading(false);
@@ -398,17 +398,18 @@ const DoggoPersonalForm: FC = () => {
         dispatch(
           updateStepData({
             images: validUrls,
-            temporaryPhotoIds: validTempIds,
+            temporaryPhotoIds: validTempIds
           })
         );
 
         console.log("Image uploaded successfully:", {
           temporaryId: imageSlot.temporaryId,
           url: imageSlot.url,
-          index,
+          index
         });
       }
     } catch (error: any) {
+      console.log(error);
       showToast({ type: "error", message: "Failed to upload image" });
     } finally {
       setIsUploading(false);
@@ -439,7 +440,7 @@ const DoggoPersonalForm: FC = () => {
     dispatch(
       updateStepData({
         images: validUrls,
-        temporaryPhotoIds: validTempIds,
+        temporaryPhotoIds: validTempIds
       })
     );
   };
@@ -481,7 +482,7 @@ const DoggoPersonalForm: FC = () => {
                     dispatch(
                       updateAttribute({
                         attributeId: attribute.id,
-                        optionIds: selectedIds,
+                        optionIds: selectedIds
                       })
                     );
                   }}
@@ -512,7 +513,7 @@ const DoggoPersonalForm: FC = () => {
                     dispatch(
                       updateAttribute({
                         attributeId: attribute.id,
-                        optionIds: selectedIds,
+                        optionIds: selectedIds
                       })
                     );
                   }}
@@ -545,7 +546,7 @@ const DoggoPersonalForm: FC = () => {
     if (!hasMinimumImages) {
       showToast({
         type: "error",
-        message: `Please upload at least ${MIN_IMAGES} photos`,
+        message: `Please upload at least ${MIN_IMAGES} photos`
       });
 
       return;
@@ -582,7 +583,7 @@ const DoggoPersonalForm: FC = () => {
         vaccination_status: data.vaccinationStatus || "",
         is_spayed_neutered: false,
         attribute_selections: attributeSelections,
-        temporary_photo_ids: temporaryPhotoIds,
+        temporary_photo_ids: temporaryPhotoIds
       };
 
       console.log("Submitting pet registration:", payload);
@@ -607,7 +608,7 @@ const DoggoPersonalForm: FC = () => {
             vaccinationStatus: data.vaccinationStatus,
             funFact: data.funFact,
             barkography: data.barkography,
-            step: 4,
+            step: 4
           })
         );
       }
@@ -621,7 +622,7 @@ const DoggoPersonalForm: FC = () => {
       } else {
         showToast({
           type: "error",
-          message: "Failed to register pet. Please try again.",
+          message: "Failed to register pet. Please try again."
         });
       }
     } finally {

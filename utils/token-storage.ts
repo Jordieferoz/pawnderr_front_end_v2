@@ -30,5 +30,5 @@ export const tokenStorage = {
     if (typeof window === "undefined") return false;
     const token = sessionStorage.getItem("accessToken");
     return !!token;
-  },
+  }
 };

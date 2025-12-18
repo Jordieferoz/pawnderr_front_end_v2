@@ -17,7 +17,7 @@ import {
   signInSchema,
   type SignInValues,
   signUpSchema,
-  type SignUpValues,
+  type SignUpValues
 } from "@/utils/schemas/auth";
 
 type Mode = "signin" | "signup";
@@ -50,14 +50,14 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
     handleSubmit,
     formState: { errors, isValid, isSubmitting },
     watch,
-    trigger,
+    trigger
   } = useForm<SignInValues | SignUpValues>({
     resolver: zodResolver(schema),
     mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: isSignup
       ? { email: "", password: "", confirmPassword: "" }
-      : { email: "", password: "", rememberMe: false },
+      : { email: "", password: "", rememberMe: false }
   });
 
   const password = watch("password");
@@ -90,7 +90,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
           email: sanitizedEmail,
           password: signinData.password,
           redirect: false,
-          callbackUrl,
+          callbackUrl
         });
 
         if (result?.error) {
@@ -117,7 +117,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
         setApiError(
           isSignup
             ? "Failed to proceed. Please try again."
-            : "Invalid email or password. Please try again.",
+            : "Invalid email or password. Please try again."
         );
       }
     }
@@ -284,7 +284,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
                       type="password"
                       {...field}
                       aria-invalid={Boolean(
-                        "confirmPassword" in errors && errors.confirmPassword,
+                        "confirmPassword" in errors && errors.confirmPassword
                       )}
                       aria-describedby={
                         "confirmPassword" in errors && errors.confirmPassword

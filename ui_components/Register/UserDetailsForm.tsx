@@ -14,7 +14,7 @@ import { registerAuth } from "@/utils/api";
 import { signupStorage } from "@/utils/auth-storage";
 import {
   userDetailsSchema,
-  type UserDetailsValues,
+  type UserDetailsValues
 } from "@/utils/schemas/registrationSchema";
 
 import { InputField } from "../Shared";
@@ -39,7 +39,7 @@ const UserDetailsForm: FC = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors, isValid }
   } = useForm<UserDetailsValues>({
     resolver: zodResolver(userDetailsSchema) as Resolver<UserDetailsValues>,
     mode: "onChange",
@@ -47,8 +47,8 @@ const UserDetailsForm: FC = () => {
       name: "",
       gender: "",
       phoneNumber: "",
-      location: "",
-    },
+      location: ""
+    }
   });
 
   const onSubmit = async (data: UserDetailsValues) => {
@@ -69,7 +69,7 @@ const UserDetailsForm: FC = () => {
         password: credentials.password,
         name: data.name,
         phone: data.phoneNumber,
-        gender: data.gender,
+        gender: data.gender
       });
 
       if (response.statusCode === 200 || response.statusCode === 201) {
@@ -89,7 +89,7 @@ const UserDetailsForm: FC = () => {
             gender: userData.gender,
             isActive: userData.is_active,
             isVerified: userData.is_verified,
-            profileCompletion: userData.profile_completion_percentage,
+            profileCompletion: userData.profile_completion_percentage
           };
 
           sessionStorage.setItem("userData", JSON.stringify(userProfile));
@@ -101,20 +101,20 @@ const UserDetailsForm: FC = () => {
               password: credentials.password,
               phoneNumber: data.phoneNumber,
               location: data.location,
-              step: 2,
-            }),
+              step: 2
+            })
           );
 
           // signupStorage.clear();
         } else {
           setApiError(
-            "Registration successful but authentication tokens missing.",
+            "Registration successful but authentication tokens missing."
           );
         }
       } else {
         setApiError(
           response.data?.message ||
-            "Failed to create account. Please try again.",
+            "Failed to create account. Please try again."
         );
       }
     } catch (error: any) {

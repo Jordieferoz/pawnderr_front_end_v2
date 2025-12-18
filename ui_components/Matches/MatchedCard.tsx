@@ -19,7 +19,7 @@ const cardsData: Card[] = [
     url: images.doggo1.src,
     desc: "A cheerful retriever who loves belly rubs and chasing tennis balls.",
     details:
-      "Golden Retriever\nLoves long walks\nFully vaccinated\nWeight: 25kg",
+      "Golden Retriever\nLoves long walks\nFully vaccinated\nWeight: 25kg"
   },
   {
     name: "Buddy",
@@ -27,7 +27,7 @@ const cardsData: Card[] = [
     url: images.doggo1.src,
     desc: "A cheerful retriever who loves belly rubs and chasing tennis balls.",
     details:
-      "Golden Retriever\nLoves long walks\nFully vaccinated\nWeight: 25kg",
+      "Golden Retriever\nLoves long walks\nFully vaccinated\nWeight: 25kg"
   },
   {
     name: "Buddy",
@@ -35,7 +35,7 @@ const cardsData: Card[] = [
     url: images.doggo1.src,
     desc: "A cheerful retriever who loves belly rubs and chasing tennis balls.",
     details:
-      "Golden Retriever\nLoves long walks\nFully vaccinated\nWeight: 25kg",
+      "Golden Retriever\nLoves long walks\nFully vaccinated\nWeight: 25kg"
   },
   {
     name: "Buddy",
@@ -43,8 +43,8 @@ const cardsData: Card[] = [
     url: images.doggo1.src,
     desc: "A cheerful retriever who loves belly rubs and chasing tennis balls.",
     details:
-      "Golden Retriever\nLoves long walks\nFully vaccinated\nWeight: 25kg",
-  },
+      "Golden Retriever\nLoves long walks\nFully vaccinated\nWeight: 25kg"
+  }
 ];
 
 const FlipCard: FC<{ card: Card }> = ({ card }) => {

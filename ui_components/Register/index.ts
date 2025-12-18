@@ -11,5 +11,5 @@ export {
   MatchingPetForm,
   OTP,
   Register,
-  UserDetailsForm,
+  UserDetailsForm
 };

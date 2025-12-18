@@ -7,5 +7,5 @@ export {
   BlockModalContent,
   FilterContent,
   MessageActionContent,
-  ReportModalContent,
+  ReportModalContent
 };

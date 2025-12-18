@@ -17,6 +17,7 @@ const MobileHeader: FC = () => {
           <img
             src={images.doggoProfilePlaceholder.src}
             className="rounded-full w-9 h-9 object-cover"
+            alt="pet placeholder"
           />
         </Link>
       </nav>

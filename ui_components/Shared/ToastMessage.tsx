@@ -35,7 +35,7 @@ export const showToast = ({ type, message, desc }: IToastMessage) => {
             ? "0 0 12px rgba(0,255,133,0.3)"
             : type === "error"
               ? "0 0 12px rgba(255,75,75,0.3)"
-              : "0 0 12px rgba(75,168,255,0.3)",
+              : "0 0 12px rgba(75,168,255,0.3)"
       }}
     >
       {/* ICON */}

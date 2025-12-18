@@ -13,5 +13,5 @@ export {
   PetInformation,
   Profile,
   ProfileCard,
-  ProfileHeader,
+  ProfileHeader
 };

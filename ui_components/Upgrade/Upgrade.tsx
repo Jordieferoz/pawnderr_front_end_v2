@@ -15,7 +15,7 @@ const FEATURES = [
   "Unlimited right swipes",
   "Premium-only pet profiles",
   "Instant playdate scheduling",
-  "Verified good boys & girls only",
+  "Verified good boys & girls only"
 ];
 
 const Upgrade = () => {

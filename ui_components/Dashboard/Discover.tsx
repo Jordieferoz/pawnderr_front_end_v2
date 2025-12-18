@@ -25,6 +25,7 @@ const Discover = () => {
             className="cursor-pointer w-10"
             src={images.filterIcon.src}
             onClick={handleOpenFilter}
+            alt="open filter"
           />
         </div>
         <div className="my-3 flex items-center gap-4">
@@ -32,6 +33,7 @@ const Discover = () => {
             className="cursor-pointer w-10 md:hidden"
             src={images.filterIcon.src}
             onClick={handleOpenFilter}
+            alt="open filter"
           />
           <div className="flex gap-4 items-center overflow-x-auto hide-scrollbar">
             <CustomAvatar

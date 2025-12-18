@@ -88,7 +88,7 @@ const initialState: RegistrationData = {
   // Metadata
   metadata: undefined,
 
-  step: 1,
+  step: 1
 };
 
 const registrationSlice = createSlice({
@@ -100,7 +100,7 @@ const registrationSlice = createSlice({
     },
     updateStepData: (
       state,
-      action: PayloadAction<Partial<RegistrationData>>,
+      action: PayloadAction<Partial<RegistrationData>>
     ) => {
       Object.assign(state, action.payload);
     },
@@ -109,7 +109,7 @@ const registrationSlice = createSlice({
     },
     updateAttribute: (
       state,
-      action: PayloadAction<{ attributeId: number; optionIds: number[] }>,
+      action: PayloadAction<{ attributeId: number; optionIds: number[] }>
     ) => {
       if (!state.attributes) {
         state.attributes = {};
@@ -119,7 +119,7 @@ const registrationSlice = createSlice({
     // ADD THIS ACTION
     updatePreference: (
       state,
-      action: PayloadAction<{ preferenceTypeId: number; optionId: number }>,
+      action: PayloadAction<{ preferenceTypeId: number; optionId: number }>
     ) => {
       if (!state.preferenceSelections) {
         state.preferenceSelections = {};
@@ -127,8 +127,8 @@ const registrationSlice = createSlice({
       state.preferenceSelections[action.payload.preferenceTypeId] =
         action.payload.optionId;
     },
-    resetRegistration: () => initialState,
-  },
+    resetRegistration: () => initialState
+  }
 });
 
 export const {
@@ -137,6 +137,6 @@ export const {
   setMetadata,
   updateAttribute,
   updatePreference, // ADD THIS EXPORT
-  resetRegistration,
+  resetRegistration
 } = registrationSlice.actions;
 export default registrationSlice.reducer;

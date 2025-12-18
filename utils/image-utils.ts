@@ -17,7 +17,7 @@ export const fileToBase64 = (file: File): Promise<string> => {
  */
 export const base64ToFile = (
   base64: string,
-  filename: string = "image.jpg",
+  filename: string = "image.jpg"
 ): File => {
   const arr = base64.split(",");
   const mime = arr[0].match(/:(.*?);/)?.[1] || "image/jpeg";
@@ -36,7 +36,7 @@ export const base64ToFile = (
  * Convert multiple Files to base64 strings
  */
 export const filesToBase64 = async (
-  files: (File | string)[],
+  files: (File | string)[]
 ): Promise<string[]> => {
   const promises = files.map(async (file) => {
     if (typeof file === "string") {
@@ -87,7 +87,7 @@ export const compressImage = (
   file: File,
   maxWidth: number = 1920,
   maxHeight: number = 1080,
-  quality: number = 0.8,
+  quality: number = 0.8
 ): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();

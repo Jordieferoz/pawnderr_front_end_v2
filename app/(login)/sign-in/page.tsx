@@ -4,7 +4,7 @@ import { Login } from "../login";
 
 export const metadata = {
   title: "Pawnderr - Sign in",
-  description: "Pawnderr - Sign in",
+  description: "Pawnderr - Sign in"
 };
 
 export default function SignInPage() {

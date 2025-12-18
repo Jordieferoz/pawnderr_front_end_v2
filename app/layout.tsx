@@ -14,7 +14,7 @@ const fredoka = Fredoka({ subsets: ["latin"], display: "swap" });
 const sourceSans3 = Source_Sans_3({ subsets: ["latin"], display: "swap" });
 
 export default function RootLayout({
-  children,
+  children
 }: {
   children: React.ReactNode;
 }) {

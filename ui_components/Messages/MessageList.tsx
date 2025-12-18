@@ -21,7 +21,7 @@ const dummyMessages: IMessageItem[] = [
     image: images.doggo1.src,
     timestamp: "Today",
     unread: 4,
-    message: "When can we meet?",
+    message: "When can we meet?"
   },
   {
     chatId: "2",
@@ -29,7 +29,7 @@ const dummyMessages: IMessageItem[] = [
     image: images.doggo2.src,
     timestamp: "2h ago",
     unread: 1,
-    message: "Got the files?",
+    message: "Got the files?"
   },
   {
     chatId: "3",
@@ -37,7 +37,7 @@ const dummyMessages: IMessageItem[] = [
     image: images.doggo3.src,
     timestamp: "Yesterday",
     unread: 5,
-    message: "Let’s catch up soon!",
+    message: "Let’s catch up soon!"
   },
   {
     chatId: "4",
@@ -45,7 +45,7 @@ const dummyMessages: IMessageItem[] = [
     image: images.doggo4.src,
     timestamp: "Mon",
     unread: 0,
-    message: "Thanks for the update.",
+    message: "Thanks for the update."
   },
   {
     chatId: "5",
@@ -53,8 +53,8 @@ const dummyMessages: IMessageItem[] = [
     image: images.doggo5.src,
     timestamp: "Sun",
     unread: 2,
-    message: "Sending the details now!",
-  },
+    message: "Sending the details now!"
+  }
 ];
 
 const MessageList: FC = () => {
@@ -76,6 +76,7 @@ const MessageList: FC = () => {
             <img
               src={item.image}
               className="w-12 h-12 shrink-0 object-cover rounded-full"
+              alt="user"
             />
             <div className="w-full">
               <div className="flex items-center gap-2 justify-between mb-2 md:mb-0.5">

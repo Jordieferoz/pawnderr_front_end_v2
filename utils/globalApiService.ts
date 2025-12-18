@@ -6,19 +6,19 @@ import { TResponse } from "./types";
 export const globalGetService = <TParamType, U>(
   url: string,
   params: TParamType,
-  instance: keyof typeof API_INSTANCES = "mainInstance",
+  instance: keyof typeof API_INSTANCES = "mainInstance"
 ): Promise<TResponse<U>> => {
   return new Promise(function (resolve, reject) {
     API_INSTANCES[instance]({
       method: "GET",
       url: url,
-      params: params,
+      params: params
     })
       .then((response: AxiosResponse<U>) => {
         const _response: TResponse<U> = {
           data: response.data,
           statusCode: response.status,
-          message: response.statusText,
+          message: response.statusText
         };
         resolve(_response);
       })
@@ -31,19 +31,19 @@ export const globalGetService = <TParamType, U>(
 export const globalPostService = <TDataType, U>(
   url: string,
   data: TDataType,
-  instance: keyof typeof API_INSTANCES = "mainInstance",
+  instance: keyof typeof API_INSTANCES = "mainInstance"
 ): Promise<TResponse<U>> => {
   return new Promise(function (resolve, reject) {
     API_INSTANCES[instance]({
       method: "POST",
       url: url,
-      data: data,
+      data: data
     })
       .then((response: AxiosResponse<U>) => {
         const _response: TResponse<U> = {
           data: response.data,
           statusCode: response.status,
-          message: response.statusText,
+          message: response.statusText
         };
         resolve(_response);
       })
@@ -56,19 +56,19 @@ export const globalPostService = <TDataType, U>(
 export const globalDeleteService = <TParamType, U>(
   url: string,
   params: TParamType,
-  instance: keyof typeof API_INSTANCES = "mainInstance",
+  instance: keyof typeof API_INSTANCES = "mainInstance"
 ): Promise<TResponse<U>> => {
   return new Promise(function (resolve, reject) {
     API_INSTANCES[instance]({
       method: "DELETE",
       url: url,
-      params: params,
+      params: params
     })
       .then((response: AxiosResponse<U>) => {
         const _response: TResponse<U> = {
           data: response.data,
           statusCode: response.status,
-          message: response.statusText,
+          message: response.statusText
         };
         resolve(_response);
       })
@@ -82,15 +82,14 @@ export const globalApiService = <TDataType, TApiResponse>(
   url: string,
   data: TDataType,
   method: string,
-  instance: keyof typeof API_INSTANCES = "mainInstance",
-  userId?: string,
+  instance: keyof typeof API_INSTANCES = "mainInstance"
 ): Promise<TResponse<TApiResponse>> => {
   return new Promise(function (resolve, reject) {
     const config: any = {
       method: method,
       url: url,
       data: data,
-      headers: {}, // Initialize headers object
+      headers: {} // Initialize headers object
     };
 
     API_INSTANCES[instance](config)
@@ -103,8 +102,8 @@ export const globalApiService = <TDataType, TApiResponse>(
             typeof response.data === "object" &&
             "success" in response.data &&
             typeof response.data.success === "boolean" && {
-              success: response.data.success as boolean,
-            }),
+              success: response.data.success as boolean
+            })
         };
         resolve(_response);
       })

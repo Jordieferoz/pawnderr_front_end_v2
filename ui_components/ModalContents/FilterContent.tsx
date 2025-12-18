@@ -3,7 +3,7 @@
 
 import {
   matchingPetSchema,
-  PetMatchingProfileValues,
+  PetMatchingProfileValues
 } from "@/utils/schemas/registrationSchema";
 import { useRouter } from "next/navigation";
 import { FC, useEffect, useMemo, useState } from "react";
@@ -50,7 +50,7 @@ const FilterContent: FC = () => {
     formState: { errors, isValid },
     reset,
     setValue,
-    watch,
+    watch
   } = useForm<PetMatchingProfileValues>({
     resolver: zodResolver(matchingPetSchema),
     mode: "onChange",
@@ -58,8 +58,8 @@ const FilterContent: FC = () => {
       preferenceSelections: {},
       minAge: 0,
       maxAge: 15,
-      preferredBreedIds: [],
-    },
+      preferredBreedIds: []
+    }
   });
 
   const watchedMinAge = watch("minAge");
@@ -78,7 +78,7 @@ const FilterContent: FC = () => {
         preferenceSelections: registrationData.preferenceSelections || {},
         minAge: registrationData.minAge || 0,
         maxAge: registrationData.maxAge || 15,
-        preferredBreedIds: registrationData.preferredBreedIds || [],
+        preferredBreedIds: registrationData.preferredBreedIds || []
       });
     }
   }, [metadata, registrationData, reset]);
@@ -90,18 +90,18 @@ const FilterContent: FC = () => {
     const currentSelections = watch("preferenceSelections") || {};
     const updatedSelections = {
       ...currentSelections,
-      [preferenceTypeId]: optionId,
+      [preferenceTypeId]: optionId
     };
 
     setValue("preferenceSelections", updatedSelections, {
-      shouldValidate: true,
+      shouldValidate: true
     });
 
     // Update Redux
     dispatch(
       updatePreference({
         preferenceTypeId,
-        optionId,
+        optionId
       })
     );
   };
@@ -110,7 +110,7 @@ const FilterContent: FC = () => {
     if (!petId) {
       showToast({
         type: "error",
-        message: "Pet ID not found. Please complete registration first.",
+        message: "Pet ID not found. Please complete registration first."
       });
       return;
     }
@@ -126,8 +126,8 @@ const FilterContent: FC = () => {
         max_age: data.maxAge,
         ...(data.preferredBreedIds &&
           data.preferredBreedIds.length > 0 && {
-            preferred_breed_ids: data.preferredBreedIds,
-          }),
+            preferred_breed_ids: data.preferredBreedIds
+          })
       };
 
       console.log("Updating pet preferences:", payload);
@@ -144,13 +144,13 @@ const FilterContent: FC = () => {
             preferenceSelections: data.preferenceSelections,
             minAge: data.minAge,
             maxAge: data.maxAge,
-            preferredBreedIds: data.preferredBreedIds,
+            preferredBreedIds: data.preferredBreedIds
           })
         );
 
         showToast({
           type: "success",
-          message: "Preferences updated successfully!",
+          message: "Preferences updated successfully!"
         });
 
         // Navigate back or close filter
@@ -166,7 +166,7 @@ const FilterContent: FC = () => {
       } else {
         showToast({
           type: "error",
-          message: "Failed to update preferences. Please try again.",
+          message: "Failed to update preferences. Please try again."
         });
       }
     } finally {

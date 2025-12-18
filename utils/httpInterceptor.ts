@@ -5,7 +5,7 @@ import axios, {
   AxiosInstance,
   AxiosRequestHeaders,
   AxiosResponse,
-  InternalAxiosRequestConfig,
+  InternalAxiosRequestConfig
 } from "axios";
 
 import { TApiResponse } from "./types";
@@ -41,7 +41,7 @@ function axiosInstanceCreator(baseURL: string | undefined, accessKey?: string) {
     },
     function (error: AxiosError) {
       return Promise.reject(error);
-    },
+    }
   );
 
   axiosInstance.interceptors.response.use(
@@ -54,7 +54,7 @@ function axiosInstanceCreator(baseURL: string | undefined, accessKey?: string) {
     },
     function (error: AxiosError) {
       return Promise.reject(error);
-    },
+    }
   );
 
   return axiosInstance;
@@ -63,6 +63,6 @@ function axiosInstanceCreator(baseURL: string | undefined, accessKey?: string) {
 const mainInstance = axiosInstanceCreator(BASE_URL, "key");
 
 export const API_INSTANCES = {
-  mainInstance: mainInstance,
+  mainInstance: mainInstance
 };
 export default API_INSTANCES;

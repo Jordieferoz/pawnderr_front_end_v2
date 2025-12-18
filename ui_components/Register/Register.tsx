@@ -15,7 +15,7 @@ const totalSteps = 5;
 
 const Register: FC = () => {
   const step = useSelector((state: RootState) => state.registration.step);
-  const formData = useSelector((state: RootState) => state.registration);
+  // const formData = useSelector((state: RootState) => state.registration);
   console.log(step, "step");
   const progressValue = (step / totalSteps) * 100;
 
@@ -55,21 +55,25 @@ const Register: FC = () => {
       </div>
       {step === 1 ? (
         <img
+          alt=""
           src={images.userFormBg.src}
           className="absolute -top-10 left-0 w-full z-10 pointer-events-none hidden md:block"
         />
       ) : step === 2 ? (
         <img
+          alt=""
           src={images.userFormBg.src}
           className="absolute -top-10 left-0 w-full z-10 pointer-events-none hidden md:block"
         />
       ) : step === 3 ? (
         <img
+          alt=""
           src={images.userFormBg.src}
           className="absolute -top-10 left-0 w-full z-10 pointer-events-none hidden md:block"
         />
       ) : step === 4 ? (
         <img
+          alt=""
           src={images.userFormBg.src}
           className="absolute -top-10 left-0 w-full z-10 pointer-events-none hidden md:block"
         />

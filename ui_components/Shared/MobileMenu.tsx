@@ -37,7 +37,7 @@ const MobileMenu: FC = () => {
 
   useEffect(() => {
     const activeIndex = mobileMenuItems.findIndex((item) =>
-      isItemActive(item.href, item.key),
+      isItemActive(item.href, item.key)
     );
     if (activeIndex === -1) return;
 
@@ -47,7 +47,7 @@ const MobileMenu: FC = () => {
     if (navRect && activeRect) {
       setIndicatorStyle({
         left: activeRect.left - navRect.left,
-        width: activeRect.width,
+        width: activeRect.width
       });
     }
   }, [pathname]);
@@ -62,7 +62,7 @@ const MobileMenu: FC = () => {
           className="absolute top-0 h-1 bg-accent-500 rounded transition-all duration-300"
           style={{
             left: indicatorStyle.left,
-            width: indicatorStyle.width,
+            width: indicatorStyle.width
           }}
         />
 

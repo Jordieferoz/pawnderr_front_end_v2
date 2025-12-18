@@ -110,7 +110,7 @@ export const petRegisterInfo = (payload: any): Promise<TResponse<any>> => {
 };
 
 export const uploadPetPhoto = (
-  file: File | Blob,
+  file: File | Blob
 ): Promise<TResponse<PhotoUploadResponse>> => {
   return new Promise((resolve, reject) => {
     const formData = new FormData();
@@ -118,7 +118,7 @@ export const uploadPetPhoto = (
 
     globalPostService<FormData, PhotoUploadResponse>(
       `pet/photo/upload`,
-      formData,
+      formData
     )
       .then((response) => {
         if (response.statusCode === 200 || response.statusCode === 201) {

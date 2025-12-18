@@ -6,10 +6,10 @@ export const userDetailsSchema = z.object({
   name: z.string().min(1, "Name is required"),
   gender: z.preprocess(
     (val) => (val === "" ? undefined : val),
-    z.enum(["male", "female", "other", ""], "Please select a gender"),
+    z.enum(["male", "female", "other", ""], "Please select a gender")
   ),
   phoneNumber: z.string().min(1, "Phone number is required"),
-  location: z.string().min(1, "Location is required"),
+  location: z.string().min(1, "Location is required")
 });
 
 // Step 2: OTP schema
@@ -17,7 +17,7 @@ export const otpSchema = z.object({
   otp: z
     .string()
     .length(4, "Enter the 4 digit OTP")
-    .regex(/^[0-9]{4}$/, "OTP must be 4 digits"),
+    .regex(/^[0-9]{4}$/, "OTP must be 4 digits")
 });
 
 // Step 3: Pet profile schema with detailed fields
@@ -33,11 +33,11 @@ export const petProfileSchema = z.object({
   breed: z.number({ message: "Select a breed" }),
   attributes: z.record(
     z.string(),
-    z.array(z.number()).min(1, "This field is required"),
+    z.array(z.number()).min(1, "This field is required")
   ),
   vaccinationStatus: z.string().optional(),
   funFact: z.string().max(200).optional(),
-  barkography: z.string().max(300).optional(),
+  barkography: z.string().max(300).optional()
 });
 
 // utils/schemas/registrationSchema.ts
@@ -46,15 +46,15 @@ export const matchingPetSchema = z.object({
   preferenceSelections: z
     .record(z.string(), z.number())
     .refine((data) => Object.keys(data).length >= 5, {
-      message: "Please complete all preference selections",
+      message: "Please complete all preference selections"
     }),
   minAge: z.number().min(0).max(15),
   maxAge: z.number().min(0).max(15),
-  preferredBreedIds: z.array(z.number()).optional(),
+  preferredBreedIds: z.array(z.number()).optional()
 });
 
 export const step5Schema = z.object({
-  about: z.string().min(10, "Write a bit more about you"),
+  about: z.string().min(10, "Write a bit more about you")
 });
 
 // Combined registration schema merging all steps

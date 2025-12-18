@@ -1,29 +1,28 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot
+} from "@/components/ui/input-otp";
 import { FC, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Button } from "@/components/ui/button";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
 import { RootState } from "@/store";
 import { setMetadata, updateStepData } from "@/store/registrationSlice";
 import { fetchPetRegistrationData } from "@/utils/api";
 import { otpSchema, type OtpValues } from "@/utils/schemas/registrationSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { BackBtnRegister } from ".";
 
 const OTP: FC = () => {
   const dispatch = useDispatch();
-  const router = useRouter();
+
   const registrationData = useSelector(
-    (state: RootState) => state.registration,
+    (state: RootState) => state.registration
   );
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -32,16 +31,17 @@ const OTP: FC = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors, isValid }
   } = useForm<OtpValues>({
     resolver: zodResolver(otpSchema),
     mode: "onChange",
     defaultValues: {
-      otp: "",
-    },
+      otp: ""
+    }
   });
 
   const onSubmit = async (data: OtpValues) => {
+    console.log(data, "data");
     setApiError(null);
     setIsSubmitting(true);
 
@@ -58,8 +58,8 @@ const OTP: FC = () => {
           updateStepData({
             // otp: data.otp,
             isVerified: true,
-            step: 3,
-          }),
+            step: 3
+          })
         );
 
         console.log("Registration metadata loaded successfully");

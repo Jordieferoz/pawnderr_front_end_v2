@@ -11,20 +11,20 @@ const buttonVariants = cva(
       variant: {
         default:
           "bg-primary-theme text-dark-black border border-dark-black hover:bg-primary-theme/90 shadow-[6px_4px_0px_0px_#1E1E1E]",
-        link: "text-primary underline-offset-4 hover:underline",
+        link: "text-primary underline-offset-4 hover:underline"
       },
       size: {
         default: "h-12 px-4 py-3 has-[>svg]:px-3",
         sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
         lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
-        icon: "size-9",
-      },
+        icon: "size-9"
+      }
     },
     defaultVariants: {
       variant: "default",
-      size: "default",
-    },
-  },
+      size: "default"
+    }
+  }
 );
 
 function Button({

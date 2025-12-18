@@ -4,7 +4,7 @@ import { images } from "@/utils/images";
 export const genderOptions = [
   { label: "Male", value: "male" },
   { label: "Female", value: "female" },
-  { label: "Other", value: "other" },
+  { label: "Other", value: "other" }
 ];
 
 export const energyLevels = ["Chill", "Playful", "Zoomies All Day", "Balanced"];
@@ -18,12 +18,12 @@ export const activities = [
   "Rolling in the Grass",
   "Chasing cats, squirrels etc.",
   "Chewing Toys",
-  "Digging for treasure",
+  "Digging for treasure"
 ];
 export const vaccinationOptions = [
   { value: "up_to_date", label: "Up to Date" },
   { value: "not_sure", label: "Not Sure" },
-  { value: "not_vaccinated", label: "Not Vaccinated" },
+  { value: "not_vaccinated", label: "Not Vaccinated" }
 ];
 
 export const interestedIn = ["Playdate", "Mating", "Dog Party"];
@@ -32,7 +32,7 @@ export const playDateVibe = [
   "Zoomie Zone",
   "Swim & Splash",
   "Home Sweet Home",
-  "Restaurant Rendezvous",
+  "Restaurant Rendezvous"
 ];
 export const personalityPreference = [
   "The Social Butterfly",
@@ -40,13 +40,13 @@ export const personalityPreference = [
   "The Adventure Seeker",
   "The Introvert",
   "The Gentle Giant",
-  "The Playtime Pro",
+  "The Playtime Pro"
 ];
 
 export const tabs = [
   { id: "likes-me", label: "Who Likes Me", count: 4 },
   { id: "you-like", label: "You Like Them", count: 4 },
-  { id: "viewed-profile", label: "Profiles Near Me", count: 0 },
+  { id: "viewed-profile", label: "Profiles Near Me", count: 0 }
 ];
 
 export const cardsData: ICard[] = [
@@ -57,7 +57,7 @@ export const cardsData: ICard[] = [
     url: images.doggo1.src,
     desc: "A cheerful retriever who loves belly rubs and chasing tennis balls.",
     details:
-      "Golden Retriever\nLoves long walks\nFully vaccinated\nWeight: 25kg",
+      "Golden Retriever\nLoves long walks\nFully vaccinated\nWeight: 25kg"
   },
   {
     id: 2,
@@ -66,7 +66,7 @@ export const cardsData: ICard[] = [
     url: images.doggo1.src,
     desc: "A cheerful retriever who loves belly rubs and chasing tennis balls.",
     details:
-      "Golden Retriever\nLoves long walks\nFully vaccinated\nWeight: 25kg",
+      "Golden Retriever\nLoves long walks\nFully vaccinated\nWeight: 25kg"
   },
   {
     id: 3,
@@ -75,8 +75,8 @@ export const cardsData: ICard[] = [
     url: images.doggo1.src,
     desc: "A cheerful retriever who loves belly rubs and chasing tennis balls.",
     details:
-      "Golden Retriever\nLoves long walks\nFully vaccinated\nWeight: 25kg",
-  },
+      "Golden Retriever\nLoves long walks\nFully vaccinated\nWeight: 25kg"
+  }
 ];
 
 export const mobileMenuItems = [
@@ -86,7 +86,7 @@ export const mobileMenuItems = [
     href: "/matches",
     img: images.matches.src,
     imgActive: images.matchesActive.src,
-    imgWidth: 18,
+    imgWidth: 18
   },
   {
     key: "activities",
@@ -94,7 +94,7 @@ export const mobileMenuItems = [
     href: "/activities",
     img: images.activities.src,
     imgActive: images.activitiesActive.src,
-    imgWidth: 21,
+    imgWidth: 21
   },
   {
     key: "discover",
@@ -102,7 +102,7 @@ export const mobileMenuItems = [
     href: "/dashboard",
     img: images.discover.src,
     imgActive: images.discoverActive.src,
-    imgWidth: 38,
+    imgWidth: 38
   },
   {
     key: "messages",
@@ -110,7 +110,7 @@ export const mobileMenuItems = [
     href: "/messages",
     img: images.messages.src,
     imgActive: images.messagesActive.src,
-    imgWidth: 24,
+    imgWidth: 24
   },
   {
     key: "upgrade",
@@ -118,8 +118,8 @@ export const mobileMenuItems = [
     href: "/upgrade",
     img: images.pawnderr.src,
     imgActive: images.pawnderrActive.src,
-    imgWidth: 26,
-  },
+    imgWidth: 26
+  }
 ];
 export const headerMenuItems = [
   {
@@ -128,7 +128,7 @@ export const headerMenuItems = [
     href: "/dashboard",
     img: images.discover.src,
     imgActive: images.discoverActive.src,
-    imgWidth: 38,
+    imgWidth: 38
   },
   {
     key: "matches",
@@ -136,7 +136,7 @@ export const headerMenuItems = [
     href: "/matches",
     img: images.matches.src,
     imgActive: images.matchesActive.src,
-    imgWidth: 18,
+    imgWidth: 18
   },
   {
     key: "activities",
@@ -144,7 +144,7 @@ export const headerMenuItems = [
     href: "/activities",
     img: images.activities.src,
     imgActive: images.activitiesActive.src,
-    imgWidth: 21,
+    imgWidth: 21
   },
 
   {
@@ -153,6 +153,6 @@ export const headerMenuItems = [
     href: "/messages",
     img: images.messages.src,
     imgActive: images.messagesActive.src,
-    imgWidth: 24,
-  },
+    imgWidth: 24
+  }
 ];

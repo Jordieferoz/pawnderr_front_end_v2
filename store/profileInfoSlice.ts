@@ -52,7 +52,7 @@ const initialState: IProfileData = {
   preferredBreeds: undefined,
   distanceRadius: "",
   personalityPreference: [],
-  step: 0,
+  step: 0
 };
 
 const profileInfoSlice = createSlice({
@@ -65,8 +65,8 @@ const profileInfoSlice = createSlice({
     updateStepData: (state, action: PayloadAction<Partial<IProfileData>>) => {
       Object.assign(state, action.payload);
     },
-    resetRegistration: () => initialState,
-  },
+    resetRegistration: () => initialState
+  }
 });
 
 export const { setStep, updateStepData, resetRegistration } =

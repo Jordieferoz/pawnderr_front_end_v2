@@ -4,11 +4,11 @@
 import {
   setStep,
   updatePreference,
-  updateStepData,
+  updateStepData
 } from "@/store/registrationSlice";
 import {
   matchingPetSchema,
-  PetMatchingProfileValues,
+  PetMatchingProfileValues
 } from "@/utils/schemas/registrationSchema";
 import { useRouter } from "next/navigation";
 import { FC, useEffect, useMemo, useState } from "react";
@@ -54,7 +54,7 @@ const MatchingPetForm: FC = () => {
     formState: { errors, isValid },
     reset,
     setValue,
-    watch,
+    watch
   } = useForm<PetMatchingProfileValues>({
     resolver: zodResolver(matchingPetSchema),
     mode: "onChange",
@@ -62,8 +62,8 @@ const MatchingPetForm: FC = () => {
       preferenceSelections: {},
       minAge: 0,
       maxAge: 15,
-      preferredBreedIds: [],
-    },
+      preferredBreedIds: []
+    }
   });
 
   const watchedMinAge = watch("minAge");
@@ -81,7 +81,7 @@ const MatchingPetForm: FC = () => {
       console.error("Pet ID missing");
       showToast({
         type: "error",
-        message: "Please complete pet registration first.",
+        message: "Please complete pet registration first."
       });
       // Set step back to 3
       dispatch(setStep(3));
@@ -94,7 +94,7 @@ const MatchingPetForm: FC = () => {
         preferenceSelections: registrationData.preferenceSelections || {},
         minAge: registrationData.minAge || 0,
         maxAge: registrationData.maxAge || 15,
-        preferredBreedIds: registrationData.preferredBreedIds || [],
+        preferredBreedIds: registrationData.preferredBreedIds || []
       });
     }
   }, [metadata, registrationData, reset, petId, dispatch]);
@@ -106,18 +106,18 @@ const MatchingPetForm: FC = () => {
     const currentSelections = watch("preferenceSelections") || {};
     const updatedSelections = {
       ...currentSelections,
-      [preferenceTypeId]: optionId,
+      [preferenceTypeId]: optionId
     };
 
     setValue("preferenceSelections", updatedSelections, {
-      shouldValidate: true,
+      shouldValidate: true
     });
 
     // Update Redux
     dispatch(
       updatePreference({
         preferenceTypeId,
-        optionId,
+        optionId
       })
     );
   };
@@ -126,7 +126,7 @@ const MatchingPetForm: FC = () => {
     if (!petId) {
       showToast({
         type: "error",
-        message: "Pet ID not found. Please complete pet registration first.",
+        message: "Pet ID not found. Please complete pet registration first."
       });
       dispatch(setStep(3));
       return;
@@ -143,8 +143,8 @@ const MatchingPetForm: FC = () => {
         max_age: data.maxAge,
         ...(data.preferredBreedIds &&
           data.preferredBreedIds.length > 0 && {
-            preferred_breed_ids: data.preferredBreedIds,
-          }),
+            preferred_breed_ids: data.preferredBreedIds
+          })
       };
 
       console.log("Submitting pet preferences:", payload);
@@ -162,13 +162,13 @@ const MatchingPetForm: FC = () => {
             minAge: data.minAge,
             maxAge: data.maxAge,
             preferredBreedIds: data.preferredBreedIds,
-            step: 5,
+            step: 5
           })
         );
 
         showToast({
           type: "success",
-          message: "Registration completed successfully!",
+          message: "Registration completed successfully!"
         });
 
         // Navigate to dashboard
@@ -184,7 +184,7 @@ const MatchingPetForm: FC = () => {
       } else {
         showToast({
           type: "error",
-          message: "Failed to save preferences. Please try again.",
+          message: "Failed to save preferences. Please try again."
         });
       }
     } finally {

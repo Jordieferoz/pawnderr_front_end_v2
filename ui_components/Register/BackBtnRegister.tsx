@@ -14,7 +14,7 @@ const BackBtnRegister: FC<IBackBtnRegisterProps> = ({
   title,
   desc,
   note,
-  titleClassName,
+  titleClassName
 }) => {
   const dispatch = useDispatch();
   const router = useRouter();

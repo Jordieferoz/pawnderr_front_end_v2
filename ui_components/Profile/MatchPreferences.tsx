@@ -13,7 +13,7 @@ import { interestedIn, personalityPreference, playDateVibe } from "@/constants";
 import { updateStepData } from "@/store/registrationSlice";
 import {
   matchingPetSchema,
-  PetMatchingProfileValues,
+  PetMatchingProfileValues
 } from "@/utils/personalInfoSchema";
 
 const MatchPreferences: FC = () => {
@@ -23,7 +23,7 @@ const MatchPreferences: FC = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors, isValid }
   } = useForm<PetMatchingProfileValues>({
     resolver: zodResolver(matchingPetSchema),
     mode: "onChange",
@@ -33,8 +33,8 @@ const MatchPreferences: FC = () => {
       ageRange: [0, 15],
       preferredBreeds: undefined,
       distanceRadius: undefined,
-      personalityPreference: [],
-    },
+      personalityPreference: []
+    }
   });
 
   const onSubmit = (data: PetMatchingProfileValues) => {

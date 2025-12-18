@@ -33,5 +33,5 @@ export const userStorage = {
   clear: () => {
     if (typeof window === "undefined") return;
     sessionStorage.removeItem("userData");
-  },
+  }
 };

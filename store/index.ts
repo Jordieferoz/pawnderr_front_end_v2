@@ -10,32 +10,32 @@ import registrationReducer from "./registrationSlice";
 // Persist config for registration slice - persist everything
 const registrationPersistConfig = {
   key: "registration",
-  storage,
+  storage
   // No whitelist/blacklist - persist all fields
 };
 
 // Persist config for profile slice
 const profilePersistConfig = {
   key: "profile",
-  storage,
+  storage
 };
 
 // Create persisted reducers
 const persistedRegistrationReducer = persistReducer(
   registrationPersistConfig,
-  registrationReducer,
+  registrationReducer
 );
 
 const persistedProfileReducer = persistReducer(
   profilePersistConfig,
-  profileReducer,
+  profileReducer
 );
 
 // Combine reducers
 const rootReducer = combineReducers({
   registration: persistedRegistrationReducer,
   profileInfo: persistedProfileReducer,
-  modal: modalReducer, // Modal state doesn't need persistence
+  modal: modalReducer // Modal state doesn't need persistence
 });
 
 export const store = configureStore({
@@ -45,10 +45,10 @@ export const store = configureStore({
       serializableCheck: {
         // Ignore these action types and paths for redux-persist
         ignoredActions: ["persist/PERSIST", "persist/REHYDRATE"],
-        ignoredPaths: ["registration.images"], // We'll handle image serialization manually
-      },
+        ignoredPaths: ["registration.images"] // We'll handle image serialization manually
+      }
     }),
-  devTools: process.env.NODE_ENV !== "production",
+  devTools: process.env.NODE_ENV !== "production"
 });
 
 export const persistor = persistStore(store);

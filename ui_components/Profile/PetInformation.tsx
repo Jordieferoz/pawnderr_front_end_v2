@@ -1,24 +1,24 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { FC, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
-
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from "@/components/ui/select";
+import { FC, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+
+import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { activities, energyLevels, vaccinationOptions } from "@/constants";
 import { updateStepData } from "@/store/registrationSlice";
 import { images } from "@/utils/images";
 import { petProfileSchema, PetProfileValues } from "@/utils/personalInfoSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { InputField } from "../Shared";
 
@@ -28,14 +28,14 @@ const PetInformation: FC = () => {
   const [imageSlots, setImageSlots] = useState<(string | null)[]>([
     null,
     null,
-    null,
+    null
   ]);
 
   const {
     control,
     handleSubmit,
     formState: { errors, isValid },
-    setValue,
+    setValue
   } = useForm<PetProfileValues>({
     resolver: zodResolver(petProfileSchema),
     mode: "onChange",
@@ -49,8 +49,8 @@ const PetInformation: FC = () => {
       favoriteActivities: [],
       vaccinationStatus: "",
       funFact: "",
-      barkography: "",
-    },
+      barkography: ""
+    }
   });
 
   const handleImageUpload = (
@@ -66,7 +66,7 @@ const PetInformation: FC = () => {
         newSlots[index] = base64String;
         setImageSlots(newSlots);
         setValue("images", newSlots.filter(Boolean) as string[], {
-          shouldValidate: true,
+          shouldValidate: true
         });
       };
       reader.readAsDataURL(file);
@@ -102,6 +102,7 @@ const PetInformation: FC = () => {
                         : URL.createObjectURL(img)
                       : images.addPetPhoto.src
                   }
+                  alt="pet"
                 />
 
                 <input
@@ -133,7 +134,7 @@ const PetInformation: FC = () => {
                       const newSlots = [...imageSlots, base64String];
                       setImageSlots(newSlots);
                       setValue("images", newSlots.filter(Boolean) as string[], {
-                        shouldValidate: true,
+                        shouldValidate: true
                       });
                     };
                     reader.readAsDataURL(file);

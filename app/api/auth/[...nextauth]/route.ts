@@ -9,7 +9,7 @@ const authOptions = {
       name: "Credentials",
       credentials: {
         email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
+        password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
@@ -24,13 +24,13 @@ const authOptions = {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                "access-token": "key", // Your access key
+                "access-token": "key" // Your access key
               },
               body: JSON.stringify({
                 email: credentials.email,
-                password: credentials.password,
-              }),
-            },
+                password: credentials.password
+              })
+            }
           );
 
           if (!response.ok) {
@@ -46,7 +46,7 @@ const authOptions = {
               email: credentials.email,
               name: data.user?.name || null,
               image: data.user?.image || null,
-              accessToken: data.accessToken,
+              accessToken: data.accessToken
             };
           }
 
@@ -55,8 +55,8 @@ const authOptions = {
           console.error("Authorization error:", error);
           throw new Error(error.message || "Authentication failed");
         }
-      },
-    }),
+      }
+    })
   ],
   callbacks: {
     async jwt({ token, user, account }: any) {
@@ -77,19 +77,19 @@ const authOptions = {
         session.user.id = token.id;
       }
       return session;
-    },
+    }
   },
   pages: {
     signIn: "/sign-in",
     signOut: "/sign-in",
-    error: "/sign-in",
+    error: "/sign-in"
   },
   session: {
     strategy: "jwt" as const,
-    maxAge: 30 * 24 * 60 * 60,
+    maxAge: 30 * 24 * 60 * 60
   },
   secret: process.env.NEXTAUTH_SECRET,
-  debug: process.env.NODE_ENV === "development",
+  debug: process.env.NODE_ENV === "development"
 };
 
 const handler = NextAuth(authOptions);
