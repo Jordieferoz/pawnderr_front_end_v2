@@ -35,9 +35,7 @@ const useAuth = () => {
   return {
     user,
     isAuthenticated,
-    logout,
-    accessToken: user?.accessToken,
-    refreshToken: user?.refreshToken
+    logout
   };
 };
 

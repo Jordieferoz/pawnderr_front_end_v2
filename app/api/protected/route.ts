@@ -3,7 +3,7 @@
 import { getServerSession } from "next-auth/next";
 import { NextRequest } from "next/server";
 
-import { authOptions } from "../auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL!;
 
