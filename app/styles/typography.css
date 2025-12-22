@@ -33,11 +33,15 @@
     font-family: "Fredoka", sans-serif;
   }
   .heading1_medium {
-    @apply text-[28px] leading-[1.1] font-normal  md:text-[32px] lg:text-[40px];
+    @apply text-[28px] leading-[1.1] font-medium  md:text-[32px] lg:text-[40px];
     font-family: "Fredoka", sans-serif;
   }
   .heading2 {
     @apply text-[24px] leading-[1.1] font-normal  md:text-[28px] lg:text-[32px];
+    font-family: "Fredoka", sans-serif;
+  }
+  .heading2_semibold {
+    @apply text-[24px] leading-[1.1] font-semibold  md:text-[28px] lg:text-[32px];
     font-family: "Fredoka", sans-serif;
   }
   .heading2_medium {

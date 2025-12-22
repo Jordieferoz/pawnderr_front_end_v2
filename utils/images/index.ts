@@ -10,6 +10,7 @@ import block from "public/assets/images/block.svg";
 import chatYellow from "public/assets/images/chat_yellow.svg";
 import chevronRight from "public/assets/images/chevron_right.svg";
 import chevronRightGrey from "public/assets/images/chevron_right_grey.svg";
+import createProfile from "public/assets/images/create_profile.png";
 import discover from "public/assets/images/discover.svg";
 import discoverActive from "public/assets/images/discover_active.svg";
 import discoverBg from "public/assets/images/discover_bg.png";
@@ -26,8 +27,11 @@ import editIcon from "public/assets/images/edit_icon.svg";
 import ellipsisHorizontal from "public/assets/images/ellipsis_horizontal.svg";
 import eyeBlue from "public/assets/images/eye_blue.svg";
 import facebook from "public/assets/images/facebook.svg";
+import featureRibbonLeft from "public/assets/images/feature_ribbon_left.svg";
+import featureRibbonRight from "public/assets/images/feature_ribbon_right.svg";
 import filterIcon from "public/assets/images/filter_icon.svg";
 import google from "public/assets/images/google.svg";
+import greenHeart from "public/assets/images/green_heart.svg";
 import greenLeftBlur from "public/assets/images/green_left_blur.svg";
 import greenRightBlur from "public/assets/images/green_right_blur.svg";
 import heroBottomShape from "public/assets/images/hero_bottom_shape.svg";
@@ -41,6 +45,7 @@ import like from "public/assets/images/like.svg";
 import loginBg from "public/assets/images/login_bg.png";
 import logo from "public/assets/images/logo.svg";
 import logoBig from "public/assets/images/logo_big.svg";
+import matchMeet from "public/assets/images/match_meet.png";
 import matches from "public/assets/images/matches.svg";
 import matchesActive from "public/assets/images/matches_active.svg";
 import messages from "public/assets/images/messages.svg";
@@ -51,18 +56,21 @@ import pawnderr from "public/assets/images/pawnderr.svg";
 import pawnderrActive from "public/assets/images/pawnderr_active.svg";
 import pawnderrPlus from "public/assets/images/pawnderr_plus.svg";
 import playBlue from "public/assets/images/play_blue.svg";
+import purpleIcon from "public/assets/images/purple_icon.svg";
 import searchGrey from "public/assets/images/search_grey.svg";
 import send from "public/assets/images/send.svg";
 import signupBg from "public/assets/images/signup_bg.svg";
 import signupLeftBlur from "public/assets/images/signup_left_blur.svg";
 import signupRightBlur from "public/assets/images/signup_right_blur.svg";
 import smiley from "public/assets/images/smiley.svg";
+import sniffSwipe from "public/assets/images/sniff_swipe.png";
 import starBlack from "public/assets/images/star_black.svg";
 import starWhite from "public/assets/images/star_white.svg";
 import userFormBg from "public/assets/images/user_form_bg.svg";
 import userLeftBlur from "public/assets/images/user_left_blur.svg";
 import userRightBlur from "public/assets/images/user_right_blur.svg";
 import x from "public/assets/images/x.svg";
+import yellowStar from "public/assets/images/yellow_star.svg";
 
 export type ImageType =
   | "logo"
@@ -129,6 +137,14 @@ export type ImageType =
   | "heroTopShape"
   | "heroBottomShape"
   | "playBlue"
+  | "yellowStar"
+  | "purpleIcon"
+  | "greenHeart"
+  | "createProfile"
+  | "sniffSwipe"
+  | "matchMeet"
+  | "featureRibbonLeft"
+  | "featureRibbonRight"
   | "backBtn";
 
 export type NextImage = {
@@ -202,5 +218,13 @@ export const images: Record<ImageType, NextImage> = {
   heroImg,
   heroTopShape,
   heroBottomShape,
-  playBlue
+  playBlue,
+  yellowStar,
+  purpleIcon,
+  greenHeart,
+  createProfile,
+  sniffSwipe,
+  matchMeet,
+  featureRibbonLeft,
+  featureRibbonRight
 };

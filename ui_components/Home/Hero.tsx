@@ -3,7 +3,7 @@ import { images } from "@/utils/images";
 
 const Hero = () => {
   return (
-    <section className="w-full min-h-screen relative pt-24 bg-primary-theme/8 flex items-center justify-center overflow-clip">
+    <section className="w-full min-h-screen relative pt-20 bg-primary-theme/8 flex items-center justify-center overflow-clip">
       <img
         src={images.heroTopShape.src}
         alt="blur"
@@ -24,14 +24,14 @@ const Hero = () => {
         alt="blur"
         className="absolute right-0 bottom-0 lg:h-[520px] pointer-events-none z-0"
       />
-      <div className="container mx-auto px-4 py-8 md:py-16 relative z-10">
+      <div className="container mx-auto px-4 md:px-0 py-8 md:py-16 relative z-10">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
           {/* Left Content */}
-          <div className="space-y-6 lg:space-y-8">
+          <div className="">
             <p className="text-dark-grey md:text-base font_fredoka">
               Verified connections for happy pets
             </p>
-            <h1 className="md:text-[64px] md:leading-[64px] text-dark-black font_fredoka">
+            <h1 className="md:text-[64px] md:leading-[64px] text-dark-black font_fredoka mb-6">
               Find a <span className="font-semibold">PAWfect</span>
               <br />
               Companion for

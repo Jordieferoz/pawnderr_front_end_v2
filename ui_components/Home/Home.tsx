@@ -1,10 +1,11 @@
-import { Header, Hero } from ".";
+import { Features, Header, Hero } from ".";
 
 const Home = () => {
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <div className="relative">
       <Header />
       <Hero />
+      <Features />
     </div>
   );
 };
