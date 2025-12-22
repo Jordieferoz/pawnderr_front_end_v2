@@ -16,12 +16,12 @@ import discoverBg from "public/assets/images/discover_bg.png";
 import discoverLeftPattern from "public/assets/images/discover_left_pattern.svg";
 import discoverRightPattern from "public/assets/images/discover_right_pattern.png";
 import dislike from "public/assets/images/dislike.svg";
-import doggoProfilePlaceholder from "public/assets/images/doggo_profile_placeholder.png";
 import doggo1 from "public/assets/images/doggo1.png";
 import doggo2 from "public/assets/images/doggo2.png";
 import doggo3 from "public/assets/images/doggo3.png";
 import doggo4 from "public/assets/images/doggo4.png";
 import doggo5 from "public/assets/images/doggo5.png";
+import doggoProfilePlaceholder from "public/assets/images/doggo_profile_placeholder.png";
 import editIcon from "public/assets/images/edit_icon.svg";
 import ellipsisHorizontal from "public/assets/images/ellipsis_horizontal.svg";
 import eyeBlue from "public/assets/images/eye_blue.svg";
@@ -30,6 +30,13 @@ import filterIcon from "public/assets/images/filter_icon.svg";
 import google from "public/assets/images/google.svg";
 import greenLeftBlur from "public/assets/images/green_left_blur.svg";
 import greenRightBlur from "public/assets/images/green_right_blur.svg";
+import heroBottomShape from "public/assets/images/hero_bottom_shape.svg";
+import heroCircle from "public/assets/images/hero_circle.svg";
+import heroImg from "public/assets/images/hero_img.png";
+import heroLeftBlur from "public/assets/images/hero_left_blur.svg";
+import heroPattern from "public/assets/images/hero_pattern.svg";
+import heroRightBlur from "public/assets/images/hero_right_blur.svg";
+import heroTopShape from "public/assets/images/hero_top_shape.svg";
 import like from "public/assets/images/like.svg";
 import loginBg from "public/assets/images/login_bg.png";
 import logo from "public/assets/images/logo.svg";
@@ -43,6 +50,7 @@ import pawnderBlack from "public/assets/images/pawnder_black.svg";
 import pawnderr from "public/assets/images/pawnderr.svg";
 import pawnderrActive from "public/assets/images/pawnderr_active.svg";
 import pawnderrPlus from "public/assets/images/pawnderr_plus.svg";
+import playBlue from "public/assets/images/play_blue.svg";
 import searchGrey from "public/assets/images/search_grey.svg";
 import send from "public/assets/images/send.svg";
 import signupBg from "public/assets/images/signup_bg.svg";
@@ -113,6 +121,14 @@ export type ImageType =
   | "discoverLeftPattern"
   | "discoverRightPattern"
   | "pawnderBlack"
+  | "heroPattern"
+  | "heroLeftBlur"
+  | "heroRightBlur"
+  | "heroCircle"
+  | "heroImg"
+  | "heroTopShape"
+  | "heroBottomShape"
+  | "playBlue"
   | "backBtn";
 
 export type NextImage = {
@@ -178,5 +194,13 @@ export const images: Record<ImageType, NextImage> = {
   discoverBg,
   discoverLeftPattern,
   discoverRightPattern,
-  pawnderBlack
+  pawnderBlack,
+  heroPattern,
+  heroLeftBlur,
+  heroRightBlur,
+  heroCircle,
+  heroImg,
+  heroTopShape,
+  heroBottomShape,
+  playBlue
 };

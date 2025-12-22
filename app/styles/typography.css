@@ -104,4 +104,8 @@
     @apply text-[10px] leading-[1.4] font-normal font-['Source_Sans_3'] md:text-xs;
     font-family: "Source Sans 3", sans-serif;
   }
+  .menu_link_medium {
+    @apply lg:text-xl font-medium;
+    font-family: "Fredoka", sans-serif;
+  }
 }

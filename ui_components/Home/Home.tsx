@@ -1,8 +1,9 @@
-import Hero from "./Hero";
+import { Header, Hero } from ".";
 
 const Home = () => {
   return (
-    <div className="relative min-h-screen">
+    <div className="relative min-h-screen overflow-hidden">
+      <Header />
       <Hero />
     </div>
   );
