@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { FC, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -15,11 +14,10 @@ const stepTitles: Record<number, string> = {
   0: "Edit Profile",
   1: "Personal Information",
   2: "Pet Information",
-  3: "Match Preferences",
+  3: "Match Preferences"
 };
 
 const EditProfile: FC = () => {
-  const router = useRouter();
   const dispatch = useDispatch();
   const step = useSelector((state: RootState) => state.profileInfo.step);
 

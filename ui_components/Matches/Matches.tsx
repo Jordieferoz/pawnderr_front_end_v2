@@ -7,8 +7,8 @@ import { useDispatch } from "react-redux";
 import { openFilterModal } from "@/store/modalSlice";
 import { images } from "@/utils/images";
 
-import { CustomAvatar } from "../Shared";
 import { MatchedCard } from ".";
+import { CustomAvatar } from "../Shared";
 
 const Matches: FC = () => {
   const router = useRouter();
@@ -26,6 +26,7 @@ const Matches: FC = () => {
             onClick={() => router.back()}
             className="w-10 h-10"
             src={images.backBtn.src}
+            alt="back"
           />
           <h4 className="display4_medium text-accent-900">Matches</h4>
         </div>
@@ -35,6 +36,7 @@ const Matches: FC = () => {
           className="cursor-pointer w-10"
           src={images.filterIcon.src}
           onClick={handleOpenFilter}
+          alt="open filter"
         />
         <div className="grid grid-cols-4 gap-4 items-center justify-center">
           <CustomAvatar

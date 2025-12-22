@@ -7,12 +7,16 @@ const InfoCard: FC<IInfoCardProps> = ({
   type,
   desc,
   list = [],
-  image,
+  image
 }) => {
   return (
     <div className="bg-white p-4 shadow-[0px_4px_10.6px_0px_#0000001A] rounded-xl">
       <div className="md:flex md:gap-7.5 items-center justify-center">
-        <img src={image} className="w-full rounded-xl mb-7.5 grow basis-0" />
+        <img
+          src={image}
+          className="w-full rounded-xl mb-7.5 grow basis-0"
+          alt="image"
+        />
         <div className="grow basis-0">
           <h2 className="heading2_medium text-dark-grey2 mb-2 border-b pb-4.5 border-dashed border-[#9B9B9B6E]">
             {title}

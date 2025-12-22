@@ -8,11 +8,11 @@ const ProfileCard: FC<IProfileCardProps> = ({
   age,
   breed,
   location,
-  image,
+  image
 }) => {
   return (
     <div className="bg-white p-4 shadow-[0px_4px_10.6px_0px_#0000001A] rounded-xl">
-      <img src={image} className="w-full rounded-xl mb-7.5" />
+      <img src={image} className="w-full rounded-xl mb-7.5" alt="image" />
       <h3 className="display4_medium text-dark-grey2 mb-2">
         {name}{" "}
         <span className="body_large_medium">

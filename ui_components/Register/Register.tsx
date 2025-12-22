@@ -15,12 +15,12 @@ const totalSteps = 5;
 
 const Register: FC = () => {
   const step = useSelector((state: RootState) => state.registration.step);
-  const formData = useSelector((state: RootState) => state.registration);
+  // const formData = useSelector((state: RootState) => state.registration);
   console.log(step, "step");
   const progressValue = (step / totalSteps) * 100;
 
   return (
-    <div className="relative min-h-[100dvh] px-5 pt-12 pb-20 md:px-8">
+    <div className="relative min-h-[100dvh] px-5 pt-12 pb-10 md:px-8">
       <Link
         href={"/"}
         className="mb-7.5 md:flex justify-center hidden relative z-20"
@@ -55,26 +55,30 @@ const Register: FC = () => {
       </div>
       {step === 1 ? (
         <img
+          alt=""
           src={images.userFormBg.src}
           className="absolute -top-10 left-0 w-full z-10 pointer-events-none hidden md:block"
         />
       ) : step === 2 ? (
         <img
+          alt=""
           src={images.userFormBg.src}
           className="absolute -top-10 left-0 w-full z-10 pointer-events-none hidden md:block"
         />
       ) : step === 3 ? (
         <img
+          alt=""
           src={images.userFormBg.src}
           className="absolute -top-10 left-0 w-full z-10 pointer-events-none hidden md:block"
         />
       ) : step === 4 ? (
         <img
+          alt=""
           src={images.userFormBg.src}
           className="absolute -top-10 left-0 w-full z-10 pointer-events-none hidden md:block"
         />
       ) : null}
-      <div className="hidden md:block fixed right-6 bottom-6">
+      <div className="hidden md:block z-20 fixed right-6 bottom-6">
         <Progress
           variant="circular"
           value={progressValue}

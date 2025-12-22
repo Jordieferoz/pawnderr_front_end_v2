@@ -32,7 +32,7 @@ function Progress({
       <div
         className={cn(
           "relative inline-flex items-center justify-center",
-          className,
+          className
         )}
       >
         <svg width={size} height={size} className="transform -rotate-90">
@@ -72,7 +72,7 @@ function Progress({
       data-slot="progress"
       className={cn(
         "bg-secondary-400 relative h-2 w-full overflow-hidden rounded-full",
-        className,
+        className
       )}
       {...props}
     >

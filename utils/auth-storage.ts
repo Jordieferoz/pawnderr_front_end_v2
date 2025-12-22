@@ -21,5 +21,5 @@ export const signupStorage = {
 
   exists: () => {
     return !!sessionStorage.getItem("signupEmail");
-  },
+  }
 };

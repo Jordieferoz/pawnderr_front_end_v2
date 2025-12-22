@@ -1,19 +1,20 @@
 "use client";
 
-import "./styles/globals.css";
-
+import { SessionProvider } from "next-auth/react";
 import { Fredoka, Source_Sans_3 } from "next/font/google";
 import { usePathname } from "next/navigation";
-import { SessionProvider } from "next-auth/react";
 
+import { Toaster } from "@/components/ui/sonner";
 import { ReduxProvider } from "@/store/Provider";
 import { MobileMenu } from "@/ui_components/Shared";
+
+import "./styles/globals.css";
 
 const fredoka = Fredoka({ subsets: ["latin"], display: "swap" });
 const sourceSans3 = Source_Sans_3({ subsets: ["latin"], display: "swap" });
 
 export default function RootLayout({
-  children,
+  children
 }: {
   children: React.ReactNode;
 }) {
@@ -35,6 +36,7 @@ export default function RootLayout({
             {!shouldHideMobileMenu && <MobileMenu />}
           </ReduxProvider>
         </SessionProvider>
+        <Toaster />
       </body>
     </html>
   );

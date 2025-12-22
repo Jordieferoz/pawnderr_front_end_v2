@@ -1,9 +1,9 @@
-//utils/api/index.ts
+// utils/api/index.ts
 
 import { globalGetService, globalPostService } from "../globalApiService";
 import { TResponse } from "../types";
+import { PhotoUploadResponse } from "./types";
 
-// Registration (no auth required)
 export const registerAuth = (payload: {
   email: string;
   password: string;
@@ -26,7 +26,6 @@ export const registerAuth = (payload: {
   });
 };
 
-// Verify OTP (auth required - token from sessionStorage)
 export const verifyOTP = (payload: {
   phone: string;
   otp: string;
@@ -46,7 +45,6 @@ export const verifyOTP = (payload: {
   });
 };
 
-// Resend OTP (auth required)
 export const resendOTP = (payload: {
   phone: string;
 }): Promise<TResponse<any>> => {
@@ -65,12 +63,83 @@ export const resendOTP = (payload: {
   });
 };
 
-// Fetch pets (auth required)
 export const fetchPets = (): Promise<TResponse<any>> => {
   return new Promise((resolve, reject) => {
     globalGetService<any, any>(`pet/fetch-pets`, {})
       .then((response) => {
         if (response.statusCode === 200) {
+          resolve(response);
+        } else {
+          reject(new Error(`Unexpected status code: ${response.statusCode}`));
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+export const fetchPetRegistrationData = (): Promise<TResponse<any>> => {
+  return new Promise((resolve, reject) => {
+    globalGetService<any, any>(`pet/registration-data`, {})
+      .then((response) => {
+        if (response.statusCode === 200) {
+          resolve(response);
+        } else {
+          reject(new Error(`Unexpected status code: ${response.statusCode}`));
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+export const petRegisterInfo = (payload: any): Promise<TResponse<any>> => {
+  return new Promise((resolve, reject) => {
+    globalPostService<any, any>(`pet/register`, payload)
+      .then((response) => {
+        if (response.statusCode === 200 || response.statusCode === 201) {
+          resolve(response);
+        } else {
+          reject(new Error(`Unexpected status code: ${response.statusCode}`));
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+export const uploadPetPhoto = (
+  file: File | Blob
+): Promise<TResponse<PhotoUploadResponse>> => {
+  return new Promise((resolve, reject) => {
+    const formData = new FormData();
+    formData.append("photo", file);
+
+    globalPostService<FormData, PhotoUploadResponse>(
+      `pet/photo/upload`,
+      formData
+    )
+      .then((response) => {
+        if (response.statusCode === 200 || response.statusCode === 201) {
+          resolve(response);
+        } else {
+          reject(new Error(`Unexpected status code: ${response.statusCode}`));
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+export const petPreferencesInfo = (payload: any): Promise<TResponse<any>> => {
+  return new Promise((resolve, reject) => {
+    globalPostService<any, any>(`pet/register-preferences`, payload)
+      .then((response) => {
+        if (response.statusCode === 200 || response.statusCode === 201) {
           resolve(response);
         } else {
           reject(new Error(`Unexpected status code: ${response.statusCode}`));

@@ -11,7 +11,7 @@ const initialState: ModalState = {
   isFilterModalOpen: false,
   isMessageActionModalOpen: false,
   isReportModalOpen: false,
-  isBlockModalOpen: false,
+  isBlockModalOpen: false
 };
 
 const modalSlice = createSlice({
@@ -41,8 +41,8 @@ const modalSlice = createSlice({
     },
     closeBlockModal: (state) => {
       state.isBlockModalOpen = false;
-    },
-  },
+    }
+  }
 });
 
 export const {
@@ -53,6 +53,6 @@ export const {
   openReportModal,
   closeReportModal,
   openBlockModal,
-  closeBlockModal,
+  closeBlockModal
 } = modalSlice.actions;
 export default modalSlice.reducer;

@@ -14,7 +14,7 @@ const REPORT_OPTIONS = [
   "Misinformation",
   "Scam / Fraud",
   "Impersonation",
-  "Other / Not Listed",
+  "Other / Not Listed"
 ];
 
 const ReportModalContent: FC = () => {

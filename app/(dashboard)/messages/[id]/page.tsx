@@ -4,7 +4,7 @@ import { ChatWindow, Messages } from "@/ui_components/Messages";
 import {
   BlockModal,
   MessageActionModal,
-  ReportModal,
+  ReportModal
 } from "@/ui_components/Modals";
 import { images } from "@/utils/images";
 

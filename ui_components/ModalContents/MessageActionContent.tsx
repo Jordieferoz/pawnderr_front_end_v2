@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import {
   closeMessageActionModal,
   openBlockModal,
-  openReportModal,
+  openReportModal
 } from "@/store/modalSlice";
 import { images } from "@/utils/images";
 

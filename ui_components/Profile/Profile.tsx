@@ -16,7 +16,7 @@ const Profile: FC = () => {
     age: 2,
     breed: "Pug",
     location: "Gurugram",
-    image: images.doggo1.src,
+    image: images.doggo1.src
   };
 
   return (
@@ -27,6 +27,7 @@ const Profile: FC = () => {
             onClick={() => router.back()}
             className="w-10 h-10"
             src={images.backBtn.src}
+            alt="back"
           />
           <h4 className="display4_medium text-accent-900">Profile</h4>
         </div>
@@ -34,6 +35,7 @@ const Profile: FC = () => {
           className="cursor-pointer"
           onClick={() => router.push("/profile/edit")}
           src={images.editIcon.src}
+          alt="edit"
         />
       </div>
 
@@ -59,8 +61,8 @@ const Profile: FC = () => {
               { left: "Nickname", right: "Jakey" },
               {
                 left: "Favourite Activities",
-                right: "Fetch, Cuddles, Digging",
-              },
+                right: "Fetch, Cuddles, Digging"
+              }
             ]}
             desc={""}
           />

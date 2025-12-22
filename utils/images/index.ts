@@ -178,5 +178,5 @@ export const images: Record<ImageType, NextImage> = {
   discoverBg,
   discoverLeftPattern,
   discoverRightPattern,
-  pawnderBlack,
+  pawnderBlack
 };

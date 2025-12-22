@@ -1,24 +1,26 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { signIn } from "next-auth/react";
-import { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { InputField } from "@/ui_components/Shared";
-import { signupStorage } from "@/utils/auth-storage";
-import { images } from "@/utils/images";
 import {
   signInSchema,
   type SignInValues,
   signUpSchema,
-  type SignUpValues,
+  type SignUpValues
 } from "@/utils/schemas/auth";
+import { signIn } from "next-auth/react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { setUser } from "@/store/userSlice";
+import { InputField } from "@/ui_components/Shared";
+import { signupStorage } from "@/utils/auth-storage";
+import { images } from "@/utils/images";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 type Mode = "signin" | "signup";
 
@@ -28,6 +30,8 @@ const sanitizeInput = (input: string): string => {
 };
 
 export function Login({ mode = "signin" }: { mode?: Mode }) {
+  const dispatch = useDispatch(); // ADD THIS
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const isSignup = mode === "signup";
@@ -50,14 +54,14 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
     handleSubmit,
     formState: { errors, isValid, isSubmitting },
     watch,
-    trigger,
+    trigger
   } = useForm<SignInValues | SignUpValues>({
     resolver: zodResolver(schema),
     mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: isSignup
       ? { email: "", password: "", confirmPassword: "" }
-      : { email: "", password: "", rememberMe: false },
+      : { email: "", password: "", rememberMe: false }
   });
 
   const password = watch("password");
@@ -90,7 +94,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
           email: sanitizedEmail,
           password: signinData.password,
           redirect: false,
-          callbackUrl,
+          callbackUrl
         });
 
         if (result?.error) {
@@ -101,8 +105,16 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
             setApiError(result.error);
           }
         } else if (result?.ok) {
-          // Update session max age based on rememberMe
-          // Note: This is handled in the session callback in [...nextauth]/route.ts
+          // Get session to retrieve user data
+          const { getSession } = await import("next-auth/react");
+          const session = await getSession();
+
+          if (session?.user) {
+            console.log("👤 Storing user in Redux:", session.user);
+
+            // Dispatch user data to Redux
+            dispatch(setUser(session.user as any));
+          }
           router.push(callbackUrl);
           router.refresh();
         }
@@ -117,7 +129,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
         setApiError(
           isSignup
             ? "Failed to proceed. Please try again."
-            : "Invalid email or password. Please try again.",
+            : "Invalid email or password. Please try again."
         );
       }
     }
@@ -284,7 +296,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
                       type="password"
                       {...field}
                       aria-invalid={Boolean(
-                        "confirmPassword" in errors && errors.confirmPassword,
+                        "confirmPassword" in errors && errors.confirmPassword
                       )}
                       aria-describedby={
                         "confirmPassword" in errors && errors.confirmPassword

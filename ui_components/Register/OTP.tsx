@@ -1,29 +1,28 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
-import { FC, useEffect, useState } from "react";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot
+} from "@/components/ui/input-otp";
+import { FC, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Button } from "@/components/ui/button";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
 import { RootState } from "@/store";
-import { updateStepData } from "@/store/registrationSlice";
-import { fetchPets } from "@/utils/api";
+import { setMetadata, updateStepData } from "@/store/registrationSlice";
+import { fetchPetRegistrationData } from "@/utils/api";
 import { otpSchema, type OtpValues } from "@/utils/schemas/registrationSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { BackBtnRegister } from ".";
 
 const OTP: FC = () => {
   const dispatch = useDispatch();
-  const router = useRouter();
+
   const registrationData = useSelector(
-    (state: RootState) => state.registration,
+    (state: RootState) => state.registration
   );
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -32,58 +31,39 @@ const OTP: FC = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid },
-    reset,
+    formState: { errors, isValid }
   } = useForm<OtpValues>({
     resolver: zodResolver(otpSchema),
     mode: "onChange",
     defaultValues: {
-      otp: "",
-    },
+      otp: ""
+    }
   });
 
-  // Check if user is authenticated
-  useEffect(() => {
-    const token = sessionStorage.getItem("accessToken");
-    if (!token) {
-      setApiError("Session expired. Please start registration again.");
-      setTimeout(() => router.push("/sign-up"), 2000);
-    }
-  }, [router]);
-
   const onSubmit = async (data: OtpValues) => {
+    console.log(data, "data");
     setApiError(null);
     setIsSubmitting(true);
 
     try {
-      // Verify user is still authenticated
-      // const token = sessionStorage.getItem("accessToken");
-      // if (!token) {
-      //   setApiError("Session expired. Please start registration again.");
-      //   setTimeout(() => router.push("/sign-up"), 2000);
-      //   return;
-      // }
+      // Fetch registration metadata
+      const resp = await fetchPetRegistrationData();
+      console.log(resp, "resp");
+      if (resp.statusCode === 200 && resp.data) {
+        // Store metadata in Redux
+        dispatch(setMetadata(resp.data.data));
 
-      try {
-        const petsResponse = await fetchPets();
+        // Update Redux state - user is now verified
+        dispatch(
+          updateStepData({
+            // otp: data.otp,
+            isVerified: true,
+            step: 3
+          })
+        );
 
-        if (petsResponse.statusCode === 200 && petsResponse.data) {
-          // Store pets data for the pet profile creation step
-          console.log(petsResponse, "petsResponse");
-        }
-      } catch (petsError) {
-        console.error("Failed to fetch pets:", petsError);
-        // Continue anyway - this is not critical for moving forward
+        console.log("Registration metadata loaded successfully");
       }
-
-      // Update Redux state - user is now verified
-      dispatch(
-        updateStepData({
-          otp: data.otp,
-          isVerified: true,
-          step: 3,
-        }),
-      );
     } catch (error: any) {
       console.error("OTP verification error:", error);
 
@@ -98,36 +78,6 @@ const OTP: FC = () => {
       setIsSubmitting(false);
     }
   };
-
-  // At the top of OTP component, add restoration logic
-  useEffect(() => {
-    const token = sessionStorage.getItem("accessToken");
-    const userData = sessionStorage.getItem("userData");
-
-    if (!token || !userData) {
-      setApiError("Session expired. Please start registration again.");
-      setTimeout(() => router.push("/sign-up"), 2000);
-      return;
-    }
-
-    // Restore Redux state if empty (page refresh)
-    if (!registrationData.userId) {
-      const user = JSON.parse(userData);
-      dispatch(
-        updateStepData({
-          email: user.email,
-          userId: user.id,
-          name: user.name,
-          gender: user.gender,
-          phoneNumber: user.phone,
-          isVerified: user.isVerified,
-          isActive: user.isActive,
-          profileCompletion: user.profileCompletion,
-          step: 2,
-        }),
-      );
-    }
-  }, [router, registrationData.userId, dispatch]);
 
   return (
     <div>

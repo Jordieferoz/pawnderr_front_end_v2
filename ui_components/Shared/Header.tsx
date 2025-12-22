@@ -33,7 +33,7 @@ const Header: FC = () => {
         </Link>
 
         <ul className="flex gap-6 items-center">
-          {headerMenuItems.map((item, index) => {
+          {headerMenuItems.map((item) => {
             const active = isItemActive(item.href, item.key);
 
             return (
@@ -72,11 +72,12 @@ const Header: FC = () => {
             <img
               src={images.doggoProfilePlaceholder.src}
               className="rounded-full w-9 h-9 object-cover"
+              alt="pet placeholder"
             />
           </Link>
           <Link href={"/upgrade"} className="cursor-pointer">
             <Button>
-              <img src={images.pawnderBlack.src} /> PAWnderr+
+              <img src={images.pawnderBlack.src} alt="pawnderr+" /> PAWnderr+
             </Button>
           </Link>
         </ul>

@@ -1,8 +1,8 @@
 "use client";
-import { useDrag } from "@use-gesture/react";
 import React, { useMemo, useState } from "react";
 
 import { images } from "@/utils/images";
+import { useDrag } from "@use-gesture/react";
 
 type Card = {
   name: string;
@@ -16,39 +16,39 @@ const cardsData: Card[] = [
     name: "Buddy",
     info: "(Male, 2 Years)",
     url: images.doggo1.src,
-    desc: "A cheerful retriever who loves belly rubs and chasing tennis balls.",
+    desc: "A cheerful retriever who loves belly rubs and chasing tennis balls."
   },
   {
     name: "Luna",
     info: "(Female, 1.5 Years)",
     url: images.doggo2.src,
-    desc: "A playful husky with bright blue eyes and endless energy for adventures.",
+    desc: "A playful husky with bright blue eyes and endless energy for adventures."
   },
   {
     name: "Rocky",
     info: "(Male, 3 Years)",
     url: images.doggo3.src,
-    desc: "This gentle giant loves naps in the sun and snuggling on cold days.",
+    desc: "This gentle giant loves naps in the sun and snuggling on cold days."
   },
   {
     name: "Daisy",
     info: "(Female, 2.5 Years)",
     url: images.doggo4.src,
-    desc: "Smart, loyal, and always ready to pose for the camera — a real charmer.",
+    desc: "Smart, loyal, and always ready to pose for the camera — a real charmer."
   },
   {
     name: "Max",
     info: "(Male, 1 Year)",
     url: images.doggo5.src,
-    desc: "Small in size but big in personality, Max never misses a treat!",
-  },
+    desc: "Small in size but big in personality, Max never misses a treat!"
+  }
 ];
 
 export default function SwipingCards() {
   const [cards, setCards] = useState(cardsData);
   const [currentIndex, setCurrentIndex] = useState(cardsData.length - 1);
   const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | null>(
-    null,
+    null
   );
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -57,7 +57,7 @@ export default function SwipingCards() {
       Array(cardsData.length)
         .fill(0)
         .map(() => React.createRef<HTMLDivElement>()),
-    [],
+    []
   );
 
   const canSwipe = currentIndex >= 0;
@@ -85,7 +85,7 @@ export default function SwipingCards() {
       active,
       movement: [mx],
       direction: [xDir],
-      velocity: [vx],
+      velocity: [vx]
     }) => {
       if (index !== currentIndex || isAnimating) return;
 
@@ -118,8 +118,8 @@ export default function SwipingCards() {
     },
     {
       axis: "x",
-      filterTaps: true,
-    },
+      filterTaps: true
+    }
   );
 
   const programmaticSwipe = (dir: "left" | "right") => {
@@ -159,7 +159,7 @@ export default function SwipingCards() {
               className="absolute top-0 left-1/2 -translate-x-1/2 w-full touch-none"
               style={{
                 zIndex: idx,
-                pointerEvents: isTop && !isAnimating ? "auto" : "none",
+                pointerEvents: isTop && !isAnimating ? "auto" : "none"
               }}
             >
               <div
@@ -169,7 +169,7 @@ export default function SwipingCards() {
                   transition: isTop
                     ? "none"
                     : "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-                  transformOrigin: "center bottom",
+                  transformOrigin: "center bottom"
                 }}
               >
                 <img
@@ -190,7 +190,7 @@ export default function SwipingCards() {
                           : "right-6 text-red-500 border-red-500 rotate-[20deg]"
                       }`}
                       style={{
-                        textShadow: "0 0 10px rgba(0,0,0,0.3)",
+                        textShadow: "0 0 10px rgba(0,0,0,0.3)"
                       }}
                     >
                       {swipeDirection === "right" ? "LIKE" : "NOPE"}
