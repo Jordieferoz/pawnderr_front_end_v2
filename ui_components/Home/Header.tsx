@@ -1,7 +1,16 @@
+"use client";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+
 import { Button } from "@/components/ui/button";
 import { images } from "@/utils/images";
 
 const Header = () => {
+  const router = useRouter();
+
+  const handleLogin = () => {
+    router.push("/sign-in");
+  };
   return (
     <header className="fixed top-0 left-0 w-full bg-white shadow-[0px_4px_19.1px_7px_#0000000A] z-40 backdrop-blur-2xl">
       <div className="container mx-auto px-4 md:px-0 py-4 md:py-6 flex items-center justify-between">
@@ -9,32 +18,34 @@ const Header = () => {
         <div className="flex items-center gap-8 md:gap-12 justify-between">
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6 lg:gap-8">
-            <a
-              href="#"
+            <Link
+              href="/"
               className="menu_link_medium text-grey-900 hover:text-blue-600 transition-colors"
             >
               How It Works
-            </a>
-            <a
+            </Link>
+            <Link
               href="#"
               className="menu_link_medium text-grey-900 hover:text-blue-600 transition-colors"
             >
               Why PAWnderr
-            </a>
-            <a
+            </Link>
+            <Link
               href="#"
               className="menu_link_medium text-grey-900 hover:text-blue-600 transition-colors"
             >
               Reviews
-            </a>
-            <a
-              href="#"
+            </Link>
+            <Link
+              href="/sign-up"
               className="menu_link_medium text-grey-900 hover:text-blue-600 transition-colors"
             >
               Sign Up
-            </a>
+            </Link>
           </nav>
-          <Button className="font-medium px-12">Log In</Button>
+          <Button className="font-medium px-12" onClick={handleLogin}>
+            Log In
+          </Button>
         </div>
       </div>
     </header>

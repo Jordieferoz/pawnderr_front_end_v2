@@ -1,7 +1,16 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+
 import { Button } from "@/components/ui/button";
 import { images } from "@/utils/images";
 
 const Hero = () => {
+  const router = useRouter();
+
+  const handleCreateAccount = () => {
+    router.push("/sign-up");
+  };
   return (
     <section className="w-full min-h-screen relative pt-20 bg-primary-theme/8 flex items-center justify-center overflow-clip">
       <img
@@ -44,7 +53,12 @@ const Hero = () => {
             </p>
 
             <div className="flex flex-wrap items-center gap-6">
-              <Button className="px-12 font-medium">Create Account</Button>
+              <Button
+                className="px-12 font-medium"
+                onClick={handleCreateAccount}
+              >
+                Create Account
+              </Button>
               <div className="flex items-center gap-2">
                 <img src={images.playBlue.src} alt="" />
                 <p className="text-accent-900 text-base font-medium font_fredoka">

@@ -1,4 +1,4 @@
-import { Features, Header, Hero } from ".";
+import { Features, Header, Hero, PawpStars, WhyChooseUs } from ".";
 
 const Home = () => {
   return (
@@ -6,6 +6,8 @@ const Home = () => {
       <Header />
       <Hero />
       <Features />
+      <WhyChooseUs />
+      <PawpStars />
     </div>
   );
 };

@@ -8,7 +8,7 @@ export default withAuth(
     const isAuthPage =
       req.nextUrl.pathname.startsWith("/sign-in") ||
       req.nextUrl.pathname.startsWith("/sign-up") ||
-      req.nextUrl.pathname.startsWith("/register"); // Added /register
+      req.nextUrl.pathname.startsWith("/register");
 
     // If user is authenticated and tries to access auth pages, redirect to dashboard
     if (isAuthPage) {
@@ -28,10 +28,13 @@ export default withAuth(
           req.nextUrl.pathname.startsWith("/sign-in") ||
           req.nextUrl.pathname.startsWith("/sign-up") ||
           req.nextUrl.pathname.startsWith("/forgot-password") ||
-          req.nextUrl.pathname.startsWith("/register"); // Added /register
+          req.nextUrl.pathname.startsWith("/register");
 
-        // Allow access to auth pages without token
-        if (isAuthPage) {
+        // Allow access to root landing page
+        const isLandingPage = req.nextUrl.pathname === "/";
+
+        // Allow access to auth pages and landing page without token
+        if (isAuthPage || isLandingPage) {
           return true;
         }
 

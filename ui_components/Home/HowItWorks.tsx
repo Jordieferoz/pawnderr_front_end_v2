@@ -1,12 +1,20 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+
 import { Button } from "@/components/ui/button";
 import { images } from "@/utils/images";
 
 const HowItWorks = () => {
+  const router = useRouter();
+
+  const handleJoin = () => {
+    router.push("/sign-up");
+  };
   return (
     <section className="pt-25">
       <div className="container mx-auto px-10">
         <h3 className="heading1_medium text-center text-dark-brown md:mb-15">
-          {" "}
           Sniff. Swipe. Match. Meet.
         </h3>
 
@@ -72,7 +80,9 @@ const HowItWorks = () => {
           </div>
         </div>
         <div className="flex items-center justify-center">
-          <Button className="font-medium px-20">Join PAWnderr</Button>
+          <Button onClick={handleJoin} className="font-medium px-20">
+            Join PAWnderr
+          </Button>
         </div>
       </div>
     </section>

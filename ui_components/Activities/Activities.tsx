@@ -21,7 +21,7 @@ const Activities: FC = () => {
     dispatch(openFilterModal());
   };
 
-  const isSubscribed = false;
+  const isSubscribed = true;
 
   return (
     <div className="activities_wrapper">

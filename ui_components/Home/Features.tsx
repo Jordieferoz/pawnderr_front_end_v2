@@ -4,7 +4,7 @@ import { HowItWorks } from ".";
 
 const Features = () => {
   return (
-    <div className="min-h-screen py-10 relative">
+    <div className="min-h-screen py-10 pb-20 relative">
       <div className="container mx-auto shadow-[0px_4px_19.1px_7px_#0000000A] relative bg-white rounded-xl py-15 px-8">
         <div className="grid md:grid-cols-3 gap-6 lg:gap-0">
           <div className="text-center pr-14 border-r border-grey-1000 border-dashed">
@@ -51,7 +51,7 @@ const Features = () => {
       />
       <img
         src={images.featureRibbonRight.src}
-        className="absolute -bottom-30 right-0 -z-10"
+        className="absolute -bottom-20 right-0 -z-10"
         alt="ribbon"
       />
     </div>

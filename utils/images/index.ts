@@ -1,5 +1,5 @@
-import activities from "public/assets/images/activities.svg";
 import activitiesActive from "public/assets/images/activities_active.svg";
+import activities from "public/assets/images/activities.svg";
 import addMore from "public/assets/images/add_more.svg";
 import addPetPhoto from "public/assets/images/add_pet_photo.svg";
 import alert from "public/assets/images/alert.svg";
@@ -7,22 +7,26 @@ import attachment from "public/assets/images/attachment.svg";
 import authPattern from "public/assets/images/auth_pattern.svg";
 import backBtn from "public/assets/images/back.svg";
 import block from "public/assets/images/block.svg";
+import blueBottomPattern from "public/assets/images/blue_bottom_pattern.svg";
+import blueLeftShape from "public/assets/images/blue_left_shape.svg";
+import blueRightShape from "public/assets/images/blue_right_shape.svg";
+import blueTopPattern from "public/assets/images/blue_top_pattern.svg";
 import chatYellow from "public/assets/images/chat_yellow.svg";
-import chevronRight from "public/assets/images/chevron_right.svg";
 import chevronRightGrey from "public/assets/images/chevron_right_grey.svg";
+import chevronRight from "public/assets/images/chevron_right.svg";
 import createProfile from "public/assets/images/create_profile.png";
-import discover from "public/assets/images/discover.svg";
 import discoverActive from "public/assets/images/discover_active.svg";
 import discoverBg from "public/assets/images/discover_bg.png";
 import discoverLeftPattern from "public/assets/images/discover_left_pattern.svg";
 import discoverRightPattern from "public/assets/images/discover_right_pattern.png";
+import discover from "public/assets/images/discover.svg";
 import dislike from "public/assets/images/dislike.svg";
+import doggoProfilePlaceholder from "public/assets/images/doggo_profile_placeholder.png";
 import doggo1 from "public/assets/images/doggo1.png";
 import doggo2 from "public/assets/images/doggo2.png";
 import doggo3 from "public/assets/images/doggo3.png";
 import doggo4 from "public/assets/images/doggo4.png";
 import doggo5 from "public/assets/images/doggo5.png";
-import doggoProfilePlaceholder from "public/assets/images/doggo_profile_placeholder.png";
 import editIcon from "public/assets/images/edit_icon.svg";
 import ellipsisHorizontal from "public/assets/images/ellipsis_horizontal.svg";
 import eyeBlue from "public/assets/images/eye_blue.svg";
@@ -43,19 +47,21 @@ import heroRightBlur from "public/assets/images/hero_right_blur.svg";
 import heroTopShape from "public/assets/images/hero_top_shape.svg";
 import like from "public/assets/images/like.svg";
 import loginBg from "public/assets/images/login_bg.png";
-import logo from "public/assets/images/logo.svg";
 import logoBig from "public/assets/images/logo_big.svg";
+import logo from "public/assets/images/logo.svg";
 import matchMeet from "public/assets/images/match_meet.png";
-import matches from "public/assets/images/matches.svg";
 import matchesActive from "public/assets/images/matches_active.svg";
-import messages from "public/assets/images/messages.svg";
+import matches from "public/assets/images/matches.svg";
 import messagesActive from "public/assets/images/messages_active.svg";
+import messages from "public/assets/images/messages.svg";
 import pawYellow from "public/assets/images/paw_yellow.svg";
 import pawnderBlack from "public/assets/images/pawnder_black.svg";
-import pawnderr from "public/assets/images/pawnderr.svg";
 import pawnderrActive from "public/assets/images/pawnderr_active.svg";
 import pawnderrPlus from "public/assets/images/pawnderr_plus.svg";
+import pawnderr from "public/assets/images/pawnderr.svg";
+import pawpStarsRibbon from "public/assets/images/pawp_stars_ribbon.svg";
 import playBlue from "public/assets/images/play_blue.svg";
+import premiumYellow from "public/assets/images/premium_yellow.svg";
 import purpleIcon from "public/assets/images/purple_icon.svg";
 import searchGrey from "public/assets/images/search_grey.svg";
 import send from "public/assets/images/send.svg";
@@ -69,6 +75,7 @@ import starWhite from "public/assets/images/star_white.svg";
 import userFormBg from "public/assets/images/user_form_bg.svg";
 import userLeftBlur from "public/assets/images/user_left_blur.svg";
 import userRightBlur from "public/assets/images/user_right_blur.svg";
+import whyChooseDogs from "public/assets/images/why_choose_dogs.png";
 import x from "public/assets/images/x.svg";
 import yellowStar from "public/assets/images/yellow_star.svg";
 
@@ -145,6 +152,13 @@ export type ImageType =
   | "matchMeet"
   | "featureRibbonLeft"
   | "featureRibbonRight"
+  | "blueTopPattern"
+  | "blueBottomPattern"
+  | "blueLeftShape"
+  | "whyChooseDogs"
+  | "blueRightShape"
+  | "pawpStarsRibbon"
+  | "premiumYellow"
   | "backBtn";
 
 export type NextImage = {
@@ -226,5 +240,12 @@ export const images: Record<ImageType, NextImage> = {
   sniffSwipe,
   matchMeet,
   featureRibbonLeft,
-  featureRibbonRight
+  featureRibbonRight,
+  blueTopPattern,
+  blueBottomPattern,
+  blueLeftShape,
+  whyChooseDogs,
+  blueRightShape,
+  pawpStarsRibbon,
+  premiumYellow
 };
