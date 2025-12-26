@@ -3,6 +3,7 @@ import {
   FindConnections,
   Header,
   Hero,
+  LoyalCompanions,
   PawpStars,
   WhyChooseUs
 } from ".";
@@ -16,6 +17,7 @@ const Home = () => {
       <WhyChooseUs />
       <PawpStars />
       <FindConnections />
+      <LoyalCompanions />
     </div>
   );
 };

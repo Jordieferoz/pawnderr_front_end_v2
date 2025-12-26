@@ -1,9 +1,9 @@
 "use client";
 
-import * as ProgressPrimitive from "@radix-ui/react-progress";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
+import * as ProgressPrimitive from "@radix-ui/react-progress";
 
 interface ProgressProps
   extends React.ComponentProps<typeof ProgressPrimitive.Root> {
@@ -12,6 +12,8 @@ interface ProgressProps
   size?: number;
   strokeWidth?: number;
   showValue?: boolean;
+  baseColor?: string;
+  highlightColor?: string;
 }
 
 function Progress({
@@ -21,8 +23,14 @@ function Progress({
   size = 120,
   strokeWidth = 8,
   showValue = false,
+  baseColor = "#e5e7eb", // Default gray color
+  highlightColor = "#3b82f6", // Default blue color
   ...props
 }: ProgressProps) {
+  // Check if color is a hex/rgb value or Tailwind class
+  const isHexColor = (color: string) =>
+    color.startsWith("#") || color.startsWith("rgb");
+
   if (variant === "circular") {
     const radius = (size - strokeWidth) / 2;
     const circumference = 2 * Math.PI * radius;
@@ -41,7 +49,8 @@ function Progress({
             cx={size / 2}
             cy={size / 2}
             r={radius}
-            className="stroke-secondary-400"
+            className={isHexColor(baseColor) ? undefined : baseColor}
+            stroke={isHexColor(baseColor) ? baseColor : undefined}
             strokeWidth={strokeWidth}
             fill="none"
           />
@@ -50,7 +59,11 @@ function Progress({
             cx={size / 2}
             cy={size / 2}
             r={radius}
-            className="stroke-primary-500 transition-all duration-300 ease-in-out"
+            className={cn(
+              isHexColor(highlightColor) ? undefined : highlightColor,
+              "transition-all duration-300 ease-in-out"
+            )}
+            stroke={isHexColor(highlightColor) ? highlightColor : undefined}
             strokeWidth={strokeWidth}
             fill="none"
             strokeDasharray={circumference}
@@ -71,15 +84,25 @@ function Progress({
     <ProgressPrimitive.Root
       data-slot="progress"
       className={cn(
-        "bg-secondary-400 relative h-2 w-full overflow-hidden rounded-full",
+        "relative h-2 w-full overflow-hidden rounded-full",
+        !isHexColor(baseColor) && baseColor,
         className
       )}
+      style={isHexColor(baseColor) ? { backgroundColor: baseColor } : undefined}
       {...props}
     >
       <ProgressPrimitive.Indicator
         data-slot="progress-indicator"
-        className="bg-primary-500 rounded-3xl h-full w-full flex-1 transition-all"
-        style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
+        className={cn(
+          !isHexColor(highlightColor) && highlightColor,
+          "rounded-3xl h-full w-full flex-1 transition-all"
+        )}
+        style={{
+          transform: `translateX(-${100 - (value || 0)}%)`,
+          ...(isHexColor(highlightColor)
+            ? { backgroundColor: highlightColor }
+            : {})
+        }}
       />
     </ProgressPrimitive.Root>
   );

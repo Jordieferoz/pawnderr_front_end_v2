@@ -15,6 +15,7 @@ import chatYellow from "public/assets/images/chat_yellow.svg";
 import chevronRight from "public/assets/images/chevron_right.svg";
 import chevronRightGrey from "public/assets/images/chevron_right_grey.svg";
 import communityCares from "public/assets/images/community_cares.png";
+import companionDogs from "public/assets/images/companion_dogs.png";
 import createProfile from "public/assets/images/create_profile.png";
 import discover from "public/assets/images/discover.svg";
 import discoverActive from "public/assets/images/discover_active.svg";
@@ -175,6 +176,7 @@ export type ImageType =
   | "reliableDogs"
   | "communityCares"
   | "loyalRibbon"
+  | "companionDogs"
   | "backBtn";
 
 export type NextImage = {
@@ -271,5 +273,6 @@ export const images: Record<ImageType, NextImage> = {
   meaningfulDogs,
   reliableDogs,
   communityCares,
-  loyalRibbon
+  loyalRibbon,
+  companionDogs
 };
