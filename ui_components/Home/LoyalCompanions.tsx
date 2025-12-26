@@ -14,7 +14,7 @@ const LoyalCompanions = () => {
   };
 
   return (
-    <section className="min-h-screen pt-10 pb-20 relative">
+    <section className="min-h-screen pt-10 relative">
       <div className="container mx-auto">
         <div className="flex">
           <div className="basis-[55vw]">

@@ -74,6 +74,26 @@ export const FIND_CONNECTIONS_CARDS = [
       "Connect, meet, and let friendships grow naturally. See who's interested in your profile today."
   }
 ];
+export const TAILS_OF_LOVE_CARDS = [
+  {
+    id: 1,
+    image: images.meaningfulDogs.src,
+    title: "“We met at Chestnut Park—now they’re inseparable!”",
+    description: "-Luna & Max"
+  },
+  {
+    id: 2,
+    image: images.reliableDogs.src,
+    title: "“We met at Chestnut Park—now they’re inseparable!”",
+    description: "-Luna & Max"
+  },
+  {
+    id: 3,
+    image: images.communityCares.src,
+    title: "“We met at Chestnut Park—now they’re inseparable!”",
+    description: "-Luna & Max"
+  }
+];
 
 export const FIND_CONNECTIONS_DECORATIONS = [
   {
@@ -97,6 +117,32 @@ export const FIND_CONNECTIONS_DECORATIONS = [
   {
     id: 4,
     image: images.greenRightShape.src,
+    alt: "right shape",
+    className: "absolute -top-15 right-0"
+  }
+];
+export const TAIL_OF_LOVE_DECORATIONS = [
+  {
+    id: 1,
+    image: images.pinkTopPattern.src,
+    alt: "top pattern",
+    className: "absolute -top-26 left-0 w-full"
+  },
+  {
+    id: 2,
+    image: images.pinkBottomPattern.src,
+    alt: "bottom pattern",
+    className: "absolute -bottom-26 left-0 w-full"
+  },
+  {
+    id: 3,
+    image: images.pinkLeftShape.src,
+    alt: "left shape",
+    className: "absolute -bottom-18 left-0"
+  },
+  {
+    id: 4,
+    image: images.pinkRightShape.src,
     alt: "right shape",
     className: "absolute -top-15 right-0"
   }

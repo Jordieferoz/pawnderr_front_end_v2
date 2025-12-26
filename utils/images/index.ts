@@ -68,6 +68,10 @@ import pawnderr from "public/assets/images/pawnderr.svg";
 import pawnderrActive from "public/assets/images/pawnderr_active.svg";
 import pawnderrPlus from "public/assets/images/pawnderr_plus.svg";
 import pawpStarsRibbon from "public/assets/images/pawp_stars_ribbon.svg";
+import pinkBottomPattern from "public/assets/images/pink_bottom_pattern.svg";
+import pinkLeftShape from "public/assets/images/pink_left_shape.svg";
+import pinkRightShape from "public/assets/images/pink_right_shape.svg";
+import pinkTopPattern from "public/assets/images/pink_top_pattern.svg";
 import playBlue from "public/assets/images/play_blue.svg";
 import premiumYellow from "public/assets/images/premium_yellow.svg";
 import purpleIcon from "public/assets/images/purple_icon.svg";
@@ -177,6 +181,10 @@ export type ImageType =
   | "communityCares"
   | "loyalRibbon"
   | "companionDogs"
+  | "pinkTopPattern"
+  | "pinkBottomPattern"
+  | "pinkLeftShape"
+  | "pinkRightShape"
   | "backBtn";
 
 export type NextImage = {
@@ -274,5 +282,9 @@ export const images: Record<ImageType, NextImage> = {
   reliableDogs,
   communityCares,
   loyalRibbon,
-  companionDogs
+  companionDogs,
+  pinkTopPattern,
+  pinkBottomPattern,
+  pinkLeftShape,
+  pinkRightShape
 };

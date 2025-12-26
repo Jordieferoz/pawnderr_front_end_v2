@@ -6,6 +6,7 @@ import Home from "./Home";
 import HowItWorks from "./HowItWorks";
 import LoyalCompanions from "./LoyalCompanions";
 import PawpStars from "./PawpStars";
+import TailsOfLove from "./TailsOfLove";
 import WhyChooseUs from "./WhyChooseUs";
 
 export {
@@ -17,5 +18,6 @@ export {
   HowItWorks,
   LoyalCompanions,
   PawpStars,
+  TailsOfLove,
   WhyChooseUs
 };

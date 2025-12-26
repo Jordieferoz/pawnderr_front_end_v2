@@ -5,6 +5,7 @@ import {
   Hero,
   LoyalCompanions,
   PawpStars,
+  TailsOfLove,
   WhyChooseUs
 } from ".";
 
@@ -18,6 +19,7 @@ const Home = () => {
       <PawpStars />
       <FindConnections />
       <LoyalCompanions />
+      <TailsOfLove />
     </div>
   );
 };
