@@ -1,3 +1,4 @@
+import BrowseProfiles from "./BrowseProfiles";
 import Features from "./Features";
 import FindConnections from "./FindConnections";
 import Header from "./Header";
@@ -10,6 +11,7 @@ import TailsOfLove from "./TailsOfLove";
 import WhyChooseUs from "./WhyChooseUs";
 
 export {
+  BrowseProfiles,
   Features,
   FindConnections,
   Header,

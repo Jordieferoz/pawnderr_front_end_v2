@@ -1,4 +1,5 @@
 import {
+  BrowseProfiles,
   Features,
   FindConnections,
   Header,
@@ -20,6 +21,7 @@ const Home = () => {
       <FindConnections />
       <LoyalCompanions />
       <TailsOfLove />
+      <BrowseProfiles />
     </div>
   );
 };

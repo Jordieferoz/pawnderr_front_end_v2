@@ -11,6 +11,11 @@ import blueBottomPattern from "public/assets/images/blue_bottom_pattern.svg";
 import blueLeftShape from "public/assets/images/blue_left_shape.svg";
 import blueRightShape from "public/assets/images/blue_right_shape.svg";
 import blueTopPattern from "public/assets/images/blue_top_pattern.svg";
+import browseLeftRibbon from "public/assets/images/browse_left_ribbon.svg";
+import browseLeftShape from "public/assets/images/browse_left_shape.svg";
+import browseProfileDogs from "public/assets/images/browse_profile_dogs.png";
+import browseRightRibbon from "public/assets/images/browse_right_ribbon.svg";
+import browseRightShape from "public/assets/images/browse_right_shape.svg";
 import chatYellow from "public/assets/images/chat_yellow.svg";
 import chevronRight from "public/assets/images/chevron_right.svg";
 import chevronRightGrey from "public/assets/images/chevron_right_grey.svg";
@@ -185,6 +190,11 @@ export type ImageType =
   | "pinkBottomPattern"
   | "pinkLeftShape"
   | "pinkRightShape"
+  | "browseLeftRibbon"
+  | "browseLeftShape"
+  | "browseRightShape"
+  | "browseRightRibbon"
+  | "browseProfileDogs"
   | "backBtn";
 
 export type NextImage = {
@@ -286,5 +296,10 @@ export const images: Record<ImageType, NextImage> = {
   pinkTopPattern,
   pinkBottomPattern,
   pinkLeftShape,
-  pinkRightShape
+  pinkRightShape,
+  browseLeftRibbon,
+  browseLeftShape,
+  browseRightShape,
+  browseRightRibbon,
+  browseProfileDogs
 };
