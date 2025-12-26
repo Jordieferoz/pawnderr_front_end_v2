@@ -1,4 +1,11 @@
-import { Features, Header, Hero, PawpStars, WhyChooseUs } from ".";
+import {
+  Features,
+  FindConnections,
+  Header,
+  Hero,
+  PawpStars,
+  WhyChooseUs
+} from ".";
 
 const Home = () => {
   return (
@@ -8,6 +15,7 @@ const Home = () => {
       <Features />
       <WhyChooseUs />
       <PawpStars />
+      <FindConnections />
     </div>
   );
 };
