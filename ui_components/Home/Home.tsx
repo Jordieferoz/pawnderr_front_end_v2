@@ -2,7 +2,6 @@ import {
   BrowseProfiles,
   Features,
   FindConnections,
-  Header,
   Hero,
   LoyalCompanions,
   PawpStars,
@@ -13,7 +12,6 @@ import {
 const Home = () => {
   return (
     <div className="relative">
-      <Header />
       <Hero />
       <Features />
       <WhyChooseUs />

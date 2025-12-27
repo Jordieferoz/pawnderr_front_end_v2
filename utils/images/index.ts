@@ -38,6 +38,7 @@ import editIcon from "public/assets/images/edit_icon.svg";
 import ellipsisHorizontal from "public/assets/images/ellipsis_horizontal.svg";
 import eyeBlue from "public/assets/images/eye_blue.svg";
 import facebook from "public/assets/images/facebook.svg";
+import facebookGrey from "public/assets/images/facebook_grey.svg";
 import featureRibbonLeft from "public/assets/images/feature_ribbon_left.svg";
 import featureRibbonRight from "public/assets/images/feature_ribbon_right.svg";
 import filterIcon from "public/assets/images/filter_icon.svg";
@@ -56,10 +57,13 @@ import heroLeftBlur from "public/assets/images/hero_left_blur.svg";
 import heroPattern from "public/assets/images/hero_pattern.svg";
 import heroRightBlur from "public/assets/images/hero_right_blur.svg";
 import heroTopShape from "public/assets/images/hero_top_shape.svg";
+import instagram from "public/assets/images/instagram.svg";
 import like from "public/assets/images/like.svg";
+import linkedin from "public/assets/images/linkedin.svg";
 import loginBg from "public/assets/images/login_bg.png";
 import logo from "public/assets/images/logo.svg";
 import logoBig from "public/assets/images/logo_big.svg";
+import logoHorizontal from "public/assets/images/logo_horizontal.png";
 import loyalRibbon from "public/assets/images/loyal_ribbon.svg";
 import matchMeet from "public/assets/images/match_meet.png";
 import matches from "public/assets/images/matches.svg";
@@ -90,6 +94,7 @@ import smiley from "public/assets/images/smiley.svg";
 import sniffSwipe from "public/assets/images/sniff_swipe.png";
 import starBlack from "public/assets/images/star_black.svg";
 import starWhite from "public/assets/images/star_white.svg";
+import twitter from "public/assets/images/twitter.svg";
 import userFormBg from "public/assets/images/user_form_bg.svg";
 import userLeftBlur from "public/assets/images/user_left_blur.svg";
 import userRightBlur from "public/assets/images/user_right_blur.svg";
@@ -140,7 +145,7 @@ export type ImageType =
   | "chevronRightGrey"
   | "eyeBlue"
   | "chatYellow"
-  | "logoBig"
+  | "logoHorizontal"
   | "loginBg"
   | "greenRightBlur"
   | "greenLeftBlur"
@@ -195,6 +200,11 @@ export type ImageType =
   | "browseRightShape"
   | "browseRightRibbon"
   | "browseProfileDogs"
+  | "logoBig"
+  | "facebookGrey"
+  | "twitter"
+  | "linkedin"
+  | "instagram"
   | "backBtn";
 
 export type NextImage = {
@@ -247,7 +257,7 @@ export const images: Record<ImageType, NextImage> = {
   chevronRightGrey,
   eyeBlue,
   chatYellow,
-  logoBig,
+  logoHorizontal,
   loginBg,
   greenRightBlur,
   greenLeftBlur,
@@ -301,5 +311,10 @@ export const images: Record<ImageType, NextImage> = {
   browseLeftShape,
   browseRightShape,
   browseRightRibbon,
-  browseProfileDogs
+  browseProfileDogs,
+  logoBig,
+  facebookGrey,
+  twitter,
+  linkedin,
+  instagram
 };

@@ -29,7 +29,11 @@ const Header: FC = () => {
     <header className="fixed py-6 w-full left-0 top-0 z-50 bg-white/80 border-b border-blue/10 shadow-[0px_4px_16.4px_0px_#0000000F] hidden md:block">
       <nav className="container mx-auto common_container flex items-center justify-between gap-4">
         <Link href={"/"}>
-          <img src={images.logoBig.src} alt="logo" className="w-[250px]" />
+          <img
+            src={images.logoHorizontal.src}
+            alt="logo"
+            className="w-[250px]"
+          />
         </Link>
 
         <ul className="flex gap-6 items-center">

@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 
 import { Toaster } from "@/components/ui/sonner";
 import { ReduxProvider } from "@/store/Provider";
+import { Footer, Header } from "@/ui_components/Home";
 import { MobileMenu } from "@/ui_components/Shared";
 
 import "./styles/globals.css";
@@ -21,7 +22,7 @@ export default function RootLayout({
   const pathname = usePathname();
 
   // Define routes where Footer should NOT appear
-  const hideMobileMenuRoutes = ["/sign-up", "/sign-in", "/register"];
+  const hideMobileMenuRoutes = ["/sign-up", "/sign-in", "/register", "/"];
   const shouldHideMobileMenu = hideMobileMenuRoutes.includes(pathname);
 
   return (
@@ -32,8 +33,10 @@ export default function RootLayout({
       <body>
         <SessionProvider>
           <ReduxProvider>
+            <Header />
             {children}
             {!shouldHideMobileMenu && <MobileMenu />}
+            <Footer />
           </ReduxProvider>
         </SessionProvider>
         <Toaster />

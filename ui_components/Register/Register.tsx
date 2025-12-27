@@ -26,7 +26,7 @@ const Register: FC = () => {
         className="mb-7.5 md:flex justify-center hidden relative z-20"
       >
         <Image
-          src={images.logoBig.src}
+          src={images.logoHorizontal.src}
           className="w-[250px]"
           width={147}
           height={97}

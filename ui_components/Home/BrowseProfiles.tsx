@@ -13,7 +13,7 @@ const BrowseProfiles = () => {
   };
 
   return (
-    <section className="pt-10 relative">
+    <section className="py-10 relative">
       <div className="container mx-auto bg-primary-500 relative rounded-xl">
         <div className="py-16 pl-30 relative z-10">
           <h5 className="mb-9 text-white font_fredoka font-medium md:text-[70px] md:leading-[74px]">

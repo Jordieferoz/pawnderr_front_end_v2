@@ -1,6 +1,7 @@
 import BrowseProfiles from "./BrowseProfiles";
 import Features from "./Features";
 import FindConnections from "./FindConnections";
+import Footer from "./Footer";
 import Header from "./Header";
 import Hero from "./Hero";
 import Home from "./Home";
@@ -14,6 +15,7 @@ export {
   BrowseProfiles,
   Features,
   FindConnections,
+  Footer,
   Header,
   Hero,
   Home,

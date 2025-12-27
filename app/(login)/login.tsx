@@ -159,7 +159,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
         className="mb-7.5 md:flex justify-center hidden relative z-20"
       >
         <Image
-          src={images.logoBig.src}
+          src={images.logoHorizontal.src}
           className="logo w-[250px]"
           width={147}
           height={97}
