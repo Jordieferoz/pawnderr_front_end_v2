@@ -15,32 +15,35 @@ const LoyalCompanions = () => {
 
   return (
     <section className="min-h-screen pt-10 relative">
-      <div className="container mx-auto">
-        <div className="flex">
-          <div className="basis-[55vw]">
-            <h3 className="md:text-[49px] md:leading-[52px] font_fredoka font-medium text-dark-brown text-left mb-9">
-              Loyal Companions, <br /> Just Like Yours
+      <div className="container mx-auto px-5 md:px-0">
+        <div className="flex flex-col md:flex-row">
+          <div className="basis-[100vw] md:basis-[55vw]">
+            <h3 className="text-[32px] leading-[38px] text-center md:text-[49px] md:leading-[52px] font_fredoka font-medium text-dark-brown md:text-left mb-9">
+              Loyal Companions, <br className="hidden md:block" /> Just Like
+              Yours
             </h3>
-            <p className="text-left text-light-grey2 text-xl font-medium font_fredoka mb-10">
-              Finding the right match shouldn’t be a guessing game. At <br />{" "}
-              PAWnderr, every profile is carefully reviewed to connect genuine{" "}
-              <br />
-              pet parents who want their companions to enjoy meaningful <br />
+            <p className="text-center md:text-left text-light-grey2 text-xl font-medium font_fredoka mb-10 text-balance">
+              Finding the right match shouldn’t be a guessing game. At{" "}
+              <br className="hidden md:block" /> PAWnderr, every profile is
+              carefully reviewed to connect genuine
+              <br className="hidden md:block" />
+              pet parents who want their companions to enjoy meaningful{" "}
+              <br className="hidden md:block" />
               friendships. No distractions, just real connections.
             </p>
             <Button
               onClick={handleCreateAccount}
-              className="font-medium px-20 mb-10"
+              className="font-medium px-20 mb-10 hidden md:block"
             >
               Create Account
             </Button>
             <img
               src={images.companionDogs.src}
               alt="companion dogs"
-              className="w-full scale-125"
+              className="w-full md:scale-125"
             />
           </div>
-          <div className="bg-white basis-[40vw] flex flex-col gap-5">
+          <div className="bg-white mt-10 md:mt-0 basis-[100vw] md:basis-[40vw] flex flex-col gap-5">
             <div className="px-5.5 py-6 bg-white rounded-lg border-4 border-[#67D6AD]">
               <h6 className="mb-1.5 font-medium font_fredoka text-dark-brown text-2xl">
                 Interests Match:
@@ -98,6 +101,12 @@ const LoyalCompanions = () => {
               </div>
             </div>
           </div>
+          <Button
+            onClick={handleCreateAccount}
+            className="font-medium px-20 mt-10 block md:hidden"
+          >
+            Create Account
+          </Button>
         </div>
       </div>
 

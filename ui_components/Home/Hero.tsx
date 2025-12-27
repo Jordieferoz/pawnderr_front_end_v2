@@ -37,17 +37,17 @@ const Hero = () => {
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
           {/* Left Content */}
           <div className="">
-            <p className="text-dark-grey md:text-base font_fredoka">
+            <p className="text-dark-grey md:text-base mb-4 md:mb-0 font_fredoka">
               Verified connections for happy pets
             </p>
-            <h1 className="md:text-[64px] md:leading-[64px] text-dark-black font_fredoka mb-6">
+            <h1 className="text-[48px] leading-[52px] md:text-[64px] md:leading-[64px] text-dark-black font_fredoka mb-6">
               Find a <span className="font-semibold">PAWfect</span>
               <br />
               Companion for
               <br />
               Your Pet.
             </h1>
-            <p className="text-2xl text-grey-900 font-medium font_fredoka">
+            <p className="text-2xl text-grey-900 font-medium font_fredoka mb-8 md:mb-0">
               Join a trusted community of pet lovers. Helping you find safe and
               happy friendships for your pet.
             </p>

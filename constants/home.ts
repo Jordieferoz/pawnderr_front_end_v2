@@ -100,25 +100,25 @@ export const FIND_CONNECTIONS_DECORATIONS = [
     id: 1,
     image: images.greenTopPattern.src,
     alt: "top pattern",
-    className: "absolute -top-26 left-0 w-full"
+    className: "absolute -top-26 left-0 w-full hidden md:block"
   },
   {
     id: 2,
     image: images.greenBottomPattern.src,
     alt: "bottom pattern",
-    className: "absolute -bottom-26 left-0 w-full"
+    className: "absolute -bottom-26 left-0 w-full hidden md:block"
   },
   {
     id: 3,
     image: images.greenLeftShape.src,
     alt: "left shape",
-    className: "absolute -bottom-8 left-0"
+    className: "absolute bottom-8 md:-bottom-8 left-0 md:w-auto w-[40vw]"
   },
   {
     id: 4,
     image: images.greenRightShape.src,
     alt: "right shape",
-    className: "absolute -top-15 right-0"
+    className: "absolute top-15 md:-top-15 right-0 md:w-auto w-[40vw]"
   }
 ];
 export const TAIL_OF_LOVE_DECORATIONS = [
@@ -126,24 +126,24 @@ export const TAIL_OF_LOVE_DECORATIONS = [
     id: 1,
     image: images.pinkTopPattern.src,
     alt: "top pattern",
-    className: "absolute -top-26 left-0 w-full"
+    className: "absolute -top-26 left-0 w-full hidden md:block"
   },
   {
     id: 2,
     image: images.pinkBottomPattern.src,
     alt: "bottom pattern",
-    className: "absolute -bottom-26 left-0 w-full"
+    className: "absolute -bottom-26 left-0 w-full hidden md:block"
   },
   {
     id: 3,
     image: images.pinkLeftShape.src,
     alt: "left shape",
-    className: "absolute -bottom-18 left-0"
+    className: "absolute bottom-18 md:-bottom-18 left-0 md:w-auto w-[40vw]"
   },
   {
     id: 4,
     image: images.pinkRightShape.src,
     alt: "right shape",
-    className: "absolute -top-15 right-0"
+    className: "absolute top-15 md:-top-15 right-0 md:w-auto w-[40vw]"
   }
 ];

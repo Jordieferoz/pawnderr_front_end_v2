@@ -6,7 +6,7 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="pt-30 relative">
+    <footer className="pt-20 md:pt-30 relative">
       <div className="container mx-auto flex items-center flex-col justify-center">
         <div className="mx-auto text-center ">
           <Link href={"/"} className="mb-8 inline-block">
@@ -16,7 +16,7 @@ const Footer = () => {
               className="h-[180px] mx-auto"
             />
           </Link>
-          <ul className="flex items-center gap-3 justify-center mb-20">
+          <ul className="flex items-center gap-3 justify-center mb-7 md:mb-20">
             <li>
               <Link href={"/"} target="_blank">
                 <img
@@ -51,7 +51,7 @@ const Footer = () => {
             </li>
           </ul>
 
-          <div className="flex gap-3 items-center text-light-grey2 font-medium text-2xl font_fredoka mb-8">
+          <div className="flex gap-3 items-center text-light-grey2 font-medium text-base md:text-2xl font_fredoka mb-8">
             <Link href={"/"}>Privacy Policy</Link> •
             <Link href={"/"}> Terms of Service</Link> •
             <Link href={"/"}> Safety Tips</Link>

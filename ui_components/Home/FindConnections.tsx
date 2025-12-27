@@ -7,7 +7,7 @@ import {
 
 const FindConnections = () => {
   return (
-    <section className="w-full bg-[#DAF8ED] relative my-30 py-10 flex items-center justify-center">
+    <section className="w-full bg-[#DAF8ED] relative md:my-30 py-10 flex items-center justify-center">
       {FIND_CONNECTIONS_DECORATIONS.map((decoration) => (
         <img
           key={decoration.id}
@@ -18,11 +18,10 @@ const FindConnections = () => {
       ))}
 
       <div className="container mx-auto px-4 md:px-0 relative z-10">
-        <div className="mb-10">
-          <h3 className="md:text-[49px] md:leading-[52px] font_fredoka font-medium text-dark-brown text-center mb-15">
-            Where Pets Find <br /> Genuine Connections
-          </h3>
-        </div>
+        <h3 className="text-[32px] mb-10 leading-[38px] md:text-[49px] md:leading-[52px] font_fredoka font-medium text-dark-brown text-center md:mb-15">
+          Where Pets Find <br /> Genuine Connections
+        </h3>
+
         <div className="grid lg:grid-cols-3 gap-8 lg:gap-9 items-center relative">
           {FIND_CONNECTIONS_CARDS.map((card) => (
             <div

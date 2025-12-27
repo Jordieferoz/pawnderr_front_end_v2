@@ -14,8 +14,8 @@ const PawpStars = () => {
   };
 
   return (
-    <section className="min-h-screen py-20 relative">
-      <div className="container mx-auto px-10">
+    <section className="min-h-screen py-10 md:py-20 relative">
+      <div className="container mx-auto px-5 md:px-10">
         <h3 className="display4_medium text-center text-dark-brown mb-5">
           Pawp Stars
         </h3>
@@ -37,7 +37,7 @@ const PawpStars = () => {
                 className="absolute right-5 top-5"
                 alt="premium badge"
               />
-              <div className="px-6 absolute bottom-6.5 left-1/2 -translate-x-1/2 w-[calc(100%-52px)]">
+              <div className="px-2 md:px-6 absolute bottom-6.5 left-1/2 -translate-x-1/2 w-[calc(100%-32px)] md:w-[calc(100%-52px)]">
                 <h4 className="text-white text-[32px] mb-2 font_fredoka font-medium">
                   {profile.name}
                 </h4>
@@ -54,7 +54,10 @@ const PawpStars = () => {
         </div>
 
         <div className="flex items-center justify-center">
-          <Button onClick={handleJoin} className="font-medium px-20">
+          <Button
+            onClick={handleJoin}
+            className="font-medium md:w-auto w-full md:px-20"
+          >
             Join PAWnderr
           </Button>
         </div>
@@ -62,7 +65,7 @@ const PawpStars = () => {
 
       <img
         src={images.pawpStarsRibbon.src}
-        className="absolute -top-60 left-0 -z-10"
+        className="absolute -top-60 left-0 -z-10 hidden md:block"
         alt="ribbon"
       />
     </section>

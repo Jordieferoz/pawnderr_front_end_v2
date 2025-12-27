@@ -16,7 +16,7 @@ const TailsOfLove = () => {
   };
 
   return (
-    <section className="w-full bg-[#FFEBF3] relative my-30 py-10">
+    <section className="w-full bg-[#FFEBF3] relative my-10 md:my-30 py-10">
       {TAIL_OF_LOVE_DECORATIONS.map((decoration) => (
         <img
           key={decoration.id}
@@ -26,19 +26,22 @@ const TailsOfLove = () => {
         />
       ))}
 
-      <div className="container mx-auto mb-15 relative">
-        <div className="flex justify-between">
-          <h3 className="md:text-[49px] md:leading-[52px] font_fredoka font-medium text-dark-brown text-left">
+      <div className="container mx-auto px-5 md:px-0 mb-7 md:mb-15 relative">
+        <div className="flex justify-between items-center">
+          <h3 className="text-[32px] leading-[38px] text-center md:text-[49px] md:leading-[52px] font_fredoka font-medium text-dark-brown md:text-left">
             Tails of Love
           </h3>
-          <Button onClick={handleCreateAccount} className="font-medium px-20">
+          <Button
+            onClick={handleCreateAccount}
+            className="font-medium px-20 hidden md:block"
+          >
             My PAWnderr Story
           </Button>
         </div>
       </div>
 
       {/* Scrollable container aligned with container's left edge */}
-      <div className="container mx-auto relative">
+      <div className="container mx-auto px-5 md:px-0 relative">
         <ul className="flex gap-5 overflow-x-auto overflow-y-hidden hide-scrollbar pb-4 -mr-[calc((100vw-100%)/2)]">
           {TAILS_OF_LOVE_CARDS.map((card) => (
             <li
@@ -61,6 +64,12 @@ const TailsOfLove = () => {
             </li>
           ))}
         </ul>
+        <Button
+          onClick={handleCreateAccount}
+          className="font-medium px-20 block md:hidden mt-6 w-full"
+        >
+          My PAWnderr Story
+        </Button>
       </div>
     </section>
   );
