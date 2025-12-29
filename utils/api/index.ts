@@ -31,7 +31,7 @@ export const verifyOTP = (payload: {
   otp: string;
 }): Promise<TResponse<any>> => {
   return new Promise((resolve, reject) => {
-    globalPostService<any, any>(`auth/verify-otp`, payload)
+    globalPostService<any, any>(`auth/verify-registration`, payload)
       .then((response) => {
         if (response.statusCode === 200 || response.statusCode === 201) {
           resolve(response);

@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { headerMenuItems } from "@/constants";
 import { images } from "@/utils/images";
 
+import { DropdownMenu } from "../Dashboard";
+
 const Header: FC = () => {
   const pathname = usePathname();
 
@@ -26,7 +28,7 @@ const Header: FC = () => {
     return pathname === itemHref || pathname.startsWith(`${itemHref}/`);
   };
   return (
-    <header className="fixed py-6 w-full left-0 top-0 z-50 bg-white/80 border-b border-blue/10 shadow-[0px_4px_16.4px_0px_#0000000F] hidden md:block">
+    <header className="fixed py-6 w-full left-0 top-0 z-50 bg-white border-b border-blue/10 shadow-[0px_4px_16.4px_0px_#0000000F] hidden md:block">
       <nav className="container mx-auto common_container flex items-center justify-between gap-4">
         <Link href={"/"}>
           <img
@@ -69,16 +71,7 @@ const Header: FC = () => {
               </Link>
             );
           })}
-          <Link
-            href={"/profile"}
-            className="rounded-full bg-light-grey w-10 h-10 flex items-center justify-center cursor-pointer"
-          >
-            <img
-              src={images.doggoProfilePlaceholder.src}
-              className="rounded-full w-9 h-9 object-cover"
-              alt="pet placeholder"
-            />
-          </Link>
+          <DropdownMenu />
           <Link href={"/upgrade"} className="cursor-pointer">
             <Button>
               <img src={images.pawnderBlack.src} alt="pawnderr+" /> PAWnderr+

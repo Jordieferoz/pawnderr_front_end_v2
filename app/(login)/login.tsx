@@ -160,7 +160,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
       >
         <Image
           src={images.logoHorizontal.src}
-          className="logo w-[250px]"
+          className="logo h-13"
           width={147}
           height={97}
           alt="PAWnderr Logo"
@@ -169,10 +169,10 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
       <div className="sm:mx-auto sm:w-full sm:max-w-[766px] md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] rounded-4xl md:px-20 md:py-14 relative z-20">
         <Link href={"/"} className="mb-7.5 flex justify-center md:hidden">
           <Image
-            src={images.logo.src}
-            className="logo w-[147px]"
-            width={147}
-            height={97}
+            src={images.logoHorizontal.src}
+            className="logo h-13"
+            width={212}
+            height={52}
             alt="PAWnderr Logo"
           />
         </Link>
@@ -343,53 +343,54 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
                 </Link>
               </div>
             )}
-
-            <Button
-              type="submit"
-              disabled={!isValid || isSubmitting}
-              suppressHydrationWarning
-            >
-              {isSubmitting ? (
-                <span className="flex items-center gap-2">
-                  <svg
-                    className="animate-spin h-5 w-5"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  {isSignup ? "Signing Up..." : "Signing In..."}
-                </span>
-              ) : (
-                <>{isSignup ? "Sign Up" : "Sign In"}</>
-              )}
-            </Button>
-          </form>
-
-          <div className="text-center">
-            <p className="paragraph1_bold text-accent-1000">
-              {isSignup ? "Already have an account?" : " New to PAWnderr?"}{" "}
-              <Link
-                href={isSignup ? "/sign-in" : "/sign-up"}
-                className="text-primary-theme"
+            <div className="fixed bottom-0 md:relative py-5 w-full bg-white shadow-[0px_-4px_12.8px_-3px_#00000012] md:shadow-none">
+              <Button
+                type="submit"
+                disabled={!isValid || isSubmitting}
+                suppressHydrationWarning
+                className="w-[calc(100%-40px)] md:w-full mb-4"
               >
-                {isSignup ? "Sign In" : "Create an Account"}
-              </Link>
-            </p>
-          </div>
+                {isSubmitting ? (
+                  <span className="flex items-center gap-2">
+                    <svg
+                      className="animate-spin h-5 w-5"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    {isSignup ? "Signing Up..." : "Signing In..."}
+                  </span>
+                ) : (
+                  <>{isSignup ? "Sign Up" : "Sign In"}</>
+                )}
+              </Button>
+              <div className="text-center">
+                <p className="paragraph1_bold text-accent-1000">
+                  {isSignup ? "Already have an account?" : " New to PAWnderr?"}{" "}
+                  <Link
+                    href={isSignup ? "/sign-in" : "/sign-up"}
+                    className="text-primary-theme"
+                  >
+                    {isSignup ? "Sign In" : "Create an Account"}
+                  </Link>
+                </p>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
       <img

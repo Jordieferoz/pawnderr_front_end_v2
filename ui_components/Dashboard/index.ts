@@ -1,5 +1,6 @@
 import Discover from "./Discover";
+import DropdownMenu from "./DropdownMenu";
 import MobileHeader from "./MobileHeader";
 import SwipeCards from "./SwipingCards";
 
-export { Discover, MobileHeader, SwipeCards };
+export { Discover, DropdownMenu, MobileHeader, SwipeCards };

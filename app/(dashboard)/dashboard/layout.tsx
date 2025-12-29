@@ -2,8 +2,8 @@ import { images } from "@/utils/images";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative h-full min-h-screen">
-      <div className="container mx-auto py-20 md:py-[104px] h-full md:mt-10">
+    <div className="relative h-screen">
+      <div className="container mx-auto py-20 md:py-[104px] h-full">
         {children}
       </div>
       <img

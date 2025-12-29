@@ -60,6 +60,10 @@
     @apply text-base leading-[22px] font-normal  md:text-[18px] lg:text-xl;
     font-family: "Fredoka", sans-serif;
   }
+  .heading4_medium {
+    @apply text-base leading-[22px] font-medium md:text-[18px] lg:text-xl;
+    font-family: "Fredoka", sans-serif;
+  }
   .tp_small_medium {
     @apply text-xs font-medium;
     font-family: "Fredoka", sans-serif;

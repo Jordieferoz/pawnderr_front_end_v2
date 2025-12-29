@@ -27,7 +27,7 @@ const Register: FC = () => {
       >
         <Image
           src={images.logoHorizontal.src}
-          className="w-[250px]"
+          className="w-[220px]"
           width={147}
           height={97}
           alt="PAWnderr Logo"
@@ -35,13 +35,13 @@ const Register: FC = () => {
       </Link>
       <div className="sm:mx-auto sm:w-full sm:max-w-[766px] md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] rounded-4xl md:px-20 md:py-14 relative z-20">
         <div className="md:hidden">
-          <Progress value={progressValue} />
+          <Progress value={progressValue} highlightColor="#0C16E0" />
         </div>
 
         <Link href={"/"} className="mb-1 mt-6 flex justify-center md:hidden">
           <Image
-            src={images.logo.src}
-            className="logo w-30"
+            src={images.logoHorizontal.src}
+            className="logo w-[220px]"
             width={120}
             height={80}
             alt="PAWnderr Logo"
@@ -84,6 +84,7 @@ const Register: FC = () => {
           value={progressValue}
           size={56}
           strokeWidth={5}
+          highlightColor="#0C16E0"
         />
       </div>
     </div>

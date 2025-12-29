@@ -63,7 +63,7 @@ import linkedin from "public/assets/images/linkedin.svg";
 import loginBg from "public/assets/images/login_bg.png";
 import logo from "public/assets/images/logo.svg";
 import logoBig from "public/assets/images/logo_big.svg";
-import logoHorizontal from "public/assets/images/logo_horizontal.png";
+import logoHorizontal from "public/assets/images/logo_horizontal.svg";
 import loyalRibbon from "public/assets/images/loyal_ribbon.svg";
 import matchMeet from "public/assets/images/match_meet.png";
 import matches from "public/assets/images/matches.svg";
@@ -72,6 +72,7 @@ import meaningfulDogs from "public/assets/images/meaningful_dogs.png";
 import messages from "public/assets/images/messages.svg";
 import messagesActive from "public/assets/images/messages_active.svg";
 import pawYellow from "public/assets/images/paw_yellow.svg";
+import pawYellowBlueBg from "public/assets/images/paw_yellow_blue_bg.svg";
 import pawnderBlack from "public/assets/images/pawnder_black.svg";
 import pawnderr from "public/assets/images/pawnderr.svg";
 import pawnderrActive from "public/assets/images/pawnderr_active.svg";
@@ -205,6 +206,7 @@ export type ImageType =
   | "twitter"
   | "linkedin"
   | "instagram"
+  | "pawYellowBlueBg"
   | "backBtn";
 
 export type NextImage = {
@@ -316,5 +318,6 @@ export const images: Record<ImageType, NextImage> = {
   facebookGrey,
   twitter,
   linkedin,
-  instagram
+  instagram,
+  pawYellowBlueBg
 };

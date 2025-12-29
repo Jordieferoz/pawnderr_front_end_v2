@@ -21,7 +21,10 @@ export default function RootLayout({
 }) {
   const pathname = usePathname();
 
-  // Define routes where Footer should NOT appear
+  // Show Header and Footer only on home route
+  const isHomeRoute = pathname === "/";
+
+  // Define routes where MobileMenu should NOT appear
   const hideMobileMenuRoutes = ["/sign-up", "/sign-in", "/register", "/"];
   const shouldHideMobileMenu = hideMobileMenuRoutes.includes(pathname);
 
@@ -33,10 +36,11 @@ export default function RootLayout({
       <body>
         <SessionProvider>
           <ReduxProvider>
-            <Header />
+            {isHomeRoute && <Header />}
+
             {children}
             {!shouldHideMobileMenu && <MobileMenu />}
-            <Footer />
+            {isHomeRoute && <Footer />}
           </ReduxProvider>
         </SessionProvider>
         <Toaster />

@@ -8,9 +8,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { images } from "@/utils/images";
 
-import { IProfileHeaderProps } from "./types";
+import { ISubscriptionHeaderProps } from "./types";
 
-const ProfileHeader: FC<IProfileHeaderProps> = ({ title }) => {
+const SubscriptionHeader: FC<ISubscriptionHeaderProps> = ({ title }) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const [isDesktop, setIsDesktop] = useState(false);
@@ -49,7 +49,7 @@ const ProfileHeader: FC<IProfileHeaderProps> = ({ title }) => {
   const desktopTitle = isTitleObject ? title.md : title;
 
   return (
-    <div className="relative my-4 flex items-center gap-3">
+    <div className="relative my-4 flex items-start gap-3">
       <Image
         src={images.backBtn.src}
         alt="back"
@@ -74,4 +74,4 @@ const ProfileHeader: FC<IProfileHeaderProps> = ({ title }) => {
   );
 };
 
-export default ProfileHeader;
+export default SubscriptionHeader;

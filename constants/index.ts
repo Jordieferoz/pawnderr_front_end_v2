@@ -1,3 +1,5 @@
+import { CreditCard, FileText, Settings, Shield, User } from "lucide-react";
+
 import { ICard } from "@/ui_components/Activities/types";
 import { images } from "@/utils/images";
 
@@ -155,4 +157,12 @@ export const headerMenuItems = [
     imgActive: images.messagesActive.src,
     imgWidth: 24
   }
+];
+
+export const dropdownMenuItems = [
+  { icon: User, label: "My Profile", href: "/profile" },
+  { icon: CreditCard, label: "My Subscription", href: "/my-subscription" },
+  { icon: Settings, label: "Account Settings", href: "/settings" },
+  { icon: Shield, label: "Privacy Policy", href: "/privacy-policy" },
+  { icon: FileText, label: "Terms of Service", href: "/terms-of-service" }
 ];
