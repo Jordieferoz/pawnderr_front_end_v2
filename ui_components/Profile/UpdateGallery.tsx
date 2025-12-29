@@ -58,7 +58,7 @@ const SortableImage: FC<SortableImageProps> = ({ image, isMain = false }) => {
   const style = {
     // Remove transform - keep items in place
     transition: transition ?? "transform 200ms cubic-bezier(0.2, 0, 0, 1)",
-    touchAction: "none" as const
+    touchAction: "pan-y"
   };
 
   return (
@@ -70,7 +70,7 @@ const SortableImage: FC<SortableImageProps> = ({ image, isMain = false }) => {
       className={`
         relative w-full overflow-hidden cursor-move
         ${isMain ? "aspect-[4/3] md:aspect-square rounded-3xl" : "aspect-square rounded-2xl"}
-        ${isDragging ? "opacity-0" : "opacity-100"}
+        ${isDragging ? "opacity-30" : "opacity-100"}
         ${isOver && !isDragging ? "ring-2 ring-blue-500 ring-offset-2" : ""}
       `}
     >
@@ -88,7 +88,7 @@ const SortableImage: FC<SortableImageProps> = ({ image, isMain = false }) => {
 
       <div
         className={`absolute bottom-4 right-4 transition-opacity ${
-          isDragging ? "opacity-0" : "opacity-100"
+          isDragging ? "opacity-30" : "opacity-100"
         }`}
       >
         <img
@@ -113,17 +113,22 @@ const UpdateGallery: FC = () => {
   const [galleryImages, setGalleryImages] =
     useState<GalleryImage[]>(dummyImages);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const isMobile =
+    typeof window !== "undefined" &&
+    window.matchMedia("(pointer: coarse)").matches;
 
   const sensors = useSensors(
     useSensor(TouchSensor, {
       activationConstraint: {
-        delay: 250, // Increased from 150ms
-        tolerance: 8 // Increased from 5px
+        delay: 350,
+        tolerance: 12
       }
     }),
-    useSensor(PointerSensor, {
-      activationConstraint: { distance: 8 }
-    }),
+    isMobile
+      ? undefined
+      : useSensor(PointerSensor, {
+          activationConstraint: { distance: 8 }
+        }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates
     })
@@ -162,7 +167,11 @@ const UpdateGallery: FC = () => {
     <DndContext
       sensors={sensors}
       collisionDetection={closestCenter}
-      measuring={{ droppable: { strategy: MeasuringStrategy.Always } }}
+      measuring={{
+        droppable: {
+          strategy: MeasuringStrategy.WhileDragging
+        }
+      }}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
@@ -210,7 +219,7 @@ const UpdateGallery: FC = () => {
               src={activeImage.url}
               alt="Dragging"
               fill
-              className="object-cover"
+              className="object-cover pointer-events-none"
             />
             <div className="absolute bottom-4 right-4">
               <img
