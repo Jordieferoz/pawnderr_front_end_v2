@@ -116,7 +116,10 @@ const UpdateGallery: FC = () => {
 
   const sensors = useSensors(
     useSensor(TouchSensor, {
-      activationConstraint: { delay: 150, tolerance: 5 }
+      activationConstraint: {
+        delay: 250, // Increased from 150ms
+        tolerance: 8 // Increased from 5px
+      }
     }),
     useSensor(PointerSensor, {
       activationConstraint: { distance: 8 }
@@ -125,7 +128,6 @@ const UpdateGallery: FC = () => {
       coordinateGetter: sortableKeyboardCoordinates
     })
   );
-
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string);
     haptic(10);
