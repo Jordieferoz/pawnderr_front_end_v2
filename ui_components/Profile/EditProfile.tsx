@@ -92,7 +92,7 @@ const EditProfile: FC = () => {
               </li>
               <li
                 className={`py-4 px-5 border-b md:border-0 md:rounded-full last:border-0 border-grey-700 flex items-center justify-between cursor-pointer transition-colors ${
-                  step === 2
+                  step === 3
                     ? "md:bg-[#DBEAFF] md:text-blue"
                     : "text-light-grey2"
                 }`}
@@ -107,7 +107,7 @@ const EditProfile: FC = () => {
               </li>
               <li
                 className={`py-4 px-5 border-b md:border-0 md:rounded-full last:border-0 border-grey-700 flex items-center justify-between cursor-pointer transition-colors ${
-                  step === 3
+                  step === 4
                     ? "md:bg-[#DBEAFF] md:text-blue"
                     : "text-light-grey2"
                 }`}
