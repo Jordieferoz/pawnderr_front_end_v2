@@ -20,10 +20,12 @@ const CurrentPlan: FC = () => {
       <div className="flex items-center justify-between gap-3 pb-7 border-b border-grey-700">
         <img src={images.pawYellowBlueBg.src} alt="plan" className="w-20" />
         <div>
-          <p className="text-lg font-medium text-accent-900 font_fredoka">
+          <p className="text-lg md:text-xl font-medium text-accent-900 font_fredoka mb-1.5">
             Annual Plan
           </p>
-          <p>₹999/Year</p>
+          <p className="text-neutral-white heading4_medium text-right">
+            ₹999/Year
+          </p>
         </div>
       </div>
       <ul className="mt-4 mb-8 flex flex-col gap-4">

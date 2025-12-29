@@ -20,10 +20,10 @@ const DropdownMenu: FC = () => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button className="rounded-full bg-light-grey w-10 h-10 flex items-center justify-center cursor-pointer">
+        <button className="rounded-full bg-light-grey w-11.5 h-11.5 flex items-center justify-center cursor-pointer">
           <img
             src={images.doggoProfilePlaceholder.src}
-            className="rounded-full w-9 h-9 object-cover"
+            className="rounded-full w-10.5 h-10.5 object-cover"
             alt="pet placeholder"
           />
         </button>
