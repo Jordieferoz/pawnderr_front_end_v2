@@ -7,8 +7,7 @@ import { RootState } from "@/store";
 import { setStep } from "@/store/profileInfoSlice";
 import { images } from "@/utils/images";
 
-import { CurrentPlan, SubscriptionHeader } from ".";
-import { PetInformation } from "../Profile";
+import { BillingHistory, CurrentPlan, SubscriptionHeader } from ".";
 
 const stepTitles: Record<number, string> = {
   0: "My Subscription",
@@ -42,12 +41,12 @@ const MySubscription: FC = () => {
         />
 
         {/* Desktop: Grid layout with sidebar and content */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mt-6">
           {/* Left Sidebar Navigation - Always visible on desktop, only when step=0 on mobile */}
           <div
             className={`md:col-span-4 ${step === 0 ? "block" : "hidden md:block"}`}
           >
-            <ul className="py-5 px-6 md:px-5 bg-white shadow-[0px_4px_16.4px_0px_#0000001A] rounded-lg mt-6">
+            <ul className="py-5 px-6 md:px-5 bg-white shadow-[0px_4px_16.4px_0px_#0000001A] rounded-lg md:rounded-[40px] mt-6 md:mt-0">
               <li
                 className={`py-4 px-5 border-b md:border-0 md:rounded-full last:border-0 border-grey-700 flex items-center justify-between cursor-pointer transition-colors ${
                   step === 1
@@ -85,7 +84,7 @@ const MySubscription: FC = () => {
             className={`md:col-span-8 ${step === 0 ? "hidden md:hidden" : "block"}`}
           >
             {step === 1 && <CurrentPlan />}
-            {step === 2 && <PetInformation />}
+            {step === 2 && <BillingHistory />}
           </div>
         </div>
       </div>

@@ -44,7 +44,7 @@ const EditProfile: FC = () => {
         />
 
         {/* Desktop: Grid layout with sidebar and content */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mt-6">
           {/* Left Sidebar Navigation - Always visible on desktop, only when step=0 on mobile */}
           <div
             className={`md:col-span-4 ${step === 0 ? "block" : "hidden md:block"}`}
