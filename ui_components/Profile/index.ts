@@ -5,6 +5,7 @@ import PetInformation from "./PetInformation";
 import Profile from "./Profile";
 import ProfileCard from "./ProfileCard";
 import ProfileHeader from "./ProfileHeader";
+import UpdateGallery from "./UpdateGallery";
 
 export {
   EditProfile,
@@ -13,5 +14,6 @@ export {
   PetInformation,
   Profile,
   ProfileCard,
-  ProfileHeader
+  ProfileHeader,
+  UpdateGallery
 };

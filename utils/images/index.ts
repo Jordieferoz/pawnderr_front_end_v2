@@ -42,6 +42,7 @@ import facebookGrey from "public/assets/images/facebook_grey.svg";
 import featureRibbonLeft from "public/assets/images/feature_ribbon_left.svg";
 import featureRibbonRight from "public/assets/images/feature_ribbon_right.svg";
 import filterIcon from "public/assets/images/filter_icon.svg";
+import gallery from "public/assets/images/gallery.svg";
 import google from "public/assets/images/google.svg";
 import greenBottomPattern from "public/assets/images/green_bottom_pattern.svg";
 import greenHeart from "public/assets/images/green_heart.svg";
@@ -207,6 +208,7 @@ export type ImageType =
   | "linkedin"
   | "instagram"
   | "pawYellowBlueBg"
+  | "gallery"
   | "backBtn";
 
 export type NextImage = {
@@ -319,5 +321,6 @@ export const images: Record<ImageType, NextImage> = {
   twitter,
   linkedin,
   instagram,
-  pawYellowBlueBg
+  pawYellowBlueBg,
+  gallery
 };

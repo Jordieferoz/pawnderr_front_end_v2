@@ -19,7 +19,7 @@ export interface IInfoCardListItem {
   right: string;
 }
 
-// types.ts
 export interface IProfileHeaderProps {
   title: string | { base: string; md: string };
+  desc?: string | { base: string; md: string };
 }
