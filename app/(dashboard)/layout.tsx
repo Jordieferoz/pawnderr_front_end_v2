@@ -10,7 +10,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <section className="min-h-screen overflow-clip">
       <Header />
       <MobileHeader />
-      <main className="relative">{children}</main>
+      <main className="relative h-screen">{children}</main>
     </section>
   );
 }

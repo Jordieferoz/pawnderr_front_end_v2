@@ -3,6 +3,7 @@
 import { SessionProvider } from "next-auth/react";
 import { Fredoka, Source_Sans_3 } from "next/font/google";
 import { usePathname } from "next/navigation";
+import Script from "next/script";
 
 import { Toaster } from "@/components/ui/sonner";
 import { ReduxProvider } from "@/store/Provider";
@@ -43,7 +44,14 @@ export default function RootLayout({
             {isHomeRoute && <Footer />}
           </ReduxProvider>
         </SessionProvider>
-        <Toaster />
+        <Toaster theme="dark" duration={3000} />
+
+        {/* Razorpay Script */}
+        <Script
+          id="razorpay-checkout-js"
+          src="https://checkout.razorpay.com/v1/checkout.js"
+          strategy="lazyOnload"
+        />
       </body>
     </html>
   );

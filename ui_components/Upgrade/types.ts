@@ -14,4 +14,6 @@ export interface PricingCardProps {
   type: PricingType;
   features: string[];
   plan: Plan | null;
+  onSubscribe?: (planId: number) => void;
+  processingPlanId?: number | null;
 }

@@ -1,14 +1,21 @@
 "use client";
 
+import {
+  createSubscriptionOrder,
+  fetchSubscriptionFeatures,
+  fetchSubscriptionPlans,
+  verifySubscriptionPayment
+} from "@/utils/api";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { fetchSubscriptionFeatures, fetchSubscriptionPlans } from "@/utils/api";
 import { images } from "@/utils/images";
+import { initiateRazorpayPayment } from "@/utils/razorPay";
 
-import PricingCard from "./PricingCard";
+import { PricingCard } from ".";
+import { showToast } from "../Shared/ToastMessage";
 import { PricingType } from "./types";
 
 interface Plan {
@@ -40,8 +47,10 @@ const Upgrade = () => {
   });
   const [features, setFeatures] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [processingPlanId, setProcessingPlanId] = useState<number | null>(null);
 
   const pricingType: PricingType = isAnnual ? "annually" : "monthly";
+  const selectedPlan = isAnnual ? plans.yearly : plans.monthly;
 
   useEffect(() => {
     const run = async () => {
@@ -51,7 +60,6 @@ const Upgrade = () => {
           fetchSubscriptionFeatures()
         ]);
 
-        // Set plans
         if (plansResp.data?.plans) {
           const monthlyPlan = plansResp.data.plans.find(
             (p: Plan) => p.duration_type === "monthly"
@@ -66,21 +74,96 @@ const Upgrade = () => {
           });
         }
 
-        // Set features
         if (featuresResp.data?.features) {
           const featureNames = featuresResp.data.features.map(
             (f: Feature) => f.feature_name
           );
           setFeatures(featureNames);
         }
-      } catch (error) {
-        console.error("Failed to fetch data:", error);
+      } catch (error: any) {
+        showToast({
+          type: "error",
+          message: "Failed to load subscription plans"
+        });
       } finally {
         setLoading(false);
       }
     };
     run();
   }, []);
+
+  const handlePaymentSuccess = async (paymentResponse: any, planId: number) => {
+    try {
+      const verifyResponse = await verifySubscriptionPayment({
+        razorpay_order_id: paymentResponse.razorpay_order_id,
+        razorpay_payment_id: paymentResponse.razorpay_payment_id,
+        razorpay_signature: paymentResponse.razorpay_signature,
+        plan_id: planId
+      });
+
+      console.log(verifyResponse, "verifyResponse");
+      if (verifyResponse.data) {
+        showToast({
+          type: "success",
+          message: "Subscription activated successfully! 🎉"
+        });
+
+        router.push("/dashboard");
+      }
+    } catch (error) {
+      showToast({
+        type: "error",
+        message: "Payment verification failed. Please contact support."
+      });
+    } finally {
+      setProcessingPlanId(null);
+    }
+  };
+
+  const handlePaymentFailure = (error: any) => {
+    showToast({
+      type: "error",
+      message: error.message || "Payment failed. Please try again."
+    });
+
+    setProcessingPlanId(null);
+  };
+
+  const handleSubscribe = async (planId: number) => {
+    if (!planId || processingPlanId !== null) return;
+
+    try {
+      setProcessingPlanId(planId);
+      const response = await createSubscriptionOrder(planId);
+
+      console.log("Create order response:", response);
+
+      if (response.data) {
+        if (!response.data.order_id || !response.data.plan) {
+          throw new Error("Invalid response from server");
+        }
+
+        initiateRazorpayPayment({
+          order_id: response.data.order_id,
+          amount: response.data.amount,
+          currency: response.data.currency,
+          razorpay_key: response.data.razorpay_key,
+          plan: response.data.plan,
+          onSuccess: handlePaymentSuccess,
+          onFailure: handlePaymentFailure
+        });
+      } else {
+        throw new Error("No data received from server");
+      }
+    } catch (error) {
+      showToast({
+        type: "error",
+        message: "Failed to initiate payment. Please try again."
+      });
+
+      setProcessingPlanId(null);
+    }
+  };
 
   if (loading) {
     return (
@@ -124,8 +207,10 @@ const Upgrade = () => {
         <div className="">
           <PricingCard
             type={pricingType}
-            plan={isAnnual ? plans.yearly : plans.monthly}
+            plan={selectedPlan}
             features={features}
+            onSubscribe={handleSubscribe}
+            processingPlanId={processingPlanId}
           />
         </div>
         <div className="hidden md:block">
@@ -133,10 +218,18 @@ const Upgrade = () => {
             type={"annually"}
             plan={plans.yearly}
             features={features}
+            onSubscribe={handleSubscribe}
+            processingPlanId={processingPlanId}
           />
         </div>
       </div>
-      <Button className="w-full md:hidden">Go Premium</Button>
+      <Button
+        className="w-full md:hidden"
+        onClick={() => selectedPlan && handleSubscribe(selectedPlan.id)}
+        disabled={!selectedPlan || processingPlanId !== null}
+      >
+        {processingPlanId === selectedPlan?.id ? "Processing..." : "Go Premium"}
+      </Button>
     </div>
   );
 };

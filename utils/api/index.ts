@@ -197,3 +197,44 @@ export const petPreferencesInfo = (payload: any): Promise<TResponse<any>> => {
       });
   });
 };
+
+export const createSubscriptionOrder = (
+  planId: number
+): Promise<TResponse<any>> => {
+  return new Promise((resolve, reject) => {
+    globalPostService<any, any>(`subscription/create-order`, {
+      plan_id: planId
+    })
+      .then((response) => {
+        if (response.statusCode === 200 || response.statusCode === 201) {
+          resolve(response.data);
+        } else {
+          reject(new Error(`Unexpected status code: ${response.statusCode}`));
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+export const verifySubscriptionPayment = (paymentData: {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+  plan_id: number;
+}): Promise<TResponse<any>> => {
+  return new Promise((resolve, reject) => {
+    globalPostService<any, any>(`subscription/verify-payment`, paymentData)
+      .then((response) => {
+        if (response.statusCode === 200 || response.statusCode === 201) {
+          resolve(response.data);
+        } else {
+          reject(new Error(`Unexpected status code: ${response.statusCode}`));
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};

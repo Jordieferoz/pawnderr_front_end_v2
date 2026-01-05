@@ -5,7 +5,13 @@ import { images } from "@/utils/images";
 
 import { PricingCardProps } from "./types";
 
-const PricingCard: FC<PricingCardProps> = ({ type, features, plan }) => {
+const PricingCard: FC<PricingCardProps> = ({
+  type,
+  features,
+  plan,
+  onSubscribe,
+  processingPlanId
+}) => {
   const formatPrice = () => {
     if (!plan) return "Price unavailable";
 
@@ -15,6 +21,15 @@ const PricingCard: FC<PricingCardProps> = ({ type, features, plan }) => {
 
     return `${currencySymbol}${amount.toFixed(0)}${period}`;
   };
+
+  const handleClick = () => {
+    if (plan && onSubscribe && processingPlanId === null) {
+      onSubscribe(plan.id);
+    }
+  };
+
+  const isProcessing = processingPlanId === plan?.id;
+  const isAnyProcessing = processingPlanId !== null;
 
   return (
     <div
@@ -51,8 +66,12 @@ const PricingCard: FC<PricingCardProps> = ({ type, features, plan }) => {
           </li>
         ))}
       </ul>
-      <Button className="w-[calc(100%-80px)] mx-auto hidden md:flex mt-11">
-        Go Premium
+      <Button
+        className="w-[calc(100%-80px)] mx-auto hidden md:flex mt-11"
+        onClick={handleClick}
+        disabled={!plan || isAnyProcessing}
+      >
+        {isProcessing ? "Processing..." : "Go Premium"}
       </Button>
     </div>
   );
