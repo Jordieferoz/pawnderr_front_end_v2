@@ -5,19 +5,11 @@ import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { fetchSubscriptionPlans } from "@/utils/api";
+import { fetchSubscriptionFeatures, fetchSubscriptionPlans } from "@/utils/api";
 import { images } from "@/utils/images";
 
 import PricingCard from "./PricingCard";
 import { PricingType } from "./types";
-
-const FEATURES = [
-  "See who sniffed you first",
-  "Unlimited right swipes",
-  "Premium-only pet profiles",
-  "Instant playdate scheduling",
-  "Verified good boys & girls only"
-];
 
 interface Plan {
   id: number;
@@ -27,6 +19,13 @@ interface Plan {
   duration_value: number;
   price: string;
   currency: string;
+}
+
+interface Feature {
+  id: number;
+  feature_key: string;
+  feature_name: string;
+  description: string;
 }
 
 const Upgrade = () => {
@@ -39,6 +38,7 @@ const Upgrade = () => {
     monthly: null,
     yearly: null
   });
+  const [features, setFeatures] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
   const pricingType: PricingType = isAnnual ? "annually" : "monthly";
@@ -46,12 +46,17 @@ const Upgrade = () => {
   useEffect(() => {
     const run = async () => {
       try {
-        const resp = await fetchSubscriptionPlans();
-        if (resp.data?.plans) {
-          const monthlyPlan = resp.data.plans.find(
+        const [plansResp, featuresResp] = await Promise.all([
+          fetchSubscriptionPlans(),
+          fetchSubscriptionFeatures()
+        ]);
+
+        // Set plans
+        if (plansResp.data?.plans) {
+          const monthlyPlan = plansResp.data.plans.find(
             (p: Plan) => p.duration_type === "monthly"
           );
-          const yearlyPlan = resp.data.plans.find(
+          const yearlyPlan = plansResp.data.plans.find(
             (p: Plan) => p.duration_type === "yearly"
           );
 
@@ -60,8 +65,16 @@ const Upgrade = () => {
             yearly: yearlyPlan || null
           });
         }
+
+        // Set features
+        if (featuresResp.data?.features) {
+          const featureNames = featuresResp.data.features.map(
+            (f: Feature) => f.feature_name
+          );
+          setFeatures(featureNames);
+        }
       } catch (error) {
-        console.error("Failed to fetch plans:", error);
+        console.error("Failed to fetch data:", error);
       } finally {
         setLoading(false);
       }
@@ -112,14 +125,14 @@ const Upgrade = () => {
           <PricingCard
             type={pricingType}
             plan={isAnnual ? plans.yearly : plans.monthly}
-            features={FEATURES}
+            features={features}
           />
         </div>
         <div className="hidden md:block">
           <PricingCard
             type={"annually"}
             plan={plans.yearly}
-            features={FEATURES}
+            features={features}
           />
         </div>
       </div>

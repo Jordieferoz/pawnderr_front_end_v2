@@ -78,9 +78,26 @@ export const fetchPets = (): Promise<TResponse<any>> => {
       });
   });
 };
+
 export const fetchSubscriptionPlans = (): Promise<TResponse<any>> => {
   return new Promise((resolve, reject) => {
     globalGetService<any, any>(`subscription/plans`, {})
+      .then((response) => {
+        if (response.statusCode === 200) {
+          resolve(response.data);
+        } else {
+          reject(new Error(`Unexpected status code: ${response.statusCode}`));
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+export const fetchSubscriptionFeatures = (): Promise<TResponse<any>> => {
+  return new Promise((resolve, reject) => {
+    globalGetService<any, any>(`subscription/features`, {})
       .then((response) => {
         if (response.statusCode === 200) {
           resolve(response.data);
