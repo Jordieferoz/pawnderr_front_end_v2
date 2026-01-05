@@ -5,8 +5,16 @@ import { images } from "@/utils/images";
 
 import { PricingCardProps } from "./types";
 
-const PricingCard: FC<PricingCardProps> = ({ type, features }) => {
-  const price = type === "annually" ? "₹999/Annually" : "₹199/Month";
+const PricingCard: FC<PricingCardProps> = ({ type, features, plan }) => {
+  const formatPrice = () => {
+    if (!plan) return "Price unavailable";
+
+    const amount = parseFloat(plan.price);
+    const currencySymbol = plan.currency === "INR" ? "₹" : plan.currency;
+    const period = type === "annually" ? "/Year" : "/Month";
+
+    return `${currencySymbol}${amount.toFixed(0)}${period}`;
+  };
 
   return (
     <div
@@ -21,7 +29,7 @@ const PricingCard: FC<PricingCardProps> = ({ type, features }) => {
         <h2
           className={`heading2_medium ${type === "annually" ? "text-dark-grey" : "text-white"}`}
         >
-          {price}
+          {formatPrice()}
         </h2>
       </div>
       <ul className={`flex flex-col gap-4 md:pl-5`}>

@@ -1,10 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { fetchSubscriptionPlans } from "@/utils/api";
 import { images } from "@/utils/images";
 
 import PricingCard from "./PricingCard";
@@ -18,11 +19,67 @@ const FEATURES = [
   "Verified good boys & girls only"
 ];
 
+interface Plan {
+  id: number;
+  name: string;
+  description: string;
+  duration_type: string;
+  duration_value: number;
+  price: string;
+  currency: string;
+}
+
 const Upgrade = () => {
   const router = useRouter();
   const [isAnnual, setIsAnnual] = useState(false);
+  const [plans, setPlans] = useState<{
+    monthly: Plan | null;
+    yearly: Plan | null;
+  }>({
+    monthly: null,
+    yearly: null
+  });
+  const [loading, setLoading] = useState(true);
 
   const pricingType: PricingType = isAnnual ? "annually" : "monthly";
+
+  useEffect(() => {
+    const run = async () => {
+      try {
+        const resp = await fetchSubscriptionPlans();
+        if (resp.data?.plans) {
+          const monthlyPlan = resp.data.plans.find(
+            (p: Plan) => p.duration_type === "monthly"
+          );
+          const yearlyPlan = resp.data.plans.find(
+            (p: Plan) => p.duration_type === "yearly"
+          );
+
+          setPlans({
+            monthly: monthlyPlan || null,
+            yearly: yearlyPlan || null
+          });
+        }
+      } catch (error) {
+        console.error("Failed to fetch plans:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    run();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="upgrade_wrapper common_container">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <p className="body_large_medium text-neutral-white">
+            Loading plans...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="upgrade_wrapper common_container">
@@ -54,14 +111,14 @@ const Upgrade = () => {
         <div className="">
           <PricingCard
             type={pricingType}
-            price={isAnnual ? "Annual pricing UI here" : "₹199/Month"}
+            plan={isAnnual ? plans.yearly : plans.monthly}
             features={FEATURES}
           />
         </div>
         <div className="hidden md:block">
           <PricingCard
             type={"annually"}
-            price={isAnnual ? "Annual pricing UI here" : "₹199/Month"}
+            plan={plans.yearly}
             features={FEATURES}
           />
         </div>

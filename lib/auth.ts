@@ -1,4 +1,4 @@
-// lib/auth.ts (or app/api/auth/auth-options.ts)
+// lib/auth.ts
 
 import { NextAuthOptions } from "next-auth/";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -12,8 +12,6 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        console.log("🔐 Authorization attempt started");
-
         if (!credentials?.email || !credentials?.password) {
           console.error("❌ Missing credentials");
           throw new Error("Please enter your email and password");
@@ -34,8 +32,6 @@ export const authOptions: NextAuthOptions = {
             })
           });
 
-          console.log("📥 Response status:", response.status);
-
           const responseText = await response.text();
           let responseData;
 
@@ -51,7 +47,6 @@ export const authOptions: NextAuthOptions = {
             throw new Error(responseData?.message || "Invalid credentials");
           }
 
-          // Extract user data from response
           const userData = responseData?.data;
 
           if (!userData || !userData.accessToken) {
@@ -59,7 +54,6 @@ export const authOptions: NextAuthOptions = {
             throw new Error("Invalid credentials");
           }
 
-          // Return complete user object matching UserData interface
           const user = {
             id: userData.id,
             email: userData.email,
@@ -74,12 +68,6 @@ export const authOptions: NextAuthOptions = {
             accessToken: userData.accessToken,
             refreshToken: userData.refreshToken
           };
-
-          console.log("✅ Authorization successful:", {
-            id: user.id,
-            email: user.email,
-            name: user.name
-          });
 
           return user;
         } catch (error: any) {
@@ -112,6 +100,10 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }: any) {
       if (token) {
         session.user = token.userData;
+
+        // THIS IS THE FIX - Add these two lines:
+        session.accessToken = token.accessToken;
+        session.refreshToken = token.refreshToken;
       }
       return session;
     }

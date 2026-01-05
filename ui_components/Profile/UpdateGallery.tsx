@@ -43,30 +43,18 @@ interface SortableImageProps {
 }
 
 const SortableImage: FC<SortableImageProps> = ({ image, isMain = false }) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    isDragging,
-    isOver,
-    transform,
-    transition
-  } = useSortable({
-    id: image.id
-  });
-
-  const style = {
-    // Remove transform - keep items in place
-    transition: transition ?? "transform 200ms cubic-bezier(0.2, 0, 0, 1)",
-    touchAction: "pan-y"
-  };
+  const { attributes, listeners, setNodeRef, isDragging, isOver, transition } =
+    useSortable({ id: image.id });
 
   return (
     <div
       ref={setNodeRef}
       {...attributes}
       {...listeners}
-      style={style}
+      style={{
+        transition,
+        touchAction: "pan-y"
+      }}
       className={`
         relative w-full overflow-hidden cursor-move
         ${isMain ? "aspect-[4/3] md:aspect-square rounded-3xl" : "aspect-square rounded-2xl"}
@@ -74,28 +62,19 @@ const SortableImage: FC<SortableImageProps> = ({ image, isMain = false }) => {
         ${isOver && !isDragging ? "ring-2 ring-blue-500 ring-offset-2" : ""}
       `}
     >
-      {/* Placeholder when dragging over */}
       {isOver && !isDragging && (
         <div className="absolute inset-0 bg-blue-100 border-2 border-dashed border-blue-400 rounded-inherit" />
       )}
 
       <Image
         src={image.url}
-        alt="Gallery photo"
+        alt="Gallery"
         fill
         className="object-cover pointer-events-none"
       />
 
-      <div
-        className={`absolute bottom-4 right-4 transition-opacity ${
-          isDragging ? "opacity-30" : "opacity-100"
-        }`}
-      >
-        <img
-          src={images.gallery?.src}
-          alt="Reorder"
-          className="w-9 h-9 pointer-events-none"
-        />
+      <div className="absolute bottom-4 right-4 pointer-events-none">
+        <img src={images.gallery.src} className="w-9 h-9" alt="gallery" />
       </div>
     </div>
   );
@@ -110,9 +89,9 @@ const dummyImages: GalleryImage[] = [
 ];
 
 const UpdateGallery: FC = () => {
-  const [galleryImages, setGalleryImages] =
-    useState<GalleryImage[]>(dummyImages);
+  const [galleryImages, setGalleryImages] = useState(dummyImages);
   const [activeId, setActiveId] = useState<string | null>(null);
+
   const isMobile =
     typeof window !== "undefined" &&
     window.matchMedia("(pointer: coarse)").matches;
@@ -133,59 +112,50 @@ const UpdateGallery: FC = () => {
       coordinateGetter: sortableKeyboardCoordinates
     })
   );
-  const handleDragStart = (event: DragStartEvent) => {
-    setActiveId(event.active.id as string);
-    haptic(10);
+
+  const handleDragStart = ({ active }: DragStartEvent) => {
+    setActiveId(active.id as string);
+    haptic();
   };
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-
+  const handleDragEnd = ({ active, over }: DragEndEvent) => {
     if (over && active.id !== over.id) {
       setGalleryImages((items) => {
         const oldIndex = items.findIndex((i) => i.id === active.id);
         const newIndex = items.findIndex((i) => i.id === over.id);
         return arrayMove(items, oldIndex, newIndex);
       });
-
       haptic(15);
     }
-
-    setActiveId(null);
-  };
-
-  const handleDragCancel = () => {
     setActiveId(null);
   };
 
   const mainImage = galleryImages[0];
-  const thumbnailImages = galleryImages.slice(1);
-  const activeImage = galleryImages.find((img) => img.id === activeId);
-  const isMainImageActive = activeId === mainImage.id;
+  const thumbnails = galleryImages.slice(1);
+  const activeImage = galleryImages.find((i) => i.id === activeId);
+  const isMainActive = activeId === mainImage.id;
 
   return (
     <DndContext
       sensors={sensors}
       collisionDetection={closestCenter}
       measuring={{
-        droppable: {
-          strategy: MeasuringStrategy.WhileDragging
-        }
+        droppable: { strategy: MeasuringStrategy.WhileDragging }
       }}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
-      onDragCancel={handleDragCancel}
+      onDragCancel={() => setActiveId(null)}
     >
-      <div className="md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] md:px-20 md:py-16 md:rounded-[40px]">
+      <div className="md:bg-white md:shadow-md md:px-20 md:py-16 md:rounded-[40px]">
         <SortableContext
-          items={galleryImages.map((img) => img.id)}
+          items={galleryImages.map((i) => i.id)}
           strategy={rectSortingStrategy}
         >
           <div className="md:hidden space-y-6">
             <SortableImage image={mainImage} isMain />
             <div className="grid grid-cols-2 gap-4">
-              {thumbnailImages.map((image) => (
-                <SortableImage key={image.id} image={image} />
+              {thumbnails.map((img) => (
+                <SortableImage key={img.id} image={img} />
               ))}
             </div>
           </div>
@@ -193,8 +163,8 @@ const UpdateGallery: FC = () => {
           <div className="hidden md:grid md:grid-cols-2 md:gap-6">
             <SortableImage image={mainImage} isMain />
             <div className="grid grid-cols-2 gap-4">
-              {thumbnailImages.map((image) => (
-                <SortableImage key={image.id} image={image} />
+              {thumbnails.map((img) => (
+                <SortableImage key={img.id} image={img} />
               ))}
             </div>
           </div>
@@ -205,28 +175,25 @@ const UpdateGallery: FC = () => {
         </div>
       </div>
 
-      {/* Simplified Drag Overlay */}
-      <DragOverlay>
+      {/* ✅ MOBILE-SAFE DRAG PREVIEW */}
+      <DragOverlay adjustScale={false} dropAnimation={null}>
         {activeImage && (
           <div
-            className={`relative w-full overflow-hidden shadow-xl ${
-              isMainImageActive
-                ? "aspect-[4/3] md:aspect-square rounded-3xl"
-                : "aspect-square rounded-2xl"
+            style={{ pointerEvents: "none" }}
+            className={`relative overflow-hidden shadow-xl ${
+              isMainActive
+                ? "w-[92vw] aspect-[4/3] rounded-3xl"
+                : "w-[45vw] aspect-square rounded-2xl"
             }`}
           >
             <Image
               src={activeImage.url}
               alt="Dragging"
               fill
-              className="object-cover pointer-events-none"
+              className="object-cover"
             />
             <div className="absolute bottom-4 right-4">
-              <img
-                src={images.gallery?.src}
-                alt="Reorder"
-                className="w-9 h-9"
-              />
+              <img src={images.gallery.src} className="w-9 h-9" alt="gallery" />
             </div>
           </div>
         )}

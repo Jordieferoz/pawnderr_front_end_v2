@@ -161,14 +161,10 @@ const MatchingPetForm: FC = () => {
           })
       };
 
-      console.log("Submitting pet preferences:", payload);
-
       // Call API
       const response = await petPreferencesInfo(payload);
 
       if (response.statusCode === 200 || response.statusCode === 201) {
-        console.log("Pet preferences saved successfully:", response);
-
         // Save to Redux
         dispatch(
           updateStepData({

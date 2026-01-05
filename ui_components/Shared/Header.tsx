@@ -1,3 +1,5 @@
+// components/Header.tsx
+
 "use client";
 
 import Link from "next/link";
@@ -6,16 +8,17 @@ import { FC } from "react";
 
 import { Button } from "@/components/ui/button";
 import { headerMenuItems } from "@/constants";
+import { useUserProfile } from "@/hooks/useUserProfile";
 import { images } from "@/utils/images";
 
 import { DropdownMenu } from "../Dashboard";
 
 const Header: FC = () => {
   const pathname = usePathname();
+  const { userProfile, isLoading } = useUserProfile();
 
   const isItemActive = (itemHref: string, itemKey: string) => {
     if (itemKey === "discover") {
-      // Dashboard tab is active on /dashboard and /profile
       return (
         pathname === "/dashboard" ||
         pathname === "/profile" ||
@@ -23,10 +26,9 @@ const Header: FC = () => {
         pathname.startsWith("/profile/")
       );
     }
-
-    // Default behavior for others
     return pathname === itemHref || pathname.startsWith(`${itemHref}/`);
   };
+
   return (
     <header className="fixed py-6 w-full left-0 top-0 z-50 bg-white border-b border-blue/10 shadow-[0px_4px_16.4px_0px_#0000000F] hidden md:block">
       <nav className="container mx-auto common_container flex items-center justify-between gap-4">
@@ -71,7 +73,7 @@ const Header: FC = () => {
               </Link>
             );
           })}
-          <DropdownMenu />
+          <DropdownMenu userProfile={userProfile} isLoading={isLoading} />
           <Link href={"/upgrade"} className="cursor-pointer">
             <Button>
               <img src={images.pawnderBlack.src} alt="pawnderr+" /> PAWnderr+

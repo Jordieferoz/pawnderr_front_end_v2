@@ -7,6 +7,7 @@ import axios, {
   AxiosResponse,
   InternalAxiosRequestConfig
 } from "axios";
+import { getSession } from "next-auth/react";
 
 import { TApiResponse } from "./types";
 
@@ -17,7 +18,7 @@ function axiosInstanceCreator(baseURL: string | undefined, accessKey?: string) {
   axiosInstance.defaults.baseURL = baseURL;
 
   axiosInstance.interceptors.request.use(
-    function (config: InternalAxiosRequestConfig) {
+    async function (config: InternalAxiosRequestConfig) {
       if (!config.headers) {
         config.headers = {} as AxiosRequestHeaders;
       }
@@ -31,15 +32,20 @@ function axiosInstanceCreator(baseURL: string | undefined, accessKey?: string) {
         }
       }
 
-      // // Add Bearer token if available (for authenticated requests)
-      // const token = sessionStorage.getItem("accessToken");
-      // if (token) {
-      //   config.headers["Authorization"] = `Bearer ${token}`;
-      // }
+      try {
+        const session = await getSession();
+        if (session && (session as any).accessToken) {
+          config.headers["Authorization"] =
+            `Bearer ${(session as any).accessToken}`;
+        }
+      } catch (error) {
+        console.error("❌ Error getting session:", error);
+      }
 
       return config;
     },
     function (error: AxiosError) {
+      console.error("❌ Request interceptor error:", error);
       return Promise.reject(error);
     }
   );
@@ -49,10 +55,24 @@ function axiosInstanceCreator(baseURL: string | undefined, accessKey?: string) {
       if (response.status >= 200 && response.status <= 299) {
         return response;
       } else {
+        console.error("⚠️ Non-2xx response:", response.status);
         return Promise.reject(response);
       }
     },
     function (error: AxiosError) {
+      console.error("❌ API Error:", {
+        url: error.config?.url,
+        status: error.response?.status,
+        message: error.response?.data || error.message
+      });
+
+      // Handle 401 Unauthorized
+      if (error.response?.status === 401) {
+        console.warn("🔒 Unauthorized - Redirecting to sign-in");
+        // Optional: Clear session and redirect to login
+        // window.location.href = '/sign-in';
+      }
+
       return Promise.reject(error);
     }
   );

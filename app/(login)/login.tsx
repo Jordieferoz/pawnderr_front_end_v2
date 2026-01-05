@@ -30,7 +30,7 @@ const sanitizeInput = (input: string): string => {
 };
 
 export function Login({ mode = "signin" }: { mode?: Mode }) {
-  const dispatch = useDispatch(); // ADD THIS
+  const dispatch = useDispatch();
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -73,17 +73,11 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
     setApiError(null);
 
     try {
-      // Sanitize email input (NOT password - it may contain special chars)
       const sanitizedEmail = sanitizeInput(data.email);
 
       if (isSignup) {
-        // Sign up flow - store credentials and navigate to /register
         const signupData = data as SignUpValues;
-
-        // Store credentials using signupStorage helper
         signupStorage.set(sanitizedEmail, signupData.password);
-
-        // Navigate to register page
         router.push("/register");
       } else {
         // Sign in flow using NextAuth
@@ -98,31 +92,33 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
         });
 
         if (result?.error) {
-          // Handle specific error messages
+          console.error("❌ Sign in error:", result.error);
           if (result.error === "CredentialsSignin") {
             setApiError("Invalid email or password. Please try again.");
           } else {
             setApiError(result.error);
           }
         } else if (result?.ok) {
-          // Get session to retrieve user data
+          await new Promise((resolve) => setTimeout(resolve, 500));
+
           const { getSession } = await import("next-auth/react");
           const session = await getSession();
 
           if (session?.user) {
-            console.log("👤 Storing user in Redux:", session.user);
-
-            // Dispatch user data to Redux
             dispatch(setUser(session.user as any));
           }
+
+          if (!(session as any)?.accessToken) {
+            console.error("❌ No accessToken in session!");
+          }
+
           router.push(callbackUrl);
           router.refresh();
         }
       }
     } catch (error: any) {
-      console.error("Authentication error:", error);
+      console.error("❌ Authentication error:", error);
 
-      // Display error message
       if (error?.message) {
         setApiError(error.message);
       } else {
@@ -242,7 +238,6 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
                     type="email"
                     {...field}
                     onChange={(e) => {
-                      // Sanitize email input on change
                       const sanitized = sanitizeInput(e.target.value);
                       field.onChange(sanitized);
                     }}

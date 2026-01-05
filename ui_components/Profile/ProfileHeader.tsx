@@ -16,7 +16,7 @@ const ProfileHeader: FC<IProfileHeaderProps> = ({ title, desc }) => {
   const [isDesktop, setIsDesktop] = useState(false);
 
   const step = useSelector((state: RootState) => state.profileInfo.step);
-  console.log(step, "step");
+
   // Detect if we're on desktop
   useEffect(() => {
     const checkDesktop = () => {

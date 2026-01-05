@@ -130,14 +130,10 @@ const FilterContent: FC = () => {
           })
       };
 
-      console.log("Updating pet preferences:", payload);
-
       // Call API to update preferences
       const response = await petPreferencesInfo(payload);
 
       if (response.statusCode === 200 || response.statusCode === 201) {
-        console.log("Pet preferences updated successfully:", response);
-
         // Save to Redux
         dispatch(
           updateStepData({

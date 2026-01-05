@@ -1,30 +1,56 @@
-import "next-auth";
+// types/next-auth.d.ts
 
-import { DefaultSession } from "next-auth";
+import "next-auth";
 
 declare module "next-auth" {
   interface Session {
-    accessToken: string;
     user: {
-      id: string;
+      id: number;
       email: string;
-      name?: string | null;
-      image?: string | null;
-    } & DefaultSession["user"];
+      name: string;
+      phone?: string;
+      gender?: string;
+      isActive: boolean;
+      isVerified: boolean;
+      profileCompletionPercentage: number;
+      lastLoginAt: string;
+      loginCount: number;
+    };
+    accessToken: string;
+    refreshToken: string;
   }
 
   interface User {
-    accessToken: string;
-    id: string;
+    id: number;
     email: string;
-    name?: string | null;
-    image?: string | null;
+    name: string;
+    phone?: string;
+    gender?: string;
+    isActive: boolean;
+    isVerified: boolean;
+    profileCompletionPercentage: number;
+    lastLoginAt: string;
+    loginCount: number;
+    accessToken: string;
+    refreshToken: string;
   }
 }
 
 declare module "next-auth/jwt" {
   interface JWT {
+    userData: {
+      id: number;
+      email: string;
+      name: string;
+      phone?: string;
+      gender?: string;
+      isActive: boolean;
+      isVerified: boolean;
+      profileCompletionPercentage: number;
+      lastLoginAt: string;
+      loginCount: number;
+    };
     accessToken: string;
-    id: string;
+    refreshToken: string;
   }
 }

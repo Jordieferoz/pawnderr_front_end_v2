@@ -3,14 +3,13 @@
 import Link from "next/link";
 import { FC } from "react";
 
+import { useUserProfile } from "@/hooks";
 import { images } from "@/utils/images";
 
 import { DropdownMenu } from ".";
 
 const MobileHeader: FC = () => {
-  const handleLogout = () => {
-    console.log("Logging out...");
-  };
+  const { userProfile, isLoading } = useUserProfile();
 
   return (
     <header className="fixed py-6 w-full left-0 top-0 z-50 bg-white md:hidden">
@@ -23,7 +22,7 @@ const MobileHeader: FC = () => {
           />
         </Link>
 
-        <DropdownMenu />
+        <DropdownMenu userProfile={userProfile} isLoading={isLoading} />
       </nav>
     </header>
   );

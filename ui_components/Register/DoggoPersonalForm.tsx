@@ -222,7 +222,6 @@ const DoggoPersonalForm: FC = () => {
 
       // Upload compressed blob to API
       const uploadResponse = await uploadPetPhoto(compressedBlob);
-      console.log(uploadResponse, "uploadResponse");
 
       if (
         uploadResponse.statusCode === 200 ||
@@ -270,8 +269,6 @@ const DoggoPersonalForm: FC = () => {
     e.target.value = "";
 
     if (files.length === 0) return;
-
-    console.log(`Selected ${files.length} files for slot ${startIndex}`);
 
     // Check if adding these images would exceed the maximum
     const availableSlots = MAX_IMAGES - uploadedImagesCount;
@@ -399,8 +396,6 @@ const DoggoPersonalForm: FC = () => {
     e.target.value = "";
 
     if (files.length === 0) return;
-
-    console.log(`Selected ${files.length} files for upload`);
 
     // Check if adding these images would exceed the maximum
     const availableSlots = MAX_IMAGES - uploadedImagesCount;
@@ -681,14 +676,10 @@ const DoggoPersonalForm: FC = () => {
         temporary_photo_ids: temporaryPhotoIds
       };
 
-      console.log("Submitting pet registration:", payload);
-
       // Call API
       const response = await petRegisterInfo(payload);
 
       if (response.statusCode === 200 || response.statusCode === 201) {
-        console.log("Pet registration successful:", response);
-
         // Extract pet_id from nested response structure
         // Response structure: response.data.data.pet_id
         const petId = response.data?.data?.pet_id;
@@ -701,8 +692,6 @@ const DoggoPersonalForm: FC = () => {
           });
           return;
         }
-
-        console.log("Extracted pet ID:", petId);
 
         // Save all data to Redux including petId
         dispatch(

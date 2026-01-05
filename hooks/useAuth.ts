@@ -15,8 +15,6 @@ const useAuth = () => {
   );
 
   const logout = async () => {
-    console.log("🚪 Logging out");
-
     // Clear Redux user state
     dispatch(clearUser());
 
@@ -25,8 +23,6 @@ const useAuth = () => {
 
     // Clear session storage
     sessionStorage.clear();
-
-    console.log("✅ Logout complete");
 
     // Redirect to sign in
     router.push("/sign-in");

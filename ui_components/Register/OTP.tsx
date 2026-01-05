@@ -41,14 +41,14 @@ const OTP: FC = () => {
   });
 
   const onSubmit = async (data: OtpValues) => {
-    console.log(data, "data");
+    // console.log(data, "data");
     setApiError(null);
     setIsSubmitting(true);
 
     try {
       // Fetch registration metadata
       const resp = await fetchPetRegistrationData();
-      console.log(resp, "resp");
+
       if (resp.statusCode === 200 && resp.data) {
         // Store metadata in Redux
         dispatch(setMetadata(resp.data.data));
@@ -61,8 +61,6 @@ const OTP: FC = () => {
             step: 3
           })
         );
-
-        console.log("Registration metadata loaded successfully");
       }
     } catch (error: any) {
       console.error("OTP verification error:", error);
