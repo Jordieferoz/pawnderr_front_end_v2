@@ -51,20 +51,6 @@ const DropdownMenu: FC<DropdownMenuProps> = ({ userProfile, isLoading }) => {
 
       <PopoverContent className="w-56 p-2" align="end">
         <div className="flex flex-col gap-1">
-          {/* User Info Section */}
-          {userProfile && (
-            <div className="px-3 py-2 mb-1">
-              <p className="text-sm font-semibold text-gray-900">
-                {userProfile.name}
-              </p>
-              <p className="text-xs text-gray-500 truncate">
-                {userProfile.email}
-              </p>
-            </div>
-          )}
-
-          <div className="h-px bg-gray-200 my-1" />
-
           {dropdownMenuItems.map((item) => {
             return (
               <Link

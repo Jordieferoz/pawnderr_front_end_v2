@@ -179,20 +179,20 @@ const Upgrade = () => {
 
   return (
     <div className="upgrade_wrapper common_container">
-      <div className="flex flex-col gap-5 my-6 md:mb-15">
+      <div className="flex gap-5 my-6 mb-22">
         <img
           onClick={() => router.back()}
           className="w-10 h-10 md:hidden cursor-pointer"
           src={images.backBtn.src}
           alt="Go back"
         />
-        <h4 className="display4_medium text-accent-900">
-          Upgrade to <br className="block md:hidden" /> PAWnderr+
+        <h4 className="display4_medium text-accent-900 relative w-full">
+          PAWnderr+
+          <span className="body_large_medium text-neutral-white absolute w-full left-0 top-full">
+            More matches. More treats. More <br className="block md:hidden" />{" "}
+            tail-wagging perks.
+          </span>
         </h4>
-        <p className="body_large_medium text-neutral-white">
-          More matches. More treats. More <br className="block md:hidden" />{" "}
-          tail-wagging perks.
-        </p>
       </div>
       <div className="flex items-center gap-3 mb-4 md:hidden">
         <h3 className="heading3 text-dark-brown">Monthly</h3>

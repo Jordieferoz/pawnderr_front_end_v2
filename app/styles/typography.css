@@ -27,7 +27,10 @@
     @apply text-[32px] leading-[1.1] font-medium  md:text-[40px] lg:text-[48px];
     font-family: "Fredoka", sans-serif;
   }
-
+  .display5_medium {
+    @apply text-[48px] leading-[1.1] font-medium  md:text-[54px] lg:text-[62px];
+    font-family: "Fredoka", sans-serif;
+  }
   .heading1 {
     @apply text-[28px] leading-[1.1] font-normal  md:text-[32px] lg:text-[40px];
     font-family: "Fredoka", sans-serif;
