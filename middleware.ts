@@ -8,17 +8,15 @@ export default withAuth(
     const isAuthPage =
       req.nextUrl.pathname.startsWith("/sign-in") ||
       req.nextUrl.pathname.startsWith("/sign-up") ||
-      req.nextUrl.pathname.startsWith("/register");
+      req.nextUrl.pathname.startsWith("/register") ||
+      req.nextUrl.pathname.startsWith("/forgot-password");
 
     // If user is authenticated and tries to access auth pages, redirect to dashboard
-    if (isAuthPage) {
-      if (isAuth) {
-        return NextResponse.redirect(new URL("/dashboard", req.url));
-      }
-      return NextResponse.next();
+    if (isAuthPage && isAuth) {
+      return NextResponse.redirect(new URL("/dashboard", req.url));
     }
 
-    // For all other pages, let withAuth handle it
+    // For all other cases, continue
     return NextResponse.next();
   },
   {
@@ -33,7 +31,7 @@ export default withAuth(
         // Allow access to root landing page
         const isLandingPage = req.nextUrl.pathname === "/";
 
-        // Allow access to auth pages and landing page without token
+        // Allow access to auth pages without token (middleware will handle redirect if authenticated)
         if (isAuthPage || isLandingPage) {
           return true;
         }
@@ -48,17 +46,8 @@ export default withAuth(
   }
 );
 
-// Configure which routes to protect
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public files (images, etc)
-     */
     "/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"
   ]
 };

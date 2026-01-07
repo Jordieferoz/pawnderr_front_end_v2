@@ -30,13 +30,13 @@ const Header: FC = () => {
   };
 
   return (
-    <header className="fixed py-6 w-full left-0 top-0 z-50 bg-white border-b border-blue/10 shadow-[0px_4px_16.4px_0px_#0000000F] hidden md:block">
+    <header className="fixed py-4 w-full left-0 top-0 z-50 bg-white border-b border-blue/10 shadow-[0px_4px_16.4px_0px_#0000000F] hidden md:block">
       <nav className="container mx-auto common_container flex items-center justify-between gap-4">
         <Link href={"/"}>
           <img
             src={images.logoHorizontal.src}
             alt="logo"
-            className="w-[250px]"
+            className="w-[220px]"
           />
         </Link>
 

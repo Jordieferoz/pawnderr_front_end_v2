@@ -2,9 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { FC } from "react";
-import { useDispatch } from "react-redux";
 
-import { openFilterModal } from "@/store/modalSlice";
 import { images } from "@/utils/images";
 
 import { MatchedCard } from ".";
@@ -13,14 +11,9 @@ import { CustomAvatar } from "../Shared";
 const Matches: FC = () => {
   const router = useRouter();
 
-  const dispatch = useDispatch();
-  const handleOpenFilter = () => {
-    dispatch(openFilterModal());
-  };
-
   return (
     <div className="matches_wrapper common_container">
-      <div className="flex items-center my-4 justify-between mb-7">
+      <div className="flex items-start my-4 justify-between mb-7">
         <div className="flex items-center gap-3">
           <img
             onClick={() => router.back()}
@@ -30,18 +23,10 @@ const Matches: FC = () => {
           />
           <h4 className="display4_medium text-accent-900">Matches</h4>
         </div>
-      </div>
-      <div className="my-3 flex items-center gap-4">
-        <img
-          className="cursor-pointer w-10"
-          src={images.filterIcon.src}
-          onClick={handleOpenFilter}
-          alt="open filter"
-        />
         <div className="grid grid-cols-4 gap-4 items-center justify-center">
           <CustomAvatar
             src={images.doggo1.src}
-            size={64}
+            size={48}
             gender="female"
             name="Frank"
             showPlus
@@ -50,7 +35,7 @@ const Matches: FC = () => {
 
           <CustomAvatar
             src={images.doggo2.src}
-            size={64}
+            size={48}
             type="countdown"
             name="Frank"
             showPlus
@@ -59,7 +44,7 @@ const Matches: FC = () => {
 
           <CustomAvatar
             src={images.doggo3.src}
-            size={64}
+            size={48}
             gender="male"
             name="Frank"
             showPlus
@@ -68,7 +53,7 @@ const Matches: FC = () => {
 
           <CustomAvatar
             src={images.doggo4.src}
-            size={64}
+            size={48}
             gender="female"
             name="Frank"
             showPlus
@@ -76,6 +61,7 @@ const Matches: FC = () => {
           />
         </div>
       </div>
+
       <MatchedCard />
     </div>
   );

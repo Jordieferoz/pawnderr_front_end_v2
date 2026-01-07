@@ -149,20 +149,22 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
   }, [password, isSignup, confirmPassword, trigger]);
 
   return (
-    <div className="relative min-h-[100dvh] px-5 pt-12 pb-20 md:px-8">
-      <Link
-        href={"/"}
-        className="mb-7.5 md:flex justify-center hidden relative z-20"
-      >
-        <Image
-          src={images.logoHorizontal.src}
-          className="logo h-13"
-          width={147}
-          height={97}
-          alt="PAWnderr Logo"
-        />
-      </Link>
-      <div className="sm:mx-auto sm:w-full sm:max-w-[766px] md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] rounded-4xl md:px-20 md:py-14 relative z-20">
+    <div className="relative min-h-[100dvh] px-5 py-6 md:px-8">
+      <div className="container">
+        <Link
+          href={"/"}
+          className="mb-7.5 md:inline-flex justify-start hidden relative z-20"
+        >
+          <Image
+            src={images.logoHorizontal.src}
+            className="logo w-[240px]"
+            width={147}
+            height={97}
+            alt="PAWnderr Logo"
+          />
+        </Link>
+      </div>
+      <div className="sm:mx-auto sm:w-full sm:max-w-[766px] md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] rounded-4xl md:px-20 md:py-7 relative z-20">
         <Link href={"/"} className="mb-7.5 flex justify-center md:hidden">
           <Image
             src={images.logoHorizontal.src}
@@ -176,7 +178,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
           {isSignup ? "Create Your PAWnderr Profile" : "Welcome Back"}
         </h1>
         <p
-          className={`body_regular text-light-grey2 px-7 md:px-34 text-center ${isSignup ? "mb-10" : "mb-16"}`}
+          className={`body_regular text-light-grey2 px-7 md:px-34 text-center mb-10`}
         >
           {isSignup
             ? "Because every connection starts with a simple hello."
@@ -338,7 +340,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
                 </Link>
               </div>
             )}
-            <div className="fixed bottom-0 md:relative py-5 w-full bg-white shadow-[0px_-4px_12.8px_-3px_#00000012] md:shadow-none">
+            <div className="fixed bottom-0 md:relative py-5 md:pb-0 w-full bg-white shadow-[0px_-4px_12.8px_-3px_#00000012] md:shadow-none">
               <Button
                 type="submit"
                 disabled={!isValid || isSubmitting}
