@@ -43,27 +43,29 @@ interface SortableImageProps {
 }
 
 const SortableImage: FC<SortableImageProps> = ({ image, isMain = false }) => {
-  const { attributes, listeners, setNodeRef, isDragging, isOver, transition } =
-    useSortable({ id: image.id });
+  const { attributes, listeners, setNodeRef, isDragging, isOver } = useSortable(
+    { id: image.id }
+  );
+
+  const style = {
+    touchAction: "none" as const
+  };
 
   return (
     <div
       ref={setNodeRef}
+      style={style}
       {...attributes}
       {...listeners}
-      style={{
-        transition,
-        touchAction: "pan-y"
-      }}
       className={`
-        relative w-full overflow-hidden cursor-move
+        relative w-full overflow-hidden cursor-move transition-all duration-200
         ${isMain ? "aspect-[4/3] md:aspect-square rounded-3xl" : "aspect-square rounded-2xl"}
-        ${isDragging ? "opacity-30" : "opacity-100"}
-        ${isOver && !isDragging ? "ring-2 ring-blue-500 ring-offset-2" : ""}
+        ${isDragging ? "opacity-40 scale-95" : "opacity-100 scale-100"}
+        ${isOver && !isDragging ? "ring-4 ring-blue-500 ring-offset-4 scale-105" : ""}
       `}
     >
       {isOver && !isDragging && (
-        <div className="absolute inset-0 bg-blue-100 border-2 border-dashed border-blue-400 rounded-inherit" />
+        <div className="absolute inset-0 bg-blue-50/50 border-4 border-dashed border-blue-500 rounded-inherit z-10" />
       )}
 
       <Image
@@ -71,10 +73,16 @@ const SortableImage: FC<SortableImageProps> = ({ image, isMain = false }) => {
         alt="Gallery"
         fill
         className="object-cover pointer-events-none"
+        draggable={false}
       />
 
       <div className="absolute bottom-4 right-4 pointer-events-none">
-        <img src={images.gallery.src} className="w-9 h-9" alt="gallery" />
+        <img
+          src={images.gallery.src}
+          className="w-9 h-9"
+          alt="gallery"
+          draggable={false}
+        />
       </div>
     </div>
   );
@@ -91,23 +99,20 @@ const dummyImages: GalleryImage[] = [
 const UpdateGallery: FC = () => {
   const [galleryImages, setGalleryImages] = useState(dummyImages);
   const [activeId, setActiveId] = useState<string | null>(null);
-
-  const isMobile =
-    typeof window !== "undefined" &&
-    window.matchMedia("(pointer: coarse)").matches;
+  const [overId, setOverId] = useState<string | null>(null);
 
   const sensors = useSensors(
     useSensor(TouchSensor, {
       activationConstraint: {
-        delay: 350,
-        tolerance: 12
+        delay: 250,
+        tolerance: 8
       }
     }),
-    isMobile
-      ? undefined
-      : useSensor(PointerSensor, {
-          activationConstraint: { distance: 8 }
-        }),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8
+      }
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates
     })
@@ -116,6 +121,10 @@ const UpdateGallery: FC = () => {
   const handleDragStart = ({ active }: DragStartEvent) => {
     setActiveId(active.id as string);
     haptic();
+  };
+
+  const handleDragOver = ({ over }: any) => {
+    setOverId(over?.id as string | null);
   };
 
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
@@ -128,12 +137,25 @@ const UpdateGallery: FC = () => {
       haptic(15);
     }
     setActiveId(null);
+    setOverId(null);
+  };
+
+  const handleDragCancel = () => {
+    setActiveId(null);
+    setOverId(null);
   };
 
   const mainImage = galleryImages[0];
   const thumbnails = galleryImages.slice(1);
   const activeImage = galleryImages.find((i) => i.id === activeId);
   const isMainActive = activeId === mainImage.id;
+
+  // Check if hovering over a thumbnail position
+  const isOverThumbnail = overId
+    ? thumbnails.some((img) => img.id === overId)
+    : false;
+  // Check if hovering over the main image position
+  const isOverMain = overId === mainImage.id;
 
   return (
     <DndContext
@@ -143,10 +165,11 @@ const UpdateGallery: FC = () => {
         droppable: { strategy: MeasuringStrategy.WhileDragging }
       }}
       onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
-      onDragCancel={() => setActiveId(null)}
+      onDragCancel={handleDragCancel}
     >
-      <div className="md:bg-white md:shadow-md md:px-20 md:py-16 md:rounded-[40px]">
+      <div className="md:bg-white md:shadow-md md:p-8 md:rounded-[40px]">
         <SortableContext
           items={galleryImages.map((i) => i.id)}
           strategy={rectSortingStrategy}
@@ -175,15 +198,19 @@ const UpdateGallery: FC = () => {
         </div>
       </div>
 
-      {/* ✅ MOBILE-SAFE DRAG PREVIEW */}
-      <DragOverlay adjustScale={false} dropAnimation={null}>
+      <DragOverlay dropAnimation={null}>
         {activeImage && (
           <div
-            style={{ pointerEvents: "none" }}
-            className={`relative overflow-hidden shadow-xl ${
-              isMainActive
-                ? "w-[92vw] aspect-[4/3] rounded-3xl"
-                : "w-[45vw] aspect-square rounded-2xl"
+            className={`relative overflow-hidden shadow-2xl cursor-grabbing transition-all duration-300 ease-out ${
+              isMainActive && isOverThumbnail
+                ? "w-[140px] aspect-square rounded-2xl scale-90"
+                : isMainActive
+                  ? "w-[280px] aspect-[4/3] md:w-[320px] md:aspect-square rounded-3xl"
+                  : !isMainActive && isOverMain
+                    ? "w-[280px] aspect-[4/3] md:w-[320px] md:aspect-square rounded-3xl scale-105"
+                    : !isMainActive && isOverThumbnail
+                      ? "w-[140px] aspect-square rounded-2xl scale-90"
+                      : "w-[140px] aspect-square rounded-2xl"
             }`}
           >
             <Image
@@ -191,9 +218,15 @@ const UpdateGallery: FC = () => {
               alt="Dragging"
               fill
               className="object-cover"
+              draggable={false}
             />
             <div className="absolute bottom-4 right-4">
-              <img src={images.gallery.src} className="w-9 h-9" alt="gallery" />
+              <img
+                src={images.gallery.src}
+                className="w-9 h-9"
+                alt="gallery"
+                draggable={false}
+              />
             </div>
           </div>
         )}
