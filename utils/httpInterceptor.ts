@@ -9,6 +9,7 @@ import axios, {
 } from "axios";
 import { getSession } from "next-auth/react";
 
+import { tokenStorage } from "./token-storage";
 import { TApiResponse } from "./types";
 
 export const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -32,14 +33,21 @@ function axiosInstanceCreator(baseURL: string | undefined, accessKey?: string) {
         }
       }
 
-      try {
-        const session = await getSession();
-        if (session && (session as any).accessToken) {
-          config.headers["Authorization"] =
-            `Bearer ${(session as any).accessToken}`;
+      // First priority: Check for token in sessionStorage (from OTP verification)
+      const sessionToken = tokenStorage.getAccessToken();
+      if (sessionToken) {
+        config.headers["Authorization"] = `Bearer ${sessionToken}`;
+      } else {
+        // Fallback: Try to get token from NextAuth session
+        try {
+          const session = await getSession();
+          if (session && (session as any).accessToken) {
+            config.headers["Authorization"] =
+              `Bearer ${(session as any).accessToken}`;
+          }
+        } catch (error) {
+          console.error("❌ Error getting session:", error);
         }
-      } catch (error) {
-        console.error("❌ Error getting session:", error);
       }
 
       return config;
@@ -68,9 +76,13 @@ function axiosInstanceCreator(baseURL: string | undefined, accessKey?: string) {
 
       // Handle 401 Unauthorized
       if (error.response?.status === 401) {
-        console.warn("🔒 Unauthorized - Redirecting to sign-in");
-        // Optional: Clear session and redirect to login
-        // window.location.href = '/sign-in';
+        console.warn("🔒 Unauthorized - Clearing tokens and redirecting");
+        // Clear tokens from sessionStorage
+        tokenStorage.clearTokens();
+        // Optional: Redirect to sign-in
+        if (typeof window !== "undefined") {
+          window.location.href = "/sign-in";
+        }
       }
 
       return Promise.reject(error);

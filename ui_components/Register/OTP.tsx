@@ -12,11 +12,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@/components/ui/button";
 import { RootState } from "@/store";
 import { setMetadata, updateStepData } from "@/store/registrationSlice";
-import { fetchPetRegistrationData } from "@/utils/api";
+import { fetchPetRegistrationData, verifyOTP } from "@/utils/api";
 import { otpSchema, type OtpValues } from "@/utils/schemas/registrationSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { BackBtnRegister } from ".";
+import { showToast } from "../Shared/ToastMessage";
 
 const OTP: FC = () => {
   const dispatch = useDispatch();
@@ -41,37 +42,88 @@ const OTP: FC = () => {
   });
 
   const onSubmit = async (data: OtpValues) => {
-    // console.log(data, "data");
     setApiError(null);
     setIsSubmitting(true);
 
     try {
-      // Fetch registration metadata
-      const resp = await fetchPetRegistrationData();
+      // Format phone number with +91 if not already present
+      const formattedPhone = registrationData.phoneNumber?.startsWith("+")
+        ? registrationData.phoneNumber
+        : `+91${registrationData.phoneNumber}`;
 
-      if (resp.statusCode === 200 && resp.data) {
-        // Store metadata in Redux
-        dispatch(setMetadata(resp.data.data));
+      // Step 1: Verify OTP
+      const verifyResponse = await verifyOTP({
+        phone: formattedPhone,
+        otp: data.otp
+      });
 
-        // Update Redux state - user is now verified
-        dispatch(
-          updateStepData({
-            // otp: data.otp,
-            isVerified: true,
-            step: 3
-          })
+      if (
+        verifyResponse.statusCode === 200 ||
+        verifyResponse.statusCode === 201
+      ) {
+        const userData = verifyResponse.data?.data;
+        console.log(userData, "userData");
+        if (userData?.accessToken && userData?.refreshToken) {
+          // Store tokens
+          sessionStorage.setItem("accessToken", userData.accessToken);
+          sessionStorage.setItem("refreshToken", userData.refreshToken);
+          const userProfile = {
+            id: userData.id,
+            email: userData.email,
+            name: userData.name,
+            phone: userData.phone,
+            gender: userData.gender,
+            isActive: userData.is_active,
+            isVerified: userData.is_verified,
+            profileCompletion: userData.profile_completion_percentage
+          };
+
+          sessionStorage.setItem("userData", JSON.stringify(userProfile));
+
+          showToast({
+            type: "success",
+            message: "OTP verified successfully!"
+          });
+
+          // Step 2: Fetch registration metadata after successful OTP verification
+          const metadataResponse = await fetchPetRegistrationData();
+          console.log(metadataResponse, "metadataResponse");
+          if (metadataResponse.statusCode === 200 && metadataResponse.data) {
+            // Store metadata in Redux
+            dispatch(setMetadata(metadataResponse.data.data));
+
+            // Update Redux state - user is now verified
+            dispatch(
+              updateStepData({
+                isVerified: true,
+                step: 3
+              })
+            );
+          }
+        } else {
+          throw new Error("Failed to fetch registration data");
+        }
+      } else {
+        throw new Error(
+          verifyResponse.data?.message || "OTP verification failed"
         );
       }
     } catch (error: any) {
       console.error("OTP verification error:", error);
 
+      let errorMessage = "Failed to verify OTP. Please try again.";
+
       if (error?.response?.data?.message) {
-        setApiError(error.response.data.message);
+        errorMessage = error.response.data.message;
       } else if (error?.message) {
-        setApiError(error.message);
-      } else {
-        setApiError("Failed to verify OTP. Please try again.");
+        errorMessage = error.message;
       }
+
+      setApiError(errorMessage);
+      showToast({
+        type: "error",
+        message: errorMessage
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -88,7 +140,7 @@ const OTP: FC = () => {
         <p className="text-sm text-gray-600">
           Code sent to{" "}
           <span className="font-semibold text-gray-900">
-            {registrationData.phoneNumber}
+            +91{registrationData.phoneNumber}
           </span>
         </p>
       </div>
@@ -111,7 +163,7 @@ const OTP: FC = () => {
             render={({ field }) => (
               <InputOTP
                 {...field}
-                maxLength={4}
+                maxLength={6}
                 inputMode="numeric"
                 autoFocus
                 value={field.value || ""}
@@ -123,6 +175,8 @@ const OTP: FC = () => {
                   <InputOTPSlot className="grow basis-0 h-[60px]" index={1} />
                   <InputOTPSlot className="grow basis-0 h-[60px]" index={2} />
                   <InputOTPSlot className="grow basis-0 h-[60px]" index={3} />
+                  <InputOTPSlot className="grow basis-0 h-[60px]" index={4} />
+                  <InputOTPSlot className="grow basis-0 h-[60px]" index={5} />
                 </InputOTPGroup>
               </InputOTP>
             )}
@@ -141,29 +195,7 @@ const OTP: FC = () => {
             suppressHydrationWarning
           >
             {isSubmitting ? (
-              <span className="flex items-center gap-2">
-                <svg
-                  className="animate-spin h-5 w-5"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                Verifying...
-              </span>
+              <span className="flex items-center gap-2">Verifying...</span>
             ) : (
               "Verify"
             )}

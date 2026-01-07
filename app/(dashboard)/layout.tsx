@@ -7,7 +7,7 @@ export const metadata = {
 };
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <section className="min-h-screen overflow-y-auto">
+    <section className="relative h-full overflow-clip">
       <Header />
       <MobileHeader />
       <main className="relative">{children}</main>

@@ -73,7 +73,7 @@ const DoggoPersonalForm: FC = () => {
         : [],
     [metadata]
   );
-
+  console.log(metadata, "metadata");
   // Get breeds for the Dog category (category ID 1)
   const dogBreeds = useMemo(() => metadata?.breeds?.["1"] || [], [metadata]);
 

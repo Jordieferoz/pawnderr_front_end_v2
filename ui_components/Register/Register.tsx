@@ -40,7 +40,10 @@ const Register: FC = () => {
           <Progress value={progressValue} highlightColor="#0C16E0" />
         </div>
 
-        <Link href={"/"} className="mb-1 mt-6 flex justify-center md:hidden">
+        <Link
+          href={"/"}
+          className="mb-1 mt-6 inline-flex justify-center md:hidden"
+        >
           <Image
             src={images.logoHorizontal.src}
             className="logo w-[220px]"

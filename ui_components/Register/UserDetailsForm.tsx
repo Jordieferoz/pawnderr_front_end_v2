@@ -67,55 +67,52 @@ const UserDetailsForm: FC = () => {
         return;
       }
 
+      // Append +91 to phone number before sending to API
+      const formattedPhone = data.phoneNumber.startsWith("+")
+        ? data.phoneNumber
+        : `+91${data.phoneNumber}`;
+
       const response = await registerAuth({
         email: credentials.email,
         password: credentials.password,
         name: data.name,
-        phone: data.phoneNumber,
+        phone: formattedPhone, // Use formatted phone number
         gender: data.gender
       });
 
       if (response.statusCode === 200 || response.statusCode === 201) {
         const userData = response.data?.data;
+        console.log(userData, "userData");
+        // Store tokens
+        // sessionStorage.setItem("accessToken", userData.accessToken);
+        // sessionStorage.setItem("refreshToken", userData.refreshToken);
 
-        if (userData?.accessToken && userData?.refreshToken) {
-          // Store tokens
-          sessionStorage.setItem("accessToken", userData.accessToken);
-          sessionStorage.setItem("refreshToken", userData.refreshToken);
+        // Store complete user profile data
+        const userProfile = {
+          id: userData.id,
+          email: userData.email,
+          name: userData.name,
+          phone: userData.phone,
+          gender: userData.gender,
+          isActive: userData.is_active,
+          isVerified: userData.is_verified,
+          profileCompletion: userData.profile_completion_percentage
+        };
 
-          // Store complete user profile data
-          const userProfile = {
-            id: userData.id,
-            email: userData.email,
-            name: userData.name,
-            phone: userData.phone,
-            gender: userData.gender,
-            isActive: userData.is_active,
-            isVerified: userData.is_verified,
-            profileCompletion: userData.profile_completion_percentage
-          };
+        sessionStorage.setItem("userData", JSON.stringify(userProfile));
 
-          sessionStorage.setItem("userData", JSON.stringify(userProfile));
+        // Update Redux for registration flow
+        dispatch(
+          updateStepData({
+            ...userProfile,
+            password: credentials.password,
+            phoneNumber: data.phoneNumber, // Store original phone number without +91
+            location: data.location,
+            step: 2
+          })
+        );
 
-          // Update Redux for registration flow
-          dispatch(
-            updateStepData({
-              ...userProfile,
-              password: credentials.password,
-              phoneNumber: data.phoneNumber,
-              location: data.location,
-              step: 2
-            })
-          );
-
-          // signupStorage.clear();
-        } else {
-          showToast({
-            type: "error",
-            message:
-              "Registration successful but authentication tokens missing."
-          });
-        }
+        // signupStorage.clear();
       } else {
         showToast({
           type: "error",

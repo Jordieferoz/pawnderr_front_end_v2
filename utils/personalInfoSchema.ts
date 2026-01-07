@@ -16,8 +16,8 @@ export const userDetailsSchema = z.object({
 export const otpSchema = z.object({
   otp: z
     .string()
-    .length(4, "Enter the 4 digit OTP")
-    .regex(/^[0-9]{4}$/, "OTP must be 4 digits")
+    .length(6, "Enter the 6 digit OTP")
+    .regex(/^[0-9]{6}$/, "OTP must be 6 digits")
 });
 
 // Step 3: Pet profile schema with detailed fields

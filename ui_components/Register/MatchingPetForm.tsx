@@ -163,7 +163,7 @@ const MatchingPetForm: FC = () => {
 
       // Call API
       const response = await petPreferencesInfo(payload);
-
+      console.log(response, "response");
       if (response.statusCode === 200 || response.statusCode === 201) {
         // Save to Redux
         dispatch(
