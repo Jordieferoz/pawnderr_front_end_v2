@@ -10,7 +10,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <>
       <Header />
       <MobileHeader />
-      <main className="relative py-[90px]">{children}</main>
+      <main className="relative pt-22.5 min-h-[calc(100vh-90px)]">
+        {children}
+      </main>
     </>
   );
 }
