@@ -1,10 +1,10 @@
 export interface IProfileCardProps {
-  name: string;
-  gender: "Male" | "Female";
-  age: number;
-  breed: string;
-  location: string;
-  image: string;
+  name?: string;
+  gender?: string;
+  age?: number;
+  breed?: string;
+  location?: string;
+  image?: string;
 }
 export interface IInfoCardProps {
   image: string;
@@ -22,4 +22,44 @@ export interface IInfoCardListItem {
 export interface IProfileHeaderProps {
   title: string | { base: string; md: string };
   desc?: string | { base: string; md: string };
+}
+
+export interface IPetData {
+  id: number;
+  name: string;
+  nickname: string;
+  gender: string;
+  age: number;
+  bark_o_graphy: string;
+  fun_fact_or_habit: string;
+  vaccination_status: string;
+  is_spayed_neutered: boolean;
+  breed: {
+    id: number;
+    name: string;
+  };
+  category: {
+    id: number;
+    name: string;
+  };
+  attributes: Array<{
+    attribute_id: number;
+    attribute_name: string;
+    selected_options: Array<{
+      option_id: number;
+      value: string;
+    }>;
+  }>;
+  images: Array<{
+    id: number;
+    image_url: string;
+    is_primary: boolean;
+    display_order: number;
+  }>;
+  preferences: any;
+}
+
+export interface IProfileProps {
+  loading: boolean;
+  petData: IPetData | null;
 }

@@ -15,11 +15,11 @@ const ProfileCard: FC<IProfileCardProps> = ({
       <img src={image} className="w-full rounded-xl mb-7.5" alt="image" />
       <h3 className="display4_medium text-dark-grey2 mb-2">
         {name}{" "}
-        <span className="body_large_medium">
+        <span className="body_large_medium capitalize block">
           {gender}, {age} Years
         </span>
       </h3>
-      <p className="text-grey-700 heading3 leading-snug pb-4">
+      <p className="text-grey-500 heading3 leading-snug pb-4">
         {breed}, {location}
       </p>
     </div>
