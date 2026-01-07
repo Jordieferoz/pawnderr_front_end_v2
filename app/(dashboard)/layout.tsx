@@ -7,10 +7,10 @@ export const metadata = {
 };
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <section className="relative h-full overflow-clip">
+    <>
       <Header />
       <MobileHeader />
-      <main className="relative">{children}</main>
-    </section>
+      <main className="relative py-[90px]">{children}</main>
+    </>
   );
 }

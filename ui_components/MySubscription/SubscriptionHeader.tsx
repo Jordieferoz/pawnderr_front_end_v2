@@ -49,7 +49,7 @@ const SubscriptionHeader: FC<ISubscriptionHeaderProps> = ({ title }) => {
   const desktopTitle = isTitleObject ? title.md : title;
 
   return (
-    <div className="relative my-4 flex items-start gap-3">
+    <div className="relative py-4 flex items-start gap-3">
       <Image
         src={images.backBtn.src}
         alt="back"

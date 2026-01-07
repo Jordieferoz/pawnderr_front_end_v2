@@ -16,7 +16,7 @@ const ActivityCard: FC<IActivityCardProps> = ({ className, cards }) => {
   };
 
   return (
-    <div className={`w-full max-w-6xl mx-auto p-4 pt-12 ${className ?? ""}`}>
+    <div className={`w-full mx-auto p-4 pt-12 ${className ?? ""}`}>
       <div
         className={`grid gap-14 ${
           cards?.length === 1

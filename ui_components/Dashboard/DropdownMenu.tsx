@@ -27,6 +27,7 @@ interface DropdownMenuProps {
 
 const DropdownMenu: FC<DropdownMenuProps> = ({ userProfile, isLoading }) => {
   const { logout } = useAuth();
+
   const handleLogout = async () => {
     await logout();
   };
