@@ -389,7 +389,7 @@ const UpdateGallery: FC<UpdateGalleryProps> = ({
   // Show loading state
   if (loading) {
     return (
-      <div className="md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] md:px-20 md:py-16 md:rounded-[40px]">
+      <div className="md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] md:p-8 md:rounded-[40px]">
         <div className="flex items-center justify-center min-h-[400px]">
           <Loader size="lg" text="Loading photos..." />
         </div>
@@ -399,7 +399,7 @@ const UpdateGallery: FC<UpdateGalleryProps> = ({
 
   if (!petData || galleryImages.length === 0) {
     return (
-      <div className="md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] md:px-20 md:py-16 md:rounded-[40px]">
+      <div className="md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] md:p-8 md:rounded-[40px]">
         <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
           <p className="text-gray-600 mb-4">No photos yet</p>
           <Button onClick={handleAddPhotos} disabled={isUploading}>
@@ -426,7 +426,7 @@ const UpdateGallery: FC<UpdateGalleryProps> = ({
   const isDraggingMain = activeId === mainImage.id;
 
   return (
-    <div className="md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] md:px-20 md:py-16 md:rounded-[40px]">
+    <div className="md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] md:p-8 md:rounded-[40px]">
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}

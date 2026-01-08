@@ -33,7 +33,7 @@ const InfoCard: FC<IInfoCardProps> = ({
               {list.map((item, index) => (
                 <div
                   key={index}
-                  className="flex justify-between items-start w-full"
+                  className="flex justify-between gap-3 items-start w-full"
                 >
                   <p className="body_large_medium text-grey-500">{item.left}</p>
                   <p className="body_large_medium text-dark-grey2 text-right">
