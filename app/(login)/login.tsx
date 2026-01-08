@@ -18,8 +18,11 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { setUser } from "@/store/userSlice";
 import { InputField } from "@/ui_components/Shared";
+import { fetchMyPetsCollection, fetchUserProfile } from "@/utils/api";
 import { signupStorage } from "@/utils/auth-storage";
 import { images } from "@/utils/images";
+import { petsStorage } from "@/utils/pets-storage";
+import { userStorage } from "@/utils/user-storage";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 type Mode = "signin" | "signup";
@@ -110,6 +113,54 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
 
           if (!(session as any)?.accessToken) {
             console.error("❌ No accessToken in session!");
+          }
+
+          // Fetch and store user profile and pets in localStorage and sync with Redux
+          try {
+            // Fetch user profile
+            const profileResponse = await fetchUserProfile();
+            // API response structure: { data: { data: {...user data...}, message, status }, statusCode, message }
+            const userData = profileResponse.data?.data || profileResponse.data;
+            if (userData && userData.id) {
+              // Store only user data in localStorage (exclude message and status)
+              userStorage.set(userData);
+
+              // Sync with Redux state (map API response to Redux UserData format)
+              const reduxUserData = {
+                id: userData.id,
+                email: userData.email,
+                name: userData.name,
+                phone: userData.phone,
+                gender: userData.gender,
+                isActive: userData.is_active,
+                isVerified: userData.is_verified,
+                profileCompletionPercentage:
+                  userData.profile_completion_percentage,
+                lastLoginAt: userData.last_login_at,
+                loginCount: userData.login_count
+              };
+              dispatch(setUser(reduxUserData));
+
+              console.log("✅ User profile stored in localStorage and Redux");
+            }
+
+            // Fetch pets collection
+            try {
+              const petsResponse = await fetchMyPetsCollection();
+              if (petsResponse.data) {
+                petsStorage.set(petsResponse.data);
+                console.log("✅ User pets stored in localStorage");
+              }
+            } catch (petsError) {
+              console.error("❌ Failed to fetch pets after login:", petsError);
+              // Continue even if pets fetch fails
+            }
+          } catch (error) {
+            console.error(
+              "❌ Failed to fetch user profile after login:",
+              error
+            );
+            // Continue with redirect even if profile fetch fails
           }
 
           router.push(callbackUrl);

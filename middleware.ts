@@ -10,9 +10,15 @@ export default withAuth(
       req.nextUrl.pathname.startsWith("/sign-up") ||
       req.nextUrl.pathname.startsWith("/register") ||
       req.nextUrl.pathname.startsWith("/forgot-password");
+    const isLandingPage = req.nextUrl.pathname === "/";
 
     // If user is authenticated and tries to access auth pages, redirect to dashboard
     if (isAuthPage && isAuth) {
+      return NextResponse.redirect(new URL("/dashboard", req.url));
+    }
+
+    // If user is authenticated and tries to access landing page, redirect to dashboard
+    if (isLandingPage && isAuth) {
       return NextResponse.redirect(new URL("/dashboard", req.url));
     }
 

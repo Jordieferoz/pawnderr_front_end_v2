@@ -14,7 +14,7 @@ const InfoCard: FC<IInfoCardProps> = ({
       <div className="md:flex md:gap-7.5 items-center justify-center">
         <img
           src={image}
-          className="w-full rounded-xl mb-7.5 grow basis-0"
+          className="md:w-[40%] w-full rounded-xl mb-7.5 grow basis-0"
           alt="image"
         />
         <div className="grow basis-0">

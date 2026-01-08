@@ -1,23 +1,54 @@
 "use client";
 
 import {
-  userDetailsSchema,
-  UserDetailsValues
+  personalInfoSchema,
+  PersonalInfoValues
 } from "@/utils/personalInfoSchema";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { Controller, Resolver, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
 import { Button } from "@/components/ui/button";
-import { Toggle } from "@/components/ui/toggle";
-import { genderOptions } from "@/constants";
-import { setStep, updateStepData } from "@/store/profileInfoSlice";
+import { useUserProfileFromStorage, useUserProfileRefetch } from "@/hooks";
+import { setStep } from "@/store/profileInfoSlice";
+import { updateUserProfile } from "@/utils/api";
+import { userStorage } from "@/utils/user-storage";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { InputField } from "../Shared";
+import { showToast } from "../Shared/ToastMessage";
+
+// Sanitize phone number input - only allow digits and + at the start
+const sanitizePhoneInput = (value: string): string => {
+  // Remove all non-digit characters except + at the start
+  let sanitized = value.replace(/[^\d+]/g, "");
+
+  // Ensure + is only at the start
+  if (sanitized.includes("+")) {
+    const plusIndex = sanitized.indexOf("+");
+    if (plusIndex > 0) {
+      // Remove + if it's not at the start
+      sanitized = sanitized.replace(/\+/g, "");
+    } else if (plusIndex === 0 && sanitized.length > 1) {
+      // Keep + at start, remove any other + signs
+      sanitized = "+" + sanitized.slice(1).replace(/\+/g, "");
+    }
+  }
+
+  return sanitized;
+};
 
 const PersonalInfo: FC = () => {
   const dispatch = useDispatch();
+  const { userProfile } = useUserProfileFromStorage();
+  // Only use refetch function, don't trigger API call on mount
+  const { refetch: refetchProfile } = useUserProfileRefetch();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [initialValues, setInitialValues] = useState<PersonalInfoValues>({
+    name: "",
+    email: "",
+    phone: ""
+  });
 
   useEffect(() => {
     dispatch(setStep(1));
@@ -26,24 +57,102 @@ const PersonalInfo: FC = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid }
-  } = useForm<UserDetailsValues>({
-    resolver: zodResolver(userDetailsSchema) as Resolver<UserDetailsValues>,
+    formState: { errors, isValid },
+    reset,
+    watch
+  } = useForm<PersonalInfoValues>({
+    resolver: zodResolver(personalInfoSchema) as Resolver<PersonalInfoValues>,
     mode: "onChange",
     defaultValues: {
       name: "",
-      gender: "",
-      phoneNumber: "",
-      location: ""
+      email: "",
+      phone: ""
     }
   });
 
-  const onSubmit = (data: UserDetailsValues) => {
-    dispatch(updateStepData({ ...data, step: 2 }));
+  // Watch form values
+  const currentValues = watch();
+
+  // Prefill form when user profile data is available
+  useEffect(() => {
+    if (userProfile) {
+      const values = {
+        name: userProfile.name || "",
+        email: userProfile.email || "",
+        phone: userProfile.phone || ""
+      };
+      reset(values);
+      setInitialValues(values);
+    }
+  }, [userProfile, reset]);
+
+  // Check if form values have changed from initial values
+  const hasChanges = useMemo(() => {
+    return (
+      currentValues.name !== initialValues.name ||
+      currentValues.email !== initialValues.email ||
+      currentValues.phone !== initialValues.phone
+    );
+  }, [currentValues, initialValues]);
+
+  const onSubmit = async (data: PersonalInfoValues) => {
+    if (!hasChanges) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const response = await updateUserProfile({
+        name: data.name,
+        email: data.email,
+        phone: data.phone
+      });
+
+      // API response structure: { status: "success", data: {...user data...}, message: "..." }
+      const userData = response.data?.data || response.data;
+
+      if (userData && userData.id) {
+        // Update localStorage with the response data
+        userStorage.set(userData);
+
+        // Refetch profile to get latest data from server
+        await refetchProfile();
+
+        // Update initial values to reflect saved state
+        setInitialValues({
+          name: userData.name || data.name,
+          email: userData.email || data.email,
+          phone: userData.phone || data.phone
+        });
+
+        // Show success toast
+        showToast({
+          type: "success",
+          message: "Profile updated successfully"
+        });
+      } else {
+        throw new Error("Invalid response data");
+      }
+    } catch (error: any) {
+      console.error("❌ Failed to update profile:", error);
+
+      // Show error toast
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to update profile. Please try again.";
+
+      showToast({
+        type: "error",
+        message: errorMessage
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <div className="md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] md:px-20 md:py-16 md:rounded-[40px]">
+    <div className="md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] md:p-8 md:rounded-[40px]">
       <form
         className="mb-7 flex flex-col gap-6"
         onSubmit={handleSubmit(onSubmit)}
@@ -72,34 +181,26 @@ const PersonalInfo: FC = () => {
           )}
         </div>
 
-        {/* Gender */}
-        <div className="flex flex-col gap-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Gender
-          </label>
+        {/* Email */}
+        <div className="relative">
           <Controller
             control={control}
-            name="gender"
+            name="email"
             render={({ field }) => (
-              <div className="flex gap-4">
-                {genderOptions.map(({ label, value }) => (
-                  <Toggle
-                    key={value}
-                    pressed={field.value === value}
-                    onPressedChange={(pressed) => {
-                      if (pressed) field.onChange(value);
-                    }}
-                    aria-label={label}
-                    type="button"
-                  >
-                    {label}
-                  </Toggle>
-                ))}
-              </div>
+              <InputField
+                label="Email"
+                placeholder="your.email@example.com"
+                type="email"
+                {...field}
+                aria-invalid={!!errors.email}
+                aria-describedby={errors.email ? "email-error" : undefined}
+              />
             )}
           />
-          {errors.gender && (
-            <p className="mt-1 text-sm text-red-500">{errors.gender.message}</p>
+          {errors.email && (
+            <p id="email-error" className="mt-1 text-sm text-red-500">
+              {errors.email.message}
+            </p>
           )}
         </div>
 
@@ -107,54 +208,35 @@ const PersonalInfo: FC = () => {
         <div className="relative">
           <Controller
             control={control}
-            name="phoneNumber"
+            name="phone"
             render={({ field }) => (
               <InputField
-                label="Phone Number (Used for Verification Only)"
+                label="Phone Number"
                 placeholder="+1234567890"
                 type="tel"
                 {...field}
-                aria-invalid={!!errors.phoneNumber}
-                aria-describedby={
-                  errors.phoneNumber ? "phone-error" : undefined
-                }
+                onChange={(e) => {
+                  const sanitized = sanitizePhoneInput(e.target.value);
+                  field.onChange(sanitized);
+                }}
+                aria-invalid={!!errors.phone}
+                aria-describedby={errors.phone ? "phone-error" : undefined}
               />
             )}
           />
-          {errors.phoneNumber && (
+          {errors.phone && (
             <p id="phone-error" className="mt-1 text-sm text-red-500">
-              {errors.phoneNumber.message}
+              {errors.phone.message}
             </p>
           )}
         </div>
 
-        {/* Location */}
-        <div className="relative">
-          <Controller
-            control={control}
-            name="location"
-            render={({ field }) => (
-              <InputField
-                label="Location"
-                placeholder="Select your Location"
-                type="text"
-                {...field}
-                aria-invalid={!!errors.location}
-                aria-describedby={
-                  errors.location ? "location-error" : undefined
-                }
-              />
-            )}
-          />
-          {errors.location && (
-            <p id="location-error" className="mt-1 text-sm text-red-500">
-              {errors.location.message}
-            </p>
-          )}
-        </div>
-
-        <Button type="submit" disabled={!isValid} suppressHydrationWarning>
-          Save Changes
+        <Button
+          type="submit"
+          disabled={!isValid || !hasChanges || isSubmitting}
+          suppressHydrationWarning
+        >
+          {isSubmitting ? "Saving..." : "Save Changes"}
         </Button>
       </form>
     </div>

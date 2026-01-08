@@ -88,14 +88,18 @@ const Profile: FC<IProfileProps> = ({ petData, loading }) => {
         </div>
         <img
           className="cursor-pointer"
-          onClick={() => router.push("/profile/edit")}
+          onClick={() => {
+            if (petData?.id) {
+              router.push(`/profile/edit/${petData.id}`);
+            }
+          }}
           src={images.editIcon.src}
           alt="edit"
         />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-x-12 gap-y-7">
-        <div className="md:col-span-4 md:order-2">
+        <div className="md:col-span-4 md:order-2 md:sticky md:top-25">
           <ProfileCard {...profileData} />
         </div>
         <div className="md:col-span-8 md:order-1 flex flex-col gap-7.5">

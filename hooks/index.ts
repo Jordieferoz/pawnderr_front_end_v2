@@ -1,4 +1,11 @@
 import { useAuth } from "./useAuth";
 import { useUserProfile } from "./useUserProfile";
+import { useUserProfileFromStorage } from "./useUserProfileFromStorage";
+import { useUserProfileRefetch } from "./useUserProfileRefetch";
 
-export { useAuth, useUserProfile };
+export {
+  useAuth,
+  useUserProfile,
+  useUserProfileFromStorage,
+  useUserProfileRefetch
+};

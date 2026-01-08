@@ -5,21 +5,25 @@ export interface UserData {
   name: string;
   phone: string;
   gender: string;
-  isActive: boolean;
-  isVerified: boolean;
-  profileCompletion: number;
+  is_active: boolean;
+  is_verified: boolean;
+  profile_completion_percentage: number;
+  last_login_at: string;
+  login_count: number;
+  created_at: string;
+  updated_at: string;
 }
 
 export const userStorage = {
   get: (): UserData | null => {
     if (typeof window === "undefined") return null;
-    const data = sessionStorage.getItem("userData");
+    const data = localStorage.getItem("userProfile");
     return data ? JSON.parse(data) : null;
   },
 
   set: (userData: UserData) => {
     if (typeof window === "undefined") return;
-    sessionStorage.setItem("userData", JSON.stringify(userData));
+    localStorage.setItem("userProfile", JSON.stringify(userData));
   },
 
   update: (updates: Partial<UserData>) => {
@@ -32,6 +36,6 @@ export const userStorage = {
 
   clear: () => {
     if (typeof window === "undefined") return;
-    sessionStorage.removeItem("userData");
+    localStorage.removeItem("userProfile");
   }
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   MatchPreferences,
@@ -11,9 +11,19 @@ import {
 
 import { RootState } from "@/store";
 import { setStep } from "@/store/profileInfoSlice";
+import { fetchPetRegistrationData } from "@/utils/api";
 import { images } from "@/utils/images";
 
+import { RegistrationMetadata } from "../Register/types";
+import Loader from "../Shared/Loader";
+import { showToast } from "../Shared/ToastMessage";
 import PersonalInfo from "./PersonalInfo";
+import { IPetData } from "./types";
+
+interface EditProfileProps {
+  petData?: IPetData | null;
+  loading?: boolean;
+}
 
 const stepTitles: Record<number, string> = {
   0: "Edit Profile",
@@ -23,12 +33,40 @@ const stepTitles: Record<number, string> = {
   4: "Match Preferences"
 };
 
-const EditProfile: FC = () => {
+const EditProfile: FC<EditProfileProps> = ({ petData, loading = false }) => {
   const dispatch = useDispatch();
   const step = useSelector((state: RootState) => state.profileInfo.step);
+
+  const [metadata, setMetadata] = useState<RegistrationMetadata | null>(null);
+  const [isLoadingMetadata, setIsLoadingMetadata] = useState(false);
+
   const stepDescriptions: Record<number, string> = {
     3: "Drag photos to change their order"
   };
+
+  // Fetch metadata on mount
+  useEffect(() => {
+    const fetchMetadata = async () => {
+      setIsLoadingMetadata(true);
+      try {
+        const metadataResponse = await fetchPetRegistrationData();
+        if (metadataResponse.statusCode === 200 && metadataResponse.data) {
+          setMetadata(metadataResponse.data.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch metadata:", error);
+        showToast({
+          type: "error",
+          message: "Failed to load form data. Please refresh the page."
+        });
+      } finally {
+        setIsLoadingMetadata(false);
+      }
+    };
+
+    fetchMetadata();
+  }, []);
+
   // Set first item as default on desktop
   useEffect(() => {
     const isDesktop = window.innerWidth >= 768; // md breakpoint
@@ -39,6 +77,20 @@ const EditProfile: FC = () => {
 
   const currentTitle = stepTitles[step] || "Edit Profile";
   const currentDesc = stepDescriptions[step];
+
+  // Show loading state if metadata is loading
+  if (isLoadingMetadata) {
+    return (
+      <div className="edit_profile_wrapper common_container">
+        <div className="mb-7">
+          <ProfileHeader title="Edit Profile" />
+          <div className="flex items-center justify-center min-h-[400px] mt-16">
+            <Loader size="lg" text="Loading form data..." />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="edit_profile_wrapper common_container">
@@ -127,9 +179,23 @@ const EditProfile: FC = () => {
             className={`md:col-span-8 ${step === 0 ? "hidden md:hidden" : "block"}`}
           >
             {step === 1 && <PersonalInfo />}
-            {step === 2 && <PetInformation />}
-            {step === 3 && <UpdateGallery />}
-            {step === 4 && <MatchPreferences />}
+            {step === 2 && (
+              <PetInformation
+                petData={petData}
+                loading={loading}
+                metadata={metadata}
+              />
+            )}
+            {step === 3 && (
+              <UpdateGallery petData={petData} loading={loading} />
+            )}
+            {step === 4 && (
+              <MatchPreferences
+                petData={petData}
+                loading={loading}
+                metadata={metadata}
+              />
+            )}
           </div>
         </div>
       </div>

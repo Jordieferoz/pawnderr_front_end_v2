@@ -8,14 +8,14 @@ import { FC } from "react";
 
 import { Button } from "@/components/ui/button";
 import { headerMenuItems } from "@/constants";
-import { useUserProfile } from "@/hooks/useUserProfile";
+import { useUserProfileFromStorage } from "@/hooks";
 import { images } from "@/utils/images";
 
 import { DropdownMenu } from "../Dashboard";
 
 const Header: FC = () => {
   const pathname = usePathname();
-  const { userProfile, isLoading } = useUserProfile();
+  const { userProfile, isLoading } = useUserProfileFromStorage();
 
   const isItemActive = (itemHref: string, itemKey: string) => {
     if (itemKey === "discover") {
@@ -32,7 +32,7 @@ const Header: FC = () => {
   return (
     <header className="fixed py-4 w-full left-0 top-0 z-50 bg-white border-b border-blue/10 shadow-[0px_4px_16.4px_0px_#0000000F] hidden md:block">
       <nav className="container mx-auto common_container flex items-center justify-between gap-4">
-        <Link href={"/"}>
+        <Link href={"/dashboard"}>
           <img
             src={images.logoHorizontal.src}
             alt="logo"

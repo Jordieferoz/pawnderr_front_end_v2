@@ -11,8 +11,8 @@ import { FC, useEffect, useState } from "react";
 
 import { dropdownMenuItems } from "@/constants";
 import { useAuth } from "@/hooks";
-import { fetchMyPetsCollection } from "@/utils/api";
 import { images } from "@/utils/images";
+import { petsStorage } from "@/utils/pets-storage";
 
 interface UserProfile {
   id: number;
@@ -41,21 +41,11 @@ const DropdownMenu: FC<DropdownMenuProps> = ({ userProfile, isLoading }) => {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const resp = await fetchMyPetsCollection();
-
-        const myPets = resp.data.my_pets;
-
-        if (myPets && myPets.length > 0) {
-          setFirstPetId(myPets[0].id);
-        }
-      } catch (error) {
-        console.error("Error fetching pets:", error);
-      }
-    };
-
-    fetchData();
+    // Read from localStorage instead of making API call
+    const firstPetId = petsStorage.getFirstPetId();
+    if (firstPetId) {
+      setFirstPetId(firstPetId);
+    }
   }, []);
 
   const avatarUrl = userProfile?.avatar || images.doggoProfilePlaceholder.src;
