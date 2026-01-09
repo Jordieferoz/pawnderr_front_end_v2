@@ -203,6 +203,40 @@ export const fetchSubscriptionStatus = (): Promise<TResponse<any>> => {
   });
 };
 
+export const fetchSubscriptionHistory = (): Promise<TResponse<any>> => {
+  return new Promise((resolve, reject) => {
+    globalGetService<any, any>(`subscription/history`, {})
+      .then((response) => {
+        if (response.statusCode === 200) {
+          resolve(response.data);
+        } else {
+          reject(new Error(`Unexpected status code: ${response.statusCode}`));
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+export const cancelSubscription = (payload: {
+  cancellation_reason?: string;
+}): Promise<TResponse<any>> => {
+  return new Promise((resolve, reject) => {
+    globalPostService<any, any>(`subscription/cancel`, payload)
+      .then((response) => {
+        if (response.statusCode === 200 || response.statusCode === 201) {
+          resolve(response.data);
+        } else {
+          reject(new Error(`Unexpected status code: ${response.statusCode}`));
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
 export const petRegisterInfo = (payload: any): Promise<TResponse<any>> => {
   return new Promise((resolve, reject) => {
     globalPostService<any, any>(`pet/register`, payload)

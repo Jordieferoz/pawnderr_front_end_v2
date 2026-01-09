@@ -18,7 +18,7 @@ export const authOptions: NextAuthOptions = {
         }
 
         try {
-          const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`;
+          const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}auth/login`;
 
           const response = await fetch(apiUrl, {
             method: "POST",
@@ -31,8 +31,10 @@ export const authOptions: NextAuthOptions = {
               password: credentials.password
             })
           });
+          console.log(response, "response");
 
           const responseText = await response.text();
+          console.log(responseText, "responseText");
           let responseData;
 
           try {
@@ -45,6 +47,23 @@ export const authOptions: NextAuthOptions = {
           if (!response.ok) {
             console.error("❌ Response not OK:", responseData);
             throw new Error(responseData?.message || "Invalid credentials");
+          }
+
+          // Check if OTP verification is required
+          if (
+            responseData?.status === "success" &&
+            responseData?.data?.requires_verification === true
+          ) {
+            // Throw a special error with JSON data that we can parse in the login component
+            const errorData = {
+              code: "OTP_VERIFICATION_REQUIRED",
+              phone: responseData.data.phone,
+              message: responseData.data.message
+            };
+            const verificationError = new Error(
+              `OTP_VERIFICATION_REQUIRED:${JSON.stringify(errorData)}`
+            );
+            throw verificationError;
           }
 
           const userData = responseData?.data;

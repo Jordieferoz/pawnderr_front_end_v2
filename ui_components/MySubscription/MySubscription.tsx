@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Button } from "@/components/ui/button";
@@ -33,10 +33,49 @@ const MySubscription: FC = () => {
     useState<SubscriptionData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const isLoadingRef = useRef(false);
+  const lastFetchRef = useRef<number>(0);
+
+  // Function to refresh subscription data
+  const refreshSubscriptionData = async () => {
+    try {
+      isLoadingRef.current = true;
+      lastFetchRef.current = Date.now();
+      setLoading(true);
+      const resp = await fetchSubscriptionStatus();
+      setSubscriptionData(resp.data);
+      setError(null);
+    } catch (err) {
+      console.error("Failed to fetch subscription status:", err);
+      setError(
+        err instanceof Error ? err.message : "Failed to load subscription"
+      );
+    } finally {
+      setLoading(false);
+      isLoadingRef.current = false;
+    }
+  };
 
   // Fetch subscription status on component mount
   useEffect(() => {
+    // Prevent multiple simultaneous calls
+    if (isLoadingRef.current) {
+      return;
+    }
+
     const loadSubscriptionStatus = async () => {
+      const now = Date.now();
+      const timeSinceLastFetch = now - lastFetchRef.current;
+
+      // Throttle: Don't fetch if we fetched less than 2 seconds ago
+      if (timeSinceLastFetch < 2000) {
+        setLoading(false);
+        return;
+      }
+
+      isLoadingRef.current = true;
+      lastFetchRef.current = now;
+
       try {
         setLoading(true);
         const resp = await fetchSubscriptionStatus();
@@ -49,6 +88,7 @@ const MySubscription: FC = () => {
         );
       } finally {
         setLoading(false);
+        isLoadingRef.current = false;
       }
     };
 
@@ -169,7 +209,12 @@ const MySubscription: FC = () => {
             <div
               className={`md:col-span-8 ${step === 0 ? "hidden md:hidden" : "block"}`}
             >
-              {step === 1 && <CurrentPlan />}
+              {step === 1 && (
+                <CurrentPlan
+                  subscriptionData={subscriptionData}
+                  onSubscriptionUpdated={refreshSubscriptionData}
+                />
+              )}
               {step === 2 && <BillingHistory />}
             </div>
           </div>

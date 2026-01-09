@@ -17,12 +17,10 @@ import { useDispatch } from "react-redux";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { setUser } from "@/store/userSlice";
-import { InputField } from "@/ui_components/Shared";
-import { fetchMyPetsCollection, fetchUserProfile } from "@/utils/api";
+import { LoginOTPModal } from "@/ui_components/Modals";
+import { InputField, Modal } from "@/ui_components/Shared";
 import { signupStorage } from "@/utils/auth-storage";
 import { images } from "@/utils/images";
-import { petsStorage } from "@/utils/pets-storage";
-import { userStorage } from "@/utils/user-storage";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 type Mode = "signin" | "signup";
@@ -41,6 +39,10 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
   const schema = isSignup ? signUpSchema : signInSchema;
 
   const [apiError, setApiError] = useState<string | null>(null);
+  const [showOTPModal, setShowOTPModal] = useState(false);
+  const [otpPhone, setOtpPhone] = useState<string>("");
+  const [pendingEmail, setPendingEmail] = useState<string>("");
+  const [pendingPassword, setPendingPassword] = useState<string>("");
 
   // Get error from URL if redirected from middleware
   useEffect(() => {
@@ -83,7 +85,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
         signupStorage.set(sanitizedEmail, signupData.password);
         router.push("/register");
       } else {
-        // Sign in flow using NextAuth
+        // Sign in flow using NextAuth (server-side)
         const signinData = data as SignInValues;
         const callbackUrl = searchParams?.get("callbackUrl") || "/dashboard";
 
@@ -95,6 +97,22 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
         });
 
         if (result?.error) {
+          // Check if error is for OTP verification required
+          if (result.error.startsWith("OTP_VERIFICATION_REQUIRED:")) {
+            try {
+              const errorData = JSON.parse(
+                result.error.replace("OTP_VERIFICATION_REQUIRED:", "")
+              );
+              setPendingEmail(sanitizedEmail);
+              setPendingPassword(signinData.password);
+              setOtpPhone(errorData.phone || "");
+              setShowOTPModal(true);
+              return;
+            } catch (parseError) {
+              console.error("❌ Failed to parse OTP error:", parseError);
+            }
+          }
+
           console.error("❌ Sign in error:", result.error);
           if (result.error === "CredentialsSignin") {
             setApiError("Invalid email or password. Please try again.");
@@ -102,69 +120,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
             setApiError(result.error);
           }
         } else if (result?.ok) {
-          await new Promise((resolve) => setTimeout(resolve, 500));
-
-          const { getSession } = await import("next-auth/react");
-          const session = await getSession();
-
-          if (session?.user) {
-            dispatch(setUser(session.user as any));
-          }
-
-          if (!(session as any)?.accessToken) {
-            console.error("❌ No accessToken in session!");
-          }
-
-          // Fetch and store user profile and pets in localStorage and sync with Redux
-          try {
-            // Fetch user profile
-            const profileResponse = await fetchUserProfile();
-            // API response structure: { data: { data: {...user data...}, message, status }, statusCode, message }
-            const userData = profileResponse.data?.data || profileResponse.data;
-            if (userData && userData.id) {
-              // Store only user data in localStorage (exclude message and status)
-              userStorage.set(userData);
-
-              // Sync with Redux state (map API response to Redux UserData format)
-              const reduxUserData = {
-                id: userData.id,
-                email: userData.email,
-                name: userData.name,
-                phone: userData.phone,
-                gender: userData.gender,
-                isActive: userData.is_active,
-                isVerified: userData.is_verified,
-                profileCompletionPercentage:
-                  userData.profile_completion_percentage,
-                lastLoginAt: userData.last_login_at,
-                loginCount: userData.login_count
-              };
-              dispatch(setUser(reduxUserData));
-
-              console.log("✅ User profile stored in localStorage and Redux");
-            }
-
-            // Fetch pets collection
-            try {
-              const petsResponse = await fetchMyPetsCollection();
-              if (petsResponse.data) {
-                petsStorage.set(petsResponse.data);
-                console.log("✅ User pets stored in localStorage");
-              }
-            } catch (petsError) {
-              console.error("❌ Failed to fetch pets after login:", petsError);
-              // Continue even if pets fetch fails
-            }
-          } catch (error) {
-            console.error(
-              "❌ Failed to fetch user profile after login:",
-              error
-            );
-            // Continue with redirect even if profile fetch fails
-          }
-
-          router.push(callbackUrl);
-          router.refresh();
+          await completeLoginFlow(callbackUrl);
         }
       }
     } catch (error: any) {
@@ -198,6 +154,65 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
       void trigger("confirmPassword" as keyof SignUpValues);
     }
   }, [password, isSignup, confirmPassword, trigger]);
+
+  // Helper function to complete login flow after OTP verification or normal login
+  const completeLoginFlow = async (callbackUrl: string = "/dashboard") => {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    const { getSession } = await import("next-auth/react");
+    const session = await getSession();
+
+    if (session?.user) {
+      dispatch(setUser(session.user as any));
+    }
+
+    if (!(session as any)?.accessToken) {
+      console.error("❌ No accessToken in session!");
+    }
+
+    // Note: ProfileLoader component will handle fetching user profile and pets
+    // No need to fetch here to avoid duplicate API calls
+    router.push(callbackUrl);
+    router.refresh();
+  };
+
+  // Handle OTP verification success
+  const handleOTPVerified = async () => {
+    setShowOTPModal(false);
+    const callbackUrl = searchParams?.get("callbackUrl") || "/dashboard";
+
+    // After OTP verification, sign in using NextAuth - user should now be verified
+    // The tokens are already stored in sessionStorage by LoginOTPModal
+    try {
+      const result = await signIn("credentials", {
+        email: pendingEmail,
+        password: pendingPassword,
+        redirect: false,
+        callbackUrl
+      });
+
+      if (result?.error) {
+        console.error("❌ Sign in error after OTP:", result.error);
+        setApiError("Login failed after OTP verification. Please try again.");
+        // Clear stored credentials
+        setPendingEmail("");
+        setPendingPassword("");
+      } else if (result?.ok) {
+        await completeLoginFlow(callbackUrl);
+      }
+    } catch (error: any) {
+      console.error("❌ Error signing in after OTP:", error);
+      // Even if signIn fails, we have tokens from OTP verification
+      // Try to complete the flow anyway
+      try {
+        await completeLoginFlow(callbackUrl);
+      } catch {
+        setApiError("Failed to complete login. Please try again.");
+        setPendingEmail("");
+        setPendingPassword("");
+      }
+    }
+  };
 
   return (
     <div className="relative min-h-[100dvh] px-5 py-6 md:px-8">
@@ -448,6 +463,32 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
         src={isSignup ? images.loginBg.src : images.signupBg.src}
         className="absolute -top-10 left-0 w-full z-10 pointer-events-none hidden md:block"
         alt=""
+      />
+
+      {/* OTP Verification Modal */}
+      <Modal
+        open={showOTPModal}
+        setOpen={(val) => {
+          if (!val) {
+            setShowOTPModal(false);
+            setOtpPhone("");
+            setPendingEmail("");
+            setPendingPassword("");
+          }
+        }}
+        content={
+          <LoginOTPModal
+            phone={otpPhone}
+            onOTPVerified={handleOTPVerified}
+            onClose={() => {
+              setShowOTPModal(false);
+              setOtpPhone("");
+              setPendingEmail("");
+              setPendingPassword("");
+            }}
+          />
+        }
+        className="max-w-md"
       />
     </div>
   );

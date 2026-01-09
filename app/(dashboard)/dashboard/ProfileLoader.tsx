@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 
 import { setUser } from "@/store/userSlice";
@@ -18,6 +18,11 @@ export default function ProfileLoader() {
   const { data: session, status } = useSession();
   const dispatch = useDispatch();
   const pathname = usePathname();
+  const isLoadingRef = useRef(false);
+  const lastFetchRef = useRef<{ user: number; pets: number }>({
+    user: 0,
+    pets: 0
+  });
 
   useEffect(() => {
     // Wait for pathname to be available
@@ -31,6 +36,11 @@ export default function ProfileLoader() {
       return;
     }
 
+    // Prevent multiple simultaneous calls
+    if (isLoadingRef.current) {
+      return;
+    }
+
     const loadProfile = async () => {
       // Only run if authenticated and we have an access token
       if (
@@ -38,9 +48,19 @@ export default function ProfileLoader() {
         session &&
         (session as any)?.accessToken
       ) {
-        // Always fetch fresh profile data on dashboard load
+        isLoadingRef.current = true;
+        const now = Date.now();
+        const timeSinceLastFetch = now - lastFetchRef.current.user;
+
+        // Throttle: Don't fetch if we fetched less than 2 seconds ago
+        if (timeSinceLastFetch < 2000) {
+          isLoadingRef.current = false;
+          return;
+        }
+
         try {
           const response = await fetchUserProfile();
+          lastFetchRef.current.user = Date.now();
           // API response structure: { data: { data: {...user data...}, message, status }, statusCode, message }
           const userData = response.data?.data || response.data;
           if (userData && userData.id) {
@@ -71,16 +91,22 @@ export default function ProfileLoader() {
           console.error("❌ Failed to load user profile:", error);
         }
 
-        // Always fetch fresh pets data on dashboard load
-        try {
-          const petsResponse = await fetchMyPetsCollection();
-          if (petsResponse.data) {
-            petsStorage.set(petsResponse.data);
-            console.log("✅ User pets loaded and stored in localStorage");
+        // Fetch pets data with throttling
+        const timeSinceLastPetsFetch = now - lastFetchRef.current.pets;
+        if (timeSinceLastPetsFetch >= 2000) {
+          try {
+            const petsResponse = await fetchMyPetsCollection();
+            lastFetchRef.current.pets = Date.now();
+            if (petsResponse.data) {
+              petsStorage.set(petsResponse.data);
+              console.log("✅ User pets loaded and stored in localStorage");
+            }
+          } catch (error) {
+            console.error("❌ Failed to load user pets:", error);
           }
-        } catch (error) {
-          console.error("❌ Failed to load user pets:", error);
         }
+
+        isLoadingRef.current = false;
       }
     };
 
