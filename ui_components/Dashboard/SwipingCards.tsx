@@ -1,8 +1,9 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { FC, useMemo, useState } from "react";
 
 import { images } from "@/utils/images";
 import { useDrag } from "@use-gesture/react";
+import { IPetData } from "../Profile/types";
 
 type Card = {
   name: string;
@@ -10,6 +11,11 @@ type Card = {
   url: string;
   desc: string;
 };
+
+export interface ISwipingCardsProps {
+  petData: IPetData | null;
+  loading: boolean;
+}
 
 const cardsData: Card[] = [
   {
@@ -44,7 +50,8 @@ const cardsData: Card[] = [
   }
 ];
 
-export default function SwipingCards() {
+const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading }) => {
+  console.log(petData, "petData", loading);
   const [cards, setCards] = useState(cardsData);
   const [currentIndex, setCurrentIndex] = useState(cardsData.length - 1);
   const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | null>(
@@ -253,4 +260,6 @@ export default function SwipingCards() {
       )}
     </div>
   );
-}
+};
+
+export default SwipingCards;

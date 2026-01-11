@@ -87,22 +87,6 @@ export const resendOTP = (payload: {
   });
 };
 
-export const fetchPets = (): Promise<TResponse<any>> => {
-  return new Promise((resolve, reject) => {
-    globalGetService<any, any>(`pet/fetch-pets`, {})
-      .then((response) => {
-        if (response.statusCode === 200) {
-          resolve(response);
-        } else {
-          reject(new Error(`Unexpected status code: ${response.statusCode}`));
-        }
-      })
-      .catch((err) => {
-        reject(err);
-      });
-  });
-};
-
 export const fetchSubscriptionPlans = (): Promise<TResponse<any>> => {
   return new Promise((resolve, reject) => {
     globalGetService<any, any>(`subscription/plans`, {})
