@@ -3,38 +3,51 @@
 import { NextAuthOptions } from "next-auth/";
 import CredentialsProvider from "next-auth/providers/credentials";
 
+/**
+ * NextAuth Configuration
+ *
+ * Phone-based login flow:
+ * 1. Client calls loginWithPhone API (sends OTP)
+ * 2. User verifies OTP in modal
+ * 3. OTP verification returns accessToken and refreshToken
+ * 4. Client calls NextAuth signIn with accessToken to create server-side session
+ *
+ * This credentials provider validates the accessToken server-side and creates a session.
+ */
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
+        accessToken: { label: "Access Token", type: "text" }
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          console.error("❌ Missing credentials");
-          throw new Error("Please enter your email and password");
+        if (!credentials?.accessToken) {
+          console.error("❌ Missing access token");
+          throw new Error("Access token is required");
         }
 
         try {
-          const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}auth/login`;
+          // Validate token and fetch user data from API
+          // Use the user profile endpoint which requires the token
+          const profileUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}user/profile`;
 
-          const response = await fetch(apiUrl, {
-            method: "POST",
+          const response = await fetch(profileUrl, {
+            method: "GET",
             headers: {
               "Content-Type": "application/json",
-              "access-token": "key"
-            },
-            body: JSON.stringify({
-              email: credentials.email,
-              password: credentials.password
-            })
+              "access-token": "key",
+              Authorization: `Bearer ${credentials.accessToken}`
+            }
           });
-          console.log(response, "response");
+
+          if (!response.ok) {
+            // If profile fetch fails, token might be invalid
+            console.error("❌ Token validation failed:", response.status);
+            throw new Error("Invalid or expired token");
+          }
 
           const responseText = await response.text();
-          console.log(responseText, "responseText");
           let responseData;
 
           try {
@@ -44,48 +57,29 @@ export const authOptions: NextAuthOptions = {
             throw new Error("Invalid response from server");
           }
 
-          if (!response.ok) {
-            console.error("❌ Response not OK:", responseData);
-            throw new Error(responseData?.message || "Invalid credentials");
+          const userData =
+            responseData?.data?.data || responseData?.data || responseData;
+
+          if (!userData || !userData.id) {
+            console.error("❌ No user data in response");
+            throw new Error("Invalid user data");
           }
 
-          // Check if OTP verification is required
-          if (
-            responseData?.status === "success" &&
-            responseData?.data?.requires_verification === true
-          ) {
-            // Throw a special error with JSON data that we can parse in the login component
-            const errorData = {
-              code: "OTP_VERIFICATION_REQUIRED",
-              phone: responseData.data.phone,
-              message: responseData.data.message
-            };
-            const verificationError = new Error(
-              `OTP_VERIFICATION_REQUIRED:${JSON.stringify(errorData)}`
-            );
-            throw verificationError;
-          }
-
-          const userData = responseData?.data;
-
-          if (!userData || !userData.accessToken) {
-            console.error("❌ No user data or access token");
-            throw new Error("Invalid credentials");
-          }
-
+          // Return user object for NextAuth session
           const user = {
             id: userData.id,
-            email: userData.email,
-            name: userData.name,
-            phone: userData.phone,
-            gender: userData.gender,
-            isActive: userData.is_active,
-            isVerified: userData.is_verified,
-            profileCompletionPercentage: userData.profile_completion_percentage,
-            lastLoginAt: userData.last_login_at,
-            loginCount: userData.login_count,
-            accessToken: userData.accessToken,
-            refreshToken: userData.refreshToken
+            email: userData.email || "",
+            name: userData.name || "",
+            phone: userData.phone || "",
+            gender: userData.gender || "",
+            isActive: userData.is_active ?? false,
+            isVerified: userData.is_verified ?? false,
+            profileCompletionPercentage:
+              userData.profile_completion_percentage ?? 0,
+            lastLoginAt: userData.last_login_at || "",
+            loginCount: userData.login_count ?? 0,
+            accessToken: credentials.accessToken,
+            refreshToken: "" // Refresh token can be stored separately if needed
           };
 
           return user;

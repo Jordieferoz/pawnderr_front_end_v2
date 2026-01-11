@@ -15,10 +15,10 @@ import { Controller, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { setUser } from "@/store/userSlice";
 import { LoginOTPModal } from "@/ui_components/Modals";
 import { InputField, Modal } from "@/ui_components/Shared";
+import { loginWithPhone } from "@/utils/api";
 import { signupStorage } from "@/utils/auth-storage";
 import { images } from "@/utils/images";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -28,6 +28,26 @@ type Mode = "signin" | "signup";
 // Simple input sanitization - removes dangerous HTML/JS
 const sanitizeInput = (input: string): string => {
   return input.replace(/[<>]/g, "").trim();
+};
+
+// Sanitize phone number input - only allow digits and + at the start
+const sanitizePhoneInput = (value: string): string => {
+  // Remove all non-digit characters except + at the start
+  let sanitized = value.replace(/[^\d+]/g, "");
+
+  // Ensure + is only at the start
+  if (sanitized.includes("+")) {
+    const plusIndex = sanitized.indexOf("+");
+    if (plusIndex > 0) {
+      // Remove + if it's not at the start
+      sanitized = sanitized.replace(/\+/g, "");
+    } else if (plusIndex === 0 && sanitized.length > 1) {
+      // Keep + at start, remove any other + signs
+      sanitized = "+" + sanitized.slice(1).replace(/\+/g, "");
+    }
+  }
+
+  return sanitized;
 };
 
 export function Login({ mode = "signin" }: { mode?: Mode }) {
@@ -41,14 +61,12 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
   const [apiError, setApiError] = useState<string | null>(null);
   const [showOTPModal, setShowOTPModal] = useState(false);
   const [otpPhone, setOtpPhone] = useState<string>("");
-  const [pendingEmail, setPendingEmail] = useState<string>("");
-  const [pendingPassword, setPendingPassword] = useState<string>("");
 
   // Get error from URL if redirected from middleware
   useEffect(() => {
     const error = searchParams?.get("error");
     if (error === "CredentialsSignin") {
-      setApiError("Invalid email or password. Please try again.");
+      setApiError("Invalid credentials. Please try again.");
     } else if (error) {
       setApiError("An error occurred. Please try again.");
     }
@@ -64,12 +82,12 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
     resolver: zodResolver(schema),
     mode: "onChange",
     reValidateMode: "onChange",
-    defaultValues: isSignup
+    defaultValues: (isSignup
       ? { email: "", password: "", confirmPassword: "" }
-      : { email: "", password: "", rememberMe: false }
+      : { phone: "", password: "" }) as SignInValues | SignUpValues
   });
 
-  const password = watch("password");
+  const password = watch("password" as keyof (SignInValues | SignUpValues));
   const confirmPassword = isSignup
     ? watch("confirmPassword" as keyof SignUpValues)
     : undefined;
@@ -78,49 +96,88 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
     setApiError(null);
 
     try {
-      const sanitizedEmail = sanitizeInput(data.email);
-
       if (isSignup) {
         const signupData = data as SignUpValues;
+        const sanitizedEmail = sanitizeInput(signupData.email);
         signupStorage.set(sanitizedEmail, signupData.password);
         router.push("/register");
       } else {
-        // Sign in flow using NextAuth (server-side)
+        // Sign in flow with phone number and password
         const signinData = data as SignInValues;
-        const callbackUrl = searchParams?.get("callbackUrl") || "/dashboard";
+        const formattedPhone = signinData.phone?.startsWith("+")
+          ? signinData.phone
+          : `+91${signinData.phone}`;
 
-        const result = await signIn("credentials", {
-          email: sanitizedEmail,
-          password: signinData.password,
-          redirect: false,
-          callbackUrl
-        });
+        try {
+          const response = await loginWithPhone({
+            phone: formattedPhone,
+            password: signinData.password
+          });
 
-        if (result?.error) {
-          // Check if error is for OTP verification required
-          if (result.error.startsWith("OTP_VERIFICATION_REQUIRED:")) {
-            try {
-              const errorData = JSON.parse(
-                result.error.replace("OTP_VERIFICATION_REQUIRED:", "")
-              );
-              setPendingEmail(sanitizedEmail);
-              setPendingPassword(signinData.password);
-              setOtpPhone(errorData.phone || "");
+          if (response.statusCode === 200 || response.statusCode === 201) {
+            // Check if OTP verification is required
+            const responseData = response.data?.data || response.data;
+            if (
+              responseData?.requires_verification === true ||
+              responseData?.requiresVerification === true
+            ) {
+              // OTP verification required, open OTP modal
+              setOtpPhone(formattedPhone);
               setShowOTPModal(true);
-              return;
-            } catch (parseError) {
-              console.error("❌ Failed to parse OTP error:", parseError);
-            }
-          }
+            } else if (responseData?.accessToken) {
+              // Direct login successful, store tokens and complete login
+              sessionStorage.setItem("accessToken", responseData.accessToken);
+              sessionStorage.setItem(
+                "refreshToken",
+                responseData.refreshToken || ""
+              );
 
-          console.error("❌ Sign in error:", result.error);
-          if (result.error === "CredentialsSignin") {
-            setApiError("Invalid email or password. Please try again.");
+              if (responseData.id) {
+                const userProfile = {
+                  id: responseData.id,
+                  email: responseData.email || "",
+                  name: responseData.name || "",
+                  phone: responseData.phone || "",
+                  gender: responseData.gender || "",
+                  isActive: responseData.is_active ?? false,
+                  isVerified: responseData.is_verified ?? false,
+                  profileCompletionPercentage:
+                    responseData.profile_completion_percentage ?? 0
+                };
+                sessionStorage.setItem("userData", JSON.stringify(userProfile));
+              }
+
+              // Create NextAuth session
+              const callbackUrl =
+                searchParams?.get("callbackUrl") || "/dashboard";
+              const result = await signIn("credentials", {
+                accessToken: responseData.accessToken,
+                redirect: false,
+                callbackUrl
+              });
+
+              if (result?.ok) {
+                await completeLoginFlow(callbackUrl);
+              } else {
+                setApiError("Failed to create session. Please try again.");
+              }
+            } else {
+              // OTP required - open modal
+              setOtpPhone(formattedPhone);
+              setShowOTPModal(true);
+            }
           } else {
-            setApiError(result.error);
+            setApiError(
+              response.data?.message || "Login failed. Please try again."
+            );
           }
-        } else if (result?.ok) {
-          await completeLoginFlow(callbackUrl);
+        } catch (error: any) {
+          console.error("❌ Login error:", error);
+          const errorMessage =
+            error?.response?.data?.message ||
+            error?.message ||
+            "Login failed. Please try again.";
+          setApiError(errorMessage);
         }
       }
     } catch (error: any) {
@@ -132,7 +189,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
         setApiError(
           isSignup
             ? "Failed to proceed. Please try again."
-            : "Invalid email or password. Please try again."
+            : "Invalid phone number. Please try again."
         );
       }
     }
@@ -155,14 +212,16 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
     }
   }, [password, isSignup, confirmPassword, trigger]);
 
-  // Helper function to complete login flow after OTP verification or normal login
+  // Helper function to complete login flow after OTP verification
   const completeLoginFlow = async (callbackUrl: string = "/dashboard") => {
     await new Promise((resolve) => setTimeout(resolve, 500));
 
+    // Get session from NextAuth (now that we've signed in server-side)
     const { getSession } = await import("next-auth/react");
     const session = await getSession();
 
     if (session?.user) {
+      // Set user in Redux store from NextAuth session
       dispatch(setUser(session.user as any));
     }
 
@@ -170,8 +229,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
       console.error("❌ No accessToken in session!");
     }
 
-    // Note: ProfileLoader component will handle fetching user profile and pets
-    // No need to fetch here to avoid duplicate API calls
+    // Redirect to dashboard - ProfileLoader will fetch fresh data if needed
     router.push(callbackUrl);
     router.refresh();
   };
@@ -181,36 +239,32 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
     setShowOTPModal(false);
     const callbackUrl = searchParams?.get("callbackUrl") || "/dashboard";
 
-    // After OTP verification, sign in using NextAuth - user should now be verified
-    // The tokens are already stored in sessionStorage by LoginOTPModal
+    // After OTP verification, tokens are stored in sessionStorage by LoginOTPModal
+    // Use NextAuth to create server-side session with the access token
     try {
+      const accessToken = sessionStorage.getItem("accessToken");
+
+      if (!accessToken) {
+        setApiError("No access token found. Please try again.");
+        return;
+      }
+
+      // Sign in with NextAuth using the access token to create server-side session
       const result = await signIn("credentials", {
-        email: pendingEmail,
-        password: pendingPassword,
+        accessToken: accessToken,
         redirect: false,
         callbackUrl
       });
 
       if (result?.error) {
         console.error("❌ Sign in error after OTP:", result.error);
-        setApiError("Login failed after OTP verification. Please try again.");
-        // Clear stored credentials
-        setPendingEmail("");
-        setPendingPassword("");
+        setApiError("Failed to create session. Please try again.");
       } else if (result?.ok) {
         await completeLoginFlow(callbackUrl);
       }
     } catch (error: any) {
-      console.error("❌ Error signing in after OTP:", error);
-      // Even if signIn fails, we have tokens from OTP verification
-      // Try to complete the flow anyway
-      try {
-        await completeLoginFlow(callbackUrl);
-      } catch {
-        setApiError("Failed to complete login. Please try again.");
-        setPendingEmail("");
-        setPendingPassword("");
-      }
+      console.error("❌ Error completing login after OTP:", error);
+      setApiError("Failed to complete login. Please try again.");
     }
   };
 
@@ -281,7 +335,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
             </div>
             <div className="relative flex justify-center">
               <p className="bg-white px-4 text-grey-500 body_medium text-center uppercase">
-                Or use your Email
+                {isSignup ? "Or use your Email" : "Or use your Phone Number"}
               </p>
             </div>
           </div>
@@ -298,56 +352,139 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
             onSubmit={handleSubmit(onSubmit)}
             noValidate
           >
-            <div className="relative">
-              <Controller
-                control={control}
-                name="email"
-                render={({ field }) => (
-                  <InputField
-                    label="Email Address"
-                    placeholder="Email"
-                    type="email"
-                    {...field}
-                    onChange={(e) => {
-                      const sanitized = sanitizeInput(e.target.value);
-                      field.onChange(sanitized);
-                    }}
-                    aria-invalid={Boolean(errors.email)}
-                    aria-describedby={errors.email ? "email-error" : undefined}
+            {isSignup ? (
+              <>
+                <div className="relative">
+                  <Controller
+                    control={control}
+                    name={"email" as keyof SignUpValues}
+                    render={({ field }) => (
+                      <InputField
+                        label="Email Address"
+                        placeholder="Email"
+                        type="email"
+                        {...field}
+                        onChange={(e) => {
+                          const sanitized = sanitizeInput(e.target.value);
+                          field.onChange(sanitized);
+                        }}
+                        aria-invalid={Boolean(
+                          "email" in errors && errors.email
+                        )}
+                        aria-describedby={
+                          "email" in errors && errors.email
+                            ? "email-error"
+                            : undefined
+                        }
+                      />
+                    )}
                   />
-                )}
-              />
-              {errors.email && (
-                <p id="email-error" className="mt-1 text-sm text-red-500">
-                  {errors.email.message}
-                </p>
-              )}
-            </div>
+                  {"email" in errors && errors.email && (
+                    <p id="email-error" className="mt-1 text-sm text-red-500">
+                      {(errors.email as { message?: string })?.message}
+                    </p>
+                  )}
+                </div>
 
-            <div className="relative">
-              <Controller
-                control={control}
-                name="password"
-                render={({ field }) => (
-                  <InputField
-                    isPassword
-                    label={isSignup ? "Set Password" : "Password"}
-                    placeholder={isSignup ? "Create a password" : "Password"}
-                    type="password"
-                    {...field}
-                    aria-invalid={Boolean(errors.password)}
-                    aria-describedby={
-                      errors.password ? "password-error" : undefined
-                    }
+                <div className="relative">
+                  <Controller
+                    control={control}
+                    name={"password" as keyof SignUpValues}
+                    render={({ field }) => (
+                      <InputField
+                        isPassword
+                        label="Set Password"
+                        placeholder="Create a password"
+                        type="password"
+                        {...field}
+                        aria-invalid={Boolean(
+                          "password" in errors && errors.password
+                        )}
+                        aria-describedby={
+                          "password" in errors && errors.password
+                            ? "password-error"
+                            : undefined
+                        }
+                      />
+                    )}
                   />
-                )}
-              />
-              {errors.password && (
-                <p id="password-error" className="mt-1 text-sm text-red-500">
-                  {errors.password.message}
-                </p>
-              )}
-            </div>
+                  {"password" in errors && errors.password && (
+                    <p
+                      id="password-error"
+                      className="mt-1 text-sm text-red-500"
+                    >
+                      {(errors.password as { message?: string })?.message}
+                    </p>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="relative">
+                  <Controller
+                    control={control}
+                    name={"phone" as keyof SignInValues}
+                    render={({ field }) => (
+                      <InputField
+                        label="Phone Number"
+                        placeholder="+1234567890"
+                        type="tel"
+                        {...field}
+                        onChange={(e) => {
+                          const sanitized = sanitizePhoneInput(e.target.value);
+                          field.onChange(sanitized);
+                        }}
+                        aria-invalid={Boolean(
+                          "phone" in errors && (errors as any).phone
+                        )}
+                        aria-describedby={
+                          "phone" in errors && (errors as any).phone
+                            ? "phone-error"
+                            : undefined
+                        }
+                      />
+                    )}
+                  />
+                  {"phone" in errors && (errors as any).phone && (
+                    <p id="phone-error" className="mt-1 text-sm text-red-500">
+                      {(errors as any).phone?.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="relative">
+                  <Controller
+                    control={control}
+                    name={"password" as keyof SignInValues}
+                    render={({ field }) => (
+                      <InputField
+                        isPassword
+                        label="Password"
+                        placeholder="Password"
+                        type="password"
+                        {...field}
+                        aria-invalid={Boolean(
+                          "password" in errors && (errors as any).password
+                        )}
+                        aria-describedby={
+                          "password" in errors && (errors as any).password
+                            ? "password-error"
+                            : undefined
+                        }
+                      />
+                    )}
+                  />
+                  {"password" in errors && (errors as any).password && (
+                    <p
+                      id="password-error"
+                      className="mt-1 text-sm text-red-500"
+                    >
+                      {(errors as any).password?.message}
+                    </p>
+                  )}
+                </div>
+              </>
+            )}
 
             {isSignup && (
               <div className="relative">
@@ -380,35 +517,6 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
               </div>
             )}
 
-            {!isSignup && (
-              <div className="flex items-center justify-between px-1 mb-2">
-                <div className="flex items-center gap-2">
-                  <Controller
-                    control={control}
-                    name="rememberMe"
-                    render={({ field }) => (
-                      <Checkbox
-                        checked={!!field.value}
-                        onCheckedChange={field.onChange}
-                        id="rememberMe"
-                      />
-                    )}
-                  />
-                  <label
-                    htmlFor="rememberMe"
-                    className="body_medium text-dark-grey cursor-pointer"
-                  >
-                    Remember me
-                  </label>
-                </div>
-                <Link
-                  href="/forgot-password"
-                  className="button2 text-accent-900 font-medium hover:underline"
-                >
-                  Forgot password?
-                </Link>
-              </div>
-            )}
             <div className="fixed bottom-0 md:relative py-5 md:pb-0 w-full bg-white shadow-[0px_-4px_12.8px_-3px_#00000012] md:shadow-none">
               <Button
                 type="submit"
@@ -472,8 +580,6 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
           if (!val) {
             setShowOTPModal(false);
             setOtpPhone("");
-            setPendingEmail("");
-            setPendingPassword("");
           }
         }}
         content={
@@ -483,8 +589,6 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
             onClose={() => {
               setShowOTPModal(false);
               setOtpPhone("");
-              setPendingEmail("");
-              setPendingPassword("");
             }}
           />
         }

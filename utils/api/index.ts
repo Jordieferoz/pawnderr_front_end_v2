@@ -50,6 +50,25 @@ export const verifyOTP = (payload: {
   });
 };
 
+export const loginWithPhone = (payload: {
+  phone: string;
+  password: string;
+}): Promise<TResponse<any>> => {
+  return new Promise((resolve, reject) => {
+    globalPostService<any, any>(`auth/login`, payload)
+      .then((response) => {
+        if (response.statusCode === 200 || response.statusCode === 201) {
+          resolve(response);
+        } else {
+          reject(new Error(`Unexpected status code: ${response.statusCode}`));
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
 export const resendOTP = (payload: {
   phone: string;
 }): Promise<TResponse<any>> => {

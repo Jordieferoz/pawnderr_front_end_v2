@@ -33,20 +33,36 @@ function axiosInstanceCreator(baseURL: string | undefined, accessKey?: string) {
         }
       }
 
-      // First priority: Check for token in sessionStorage (from OTP verification)
-      const sessionToken = tokenStorage.getAccessToken();
-      if (sessionToken) {
-        config.headers["Authorization"] = `Bearer ${sessionToken}`;
-      } else {
-        // Fallback: Try to get token from NextAuth session
-        try {
-          const session = await getSession();
-          if (session && (session as any).accessToken) {
-            config.headers["Authorization"] =
-              `Bearer ${(session as any).accessToken}`;
+      // List of public endpoints that don't require Authorization header
+      const publicEndpoints = [
+        "auth/login",
+        "auth/register",
+        "auth/verify-registration",
+        "auth/resend-otp",
+        "auth/send-otp"
+      ];
+
+      const isPublicEndpoint = publicEndpoints.some((endpoint) =>
+        config.url?.includes(endpoint)
+      );
+
+      // Only add Authorization header for protected endpoints
+      if (!isPublicEndpoint) {
+        // First priority: Check for token in sessionStorage (from OTP verification)
+        const sessionToken = tokenStorage.getAccessToken();
+        if (sessionToken) {
+          config.headers["Authorization"] = `Bearer ${sessionToken}`;
+        } else {
+          // Fallback: Try to get token from NextAuth session
+          try {
+            const session = await getSession();
+            if (session && (session as any).accessToken) {
+              config.headers["Authorization"] =
+                `Bearer ${(session as any).accessToken}`;
+            }
+          } catch (error) {
+            console.error("❌ Error getting session:", error);
           }
-        } catch (error) {
-          console.error("❌ Error getting session:", error);
         }
       }
 
