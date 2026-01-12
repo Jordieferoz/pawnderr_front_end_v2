@@ -57,11 +57,13 @@ const DropdownMenu: FC<DropdownMenuProps> = ({ userProfile, isLoading }) => {
           {isLoading ? (
             <div className="w-10.5 h-10.5 rounded-full bg-gray-200 animate-pulse" />
           ) : (
-            <img
-              src={avatarUrl}
-              className="rounded-full w-10.5 h-10.5 object-cover"
-              alt={userProfile?.name || "Profile"}
-            />
+            <div className="flex items-center justify-center gap-1 w-11 h-11 bg-white border-2 border-neutral-white rounded-full">
+              <img
+                src={avatarUrl}
+                className="rounded-full w-10.5 h-10.5 object-cover border-white border-1 p-0.5"
+                alt={userProfile?.name || "Profile"}
+              />
+            </div>
           )}
         </button>
       </PopoverTrigger>
