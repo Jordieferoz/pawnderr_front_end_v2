@@ -1,14 +1,18 @@
 "use client";
 
+import { openHangTightModal } from "@/store/modalSlice";
 import SwipingCards from "@/ui_components/Dashboard/SwipingCards";
 import { CustomAvatar } from "@/ui_components/Shared";
 import { fetchMyPet } from "@/utils/api";
 import { images } from "@/utils/images";
 import { petsStorage } from "@/utils/pets-storage";
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { HangTightModal } from "../Modals";
 import { IPetData } from "../Profile/types";
 
 const Discover = () => {
+  const dispatch = useDispatch();
   const [firstPetId, setFirstPetId] = useState<number | null>(null);
   const [petData, setPetData] = useState<IPetData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -19,6 +23,8 @@ const Discover = () => {
       setFirstPetId(firstPetId);
     }
   }, []);
+
+  dispatch(openHangTightModal());
 
   useEffect(() => {
     const fetchData = async () => {
@@ -132,6 +138,7 @@ const Discover = () => {
         </div>
 
         <SwipingCards petData={petData} loading={loading} />
+        <HangTightModal />
       </div>
     </div>
   );
