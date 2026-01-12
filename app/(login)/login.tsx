@@ -131,6 +131,10 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
                 "refreshToken",
                 responseData.refreshToken || ""
               );
+              sessionStorage.setItem(
+                "firebaseToken",
+                responseData.firebaseToken || ""
+              );
 
               if (responseData.id) {
                 const userProfile = {
@@ -152,6 +156,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
                 searchParams?.get("callbackUrl") || "/dashboard";
               const result = await signIn("credentials", {
                 accessToken: responseData.accessToken,
+                firebaseToken: responseData.firebaseToken || "",
                 redirect: false,
                 callbackUrl
               });
@@ -243,6 +248,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
     // Use NextAuth to create server-side session with the access token
     try {
       const accessToken = sessionStorage.getItem("accessToken");
+      const firebaseToken = sessionStorage.getItem("firebaseToken");
 
       if (!accessToken) {
         setApiError("No access token found. Please try again.");
@@ -252,6 +258,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
       // Sign in with NextAuth using the access token to create server-side session
       const result = await signIn("credentials", {
         accessToken: accessToken,
+        firebaseToken: firebaseToken || "",
         redirect: false,
         callbackUrl
       });

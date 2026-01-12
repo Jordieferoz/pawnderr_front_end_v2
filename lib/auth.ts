@@ -19,7 +19,8 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        accessToken: { label: "Access Token", type: "text" }
+        accessToken: { label: "Access Token", type: "text" },
+        firebaseToken: { label: "Firebase Token", type: "text" }
       },
       async authorize(credentials) {
         if (!credentials?.accessToken) {
@@ -79,7 +80,8 @@ export const authOptions: NextAuthOptions = {
             lastLoginAt: userData.last_login_at || "",
             loginCount: userData.login_count ?? 0,
             accessToken: credentials.accessToken,
-            refreshToken: "" // Refresh token can be stored separately if needed
+            refreshToken: "", // Refresh token can be stored separately if needed
+            firebaseToken: credentials.firebaseToken || ""
           };
 
           return user;
@@ -107,6 +109,7 @@ export const authOptions: NextAuthOptions = {
         };
         token.accessToken = user.accessToken;
         token.refreshToken = user.refreshToken;
+        token.firebaseToken = user.firebaseToken;
       }
       return token;
     },
@@ -117,6 +120,7 @@ export const authOptions: NextAuthOptions = {
         // THIS IS THE FIX - Add these two lines:
         session.accessToken = token.accessToken;
         session.refreshToken = token.refreshToken;
+        session.firebaseToken = token.firebaseToken;
       }
       return session;
     }
@@ -131,5 +135,5 @@ export const authOptions: NextAuthOptions = {
     maxAge: 30 * 24 * 60 * 60 // 30 days
   },
   secret: process.env.NEXTAUTH_SECRET,
-  debug: process.env.NODE_ENV === "development"
+  debug: process.env.NEXTAUTH_DEBUG === "true"
 };

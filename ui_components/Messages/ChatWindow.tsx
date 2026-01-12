@@ -1,67 +1,98 @@
 "use client";
 
-import { FC } from "react";
+import { useSession } from "next-auth/react";
+import { FC, useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 
+import { useChatMessages, useFirebaseChat } from "@/hooks/useFirebaseChat";
 import { openMessageActionModal } from "@/store/modalSlice";
+import { type ChatMessage } from "@/utils/firebase-chat";
 import { images } from "@/utils/images";
 
 import { InputField } from "../Shared";
 
-interface Message {
-  id: number;
-  text: string;
-  sender: "me" | "other";
-  avatar?: string;
-}
-
 interface ChatWindowProps {
+  chatId: string;
+  receiverId: string;
   name: string;
   avatar: string;
 }
 
-const messages: Message[] = [
-  {
-    id: 1,
-    sender: "other",
-    text: "Hey! Jake is adorable. My Jeff would totally share her chew toy with him 💕",
-    avatar: images.doggo1.src
-  },
-  {
-    id: 2,
-    sender: "me",
-    text: "Haha wow, that’s serious commitment 😁"
-  },
-  {
-    id: 3,
-    sender: "me",
-    text: "Jake usually guards his toys like national treasures!"
-  },
-  {
-    id: 4,
-    sender: "other",
-    text: "Jeff’s the opposite — He brings everyone a gift. Usually half a slipper 🥿😂",
-    avatar: images.doggo1.src
-  },
-  {
-    id: 5,
-    sender: "other",
-    text: "Jeff’s the opposite — He brings everyone a gift. Usually half a slipper 🥿😂",
-    avatar: images.doggo1.src
-  },
-  {
-    id: 6,
-    sender: "other",
-    text: "Jeff’s the opposite — He brings everyone a gift. Usually half a slipper 🥿😂",
-    avatar: images.doggo1.src
-  }
-];
-
-const ChatWindow: FC<ChatWindowProps> = ({ name, avatar }) => {
+const ChatWindow: FC<ChatWindowProps> = ({
+  chatId,
+  receiverId,
+  name,
+  avatar
+}) => {
   const dispatch = useDispatch();
+  const { data: session } = useSession();
+  const [messageText, setMessageText] = useState("");
+  const [isSending, setIsSending] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Initialize Firebase
+  useFirebaseChat();
+
+  // Get current user ID
+  const currentUserId = (session?.user as any)?.id?.toString() || "";
+
+  // Get messages for this chat
+  const { messages, isLoading, sendMessage, markAsRead } = useChatMessages(
+    chatId || null
+  );
+
+  // Mark messages as read when chat is opened
+  useEffect(() => {
+    if (chatId && currentUserId) {
+      markAsRead(currentUserId);
+    }
+  }, [chatId, currentUserId, markAsRead]);
+
+  // Scroll to bottom when new messages arrive
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const handleOpenMessageActionModal = () => {
     dispatch(openMessageActionModal());
+  };
+
+  const handleSendMessage = async () => {
+    if (!messageText.trim() || !chatId || !currentUserId || isSending) {
+      return;
+    }
+
+    try {
+      setIsSending(true);
+      await sendMessage(currentUserId, receiverId, messageText.trim(), "text");
+      setMessageText("");
+    } catch (error) {
+      console.error("Failed to send message:", error);
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
+  // Format timestamp
+  const formatTime = (timestamp: number) => {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const isToday = date.toDateString() === now.toDateString();
+    return isToday
+      ? date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
+      : date.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit"
+        });
   };
   return (
     <div className="bg-white md:bg-transparent flex-1 rounded-xl md:rounded-[0px] px-4 md:px-0 md:border-l md:border-black/10 md:h-full relative shadow-[0px_4px_16.4px_0px_#0000001A] h-[calc(75vh-120px)] md:shadow-none flex flex-col">
@@ -83,51 +114,97 @@ const ChatWindow: FC<ChatWindowProps> = ({ name, avatar }) => {
       </div>
 
       <div className="flex-1 overflow-y-auto px-2 md:px-4 space-y-4 pb-5 hide-scrollbar">
-        <div className="text-center tp_small_medium text-dark-grey my-5">
-          Today 04:43
-        </div>
-        {messages.map((msg) => (
-          <div
-            key={msg.id}
-            className={`flex items-end gap-2 ${
-              msg.sender === "me" ? "justify-end" : "justify-start"
-            }`}
-          >
-            {msg.sender === "other" && (
-              <img
-                src={msg.avatar}
-                className="w-12 h-12 rounded-full object-cover"
-                alt="avatar"
-              />
-            )}
-
-            <p
-              className={`max-w-[70%] px-4 py-3 rounded-xl body_medium ${
-                msg.sender === "me"
-                  ? "bg-blue text-white"
-                  : "bg-grey-800 text-dark-grey"
-              }`}
-            >
-              {msg.text}
+        {isLoading ? (
+          <div className="flex items-center justify-center h-full">
+            <p className="text-grey-500">Loading messages...</p>
+          </div>
+        ) : messages.length === 0 ? (
+          <div className="flex items-center justify-center h-full">
+            <p className="text-grey-500">
+              No messages yet. Start the conversation!
             </p>
           </div>
-        ))}
+        ) : (
+          <>
+            {messages.map((msg: ChatMessage, index: number) => {
+              const isMe = msg.senderId === currentUserId;
+              const showAvatar =
+                !isMe &&
+                (index === 0 || messages[index - 1].senderId !== msg.senderId);
+              const showTime =
+                index === messages.length - 1 ||
+                Math.abs(
+                  msg.timestamp - (messages[index + 1]?.timestamp || 0)
+                ) > 300000; // 5 minutes
+
+              return (
+                <div key={msg.id}>
+                  {showTime && (
+                    <div className="text-center tp_small_medium text-dark-grey my-5">
+                      {formatTime(msg.timestamp)}
+                    </div>
+                  )}
+                  <div
+                    className={`flex items-end gap-2 ${
+                      isMe ? "justify-end" : "justify-start"
+                    }`}
+                  >
+                    {showAvatar && !isMe && (
+                      <img
+                        src={avatar}
+                        className="w-12 h-12 rounded-full object-cover"
+                        alt="avatar"
+                      />
+                    )}
+                    {!isMe && !showAvatar && <div className="w-12" />}
+
+                    <p
+                      className={`max-w-[70%] px-4 py-3 rounded-xl body_medium ${
+                        isMe
+                          ? "bg-blue text-white"
+                          : "bg-grey-800 text-dark-grey"
+                      }`}
+                    >
+                      {msg.text}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+            <div ref={messagesEndRef} />
+          </>
+        )}
       </div>
 
       {/* Message Input */}
       <div className="fixed md:absolute md:bottom-[0px] bottom-[88px] left-0 right-0 py-3 md:border-0 bg-white md:rounded-b-[40px] border-t shadow-[0px_-6px_11px_0px_#8787871C] md:shadow-none border-black/10 ">
         <div className="common_container flex items-center gap-3">
-          <img src={images.attachment.src} alt="attachment" />
+          <img
+            src={images.attachment.src}
+            alt="attachment"
+            className="cursor-pointer"
+          />
 
-          <div className="relative w-full">
-            <InputField placeholder="Type message..." className="w-full" />
+          <div className="relative w-full" onKeyDown={handleKeyDown}>
+            <InputField
+              placeholder="Type message..."
+              className="w-full"
+              value={messageText}
+              onChange={(e) => setMessageText(e.target.value)}
+              disabled={isSending || !chatId}
+            />
             <img
               alt="smiley"
               src={images.smiley.src}
-              className="absolute top-1/2 -translate-y-1/2 right-4"
+              className="absolute top-1/2 -translate-y-1/2 right-4 cursor-pointer"
             />
           </div>
-          <img src={images.send.src} alt="send" />
+          <img
+            src={images.send.src}
+            alt="send"
+            className={`cursor-pointer ${isSending || !messageText.trim() ? "opacity-50" : ""}`}
+            onClick={handleSendMessage}
+          />
         </div>
       </div>
     </div>

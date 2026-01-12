@@ -20,10 +20,21 @@ export const tokenStorage = {
     sessionStorage.setItem("refreshToken", token);
   },
 
+  getFirebaseToken: (): string | null => {
+    if (typeof window === "undefined") return null;
+    return sessionStorage.getItem("firebaseToken");
+  },
+
+  setFirebaseToken: (token: string) => {
+    if (typeof window === "undefined") return;
+    sessionStorage.setItem("firebaseToken", token);
+  },
+
   clearTokens: () => {
     if (typeof window === "undefined") return;
     sessionStorage.removeItem("accessToken");
     sessionStorage.removeItem("refreshToken");
+    sessionStorage.removeItem("firebaseToken");
   },
 
   hasValidSession: (): boolean => {

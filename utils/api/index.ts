@@ -462,3 +462,22 @@ export const reorderPetPhotos = (
       });
   });
 };
+
+export const checkCanChat = (payload: {
+  from_pet_id: number;
+  to_pet_id: number;
+}): Promise<TResponse<any>> => {
+  return new Promise((resolve, reject) => {
+    globalPostService<any, any>(`chat/can-chat`, payload)
+      .then((response) => {
+        if (response.statusCode === 200 || response.statusCode === 201) {
+          resolve(response);
+        } else {
+          reject(new Error(`Unexpected status code: ${response.statusCode}`));
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};

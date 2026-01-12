@@ -18,6 +18,7 @@ declare module "next-auth" {
     };
     accessToken: string;
     refreshToken: string;
+    firebaseToken: string;
   }
 
   interface User {
@@ -33,6 +34,7 @@ declare module "next-auth" {
     loginCount: number;
     accessToken: string;
     refreshToken: string;
+    firebaseToken: string;
   }
 }
 
@@ -52,5 +54,6 @@ declare module "next-auth/jwt" {
     };
     accessToken: string;
     refreshToken: string;
+    firebaseToken: string;
   }
 }

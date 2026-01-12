@@ -91,6 +91,9 @@ const LoginOTPModal = ({
         if (userData?.accessToken && userData?.refreshToken) {
           sessionStorage.setItem("accessToken", userData.accessToken);
           sessionStorage.setItem("refreshToken", userData.refreshToken);
+          if (userData.firebaseToken) {
+            sessionStorage.setItem("firebaseToken", userData.firebaseToken);
+          }
 
           const userProfile = {
             id: userData.id,
