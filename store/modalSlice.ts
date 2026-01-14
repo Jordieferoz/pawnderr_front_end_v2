@@ -6,6 +6,7 @@ interface ModalState {
   isReportModalOpen: boolean;
   isHangTightModalOpen: boolean;
   isBlockModalOpen: boolean;
+  isOutOfSwipesModalOpen: boolean;
 }
 
 const initialState: ModalState = {
@@ -13,7 +14,8 @@ const initialState: ModalState = {
   isMessageActionModalOpen: false,
   isReportModalOpen: false,
   isBlockModalOpen: false,
-  isHangTightModalOpen: false
+  isHangTightModalOpen: false,
+  isOutOfSwipesModalOpen: false
 };
 
 const modalSlice = createSlice({
@@ -49,6 +51,12 @@ const modalSlice = createSlice({
     },
     closeBlockModal: (state) => {
       state.isBlockModalOpen = false;
+    },
+    openOutOfSwipesModal: (state) => {
+      state.isOutOfSwipesModalOpen = true;
+    },
+    closeOutOfSwipesModal: (state) => {
+      state.isOutOfSwipesModalOpen = false;
     }
   }
 });
@@ -63,6 +71,8 @@ export const {
   openBlockModal,
   closeBlockModal,
   openHangTightModal,
-  closeHangTightModal
+  closeHangTightModal,
+  openOutOfSwipesModal,
+  closeOutOfSwipesModal
 } = modalSlice.actions;
 export default modalSlice.reducer;

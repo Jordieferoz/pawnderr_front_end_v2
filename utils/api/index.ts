@@ -481,3 +481,53 @@ export const checkCanChat = (payload: {
       });
   });
 };
+
+export const discoverNearbyPets = (petId: number): Promise<TResponse<any>> => {
+  return new Promise((resolve, reject) => {
+    globalGetService<any, any>(`discovery/nearby/${petId}`, {})
+      .then((response) => {
+        if (response.statusCode === 200) {
+          resolve(response.data);
+        } else {
+          reject(new Error(`Unexpected status code: ${response.statusCode}`));
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+export const updateUserLocation = (payload: {
+  latitude: number;
+  longitude: number;
+}): Promise<TResponse<any>> => {
+  return new Promise((resolve, reject) => {
+    globalPostService<any, any>(`discovery/location`, payload)
+      .then((response) => {
+        if (response.statusCode === 200 || response.statusCode === 201) {
+          resolve(response);
+        } else {
+          reject(new Error(`Unexpected status code: ${response.statusCode}`));
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+export const swipePetAction = (payload: {
+  pet_id: number;
+  action: "like" | "pass";
+}): Promise<TResponse<any>> => {
+  return new Promise((resolve, reject) => {
+    globalPostService<any, any>(`match/like`, payload)
+      .then((response) => {
+        resolve(response);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};

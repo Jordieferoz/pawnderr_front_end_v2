@@ -88,6 +88,7 @@ import playBlue from "public/assets/images/play_blue.svg";
 import premiumYellow from "public/assets/images/premium_yellow.svg";
 import purpleIcon from "public/assets/images/purple_icon.svg";
 import reliableDogs from "public/assets/images/reliable_dogs.png";
+import sadPug from "public/assets/images/sad_pug.png";
 import searchGrey from "public/assets/images/search_grey.svg";
 import send from "public/assets/images/send.svg";
 import signupBg from "public/assets/images/signup_bg.svg";
@@ -211,6 +212,7 @@ export type ImageType =
   | "pawYellowBlueBg"
   | "gallery"
   | "crownYellow"
+  | "sadPug"
   | "backBtn";
 
 export type NextImage = {
@@ -325,5 +327,6 @@ export const images: Record<ImageType, NextImage> = {
   instagram,
   pawYellowBlueBg,
   gallery,
-  crownYellow
+  crownYellow,
+  sadPug
 };

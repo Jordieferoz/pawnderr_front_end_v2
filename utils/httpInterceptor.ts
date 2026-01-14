@@ -15,16 +15,20 @@ import { TApiResponse } from "./types";
 export const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 function axiosInstanceCreator(baseURL: string | undefined, accessKey?: string) {
-  const axiosInstance: AxiosInstance = axios.create();
-  axiosInstance.defaults.baseURL = baseURL;
+  const axiosInstance: AxiosInstance = axios.create({
+    baseURL,
+    validateStatus: (status) => {
+      // ✅ Allow 2xx and 4xx responses
+      return status >= 200 && status < 500;
+    }
+  });
 
   axiosInstance.interceptors.request.use(
-    async function (config: InternalAxiosRequestConfig) {
+    async (config: InternalAxiosRequestConfig) => {
       if (!config.headers) {
         config.headers = {} as AxiosRequestHeaders;
       }
 
-      // Add static access-token for API key
       if (accessKey) {
         if (baseURL === BASE_URL) {
           config.headers["access-token"] = accessKey;
@@ -33,7 +37,6 @@ function axiosInstanceCreator(baseURL: string | undefined, accessKey?: string) {
         }
       }
 
-      // List of public endpoints that don't require Authorization header
       const publicEndpoints = [
         "auth/login",
         "auth/register",
@@ -46,19 +49,15 @@ function axiosInstanceCreator(baseURL: string | undefined, accessKey?: string) {
         config.url?.includes(endpoint)
       );
 
-      // Only add Authorization header for protected endpoints
       if (!isPublicEndpoint) {
-        // First priority: Check for token in sessionStorage (from OTP verification)
         const sessionToken = tokenStorage.getAccessToken();
         if (sessionToken) {
-          config.headers["Authorization"] = `Bearer ${sessionToken}`;
+          config.headers.Authorization = `Bearer ${sessionToken}`;
         } else {
-          // Fallback: Try to get token from NextAuth session
           try {
             const session = await getSession();
             if (session && (session as any).accessToken) {
-              config.headers["Authorization"] =
-                `Bearer ${(session as any).accessToken}`;
+              config.headers.Authorization = `Bearer ${(session as any).accessToken}`;
             }
           } catch (error) {
             console.error("❌ Error getting session:", error);
@@ -67,35 +66,24 @@ function axiosInstanceCreator(baseURL: string | undefined, accessKey?: string) {
       }
 
       return config;
-    },
-    function (error: AxiosError) {
-      console.error("❌ Request interceptor error:", error);
-      return Promise.reject(error);
     }
   );
 
   axiosInstance.interceptors.response.use(
-    function (response: AxiosResponse<TApiResponse>) {
-      if (response.status >= 200 && response.status <= 299) {
-        return response;
-      } else {
-        console.error("⚠️ Non-2xx response:", response.status);
-        return Promise.reject(response);
-      }
+    (response: AxiosResponse<TApiResponse>) => {
+      // ✅ 2xx & 4xx both land here
+      return response;
     },
-    function (error: AxiosError) {
+    (error: AxiosError) => {
+      // 🚨 Only real failures (5xx, network, timeout)
       console.error("❌ API Error:", {
         url: error.config?.url,
         status: error.response?.status,
         message: error.response?.data || error.message
       });
 
-      // Handle 401 Unauthorized
       if (error.response?.status === 401) {
-        console.warn("🔒 Unauthorized - Clearing tokens and redirecting");
-        // Clear tokens from sessionStorage
         tokenStorage.clearTokens();
-        // Optional: Redirect to sign-in
         if (typeof window !== "undefined") {
           window.location.href = "/sign-in";
         }

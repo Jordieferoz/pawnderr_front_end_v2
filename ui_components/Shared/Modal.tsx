@@ -46,7 +46,7 @@ const Modal: FC<ModalProps> = ({ open, setOpen, content, className }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className={className}>
-        <div className="pt-6">{content}</div>
+        <div>{content}</div>
       </DialogContent>
     </Dialog>
   );
