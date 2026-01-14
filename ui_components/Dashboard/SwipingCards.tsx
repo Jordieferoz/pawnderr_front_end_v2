@@ -51,7 +51,7 @@ const cardsData: Card[] = [
 ];
 
 const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading }) => {
-  console.log(petData, "petData", loading);
+  // console.log(petData, "petData", loading);
   const [cards, setCards] = useState(cardsData);
   const [currentIndex, setCurrentIndex] = useState(cardsData.length - 1);
   const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | null>(

@@ -12,7 +12,7 @@ import { FC, useEffect, useState } from "react";
 import { dropdownMenuItems } from "@/constants";
 import { useAuth } from "@/hooks";
 import { images } from "@/utils/images";
-import { petsStorage } from "@/utils/pets-storage";
+import { PETS_STORAGE_EVENT, petsStorage } from "@/utils/pets-storage";
 
 interface UserProfile {
   id: number;
@@ -41,11 +41,28 @@ const DropdownMenu: FC<DropdownMenuProps> = ({ userProfile, isLoading }) => {
   };
 
   useEffect(() => {
-    // Read from localStorage instead of making API call
-    const firstPetId = petsStorage.getFirstPetId();
-    if (firstPetId) {
-      setFirstPetId(firstPetId);
-    }
+    if (typeof window === "undefined") return;
+
+    const loadFirstPetId = () => {
+      const id = petsStorage.getFirstPetId();
+      if (id) {
+        setFirstPetId(id);
+      } else {
+        setFirstPetId(null);
+      }
+    };
+
+    loadFirstPetId();
+
+    const handlePetsChange = () => {
+      loadFirstPetId();
+    };
+
+    window.addEventListener(PETS_STORAGE_EVENT, handlePetsChange);
+
+    return () => {
+      window.removeEventListener(PETS_STORAGE_EVENT, handlePetsChange);
+    };
   }, []);
 
   const avatarUrl = userProfile?.avatar || images.doggoProfilePlaceholder.src;

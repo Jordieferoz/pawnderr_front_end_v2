@@ -32,7 +32,6 @@ export default function ProfileLoader() {
 
     // Skip on edit profile page - it doesn't need user profile refresh
     if (pathname.startsWith("/profile/edit")) {
-      console.log("⏭️ Skipping ProfileLoader on edit profile page:", pathname);
       return;
     }
 
@@ -82,10 +81,6 @@ export default function ProfileLoader() {
               loginCount: userData.login_count
             };
             dispatch(setUser(reduxUserData));
-
-            console.log(
-              "✅ User profile loaded and stored in localStorage and Redux"
-            );
           }
         } catch (error) {
           console.error("❌ Failed to load user profile:", error);
@@ -99,7 +94,6 @@ export default function ProfileLoader() {
             lastFetchRef.current.pets = Date.now();
             if (petsResponse.data) {
               petsStorage.set(petsResponse.data);
-              console.log("✅ User pets loaded and stored in localStorage");
             }
           } catch (error) {
             console.error("❌ Failed to load user pets:", error);

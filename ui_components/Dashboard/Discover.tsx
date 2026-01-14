@@ -1,9 +1,8 @@
 "use client";
 
-import { openHangTightModal } from "@/store/modalSlice";
 import SwipingCards from "@/ui_components/Dashboard/SwipingCards";
 import { CustomAvatar } from "@/ui_components/Shared";
-import { fetchMyPet } from "@/utils/api";
+import { fetchMyPet, fetchMyPetsCollection } from "@/utils/api";
 import { images } from "@/utils/images";
 import { petsStorage } from "@/utils/pets-storage";
 import { useEffect, useState } from "react";
@@ -18,21 +17,38 @@ const Discover = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const firstPetId = petsStorage.getFirstPetId();
-    if (firstPetId) {
-      setFirstPetId(firstPetId);
-    }
-  }, []);
+    const ensureFirstPetId = async () => {
+      try {
+        let id = petsStorage.getFirstPetId();
 
-  dispatch(openHangTightModal());
+        if (!id) {
+          const petsResp = await fetchMyPetsCollection();
+          if (petsResp?.data) {
+            petsStorage.set(petsResp.data);
+            id = petsStorage.getFirstPetId();
+          }
+        }
+
+        if (id) {
+          setFirstPetId(id);
+        } else {
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Error ensuring first pet id:", error);
+        setLoading(false);
+      }
+    };
+
+    ensureFirstPetId();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!firstPetId) return;
       try {
         const resp = await fetchMyPet(Number(firstPetId));
-
         const petDetails = resp?.data;
-
         setPetData(petDetails);
       } catch (error) {
         console.error("Error fetching pet:", error);
@@ -45,7 +61,7 @@ const Discover = () => {
       fetchData();
     }
   }, [firstPetId]);
-  console.log(petData, "petData");
+
   return (
     <div className="discover_wrapper common_container h-[calc(100vh-120px)]">
       <div className="md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] md:px-5 md:py-5 md:rounded-2xl md:w-[700px] md:mx-auto">

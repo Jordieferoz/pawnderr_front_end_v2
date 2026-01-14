@@ -5,11 +5,12 @@ import { FC } from "react";
 
 import { images } from "@/utils/images";
 
+import { Button } from "@/components/ui/button";
 import { InfoCard, ProfileCard } from ".";
 import Loader from "../Shared/Loader";
 import { IProfileProps } from "./types";
 
-const Profile: FC<IProfileProps> = ({ petData, loading }) => {
+const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
   const router = useRouter();
 
   const primaryImage = petData?.images?.find(
@@ -37,17 +38,14 @@ const Profile: FC<IProfileProps> = ({ petData, loading }) => {
   // Dynamically map all preferences for What's Pup looking for
   const preferences = petData?.preferences;
   const pupLookingForList = [
-    // Add Age Limit first
     {
       left: "Age Limit",
       right: `${preferences?.min_age || 0} Yrs - ${preferences?.max_age || 0} Yrs`
     },
-    // Add Preferred Breeds
     {
       left: "Preferred Breeds",
       right: preferences?.breed_match_type || ""
     },
-    // Dynamically map all selections
     ...(preferences?.selections?.map((selection: any) => ({
       left: selection.type_name,
       right: selection.selected_option?.value || ""
@@ -64,10 +62,38 @@ const Profile: FC<IProfileProps> = ({ petData, loading }) => {
           </div>
         </div>
 
-        {/* Loader */}
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="flex flex-col items-center gap-4">
             <Loader size="lg" text="Loading profile..." />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !petData) {
+    return (
+      <div className="profile_wrapper common_container">
+        <div className="flex items-center my-4 justify-between mb-7">
+          <div className="flex items-center gap-3">
+            <img
+              onClick={() => router.back()}
+              className="w-10 h-10 cursor-pointer"
+              src={images.backBtn.src}
+              alt="back"
+            />
+            <h4 className="display4_medium text-accent-900">Profile</h4>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="flex flex-col items-center gap-4 text-center">
+            <h3 className="text-2xl font-semibold text-accent-900">
+              Profile Not Found
+            </h3>
+            <Button onClick={() => router.push("/")} className="mt-4 px-6 py-2">
+              Back to Home
+            </Button>
           </div>
         </div>
       </div>
@@ -86,16 +112,18 @@ const Profile: FC<IProfileProps> = ({ petData, loading }) => {
           />
           <h4 className="display4_medium text-accent-900">Profile</h4>
         </div>
-        <img
-          className="cursor-pointer"
-          onClick={() => {
-            if (petData?.id) {
-              router.push(`/profile/edit/${petData.id}`);
-            }
-          }}
-          src={images.editIcon.src}
-          alt="edit"
-        />
+        {petData?.preferences?.preference_id && (
+          <img
+            className="cursor-pointer"
+            onClick={() => {
+              if (petData?.id) {
+                router.push(`/profile/edit/${petData.id}`);
+              }
+            }}
+            src={images.editIcon.src}
+            alt="edit"
+          />
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-x-12 gap-y-7">

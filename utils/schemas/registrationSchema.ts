@@ -8,8 +8,8 @@ export const userDetailsSchema = z.object({
     (val) => (val === "" ? undefined : val),
     z.enum(["male", "female", "other", ""], "Please select a gender")
   ),
-  phoneNumber: z.string().min(1, "Phone number is required"),
-  location: z.string().min(1, "Location is required")
+  phoneNumber: z.string().min(1, "Phone number is required")
+  // location: z.string().min(1, "Location is required")
 });
 
 // Step 2: OTP schema

@@ -62,7 +62,7 @@ const OTP: FC = () => {
         verifyResponse.statusCode === 201
       ) {
         const userData = verifyResponse.data?.data;
-        console.log(userData, "userData");
+
         if (userData?.accessToken && userData?.refreshToken) {
           // Store tokens
           sessionStorage.setItem("accessToken", userData.accessToken);
@@ -90,7 +90,7 @@ const OTP: FC = () => {
 
           // Step 2: Fetch registration metadata after successful OTP verification
           const metadataResponse = await fetchPetRegistrationData();
-          console.log(metadataResponse, "metadataResponse");
+
           if (metadataResponse.statusCode === 200 && metadataResponse.data) {
             // Store metadata in Redux
             dispatch(setMetadata(metadataResponse.data.data));

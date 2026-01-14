@@ -62,4 +62,5 @@ export interface IPetData {
 export interface IProfileProps {
   loading: boolean;
   petData: IPetData | null;
+  error?: boolean;
 }

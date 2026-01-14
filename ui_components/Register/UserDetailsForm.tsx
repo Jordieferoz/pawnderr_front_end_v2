@@ -46,8 +46,7 @@ const UserDetailsForm: FC = () => {
     defaultValues: {
       name: "",
       gender: "",
-      phoneNumber: "",
-      location: ""
+      phoneNumber: ""
     }
   });
 
@@ -82,7 +81,7 @@ const UserDetailsForm: FC = () => {
 
       if (response.statusCode === 200 || response.statusCode === 201) {
         const userData = response.data?.data;
-        console.log(userData, "userData");
+
         // Store tokens
         // sessionStorage.setItem("accessToken", userData.accessToken);
         // sessionStorage.setItem("refreshToken", userData.refreshToken);
@@ -107,7 +106,7 @@ const UserDetailsForm: FC = () => {
             ...userProfile,
             password: credentials.password,
             phoneNumber: data.phoneNumber, // Store original phone number without +91
-            location: data.location,
+            // location: data.location,
             step: 2
           })
         );
@@ -234,7 +233,7 @@ const UserDetailsForm: FC = () => {
         </div>
 
         {/* Location */}
-        <div className="relative">
+        {/* <div className="relative">
           <Controller
             control={control}
             name="location"
@@ -256,7 +255,7 @@ const UserDetailsForm: FC = () => {
               {errors.location.message}
             </p>
           )}
-        </div>
+        </div> */}
         <div className="fixed bottom-0 md:relative py-5 w-full bg-white shadow-[0px_-4px_12.8px_-3px_#00000012] md:shadow-none">
           <Button
             type="submit"

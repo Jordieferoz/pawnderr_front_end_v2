@@ -10,6 +10,19 @@ export interface PetsData {
   [key: string]: any; // Allow other response properties
 }
 
+// Custom event name used to notify when the stored pets data changes.
+export const PETS_STORAGE_EVENT = "userPetsStorageChanged";
+
+const dispatchPetsEvent = () => {
+  if (typeof window === "undefined") return;
+
+  try {
+    window.dispatchEvent(new Event(PETS_STORAGE_EVENT));
+  } catch {
+    // Ignore event dispatch errors in non-browser-like environments
+  }
+};
+
 export const petsStorage = {
   get: (): PetsData | null => {
     if (typeof window === "undefined") return null;
@@ -20,6 +33,7 @@ export const petsStorage = {
   set: (petsData: PetsData) => {
     if (typeof window === "undefined") return;
     localStorage.setItem("userPets", JSON.stringify(petsData));
+    dispatchPetsEvent();
   },
 
   getFirstPetId: (): number | null => {
@@ -33,5 +47,6 @@ export const petsStorage = {
   clear: () => {
     if (typeof window === "undefined") return;
     localStorage.removeItem("userPets");
+    dispatchPetsEvent();
   }
 };

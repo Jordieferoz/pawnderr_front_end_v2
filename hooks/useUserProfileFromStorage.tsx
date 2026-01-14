@@ -5,7 +5,7 @@
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
-import { userStorage } from "@/utils/user-storage";
+import { USER_PROFILE_STORAGE_EVENT, userStorage } from "@/utils/user-storage";
 import { UserProfile } from "./useUserProfile";
 
 interface UseUserProfileFromStorageReturn {
@@ -25,16 +25,38 @@ export const useUserProfileFromStorage =
         return;
       }
 
+      if (typeof window === "undefined") {
+        return;
+      }
+
       if (status === "unauthenticated") {
         setUserProfile(null);
         setIsLoading(false);
         return;
       }
 
-      // Read from localStorage
-      const cachedProfile = userStorage.get();
-      setUserProfile(cachedProfile);
-      setIsLoading(false);
+      const loadFromStorage = () => {
+        const cachedProfile = userStorage.get();
+        setUserProfile(cachedProfile);
+        setIsLoading(false);
+      };
+
+      // Initial read
+      loadFromStorage();
+
+      // Listen for storage updates (e.g. ProfileLoader or other flows calling userStorage.set/clear)
+      const handleProfileChange = () => {
+        loadFromStorage();
+      };
+
+      window.addEventListener(USER_PROFILE_STORAGE_EVENT, handleProfileChange);
+
+      return () => {
+        window.removeEventListener(
+          USER_PROFILE_STORAGE_EVENT,
+          handleProfileChange
+        );
+      };
     }, [status]);
 
     return {

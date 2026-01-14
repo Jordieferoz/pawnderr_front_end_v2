@@ -25,7 +25,7 @@ export default function ProfileEditPage() {
         const response = await fetchPetProfile(Number(petId));
         // API response structure: { data: { data: {...pet data...}, message, status }, statusCode, message }
         const petProfileData = response.data?.data || response.data;
-        console.log(petProfileData, "petProfileData");
+
         if (petProfileData) {
           setPetData(petProfileData);
         }

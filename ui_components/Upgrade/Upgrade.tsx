@@ -101,7 +101,6 @@ const Upgrade = () => {
         plan_id: planId
       });
 
-      console.log(verifyResponse, "verifyResponse");
       if (verifyResponse.data) {
         showToast({
           type: "success",
@@ -135,8 +134,6 @@ const Upgrade = () => {
     try {
       setProcessingPlanId(planId);
       const response = await createSubscriptionOrder(planId);
-
-      console.log("Create order response:", response);
 
       if (response.data) {
         if (!response.data.order_id || !response.data.plan) {

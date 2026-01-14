@@ -14,6 +14,19 @@ export interface UserData {
   updated_at: string;
 }
 
+// Custom event name used to notify when the stored user profile changes.
+export const USER_PROFILE_STORAGE_EVENT = "userProfileStorageChanged";
+
+const dispatchUserProfileEvent = () => {
+  if (typeof window === "undefined") return;
+
+  try {
+    window.dispatchEvent(new Event(USER_PROFILE_STORAGE_EVENT));
+  } catch {
+    // Ignore event dispatch errors in non-browser-like environments
+  }
+};
+
 export const userStorage = {
   get: (): UserData | null => {
     if (typeof window === "undefined") return null;
@@ -24,6 +37,7 @@ export const userStorage = {
   set: (userData: UserData) => {
     if (typeof window === "undefined") return;
     localStorage.setItem("userProfile", JSON.stringify(userData));
+    dispatchUserProfileEvent();
   },
 
   update: (updates: Partial<UserData>) => {
@@ -37,5 +51,6 @@ export const userStorage = {
   clear: () => {
     if (typeof window === "undefined") return;
     localStorage.removeItem("userProfile");
+    dispatchUserProfileEvent();
   }
 };
