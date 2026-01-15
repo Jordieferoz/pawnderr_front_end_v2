@@ -42,6 +42,8 @@ export const useChatPermission = (
 
       // Assuming the API returns { can_chat: true/false } or similar
       const canChatResult =
+        response.data?.canChat ??
+        response.data?.data?.canChat ??
         response.data?.can_chat ??
         response.data?.data?.can_chat ??
         response.statusCode === 200;

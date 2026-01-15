@@ -9,18 +9,9 @@ import {
 } from "firebase/auth";
 import {
   getDatabase,
-  ref,
-  push,
-  onValue,
-  off,
-  query,
-  orderByChild,
-  limitToLast,
-  Database,
-  serverTimestamp,
-  set,
-  update
+  Database
 } from "firebase/database";
+import { getFirestore, Firestore } from "firebase/firestore";
 
 // Firebase configuration - these should be set in environment variables
 const firebaseConfig = {
@@ -40,6 +31,7 @@ const firebaseConfig = {
 let app: FirebaseApp;
 let auth: Auth;
 let database: Database;
+let firestore: Firestore;
 
 if (typeof window !== "undefined") {
   // Only initialize on client side
@@ -50,6 +42,7 @@ if (typeof window !== "undefined") {
   }
   auth = getAuth(app);
   database = getDatabase(app);
+  firestore = getFirestore(app);
 }
 
 /**
@@ -109,6 +102,13 @@ export const getFirebaseDatabase = (): Database | null => {
   return database;
 };
 
+export const getFirebaseFirestore = (): Firestore | null => {
+  if (typeof window === "undefined") {
+    return null;
+  }
+  return firestore;
+};
+
 /**
  * Listen to auth state changes
  */
@@ -122,4 +122,4 @@ export const onAuthStateChange = (
   return onAuthStateChanged(auth, callback);
 };
 
-export { auth, database };
+export { auth, database, firestore };

@@ -482,6 +482,47 @@ export const checkCanChat = (payload: {
   });
 };
 
+export const messageInitiated = (payload: {
+  chat_id: string;
+  from_pet_id: number;
+  to_pet_id: number;
+  match_id: number;
+}): Promise<TResponse<any>> => {
+  return new Promise((resolve, reject) => {
+    globalPostService<any, any>(`chat/message-initiated`, payload)
+      .then((response) => {
+        if (response.statusCode === 200 || response.statusCode === 201) {
+          resolve(response);
+        } else {
+          reject(new Error(`Unexpected status code: ${response.statusCode}`));
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+export const fetchActiveMatches = (params: {
+  page: number;
+  limit: number;
+  state: "active";
+}): Promise<TResponse<any>> => {
+  return new Promise((resolve, reject) => {
+    globalGetService<any, any>(`match/matches`, params)
+      .then((response) => {
+        if (response.statusCode === 200) {
+          resolve(response);
+        } else {
+          reject(new Error(`Unexpected status code: ${response.statusCode}`));
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
 export const discoverNearbyPets = (petId: number): Promise<TResponse<any>> => {
   return new Promise((resolve, reject) => {
     globalGetService<any, any>(`discovery/nearby/${petId}`, {})
@@ -525,6 +566,97 @@ export const swipePetAction = (payload: {
     globalPostService<any, any>(`match/like`, payload)
       .then((response) => {
         resolve(response);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+export const fetchFirebaseToken = (): Promise<TResponse<any>> => {
+  return new Promise((resolve, reject) => {
+    globalGetService<any, any>(`auth/firebase-token`, {})
+      .then((response) => {
+        if (response.statusCode === 200 || response.statusCode === 201) {
+          resolve(response);
+        } else {
+          reject(new Error(`Unexpected status code: ${response.statusCode}`));
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+export const fetchWhomILiked = (params: {
+  page: number;
+  limit: number;
+}): Promise<TResponse<any>> => {
+  return new Promise((resolve, reject) => {
+    globalGetService<any, any>(`match/whom-i-liked`, params)
+      .then((response) => {
+        if (response.statusCode === 200) {
+          resolve(response);
+        } else {
+          reject(new Error(`Unexpected status code: ${response.statusCode}`));
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+export const fetchWhoLikesMe = (params: {
+  page: number;
+  limit: number;
+}): Promise<TResponse<any>> => {
+  return new Promise((resolve, reject) => {
+    globalGetService<any, any>(`match/who-likes-me`, params)
+      .then((response) => {
+        if (response.statusCode === 200) {
+          resolve(response);
+        } else {
+          reject(new Error(`Unexpected status code: ${response.statusCode}`));
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+export const fetchWhomIDisliked = (params: {
+  page: number;
+  limit: number;
+}): Promise<TResponse<any>> => {
+  return new Promise((resolve, reject) => {
+    globalGetService<any, any>(`match/whom-i-disliked`, params)
+      .then((response) => {
+        if (response.statusCode === 200) {
+          resolve(response);
+        } else {
+          reject(new Error(`Unexpected status code: ${response.statusCode}`));
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+export const undoMatch = (payload: {
+  pet_id: number;
+}): Promise<TResponse<any>> => {
+  return new Promise((resolve, reject) => {
+    globalPostService<any, any>(`match/undo`, payload)
+      .then((response) => {
+        if (response.statusCode === 200 || response.statusCode === 201) {
+          resolve(response);
+        } else {
+          reject(new Error(`Unexpected status code: ${response.statusCode}`));
+        }
       })
       .catch((err) => {
         reject(err);

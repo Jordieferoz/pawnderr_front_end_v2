@@ -1,26 +1,27 @@
 "use client";
 
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { FC } from "react";
+import { FC, useMemo } from "react";
 
 import { useChatConversations, useFirebaseChat } from "@/hooks/useFirebaseChat";
 import { type ChatConversation } from "@/utils/firebase-chat";
 import { images } from "@/utils/images";
+import { petsStorage } from "@/utils/pets-storage";
 
 const MessageList: FC = () => {
   const router = useRouter();
-  const { data: session } = useSession();
 
   // Initialize Firebase
-  useFirebaseChat();
+  const { isAuthenticated, isInitializing, error } = useFirebaseChat();
 
-  // Get current user ID
-  const currentUserId = (session?.user as any)?.id?.toString() || "";
+  const petIds = useMemo(
+    () => petsStorage.get()?.my_pets?.map((pet) => pet.id) ?? [],
+    []
+  );
 
   // Get conversations
   const { conversations, isLoading } = useChatConversations(
-    currentUserId || null
+    isAuthenticated ? petIds : []
   );
 
   const openChat = (chatId: string) => {
@@ -46,6 +47,24 @@ const MessageList: FC = () => {
     return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   };
 
+  if (isInitializing) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <p className="text-grey-500">Loading conversations...</p>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <p className="text-grey-500">
+          {error || "Chat is unavailable. Please sign in again."}
+        </p>
+      </div>
+    );
+  }
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -65,14 +84,15 @@ const MessageList: FC = () => {
   return (
     <div className="flex flex-col">
       {conversations.map((conversation: ChatConversation) => {
-        // Get the other participant (not current user)
-        const otherParticipantId =
-          conversation.participants.find((id) => id !== currentUserId) ||
-          conversation.participants[0];
+        const otherPetId =
+          conversation.otherPetId ??
+          Number(
+            conversation.participants.find(
+              (id) => !petIds.includes(Number(id))
+            ) || 0
+          );
 
-        // TODO: Fetch user details for otherParticipantId from your API
-        // For now, using placeholder data
-        const displayName = `User ${otherParticipantId}`;
+        const displayName = otherPetId ? `Pet ${otherPetId}` : "Pet";
         const displayImage = images.doggo1.src;
         const lastMessage = conversation.lastMessage?.text || "No messages yet";
 
@@ -80,7 +100,7 @@ const MessageList: FC = () => {
           <div
             key={conversation.chatId}
             onClick={() => openChat(conversation.chatId)}
-            className="relative py-4 border-b border-black/10 px-2.5 cursor-pointer hover:bg-black/5 transition"
+            className="relative py-4 border-b border-black/10 px-4 cursor-pointer hover:bg-black/5 transition"
           >
             <div className="flex items-center gap-3">
               <img
@@ -93,7 +113,7 @@ const MessageList: FC = () => {
                   <h3 className="heading3_medium text-accent-900">
                     {displayName}
                   </h3>
-                  <p className="tp_small_medium text-neutral-white">
+                  <p className="tp_small_medium text-grey-500">
                     {formatTimestamp(conversation.lastMessageTime)}
                   </p>
                 </div>
@@ -104,8 +124,8 @@ const MessageList: FC = () => {
                   </p>
 
                   {conversation.unreadCount && conversation.unreadCount > 0 && (
-                    <div className="bg-secondary-600 rounded-full w-4.5 h-4.5 flex items-center justify-center shrink-0">
-                      <p className="body_medium text-white text-xs">
+                    <div className="bg-secondary-600 rounded-full w-5 h-5 flex items-center justify-center shrink-0">
+                      <p className="body_medium text-white text-[10px]">
                         {conversation.unreadCount > 9
                           ? "9+"
                           : conversation.unreadCount}

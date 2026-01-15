@@ -1,6 +1,7 @@
 export interface IActivityCardProps {
   className?: string;
   cards: ICard[];
+  onMiddleAction?: (card: ICard) => void;
 }
 
 export type ICard = {

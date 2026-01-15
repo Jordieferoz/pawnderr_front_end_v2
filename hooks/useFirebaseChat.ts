@@ -1,43 +1,73 @@
 // hooks/useFirebaseChat.ts
-import { useEffect, useState, useCallback } from "react";
-import { useSession } from "next-auth/react";
-import { signInWithFirebaseToken, onAuthStateChange } from "@/lib/firebase";
+import { onAuthStateChange, signInWithFirebaseToken } from "@/lib/firebase";
+import { fetchFirebaseToken } from "@/utils/api";
 import {
-  subscribeToMessages,
-  sendMessage as sendFirebaseMessage,
-  markMessagesAsRead,
-  getUserConversations,
   getChatId,
-  type ChatMessage,
-  type ChatConversation
+  getUserConversations,
+  markMessagesAsRead,
+  sendMessage as sendFirebaseMessage,
+  subscribeToMessages,
+  type ChatConversation,
+  type ChatMessage
 } from "@/utils/firebase-chat";
 import { tokenStorage } from "@/utils/token-storage";
+import { useSession } from "next-auth/react";
+import { useCallback, useEffect, useState } from "react";
 
 export const useFirebaseChat = () => {
   const { data: session } = useSession();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Initialize Firebase auth with custom token
   useEffect(() => {
+    const resolveFirebaseToken = async (): Promise<string | null> => {
+      const storedToken =
+        (session as any)?.firebaseToken || tokenStorage.getFirebaseToken();
+      if (storedToken) {
+        return storedToken;
+      }
+
+      try {
+        const resp = await fetchFirebaseToken();
+        const apiToken =
+          resp?.data?.firebaseToken ||
+          resp?.data?.data?.firebaseToken ||
+          resp?.data?.token ||
+          resp?.data?.data?.token;
+        if (apiToken) {
+          tokenStorage.setFirebaseToken(apiToken);
+          return apiToken;
+        }
+      } catch (fetchError) {
+        console.error("❌ Failed to fetch Firebase token:", fetchError);
+      }
+
+      return null;
+    };
+
     const initializeFirebase = async () => {
       try {
-        // Try to get firebaseToken from session first, then from sessionStorage
-        const firebaseToken =
-          (session as any)?.firebaseToken ||
-          tokenStorage.getFirebaseToken();
-
+        const firebaseToken = await resolveFirebaseToken();
         if (!firebaseToken) {
           console.warn("⚠️ No Firebase token found");
+          setError("Firebase token missing. Please sign in again.");
           setIsInitializing(false);
           return;
         }
 
         await signInWithFirebaseToken(firebaseToken);
         setIsAuthenticated(true);
+        setError(null);
       } catch (error) {
         console.error("❌ Failed to initialize Firebase:", error);
         setIsAuthenticated(false);
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Failed to initialize Firebase";
+        setError(errorMessage);
       } finally {
         setIsInitializing(false);
       }
@@ -60,7 +90,8 @@ export const useFirebaseChat = () => {
 
   return {
     isAuthenticated,
-    isInitializing
+    isInitializing,
+    error
   };
 };
 
@@ -88,11 +119,13 @@ export const useChatMessages = (chatId: string | null) => {
 
   const sendMessage = useCallback(
     async (
-      senderId: string,
-      receiverId: string,
+      fromPetId: number,
+      toPetId: number,
+      fromUserId: string,
       text: string,
       type: "text" | "image" | "file" = "text",
-      imageUrl?: string
+      imageUrl?: string,
+      toUserId?: string
     ) => {
       if (!chatId) {
         throw new Error("Chat ID is required");
@@ -100,23 +133,25 @@ export const useChatMessages = (chatId: string | null) => {
 
       await sendFirebaseMessage(
         chatId,
-        senderId,
-        receiverId,
+        fromPetId,
+        toPetId,
+        fromUserId,
         text,
         type,
-        imageUrl
+        imageUrl,
+        toUserId
       );
     },
     [chatId]
   );
 
   const markAsRead = useCallback(
-    async (userId: string) => {
+    async (petId: number) => {
       if (!chatId) {
         return;
       }
 
-      await markMessagesAsRead(chatId, userId);
+      await markMessagesAsRead(chatId, petId);
     },
     [chatId]
   );
@@ -129,19 +164,21 @@ export const useChatMessages = (chatId: string | null) => {
   };
 };
 
-export const useChatConversations = (userId: string | null) => {
+export const useChatConversations = (petIds: number[]) => {
   const [conversations, setConversations] = useState<ChatConversation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const petIdsKey = petIds.join(",");
+
   useEffect(() => {
-    if (!userId) {
+    if (!petIds.length) {
       setConversations([]);
       setIsLoading(false);
       return;
     }
 
     setIsLoading(true);
-    const unsubscribe = getUserConversations(userId, (newConversations) => {
+    const unsubscribe = getUserConversations(petIds, (newConversations) => {
       setConversations(newConversations);
       setIsLoading(false);
     });
@@ -149,7 +186,7 @@ export const useChatConversations = (userId: string | null) => {
     return () => {
       unsubscribe();
     };
-  }, [userId]);
+  }, [petIdsKey]);
 
   return {
     conversations,

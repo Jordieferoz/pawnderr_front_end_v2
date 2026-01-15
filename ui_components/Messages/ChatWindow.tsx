@@ -13,14 +13,16 @@ import { InputField } from "../Shared";
 
 interface ChatWindowProps {
   chatId: string;
-  receiverId: string;
+  receiverPetId: number;
+  myPetId: number;
   name: string;
   avatar: string;
 }
 
 const ChatWindow: FC<ChatWindowProps> = ({
   chatId,
-  receiverId,
+  receiverPetId,
+  myPetId,
   name,
   avatar
 }) => {
@@ -31,7 +33,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Initialize Firebase
-  useFirebaseChat();
+  const { isAuthenticated, isInitializing, error } = useFirebaseChat();
 
   // Get current user ID
   const currentUserId = (session?.user as any)?.id?.toString() || "";
@@ -43,10 +45,10 @@ const ChatWindow: FC<ChatWindowProps> = ({
 
   // Mark messages as read when chat is opened
   useEffect(() => {
-    if (chatId && currentUserId) {
-      markAsRead(currentUserId);
+    if (chatId && myPetId) {
+      markAsRead(myPetId);
     }
-  }, [chatId, currentUserId, markAsRead]);
+  }, [chatId, myPetId, markAsRead]);
 
   // Scroll to bottom when new messages arrive
   useEffect(() => {
@@ -64,7 +66,13 @@ const ChatWindow: FC<ChatWindowProps> = ({
 
     try {
       setIsSending(true);
-      await sendMessage(currentUserId, receiverId, messageText.trim(), "text");
+      await sendMessage(
+        myPetId,
+        receiverPetId,
+        currentUserId,
+        messageText.trim(),
+        "text"
+      );
       setMessageText("");
     } catch (error) {
       console.error("Failed to send message:", error);
@@ -94,8 +102,26 @@ const ChatWindow: FC<ChatWindowProps> = ({
           minute: "2-digit"
         });
   };
+  if (isInitializing) {
+    return (
+      <div className="bg-white flex-1 rounded-xl md:rounded-[0px] px-4 md:px-0 md:border-l md:border-black/10 md:h-full relative shadow-[0px_4px_16.4px_0px_#0000001A] h-[calc(75vh-120px)] md:shadow-none flex items-center justify-center">
+        <p className="text-grey-500">Loading messages...</p>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="bg-white flex-1 rounded-xl md:rounded-[0px] px-4 md:px-0 md:border-l md:border-black/10 md:h-full relative shadow-[0px_4px_16.4px_0px_#0000001A] h-[calc(75vh-120px)] md:shadow-none flex items-center justify-center">
+        <p className="text-grey-500">
+          {error || "Chat is unavailable. Please sign in again."}
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-white md:bg-transparent flex-1 rounded-xl md:rounded-[0px] px-4 md:px-0 md:border-l md:border-black/10 md:h-full relative shadow-[0px_4px_16.4px_0px_#0000001A] h-[calc(75vh-120px)] md:shadow-none flex flex-col">
+    <div className="bg-white flex-1 rounded-xl md:rounded-[0px] px-4 md:px-0 md:border-l md:border-black/10 md:h-full relative shadow-[0px_4px_16.4px_0px_#0000001A] h-[calc(75vh-120px)] md:shadow-none flex flex-col">
       {/* Header */}
       <div className="flex items-center gap-3 md:px-3 px-1 py-3 border-b border-black/10">
         <img
@@ -113,7 +139,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-2 md:px-4 space-y-4 pb-5 hide-scrollbar">
+      <div className="flex-1 overflow-y-auto px-2 md:px-4 space-y-4 pb-6 hide-scrollbar">
         {isLoading ? (
           <div className="flex items-center justify-center h-full">
             <p className="text-grey-500">Loading messages...</p>
@@ -127,7 +153,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
         ) : (
           <>
             {messages.map((msg: ChatMessage, index: number) => {
-              const isMe = msg.senderId === currentUserId;
+              const isMe = Number(msg.senderId) === myPetId;
               const showAvatar =
                 !isMe &&
                 (index === 0 || messages[index - 1].senderId !== msg.senderId);
@@ -159,10 +185,10 @@ const ChatWindow: FC<ChatWindowProps> = ({
                     {!isMe && !showAvatar && <div className="w-12" />}
 
                     <p
-                      className={`max-w-[70%] px-4 py-3 rounded-xl body_medium ${
+                      className={`max-w-[70%] px-4 py-3 rounded-2xl body_medium ${
                         isMe
                           ? "bg-blue text-white"
-                          : "bg-grey-800 text-dark-grey"
+                          : "bg-grey-100 text-dark-grey"
                       }`}
                     >
                       {msg.text}
@@ -177,8 +203,8 @@ const ChatWindow: FC<ChatWindowProps> = ({
       </div>
 
       {/* Message Input */}
-      <div className="fixed md:absolute md:bottom-[0px] bottom-[88px] left-0 right-0 py-3 md:border-0 bg-white md:rounded-b-[40px] border-t shadow-[0px_-6px_11px_0px_#8787871C] md:shadow-none border-black/10 ">
-        <div className="common_container flex items-center gap-3">
+      <div className="mt-auto py-3 md:border-0 bg-white md:rounded-b-[40px] border-t shadow-[0px_-6px_11px_0px_#8787871C] md:shadow-none border-black/10">
+        <div className="common_container flex items-center gap-3 md:px-4">
           <img
             src={images.attachment.src}
             alt="attachment"
@@ -191,7 +217,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
               className="w-full"
               value={messageText}
               onChange={(e) => setMessageText(e.target.value)}
-              disabled={isSending || !chatId}
+              disabled={isSending || !chatId || !myPetId || !receiverPetId}
             />
             <img
               alt="smiley"

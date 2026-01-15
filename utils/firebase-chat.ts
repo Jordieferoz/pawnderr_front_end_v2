@@ -1,19 +1,18 @@
 // utils/firebase-chat.ts
 import {
-  ref,
-  push,
-  onValue,
-  off,
+  addDoc,
+  collection,
+  onSnapshot,
+  orderBy,
   query,
-  orderByChild,
-  limitToLast,
   serverTimestamp,
-  set,
-  update,
-  get,
-  child
-} from "firebase/database";
-import { getFirebaseDatabase, getFirebaseAuth } from "@/lib/firebase";
+  where,
+  limit as firestoreLimit,
+  Timestamp,
+  doc,
+  setDoc
+} from "firebase/firestore";
+import { getFirebaseFirestore } from "@/lib/firebase";
 
 export interface ChatMessage {
   id: string;
@@ -28,7 +27,9 @@ export interface ChatMessage {
 
 export interface ChatConversation {
   chatId: string;
-  participants: string[]; // Array of user IDs
+  participants: string[];
+  myPetId?: number;
+  otherPetId?: number;
   lastMessage?: ChatMessage;
   lastMessageTime?: number;
   unreadCount?: number;
@@ -46,40 +47,33 @@ export const getChatId = (userId1: string, userId2: string): string => {
  */
 export const sendMessage = async (
   chatId: string,
-  senderId: string,
-  receiverId: string,
+  fromPetId: number,
+  toPetId: number,
+  fromUserId: string,
   text: string,
   type: "text" | "image" | "file" = "text",
-  imageUrl?: string
+  imageUrl?: string,
+  toUserId?: string
 ): Promise<void> => {
-  const database = getFirebaseDatabase();
-  if (!database) {
-    throw new Error("Firebase database is not available");
+  const firestore = getFirebaseFirestore();
+  if (!firestore) {
+    throw new Error("Firebase Firestore is not available");
   }
 
-  const messagesRef = ref(database, `chats/${chatId}/messages`);
-  const newMessageRef = push(messagesRef);
-
-  const message: Omit<ChatMessage, "id"> = {
-    text,
-    senderId,
-    receiverId,
-    timestamp: Date.now(),
-    read: false,
+  const message = {
+    chatId,
+    fromPetId,
+    toPetId,
+    fromUserId,
+    ...(toUserId ? { toUserId } : {}),
+    message: text,
     type,
-    ...(imageUrl && { imageUrl })
+    ...(imageUrl ? { imageUrl } : {}),
+    timestamp: serverTimestamp(),
+    isDisabled: false
   };
 
-  await set(newMessageRef, message);
-
-  // Update conversation metadata
-  const conversationRef = ref(database, `chats/${chatId}`);
-  await update(conversationRef, {
-    lastMessage: message.text,
-    lastMessageTime: message.timestamp,
-    lastSenderId: senderId,
-    [`unreadCount_${receiverId}`]: (await get(child(conversationRef, `unreadCount_${receiverId}`))).val() || 0 + 1
-  });
+  await addDoc(collection(firestore, "messages"), message);
 };
 
 /**
@@ -87,35 +81,23 @@ export const sendMessage = async (
  */
 export const markMessagesAsRead = async (
   chatId: string,
-  userId: string
+  petId: number
 ): Promise<void> => {
-  const database = getFirebaseDatabase();
-  if (!database) {
-    throw new Error("Firebase database is not available");
+  const firestore = getFirebaseFirestore();
+  if (!firestore) {
+    throw new Error("Firebase Firestore is not available");
   }
 
-  const messagesRef = ref(database, `chats/${chatId}/messages`);
-  const snapshot = await get(messagesRef);
-
-  if (snapshot.exists()) {
-    const updates: Record<string, any> = {};
-    snapshot.forEach((childSnapshot) => {
-      const message = childSnapshot.val();
-      if (message.receiverId === userId && !message.read) {
-        updates[`${childSnapshot.key}/read`] = true;
-      }
-    });
-
-    if (Object.keys(updates).length > 0) {
-      await update(messagesRef, updates);
-    }
-
-    // Reset unread count
-    const conversationRef = ref(database, `chats/${chatId}`);
-    await update(conversationRef, {
-      [`unreadCount_${userId}`]: 0
-    });
-  }
+  const readDocId = `${chatId}_${petId}`;
+  await setDoc(
+    doc(firestore, "chat_reads", readDocId),
+    {
+      chatId,
+      petId,
+      lastRead: serverTimestamp()
+    },
+    { merge: true }
+  );
 };
 
 /**
@@ -126,36 +108,42 @@ export const subscribeToMessages = (
   callback: (messages: ChatMessage[]) => void,
   limit: number = 50
 ): (() => void) => {
-  const database = getFirebaseDatabase();
-  if (!database) {
-    console.error("Firebase database is not available");
+  const firestore = getFirebaseFirestore();
+  if (!firestore) {
+    console.error("Firebase Firestore is not available");
     return () => {};
   }
 
-  const messagesRef = ref(database, `chats/${chatId}/messages`);
   const messagesQuery = query(
-    messagesRef,
-    orderByChild("timestamp"),
-    limitToLast(limit)
+    collection(firestore, "messages"),
+    where("chatId", "==", chatId),
+    where("isDisabled", "==", false),
+    orderBy("timestamp"),
+    firestoreLimit(limit)
   );
 
-  const unsubscribe = onValue(
+  const unsubscribe = onSnapshot(
     messagesQuery,
     (snapshot) => {
-      if (snapshot.exists()) {
-        const messages: ChatMessage[] = [];
-        snapshot.forEach((childSnapshot) => {
-          messages.push({
-            id: childSnapshot.key!,
-            ...childSnapshot.val()
-          });
+      const messages: ChatMessage[] = [];
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data() as any;
+        const ts: Timestamp | undefined = data.timestamp;
+        const timestamp =
+          ts?.toMillis?.() ?? (ts as any)?.seconds * 1000 ?? 0;
+
+        messages.push({
+          id: docSnap.id,
+          text: data.message ?? data.text ?? "",
+          senderId: String(data.fromPetId ?? ""),
+          receiverId: String(data.toPetId ?? ""),
+          timestamp,
+          read: false,
+          type: data.type,
+          imageUrl: data.imageUrl
         });
-        // Sort by timestamp (oldest first)
-        messages.sort((a, b) => a.timestamp - b.timestamp);
-        callback(messages);
-      } else {
-        callback([]);
-      }
+      });
+      callback(messages);
     },
     (error) => {
       console.error("Error listening to messages:", error);
@@ -164,7 +152,6 @@ export const subscribeToMessages = (
   );
 
   return () => {
-    off(messagesRef);
     unsubscribe();
   };
 };
@@ -173,69 +160,92 @@ export const subscribeToMessages = (
  * Get user's conversations
  */
 export const getUserConversations = (
-  userId: string,
+  petIds: number[],
   callback: (conversations: ChatConversation[]) => void
 ): (() => void) => {
-  const database = getFirebaseDatabase();
-  if (!database) {
-    console.error("Firebase database is not available");
+  const firestore = getFirebaseFirestore();
+  if (!firestore) {
+    console.error("Firebase Firestore is not available");
+    return () => {};
+  }
+  if (!petIds.length) {
+    callback([]);
     return () => {};
   }
 
-  const conversationsRef = ref(database, "chats");
-  const unsubscribe = onValue(
-    conversationsRef,
-    (snapshot) => {
-      if (snapshot.exists()) {
-        const conversations: ChatConversation[] = [];
-        snapshot.forEach((chatSnapshot) => {
-          const chatData = chatSnapshot.val();
-          const chatId = chatSnapshot.key!;
-          const participants = chatId.split("_");
+  const chatMap = new Map<string, any>();
 
-          // Only include conversations where user is a participant
-          if (participants.includes(userId)) {
-            // Get last message
-            const messages = chatData.messages || {};
-            const messageKeys = Object.keys(messages);
-            let lastMessage: ChatMessage | undefined;
-            let lastMessageTime = 0;
-
-            if (messageKeys.length > 0) {
-              const lastMessageKey = messageKeys[messageKeys.length - 1];
-              const lastMsg = messages[lastMessageKey];
-              lastMessage = {
-                id: lastMessageKey,
-                ...lastMsg
-              };
-              lastMessageTime = lastMsg.timestamp || 0;
-            }
-
-            conversations.push({
-              chatId,
-              participants,
-              lastMessage,
-              lastMessageTime,
-              unreadCount: chatData[`unreadCount_${userId}`] || 0
-            });
-          }
-        });
-
-        // Sort by last message time (newest first)
-        conversations.sort((a, b) => (b.lastMessageTime || 0) - (a.lastMessageTime || 0));
-        callback(conversations);
-      } else {
-        callback([]);
+  const handleSnapshot = (snapshot: any) => {
+    snapshot.forEach((docSnap: any) => {
+      const data = docSnap.data();
+      const ts: Timestamp | undefined = data.timestamp;
+      const timestamp =
+        ts?.toMillis?.() ?? (ts as any)?.seconds * 1000 ?? 0;
+      const existing = chatMap.get(data.chatId);
+      if (!existing || timestamp > (existing.timestamp || 0)) {
+        chatMap.set(data.chatId, { ...data, timestamp });
       }
-    },
-    (error) => {
-      console.error("Error fetching conversations:", error);
-      callback([]);
-    }
+    });
+
+    const conversations: ChatConversation[] = Array.from(chatMap.values())
+      .filter((msg) => msg.chatId)
+      .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
+      .map((msg) => {
+        const myPetId =
+          petIds.find(
+            (id) => id === msg.fromPetId || id === msg.toPetId
+          ) ?? petIds[0];
+        const otherPetId = myPetId === msg.fromPetId ? msg.toPetId : msg.fromPetId;
+
+        return {
+          chatId: msg.chatId,
+          participants: [String(msg.fromPetId), String(msg.toPetId)],
+          myPetId,
+          otherPetId,
+          lastMessage: {
+            id: msg.id || "",
+            text: msg.message ?? msg.text ?? "",
+            senderId: String(msg.fromPetId ?? ""),
+            receiverId: String(msg.toPetId ?? ""),
+            timestamp: msg.timestamp || 0,
+            read: false
+          },
+          lastMessageTime: msg.timestamp || 0,
+          unreadCount: 0
+        };
+      });
+
+    callback(conversations);
+  };
+
+  const sentQuery = query(
+    collection(firestore, "messages"),
+    where("fromPetId", "in", petIds),
+    where("isDisabled", "==", false),
+    orderBy("timestamp", "desc"),
+    firestoreLimit(100)
   );
 
+  const receivedQuery = query(
+    collection(firestore, "messages"),
+    where("toPetId", "in", petIds),
+    where("isDisabled", "==", false),
+    orderBy("timestamp", "desc"),
+    firestoreLimit(100)
+  );
+
+  const unsub1 = onSnapshot(sentQuery, handleSnapshot, (error) => {
+    console.error("Error fetching conversations (sent):", error);
+    callback([]);
+  });
+
+  const unsub2 = onSnapshot(receivedQuery, handleSnapshot, (error) => {
+    console.error("Error fetching conversations (received):", error);
+    callback([]);
+  });
+
   return () => {
-    off(conversationsRef);
-    unsubscribe();
+    unsub1();
+    unsub2();
   };
 };

@@ -7,29 +7,30 @@ import {
   ReportModal
 } from "@/ui_components/Modals";
 import { images } from "@/utils/images";
-import { useSession } from "next-auth/react";
+import { petsStorage } from "@/utils/pets-storage";
 import { useParams } from "next/navigation";
 
 export default function ChatPage() {
   const params = useParams();
-  const { data: session } = useSession();
   const chatId = params?.id as string;
-  const currentUserId = (session?.user as any)?.id?.toString() || "";
+  const myPetIds = petsStorage.get()?.my_pets?.map((pet) => pet.id) ?? [];
 
-  // Extract receiver ID from chat ID (format: "userId1_userId2")
-  const getReceiverId = () => {
-    if (!chatId || !currentUserId) return "";
-    const participants = chatId.split("_");
-    return (
-      participants.find((id) => id !== currentUserId) || participants[0] || ""
+  const getPetIdsFromChat = () => {
+    if (!chatId) return [];
+    return Array.from(chatId.matchAll(/pet(\d+)/g)).map((match) =>
+      Number(match[1])
     );
   };
 
-  const receiverId = getReceiverId();
+  const chatPetIds = getPetIdsFromChat();
+  const myPetId =
+    chatPetIds.find((id) => myPetIds.includes(id)) ?? myPetIds[0] ?? 0;
+  const receiverPetId =
+    chatPetIds.find((id) => id !== myPetId) ?? chatPetIds[1] ?? 0;
 
   // TODO: Fetch receiver user details from your API
   // For now, using placeholder data
-  const receiverName = `User ${receiverId}`;
+  const receiverName = receiverPetId ? `Pet ${receiverPetId}` : "Pet";
   const receiverAvatar = images.doggo1.src;
 
   return (
@@ -38,10 +39,11 @@ export default function ChatPage() {
         <div className="hidden md:flex md:basis-sn">
           <Messages />
         </div>
-        {chatId && receiverId ? (
+        {chatId && receiverPetId && myPetId ? (
           <ChatWindow
             chatId={chatId}
-            receiverId={receiverId}
+            receiverPetId={receiverPetId}
+            myPetId={myPetId}
             name={receiverName}
             avatar={receiverAvatar}
           />
