@@ -92,8 +92,15 @@ const OTP: FC = () => {
           const metadataResponse = await fetchPetRegistrationData();
 
           if (metadataResponse.statusCode === 200 && metadataResponse.data) {
-            // Store metadata in Redux
-            dispatch(setMetadata(metadataResponse.data.data));
+            const registrationPayload =
+              metadataResponse.data?.data ?? metadataResponse.data;
+            const metadata =
+              registrationPayload?.metadata ?? registrationPayload;
+
+            if (metadata) {
+              // Store metadata in Redux
+              dispatch(setMetadata(metadata));
+            }
 
             // Update Redux state - user is now verified
             dispatch(

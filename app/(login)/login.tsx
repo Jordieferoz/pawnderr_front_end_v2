@@ -15,10 +15,16 @@ import { Controller, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
 import { Button } from "@/components/ui/button";
+import { setMetadata, updateStepData } from "@/store/registrationSlice";
 import { setUser } from "@/store/userSlice";
 import { LoginOTPModal } from "@/ui_components/Modals";
 import { InputField, Modal } from "@/ui_components/Shared";
-import { loginWithPhone } from "@/utils/api";
+import { showToast } from "@/ui_components/Shared/ToastMessage";
+import {
+  fetchMyPetsCollection,
+  fetchPetRegistrationData,
+  loginWithPhone
+} from "@/utils/api";
 import { signupStorage } from "@/utils/auth-storage";
 import { images } from "@/utils/images";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -58,7 +64,6 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
   const isSignup = mode === "signup";
   const schema = isSignup ? signUpSchema : signInSchema;
 
-  const [apiError, setApiError] = useState<string | null>(null);
   const [showOTPModal, setShowOTPModal] = useState(false);
   const [otpPhone, setOtpPhone] = useState<string>("");
 
@@ -66,9 +71,15 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
   useEffect(() => {
     const error = searchParams?.get("error");
     if (error === "CredentialsSignin") {
-      setApiError("Invalid credentials. Please try again.");
+      showToast({
+        type: "error",
+        message: "Invalid credentials. Please try again."
+      });
     } else if (error) {
-      setApiError("An error occurred. Please try again.");
+      showToast({
+        type: "error",
+        message: "An error occurred. Please try again."
+      });
     }
   }, [searchParams]);
 
@@ -93,8 +104,6 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
     : undefined;
 
   const onSubmit = async (data: SignInValues | SignUpValues) => {
-    setApiError(null);
-
     try {
       if (isSignup) {
         const signupData = data as SignUpValues;
@@ -164,7 +173,10 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
               if (result?.ok) {
                 await completeLoginFlow(callbackUrl);
               } else {
-                setApiError("Failed to create session. Please try again.");
+                showToast({
+                  type: "error",
+                  message: "Failed to create session. Please try again."
+                });
               }
             } else {
               // OTP required - open modal
@@ -172,9 +184,11 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
               setShowOTPModal(true);
             }
           } else {
-            setApiError(
-              response.data?.message || "Login failed. Please try again."
-            );
+            showToast({
+              type: "error",
+              message:
+                response.data?.message || "Login failed. Please try again."
+            });
           }
         } catch (error: any) {
           console.error("❌ Login error:", error);
@@ -182,20 +196,28 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
             error?.response?.data?.message ||
             error?.message ||
             "Login failed. Please try again.";
-          setApiError(errorMessage);
+          showToast({
+            type: "error",
+            message:
+              errorMessage || "Failed to create session. Please try again."
+          });
         }
       }
     } catch (error: any) {
       console.error("❌ Authentication error:", error);
 
       if (error?.message) {
-        setApiError(error.message);
+        showToast({
+          type: "error",
+          message: error.message
+        });
       } else {
-        setApiError(
-          isSignup
+        showToast({
+          type: "error",
+          message: isSignup
             ? "Failed to proceed. Please try again."
             : "Invalid phone number. Please try again."
-        );
+        });
       }
     }
   };
@@ -207,7 +229,10 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
       await signIn("google", { callbackUrl });
     } catch (error) {
       console.error("Google sign in error:", error);
-      setApiError("Failed to sign in with Google. Please try again.");
+      showToast({
+        type: "error",
+        message: "Failed to sign in with Google. Please try again."
+      });
     }
   };
 
@@ -234,9 +259,39 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
       console.error("❌ No accessToken in session!");
     }
 
-    // Redirect to dashboard - ProfileLoader will fetch fresh data if needed
-    router.push(callbackUrl);
-    router.refresh();
+    const redirectAfterLogin = async () => {
+      try {
+        const petsResponse = await fetchMyPetsCollection();
+        const petsPayload = petsResponse?.data ?? petsResponse;
+        const myPets = petsPayload?.my_pets ?? [];
+        const incompletePets = petsPayload?.incomplete_pets ?? [];
+        const hasNoPets = myPets.length === 0 && incompletePets.length === 0;
+
+        if (hasNoPets) {
+          const registrationResponse = await fetchPetRegistrationData();
+          const registrationPayload =
+            registrationResponse?.data?.data ??
+            registrationResponse?.data ??
+            registrationResponse;
+          const metadata = registrationPayload?.metadata ?? registrationPayload;
+
+          if (metadata) {
+            dispatch(setMetadata(metadata));
+            dispatch(updateStepData({ step: 3 }));
+            router.push("/register");
+            router.refresh();
+            return;
+          }
+        }
+      } catch (error) {
+        console.error("❌ Login redirect check failed:", error);
+      }
+
+      router.push(callbackUrl);
+      router.refresh();
+    };
+
+    await redirectAfterLogin();
   };
 
   // Handle OTP verification success
@@ -251,7 +306,10 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
       const firebaseToken = sessionStorage.getItem("firebaseToken");
 
       if (!accessToken) {
-        setApiError("No access token found. Please try again.");
+        showToast({
+          type: "error",
+          message: "No access token found. Please try again."
+        });
         return;
       }
 
@@ -265,13 +323,19 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
 
       if (result?.error) {
         console.error("❌ Sign in error after OTP:", result.error);
-        setApiError("Failed to create session. Please try again.");
+        showToast({
+          type: "error",
+          message: "Failed to create session. Please try again."
+        });
       } else if (result?.ok) {
         await completeLoginFlow(callbackUrl);
       }
     } catch (error: any) {
       console.error("❌ Error completing login after OTP:", error);
-      setApiError("Failed to complete login. Please try again.");
+      showToast({
+        type: "error",
+        message: "Failed to complete login. Please try again."
+      });
     }
   };
 
@@ -346,13 +410,6 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
               </p>
             </div>
           </div>
-
-          {/* API Error Display */}
-          {apiError && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-sm text-red-600 text-center">{apiError}</p>
-            </div>
-          )}
 
           <form
             className="mb-7 flex flex-col gap-6"

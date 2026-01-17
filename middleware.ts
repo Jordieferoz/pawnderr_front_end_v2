@@ -8,7 +8,6 @@ export default withAuth(
     const isAuthPage =
       req.nextUrl.pathname.startsWith("/sign-in") ||
       req.nextUrl.pathname.startsWith("/sign-up") ||
-      req.nextUrl.pathname.startsWith("/register") ||
       req.nextUrl.pathname.startsWith("/forgot-password");
     const isLandingPage = req.nextUrl.pathname === "/";
 

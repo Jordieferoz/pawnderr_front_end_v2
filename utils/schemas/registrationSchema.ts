@@ -29,7 +29,13 @@ export const petProfileSchema = z.object({
   petName: z.string().min(1, "Pet's Name is required"),
   nicknames: z.string().max(100).optional(),
   petGender: z.enum(["male", "female"], { message: "Select pet gender" }),
-  age: z.string().min(1, "Age is required"),
+  age: z
+    .string()
+    .min(1, "Age is required")
+    .refine((value) => {
+      const numericValue = Number(value);
+      return Number.isFinite(numericValue) && numericValue <= 30;
+    }, "Age must be less than or equal to 30"),
   breed: z.number({ message: "Select a breed" }),
   attributes: z.record(
     z.string(),

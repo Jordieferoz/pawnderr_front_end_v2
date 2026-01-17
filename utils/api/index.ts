@@ -57,11 +57,7 @@ export const loginWithPhone = (payload: {
   return new Promise((resolve, reject) => {
     globalPostService<any, any>(`auth/login`, payload)
       .then((response) => {
-        if (response.statusCode === 200 || response.statusCode === 201) {
-          resolve(response);
-        } else {
-          reject(new Error(`Unexpected status code: ${response.statusCode}`));
-        }
+        resolve(response);
       })
       .catch((err) => {
         reject(err);
@@ -244,11 +240,7 @@ export const petRegisterInfo = (payload: any): Promise<TResponse<any>> => {
   return new Promise((resolve, reject) => {
     globalPostService<any, any>(`pet/register`, payload)
       .then((response) => {
-        if (response.statusCode === 200 || response.statusCode === 201) {
-          resolve(response);
-        } else {
-          reject(new Error(`Unexpected status code: ${response.statusCode}`));
-        }
+        resolve(response);
       })
       .catch((err) => {
         reject(err);
@@ -596,11 +588,7 @@ export const fetchWhomILiked = (params: {
   return new Promise((resolve, reject) => {
     globalGetService<any, any>(`match/whom-i-liked`, params)
       .then((response) => {
-        if (response.statusCode === 200) {
-          resolve(response);
-        } else {
-          reject(new Error(`Unexpected status code: ${response.statusCode}`));
-        }
+        resolve(response);
       })
       .catch((err) => {
         reject(err);
@@ -615,11 +603,7 @@ export const fetchWhoLikesMe = (params: {
   return new Promise((resolve, reject) => {
     globalGetService<any, any>(`match/who-likes-me`, params)
       .then((response) => {
-        if (response.statusCode === 200) {
-          resolve(response);
-        } else {
-          reject(new Error(`Unexpected status code: ${response.statusCode}`));
-        }
+        resolve(response);
       })
       .catch((err) => {
         reject(err);
@@ -634,11 +618,7 @@ export const fetchWhomIDisliked = (params: {
   return new Promise((resolve, reject) => {
     globalGetService<any, any>(`match/whom-i-disliked`, params)
       .then((response) => {
-        if (response.statusCode === 200) {
-          resolve(response);
-        } else {
-          reject(new Error(`Unexpected status code: ${response.statusCode}`));
-        }
+        resolve(response);
       })
       .catch((err) => {
         reject(err);
@@ -652,11 +632,7 @@ export const undoMatch = (payload: {
   return new Promise((resolve, reject) => {
     globalPostService<any, any>(`match/undo`, payload)
       .then((response) => {
-        if (response.statusCode === 200 || response.statusCode === 201) {
-          resolve(response);
-        } else {
-          reject(new Error(`Unexpected status code: ${response.statusCode}`));
-        }
+        resolve(response);
       })
       .catch((err) => {
         reject(err);

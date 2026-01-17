@@ -1,15 +1,17 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { FC, useEffect, useMemo, useRef, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import Loader from "@/ui_components/Shared/Loader";
 import { showToast } from "@/ui_components/Shared/ToastMessage";
 import {
+  fetchSubscriptionStatus,
   fetchWhoLikesMe,
   fetchWhomIDisliked,
   fetchWhomILiked,
+  swipePetAction,
   undoMatch
 } from "@/utils/api";
 import { images } from "@/utils/images";
@@ -25,17 +27,15 @@ const Activities: FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isSubscriptionLoading, setIsSubscriptionLoading] = useState(true);
   const [tabCounts, setTabCounts] = useState({
     likesMe: 0,
     youLike: 0,
     viewedProfile: 0
   });
 
-  const isSubscribed = true;
-  const didInitCountsRef = useRef(false);
-
   const handleUndo = async (card: ICard) => {
-    if (!isSubscribed) return;
     if (activeTab !== "you-like" && activeTab !== "viewed-profile") return;
 
     try {
@@ -57,6 +57,31 @@ const Activities: FC = () => {
         type: "error",
         message:
           error?.message || "Unable to undo this activity. Please try again."
+      });
+    }
+  };
+
+  const handleSwipeAction = async (card: ICard, action: "like" | "pass") => {
+    try {
+      await swipePetAction({ pet_id: card.id, action });
+      setCards((prev) => prev.filter((item) => item.id !== card.id));
+      setTabCounts((prev) => {
+        if (activeTab === "likes-me") {
+          return { ...prev, likesMe: Math.max(prev.likesMe - 1, 0) };
+        }
+        if (activeTab === "viewed-profile") {
+          return {
+            ...prev,
+            viewedProfile: Math.max(prev.viewedProfile - 1, 0)
+          };
+        }
+        return prev;
+      });
+    } catch (error: any) {
+      showToast({
+        type: "error",
+        message:
+          error?.message || "Unable to update this activity. Please try again."
       });
     }
   };
@@ -120,6 +145,11 @@ const Activities: FC = () => {
   };
 
   const fetchActivities = async (targetPage: number, append: boolean) => {
+    if (activeTab === "likes-me" && !isSubscribed) {
+      setCards([]);
+      setHasMore(false);
+      return;
+    }
     setIsLoading(true);
 
     try {
@@ -174,21 +204,44 @@ const Activities: FC = () => {
   };
 
   useEffect(() => {
-    if (didInitCountsRef.current) {
+    const loadSubscriptionStatus = async () => {
+      try {
+        setIsSubscriptionLoading(true);
+        const resp = await fetchSubscriptionStatus();
+        setIsSubscribed(Boolean(resp?.data?.is_premium));
+      } catch (error: any) {
+        setIsSubscribed(false);
+        showToast({
+          type: "error",
+          message:
+            error?.message ||
+            "Unable to load subscription status. Please try again."
+        });
+      } finally {
+        setIsSubscriptionLoading(false);
+      }
+    };
+
+    loadSubscriptionStatus();
+  }, []);
+
+  useEffect(() => {
+    if (isSubscriptionLoading) {
       return;
     }
-    didInitCountsRef.current = true;
 
     const fetchInitialCounts = async () => {
       try {
         const [likesMeResp, youLikeResp, dislikedResp] = await Promise.all([
-          fetchWhoLikesMe({ page: 1, limit: 1 }),
+          isSubscribed
+            ? fetchWhoLikesMe({ page: 1, limit: 1 })
+            : Promise.resolve(null),
           fetchWhomILiked({ page: 1, limit: 1 }),
           fetchWhomIDisliked({ page: 1, limit: 1 })
         ]);
 
         setTabCounts({
-          likesMe: getTotalFromPagination(likesMeResp, 0),
+          likesMe: isSubscribed ? getTotalFromPagination(likesMeResp, 0) : 0,
           youLike: getTotalFromPagination(youLikeResp, 0),
           viewedProfile: getTotalFromPagination(dislikedResp, 0)
         });
@@ -203,14 +256,16 @@ const Activities: FC = () => {
     };
 
     fetchInitialCounts();
-  }, []);
+  }, [isSubscribed, isSubscriptionLoading]);
 
   useEffect(() => {
     setCards([]);
     setPage(1);
     setHasMore(true);
-    fetchActivities(1, false);
-  }, [activeTab]);
+    if (!isSubscriptionLoading) {
+      fetchActivities(1, false);
+    }
+  }, [activeTab, isSubscribed, isSubscriptionLoading]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -290,9 +345,28 @@ const Activities: FC = () => {
           </div>
         ) : (
           <ActivityCard
-            cards={!isSubscribed ? [cards?.[0] ?? ({} as ICard)] : cards}
+            cards={
+              !isSubscribed && activeTab === "likes-me"
+                ? [cards?.[0] ?? ({} as ICard)]
+                : cards
+            }
             className={`${!isSubscribed ? "" : ""}`}
-            onMiddleAction={handleUndo}
+            activeTab={activeTab as "likes-me" | "you-like" | "viewed-profile"}
+            onPass={
+              activeTab === "likes-me"
+                ? (card) => handleSwipeAction(card, "pass")
+                : undefined
+            }
+            onLike={
+              activeTab === "likes-me" || activeTab === "viewed-profile"
+                ? (card) => handleSwipeAction(card, "like")
+                : undefined
+            }
+            onUndo={
+              activeTab === "you-like" || activeTab === "viewed-profile"
+                ? handleUndo
+                : undefined
+            }
           />
         )}
         {isLoading && cards.length > 0 && (
@@ -300,7 +374,7 @@ const Activities: FC = () => {
             <Loader size={24} />
           </div>
         )}
-        {!isSubscribed && (
+        {!isSubscribed && activeTab === "likes-me" && (
           <div className="absolute top-0 backdrop-blur-lg w-full bg-white/80 h-[550px] flex items-center justify-center">
             <div className="text-center">
               <h4 className="display2_medium text-accent-900">

@@ -1,12 +1,17 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 
+import { setMetadata, updateStepData } from "@/store/registrationSlice";
 import { setUser } from "@/store/userSlice";
-import { fetchMyPetsCollection, fetchUserProfile } from "@/utils/api";
+import {
+  fetchMyPetsCollection,
+  fetchPetRegistrationData,
+  fetchUserProfile
+} from "@/utils/api";
 import { petsStorage } from "@/utils/pets-storage";
 import { userStorage } from "@/utils/user-storage";
 
@@ -18,6 +23,7 @@ export default function ProfileLoader() {
   const { data: session, status } = useSession();
   const dispatch = useDispatch();
   const pathname = usePathname();
+  const router = useRouter();
   const isLoadingRef = useRef(false);
   const lastFetchRef = useRef<{ user: number; pets: number }>({
     user: 0,
@@ -92,8 +98,39 @@ export default function ProfileLoader() {
           try {
             const petsResponse = await fetchMyPetsCollection();
             lastFetchRef.current.pets = Date.now();
-            if (petsResponse.data) {
-              petsStorage.set(petsResponse.data);
+            const petsPayload = petsResponse?.data ?? petsResponse;
+
+            if (petsPayload) {
+              petsStorage.set(petsPayload);
+            }
+
+            const myPets = petsPayload?.my_pets ?? [];
+            const incompletePets = petsPayload?.incomplete_pets ?? [];
+            const hasNoPets =
+              myPets.length === 0 && incompletePets.length === 0;
+            console.log(hasNoPets, "hasNoPets");
+            if (hasNoPets) {
+              try {
+                const registrationResponse = await fetchPetRegistrationData();
+                const registrationPayload =
+                  registrationResponse?.data?.data ??
+                  registrationResponse?.data ??
+                  registrationResponse;
+                const metadata =
+                  registrationPayload?.metadata ?? registrationPayload;
+
+                if (metadata) {
+                  console.log(metadata, "metadata");
+                  dispatch(setMetadata(metadata));
+                  dispatch(updateStepData({ step: 3 }));
+                  router.push("/register");
+                }
+              } catch (error) {
+                console.error(
+                  "❌ Failed to load pet registration metadata:",
+                  error
+                );
+              }
             }
           } catch (error) {
             console.error("❌ Failed to load user pets:", error);
@@ -108,7 +145,7 @@ export default function ProfileLoader() {
     if (status !== "loading") {
       loadProfile();
     }
-  }, [session, status, dispatch, pathname]);
+  }, [session, status, dispatch, pathname, router]);
 
   return null; // This component doesn't render anything
 }

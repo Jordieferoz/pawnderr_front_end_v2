@@ -12,7 +12,10 @@ import { IActivityCardProps } from "./types";
 const ActivityCard: FC<IActivityCardProps> = ({
   className,
   cards,
-  onMiddleAction
+  activeTab,
+  onLike,
+  onPass,
+  onUndo
 }) => {
   const router = useRouter();
 
@@ -98,17 +101,15 @@ const ActivityCard: FC<IActivityCardProps> = ({
 
   return (
     <div className={`w-full mx-auto p-4 pt-12 ${className ?? ""}`}>
-      <div
-        className={`grid gap-14 mb-8 ${
-          cards?.length === 1
-            ? "grid-cols-1 justify-items-center"
-            : cards?.length === 2
-              ? "grid-cols-1 sm:grid-cols-2 justify-items-center"
-              : "grid-cols-1 sm:grid-cols-2 md:grid-cols-3"
-        }`}
-      >
+      <div className={`grid gap-14 mb-8 md:grid-cols-3 justify-items-center`}>
         {cards?.map((card) => {
           const isFlipped = flippedCardId === card.id;
+          const toggleFlip = () =>
+            setFlippedCardId((prev) => (prev === card.id ? null : card.id));
+          const buttonBase =
+            "bg-white rounded-full w-[55px] h-[55px] flex items-center justify-center shadow-[0px_4px_28px_0px_#00000040] hover:scale-105 active:scale-95 transition-transform";
+          const largeButton =
+            "bg-primary-500 rounded-full w-[68px] h-[68px] flex items-center justify-center shadow-[0px_4px_28px_0px_#00000040] hover:scale-105 active:scale-95 transition-transform";
 
           return (
             <div
@@ -122,11 +123,7 @@ const ActivityCard: FC<IActivityCardProps> = ({
                 style={{
                   transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)"
                 }}
-                onClick={() =>
-                  setFlippedCardId((prev) =>
-                    prev === card.id ? null : card.id
-                  )
-                }
+                onClick={toggleFlip}
               >
                 {/* Front Face */}
                 <div className="absolute inset-0 rounded-[24px] [backface-visibility:hidden]">
@@ -151,40 +148,109 @@ const ActivityCard: FC<IActivityCardProps> = ({
               </div>
 
               <div className="flex justify-center items-center gap-5 absolute -bottom-6 left-1/2 -translate-x-1/2 z-10">
-                <button
-                  onClick={() => handleOpenChat(card.id)}
-                  className="bg-white rounded-full w-[55px] h-[55px] flex items-center justify-center shadow-[0px_4px_28px_0px_#00000040] hover:scale-105 active:scale-95 transition-transform"
-                >
-                  <img
-                    src={images.chatYellow.src}
-                    alt="message"
-                    className="w-7"
-                  />
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onMiddleAction?.(card);
-                  }}
-                  className="bg-white rounded-full w-[55px] h-[55px] flex items-center justify-center shadow-[0px_4px_28px_0px_#00000040] hover:scale-105 active:scale-95 transition-transform"
-                >
-                  <img src={images.like.src} alt="like" className="w-7.5" />
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setFlippedCardId((prev) =>
-                      prev === card.id ? null : card.id
-                    );
-                  }}
-                  className="bg-white rounded-full w-[55px] h-[55px] flex items-center justify-center shadow-[0px_4px_28px_0px_#00000040] hover:scale-105 active:scale-95 transition-transform"
-                >
-                  <img
-                    src={images.eyeBlue.src}
-                    alt="view"
-                    className="w-[28px]"
-                  />
-                </button>
+                {activeTab === "likes-me" && (
+                  <>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onPass?.(card);
+                      }}
+                      className={buttonBase}
+                    >
+                      <img
+                        src={images.dislike.src}
+                        alt="Dislike"
+                        className="w-5 h-5"
+                      />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onLike?.(card);
+                      }}
+                      className={largeButton}
+                    >
+                      <img
+                        src={images.pawYellow.src}
+                        alt="Like"
+                        className="h-[36px]"
+                      />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onLike?.(card);
+                      }}
+                      className={buttonBase}
+                    >
+                      <img
+                        src={images.like.src}
+                        alt="Like"
+                        className="w-[33px] h-[33px]"
+                      />
+                    </button>
+                  </>
+                )}
+                {activeTab === "you-like" && (
+                  <>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onUndo?.(card);
+                      }}
+                      className={buttonBase}
+                    >
+                      <img
+                        src={images.dislike.src}
+                        alt="Undo"
+                        className="w-5 h-5"
+                      />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOpenChat(card.id);
+                      }}
+                      className={largeButton}
+                    >
+                      <img
+                        src={images.pawYellow.src}
+                        alt="Chat"
+                        className="h-[36px]"
+                      />
+                    </button>
+                  </>
+                )}
+                {activeTab === "viewed-profile" && (
+                  <>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onUndo?.(card);
+                      }}
+                      className={largeButton}
+                    >
+                      <img
+                        src={images.pawYellow.src}
+                        alt="Undo"
+                        className="h-[36px]"
+                      />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onLike?.(card);
+                      }}
+                      className={buttonBase}
+                    >
+                      <img
+                        src={images.like.src}
+                        alt="Like"
+                        className="w-[33px] h-[33px]"
+                      />
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           );
