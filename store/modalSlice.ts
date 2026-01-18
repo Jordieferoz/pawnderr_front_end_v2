@@ -3,19 +3,33 @@ import { createSlice } from "@reduxjs/toolkit";
 interface ModalState {
   isFilterModalOpen: boolean;
   isMessageActionModalOpen: boolean;
+  actionData: {
+    blocked_user_id: number;
+    match_id?: number;
+    name?: string;
+  } | null;
   isReportModalOpen: boolean;
   isHangTightModalOpen: boolean;
+  blockData: {
+    blocked_user_id: number;
+    match_id?: number;
+    name?: string;
+  } | null;
   isBlockModalOpen: boolean;
   isOutOfSwipesModalOpen: boolean;
+  isNotificationModalOpen: boolean;
 }
 
 const initialState: ModalState = {
   isFilterModalOpen: false,
   isMessageActionModalOpen: false,
+  actionData: null,
   isReportModalOpen: false,
   isBlockModalOpen: false,
+  blockData: null,
   isHangTightModalOpen: false,
-  isOutOfSwipesModalOpen: false
+  isOutOfSwipesModalOpen: false,
+  isNotificationModalOpen: false
 };
 
 const modalSlice = createSlice({
@@ -28,11 +42,13 @@ const modalSlice = createSlice({
     closeFilterModal: (state) => {
       state.isFilterModalOpen = false;
     },
-    openMessageActionModal: (state) => {
+    openMessageActionModal: (state, action: { payload: ModalState["actionData"] }) => {
       state.isMessageActionModalOpen = true;
+      state.actionData = action.payload;
     },
     closeMessageActionModal: (state) => {
       state.isMessageActionModalOpen = false;
+      state.actionData = null;
     },
     openReportModal: (state) => {
       state.isReportModalOpen = true;
@@ -46,8 +62,9 @@ const modalSlice = createSlice({
     closeHangTightModal: (state) => {
       state.isHangTightModalOpen = false;
     },
-    openBlockModal: (state) => {
+    openBlockModal: (state, action: { payload: ModalState["blockData"] }) => {
       state.isBlockModalOpen = true;
+      state.blockData = action.payload;
     },
     closeBlockModal: (state) => {
       state.isBlockModalOpen = false;
@@ -57,6 +74,12 @@ const modalSlice = createSlice({
     },
     closeOutOfSwipesModal: (state) => {
       state.isOutOfSwipesModalOpen = false;
+    },
+    openNotificationModal: (state) => {
+      state.isNotificationModalOpen = true;
+    },
+    closeNotificationModal: (state) => {
+      state.isNotificationModalOpen = false;
     }
   }
 });
@@ -73,6 +96,8 @@ export const {
   openHangTightModal,
   closeHangTightModal,
   openOutOfSwipesModal,
-  closeOutOfSwipesModal
+  closeOutOfSwipesModal,
+  openNotificationModal,
+  closeNotificationModal
 } = modalSlice.actions;
 export default modalSlice.reducer;

@@ -11,11 +11,18 @@ import { headerMenuItems } from "@/constants";
 import { useUserProfileFromStorage } from "@/hooks";
 import { images } from "@/utils/images";
 
+import { Bell } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { openNotificationModal } from "@/store/modalSlice";
+import { Notifications } from "./Notifications";
 import { DropdownMenu } from "../Dashboard";
+import { RootState } from "@/store";
 
 const Header: FC = () => {
+  const dispatch = useDispatch();
   const pathname = usePathname();
   const { userProfile, isLoading } = useUserProfileFromStorage();
+  const unseenMatchCount = useSelector((state: RootState) => state.match.unseenMatchCount);
 
   const isItemActive = (itemHref: string, itemKey: string) => {
     if (itemKey === "discover") {
@@ -30,58 +37,73 @@ const Header: FC = () => {
   };
 
   return (
-    <header className="fixed py-4 w-full left-0 top-0 z-50 bg-white border-b border-blue/10 shadow-[0px_4px_16.4px_0px_#0000000F] hidden md:block">
-      <nav className="container mx-auto common_container flex items-center justify-between gap-4">
-        <Link href={"/dashboard"}>
-          <img
-            src={images.logoHorizontal.src}
-            alt="logo"
-            className="w-[220px]"
-          />
-        </Link>
-
-        <ul className="flex gap-6 items-center">
-          {headerMenuItems.map((item) => {
-            const active = isItemActive(item.href, item.key);
-
-            return (
-              <Link
-                key={item.key}
-                href={item.href}
-                className={`flex-1 text-center no-underline select-none ${
-                  active ? "text-neutral-900" : "text-gray-400"
-                }`}
-              >
-                <div className="flex flex-col items-center justify-between h-[56px]">
-                  <div className="flex justify-center items-center h-[40px]">
-                    <img
-                      src={active ? item.imgActive : item.img}
-                      alt={item.label}
-                      style={{ width: item.imgWidth }}
-                      className="block"
-                    />
-                  </div>
-
-                  <p
-                    className={`tp_small_medium mt-1 ${
-                      active ? "text-accent-500" : "text-neutral-white"
-                    }`}
-                  >
-                    {item.label}
-                  </p>
-                </div>
-              </Link>
-            );
-          })}
-          <DropdownMenu userProfile={userProfile} isLoading={isLoading} />
-          <Link href={"/upgrade"} className="cursor-pointer">
-            <Button>
-              <img src={images.pawnderBlack.src} alt="pawnderr+" /> PAWnderr+
-            </Button>
+    <>
+      <header className="fixed py-4 w-full left-0 top-0 z-50 bg-white border-b border-blue/10 shadow-[0px_4px_16.4px_0px_#0000000F] hidden md:block">
+        <nav className="container mx-auto common_container flex items-center justify-between gap-4">
+          <Link href={"/dashboard"}>
+            <img
+              src={images.logoHorizontal.src}
+              alt="logo"
+              className="w-[220px]"
+            />
           </Link>
-        </ul>
-      </nav>
-    </header>
+
+          <ul className="flex gap-6 items-center">
+            {headerMenuItems.map((item) => {
+              const active = isItemActive(item.href, item.key);
+
+              return (
+                <Link
+                  key={item.key}
+                  href={item.href}
+                  className={`flex-1 text-center no-underline select-none ${active ? "text-neutral-900" : "text-gray-400"
+                    }`}
+                >
+                  <div className="flex flex-col items-center justify-between h-[56px]">
+                    <div className="flex justify-center items-center h-[40px] relative">
+                      <img
+                        src={active ? item.imgActive : item.img}
+                        alt={item.label}
+                        style={{ width: item.imgWidth }}
+                        className="block"
+                      />
+                      {item.key === "matches" && unseenMatchCount > 0 && (
+                        <span className="absolute top-1 -right-1 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full"></span>
+                      )}
+                    </div>
+
+                    <p
+                      className={`tp_small_medium mt-1 ${active ? "text-accent-500" : "text-neutral-white"
+                        }`}
+                    >
+                      {item.label}
+                    </p>
+                  </div>
+                </Link>
+              );
+            })}
+
+            {/* Notification Bell */}
+            <button
+              className="relative p-2 rounded-full hover:bg-gray-100 transition-colors"
+              onClick={() => dispatch(openNotificationModal())}
+            >
+              <Bell className="w-6 h-6 text-gray-500" />
+              {/* Mock Unread Badge */}
+              <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full"></span>
+            </button>
+
+            <DropdownMenu userProfile={userProfile} isLoading={isLoading} />
+            <Link href={"/upgrade"} className="cursor-pointer">
+              <Button>
+                <img src={images.pawnderBlack.src} alt="pawnderr+" /> PAWnderr+
+              </Button>
+            </Link>
+          </ul>
+        </nav>
+      </header>
+      <Notifications />
+    </>
   );
 };
 

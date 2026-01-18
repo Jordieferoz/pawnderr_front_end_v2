@@ -10,7 +10,8 @@ import {
   limit as firestoreLimit,
   Timestamp,
   doc,
-  setDoc
+  setDoc,
+  getDocs
 } from "firebase/firestore";
 import { getFirebaseFirestore } from "@/lib/firebase";
 
@@ -30,10 +31,35 @@ export interface ChatConversation {
   participants: string[];
   myPetId?: number;
   otherPetId?: number;
+  otherPetName?: string;
+  otherPetPrimaryPhoto?: string;
   lastMessage?: ChatMessage;
   lastMessageTime?: number;
   unreadCount?: number;
+  hasUnread?: boolean;
 }
+
+const normalizeId = (value: unknown): number | null => {
+  if (value === null || value === undefined) return null;
+  if (typeof value === "number") return value;
+  if (typeof value === "string" && value.trim() !== "") {
+    const parsed = Number(value);
+    return Number.isNaN(parsed) ? null : parsed;
+  }
+  return null;
+};
+
+const getTimestampMillis = (
+  timestamp?: Timestamp | { seconds?: number } | number | null
+): number => {
+  if (!timestamp) return 0;
+  if (typeof timestamp === "number") return timestamp;
+  if (timestamp instanceof Timestamp) {
+    return timestamp.toMillis();
+  }
+  const seconds = (timestamp as { seconds?: number }).seconds;
+  return seconds ? seconds * 1000 : 0;
+};
 
 /**
  * Get chat ID from two user IDs (ensures consistent ordering)
@@ -49,11 +75,9 @@ export const sendMessage = async (
   chatId: string,
   fromPetId: number,
   toPetId: number,
-  fromUserId: string,
   text: string,
   type: "text" | "image" | "file" = "text",
-  imageUrl?: string,
-  toUserId?: string
+  imageUrl?: string
 ): Promise<void> => {
   const firestore = getFirebaseFirestore();
   if (!firestore) {
@@ -64,8 +88,6 @@ export const sendMessage = async (
     chatId,
     fromPetId,
     toPetId,
-    fromUserId,
-    ...(toUserId ? { toUserId } : {}),
     message: text,
     type,
     ...(imageUrl ? { imageUrl } : {}),
@@ -105,6 +127,7 @@ export const markMessagesAsRead = async (
  */
 export const subscribeToMessages = (
   chatId: string,
+  myPetId: number,
   callback: (messages: ChatMessage[]) => void,
   limit: number = 50
 ): (() => void) => {
@@ -114,25 +137,45 @@ export const subscribeToMessages = (
     return () => {};
   }
 
-  const messagesQuery = query(
+  const messagesMap = new Map<string, ChatMessage>();
+  const hasReceivedInitialData = { q1: false, q2: false };
+
+  const updateMessagesFromSnapshots = () => {
+    if (!hasReceivedInitialData.q1 && !hasReceivedInitialData.q2) {
+      return;
+    }
+    const messages = Array.from(messagesMap.values()).sort(
+      (a, b) => a.timestamp - b.timestamp
+    );
+    callback(messages);
+  };
+
+  const q1 = query(
     collection(firestore, "messages"),
     where("chatId", "==", chatId),
+    where("fromPetId", "==", myPetId),
     where("isDisabled", "==", false),
-    orderBy("timestamp"),
+    orderBy("timestamp", "desc"),
     firestoreLimit(limit)
   );
 
-  const unsubscribe = onSnapshot(
-    messagesQuery,
+  const q2 = query(
+    collection(firestore, "messages"),
+    where("chatId", "==", chatId),
+    where("toPetId", "==", myPetId),
+    where("isDisabled", "==", false),
+    orderBy("timestamp", "desc"),
+    firestoreLimit(limit)
+  );
+
+  const unsubscribe1 = onSnapshot(
+    q1,
     (snapshot) => {
-      const messages: ChatMessage[] = [];
+      hasReceivedInitialData.q1 = true;
       snapshot.forEach((docSnap) => {
         const data = docSnap.data() as any;
-        const ts: Timestamp | undefined = data.timestamp;
-        const timestamp =
-          ts?.toMillis?.() ?? (ts as any)?.seconds * 1000 ?? 0;
-
-        messages.push({
+        const timestamp = getTimestampMillis(data.timestamp as Timestamp);
+        messagesMap.set(docSnap.id, {
           id: docSnap.id,
           text: data.message ?? data.text ?? "",
           senderId: String(data.fromPetId ?? ""),
@@ -143,16 +186,45 @@ export const subscribeToMessages = (
           imageUrl: data.imageUrl
         });
       });
-      callback(messages);
+      updateMessagesFromSnapshots();
     },
     (error) => {
-      console.error("Error listening to messages:", error);
-      callback([]);
+      console.error("Error listening to sent messages:", error);
+      hasReceivedInitialData.q1 = true;
+      updateMessagesFromSnapshots();
+    }
+  );
+
+  const unsubscribe2 = onSnapshot(
+    q2,
+    (snapshot) => {
+      hasReceivedInitialData.q2 = true;
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data() as any;
+        const timestamp = getTimestampMillis(data.timestamp as Timestamp);
+        messagesMap.set(docSnap.id, {
+          id: docSnap.id,
+          text: data.message ?? data.text ?? "",
+          senderId: String(data.fromPetId ?? ""),
+          receiverId: String(data.toPetId ?? ""),
+          timestamp,
+          read: false,
+          type: data.type,
+          imageUrl: data.imageUrl
+        });
+      });
+      updateMessagesFromSnapshots();
+    },
+    (error) => {
+      console.error("Error listening to received messages:", error);
+      hasReceivedInitialData.q2 = true;
+      updateMessagesFromSnapshots();
     }
   );
 
   return () => {
-    unsubscribe();
+    unsubscribe1();
+    unsubscribe2();
   };
 };
 
@@ -174,78 +246,275 @@ export const getUserConversations = (
   }
 
   const chatMap = new Map<string, any>();
+  const lastMessageMap = new Map<
+    string,
+    {
+      message: string;
+      timestamp?: Timestamp | null;
+      fromPetId?: number | null;
+      toPetId?: number | null;
+    }
+  >();
+  const lastReadMap: Record<string, Timestamp> = {};
+  const chatListeners: Array<() => void> = [];
+  const readListeners: Array<() => void> = [];
+  const lastMessageListeners = new Map<string, () => void>();
+  let isActive = true;
 
-  const handleSnapshot = (snapshot: any) => {
-    snapshot.forEach((docSnap: any) => {
-      const data = docSnap.data();
-      const ts: Timestamp | undefined = data.timestamp;
-      const timestamp =
-        ts?.toMillis?.() ?? (ts as any)?.seconds * 1000 ?? 0;
-      const existing = chatMap.get(data.chatId);
-      if (!existing || timestamp > (existing.timestamp || 0)) {
-        chatMap.set(data.chatId, { ...data, timestamp });
-      }
-    });
+  const updateChatList = () => {
+    if (!isActive) return;
 
-    const conversations: ChatConversation[] = Array.from(chatMap.values())
-      .filter((msg) => msg.chatId)
-      .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
-      .map((msg) => {
+    const conversations = Array.from(chatMap.values())
+      .map((chat) => {
+        const chatPet1Id = normalizeId(chat.pet1_id);
+        const chatPet2Id = normalizeId(chat.pet2_id);
+        if (!chatPet1Id || !chatPet2Id) return null;
+
         const myPetId =
-          petIds.find(
-            (id) => id === msg.fromPetId || id === msg.toPetId
-          ) ?? petIds[0];
-        const otherPetId = myPetId === msg.fromPetId ? msg.toPetId : msg.fromPetId;
+          petIds.find((id) => {
+            const normalizedId = normalizeId(id);
+            return normalizedId === chatPet1Id || normalizedId === chatPet2Id;
+          }) ?? null;
+
+        if (!myPetId) return null;
+        const normalizedMyPetId = normalizeId(myPetId);
+        if (!normalizedMyPetId) return null;
+
+        const otherPetId =
+          normalizedMyPetId === chatPet1Id ? chatPet2Id : chatPet1Id;
+        const otherPetMetadata =
+          normalizedMyPetId === chatPet1Id
+            ? chat.pet2_metadata
+            : chat.pet1_metadata;
+        const otherPetName =
+          otherPetMetadata?.name ||
+          otherPetMetadata?.pet_name ||
+          otherPetMetadata?.petName ||
+          undefined;
+        const otherPetPrimaryPhoto =
+          otherPetMetadata?.primary_photo_url ||
+          otherPetMetadata?.primaryPhotoUrl ||
+          undefined;
+
+        const lastMsg = lastMessageMap.get(chat.chatId);
+        const lastMessageTime = getTimestampMillis(lastMsg?.timestamp);
+        const lastMessage = lastMsg
+          ? {
+              id: "",
+              text: lastMsg.message,
+              senderId: String(lastMsg.fromPetId ?? ""),
+              receiverId: String(lastMsg.toPetId ?? ""),
+              timestamp: lastMessageTime,
+              read: false
+            }
+          : undefined;
+
+        const lastRead = lastReadMap[chat.chatId];
+        const lastReadTime = getTimestampMillis(lastRead);
+        let unreadCount = 0;
+        const lastSenderId = normalizeId(lastMsg?.fromPetId);
+        if (lastMessageTime && lastSenderId && lastSenderId !== normalizedMyPetId) {
+          if (!lastReadTime || lastMessageTime > lastReadTime) {
+            unreadCount = 1;
+          }
+        }
 
         return {
-          chatId: msg.chatId,
-          participants: [String(msg.fromPetId), String(msg.toPetId)],
-          myPetId,
+          chatId: chat.chatId,
+          participants: [String(chatPet1Id), String(chatPet2Id)],
+          myPetId: normalizedMyPetId,
           otherPetId,
-          lastMessage: {
-            id: msg.id || "",
-            text: msg.message ?? msg.text ?? "",
-            senderId: String(msg.fromPetId ?? ""),
-            receiverId: String(msg.toPetId ?? ""),
-            timestamp: msg.timestamp || 0,
-            read: false
-          },
-          lastMessageTime: msg.timestamp || 0,
-          unreadCount: 0
+          otherPetName,
+          otherPetPrimaryPhoto,
+          lastMessage,
+          lastMessageTime: lastMessageTime || undefined,
+          unreadCount,
+          hasUnread: unreadCount > 0
         };
-      });
+      })
+      .filter(Boolean)
+      .sort(
+        (a, b) =>
+          (b?.lastMessageTime || 0) - (a?.lastMessageTime || 0)
+      ) as ChatConversation[];
 
     callback(conversations);
   };
 
-  const sentQuery = query(
-    collection(firestore, "messages"),
-    where("fromPetId", "in", petIds),
-    where("isDisabled", "==", false),
-    orderBy("timestamp", "desc"),
-    firestoreLimit(100)
-  );
+  const loadLastReadTimestamps = async () => {
+    try {
+      for (const petId of petIds) {
+        const snapshot = await getDocs(
+          query(
+            collection(firestore, "chat_reads"),
+            where("petId", "==", petId)
+          )
+        );
+        snapshot.forEach((docSnap) => {
+          const data = docSnap.data() as any;
+          if (data?.chatId && data?.lastRead) {
+            lastReadMap[data.chatId] = data.lastRead;
+          }
+        });
+      }
+    } catch (error) {
+      console.warn("Error loading last read timestamps:", error);
+    }
+  };
 
-  const receivedQuery = query(
-    collection(firestore, "messages"),
-    where("toPetId", "in", petIds),
-    where("isDisabled", "==", false),
-    orderBy("timestamp", "desc"),
-    firestoreLimit(100)
-  );
+  const ensureLastMessageListener = (chatId: string, petId: number) => {
+    if (lastMessageListeners.has(chatId)) return;
 
-  const unsub1 = onSnapshot(sentQuery, handleSnapshot, (error) => {
-    console.error("Error fetching conversations (sent):", error);
-    callback([]);
+    const msgQuery1 = query(
+      collection(firestore, "messages"),
+      where("chatId", "==", chatId),
+      where("fromPetId", "==", petId),
+      where("isDisabled", "==", false),
+      orderBy("timestamp", "desc"),
+      firestoreLimit(1)
+    );
+
+    const msgQuery2 = query(
+      collection(firestore, "messages"),
+      where("chatId", "==", chatId),
+      where("toPetId", "==", petId),
+      where("isDisabled", "==", false),
+      orderBy("timestamp", "desc"),
+      firestoreLimit(1)
+    );
+
+    const updateFromSnapshot = (snapshot: any, shouldCompare: boolean) => {
+      if (snapshot.empty) return;
+      const docSnap = snapshot.docs[0];
+      const data = docSnap.data() as any;
+      const timestamp = data.timestamp as Timestamp | null;
+      const newTimestamp = getTimestampMillis(timestamp);
+      const current = lastMessageMap.get(chatId);
+      const currentTimestamp = getTimestampMillis(current?.timestamp);
+
+      if (!shouldCompare || newTimestamp > currentTimestamp) {
+        lastMessageMap.set(chatId, {
+          message: data.message ?? data.text ?? "",
+          timestamp,
+          fromPetId: normalizeId(data.fromPetId),
+          toPetId: normalizeId(data.toPetId)
+        });
+        updateChatList();
+      }
+    };
+
+    const unsub1 = onSnapshot(
+      msgQuery1,
+      (snapshot) => updateFromSnapshot(snapshot, false),
+      (error) => {
+        console.warn(`Error listening to last message (sent) ${chatId}:`, error);
+      }
+    );
+
+    const unsub2 = onSnapshot(
+      msgQuery2,
+      (snapshot) => updateFromSnapshot(snapshot, true),
+      (error) => {
+        console.warn(
+          `Error listening to last message (received) ${chatId}:`,
+          error
+        );
+      }
+    );
+
+    lastMessageListeners.set(chatId, () => {
+      unsub1();
+      unsub2();
+    });
+  };
+
+  const listenForChats = (petId: number, field: "pet1_id" | "pet2_id") => {
+    const chatsQuery = query(
+      collection(firestore, "chats"),
+      where(field, "==", petId),
+      where("is_disabled", "==", false)
+    );
+
+    const unsubscribe = onSnapshot(
+      chatsQuery,
+      (snapshot) => {
+        console.log(`DEBUG: Chats snapshot for ${field}=${petId}: ${snapshot.size} docs found`);
+        const activeChatIds = new Set<string>();
+        snapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          console.log(`DEBUG: Chat Doc ${docSnap.id}:`, data);
+          const chatId = docSnap.id;
+          activeChatIds.add(chatId);
+          chatMap.set(chatId, { chatId, ...data });
+          ensureLastMessageListener(chatId, petId);
+        });
+
+        Array.from(chatMap.entries()).forEach(([chatId, chatData]) => {
+          const chatPetId = normalizeId(chatData[field]);
+          if (chatPetId === petId && !activeChatIds.has(chatId)) {
+            chatMap.delete(chatId);
+            lastMessageMap.delete(chatId);
+            const unsub = lastMessageListeners.get(chatId);
+            if (unsub) {
+              unsub();
+              lastMessageListeners.delete(chatId);
+            }
+          }
+        });
+
+        updateChatList();
+      },
+      (error) => {
+        console.error(`Error fetching chats (${field}):`, error);
+        callback([]);
+      }
+    );
+
+    chatListeners.push(unsubscribe);
+  };
+
+  const listenForReads = (petId: number) => {
+    const readsQuery = query(
+      collection(firestore, "chat_reads"),
+      where("petId", "==", petId)
+    );
+
+    const unsubscribe = onSnapshot(
+      readsQuery,
+      (snapshot) => {
+        snapshot.forEach((docSnap) => {
+          const data = docSnap.data() as any;
+          if (data?.chatId && data?.lastRead) {
+            lastReadMap[data.chatId] = data.lastRead;
+          }
+        });
+        updateChatList();
+      },
+      (error) => {
+        console.warn("Error listening to read receipts:", error);
+      }
+    );
+
+    readListeners.push(unsubscribe);
+  };
+
+  loadLastReadTimestamps().finally(() => {
+    updateChatList();
   });
 
-  const unsub2 = onSnapshot(receivedQuery, handleSnapshot, (error) => {
-    console.error("Error fetching conversations (received):", error);
-    callback([]);
+  petIds.forEach((petId) => {
+    listenForChats(petId, "pet1_id");
+    listenForChats(petId, "pet2_id");
+    listenForReads(petId);
   });
 
   return () => {
-    unsub1();
-    unsub2();
+    isActive = false;
+    chatListeners.forEach((unsub) => unsub());
+    readListeners.forEach((unsub) => unsub());
+    lastMessageListeners.forEach((unsub) => unsub());
+    chatListeners.length = 0;
+    readListeners.length = 0;
+    lastMessageListeners.clear();
   };
 };

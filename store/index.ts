@@ -7,7 +7,8 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import modalReducer from "./modalSlice";
 import profileReducer from "./profileInfoSlice";
 import registrationReducer from "./registrationSlice";
-import userReducer from "./userSlice"; // ADD THIS
+import userReducer from "./userSlice";
+import matchReducer from "./matchSlice";
 
 // Persist config for registration slice - persist everything
 const registrationPersistConfig = {
@@ -22,7 +23,7 @@ const profilePersistConfig = {
   storage
 };
 
-// Persist config for user slice - ADD THIS
+// Persist config for user slice
 const userPersistConfig = {
   key: "user",
   storage
@@ -40,15 +41,15 @@ const persistedProfileReducer = persistReducer(
   profileReducer
 );
 
-// ADD THIS
 const persistedUserReducer = persistReducer(userPersistConfig, userReducer);
 
 // Combine reducers
 const rootReducer = combineReducers({
   registration: persistedRegistrationReducer,
   profileInfo: persistedProfileReducer,
-  user: persistedUserReducer, // ADD THIS
-  modal: modalReducer // Modal state doesn't need persistence
+  user: persistedUserReducer,
+  modal: modalReducer,
+  match: matchReducer 
 });
 
 export const store = configureStore({

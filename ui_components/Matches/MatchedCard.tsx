@@ -5,54 +5,21 @@ import { FC, useState } from "react";
 import { images } from "@/utils/images";
 
 type Card = {
+  id: string | number;
   name: string;
   info: string;
   url: string;
   desc: string;
   details: string;
+  indicator?: string;
 };
-
-const cardsData: Card[] = [
-  {
-    name: "Buddy",
-    info: "(Male, 2 Years)",
-    url: images.doggo1.src,
-    desc: "A cheerful retriever who loves belly rubs and chasing tennis balls.",
-    details:
-      "Golden Retriever\nLoves long walks\nFully vaccinated\nWeight: 25kg"
-  },
-  {
-    name: "Buddy",
-    info: "(Male, 2 Years)",
-    url: images.doggo1.src,
-    desc: "A cheerful retriever who loves belly rubs and chasing tennis balls.",
-    details:
-      "Golden Retriever\nLoves long walks\nFully vaccinated\nWeight: 25kg"
-  },
-  {
-    name: "Buddy",
-    info: "(Male, 2 Years)",
-    url: images.doggo1.src,
-    desc: "A cheerful retriever who loves belly rubs and chasing tennis balls.",
-    details:
-      "Golden Retriever\nLoves long walks\nFully vaccinated\nWeight: 25kg"
-  },
-  {
-    name: "Buddy",
-    info: "(Male, 2 Years)",
-    url: images.doggo1.src,
-    desc: "A cheerful retriever who loves belly rubs and chasing tennis balls.",
-    details:
-      "Golden Retriever\nLoves long walks\nFully vaccinated\nWeight: 25kg"
-  }
-];
 
 const FlipCard: FC<{ card: Card }> = ({ card }) => {
   const router = useRouter();
 
   const [isFlipped, setIsFlipped] = useState(false);
 
-  const handleOpenChat = (id: string) => {
+  const handleOpenChat = (id: string | number) => {
     router.push(`/messages/${id}`);
   };
 
@@ -65,6 +32,11 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
       >
         {/* Front Face */}
         <div className="absolute inset-0 rounded-[24px] [backface-visibility:hidden]">
+          {card.indicator && (
+            <div className="absolute top-6 left-6 z-20 bg-black text-white px-3 py-1 rounded-lg border-[1.5px] border-white text-sm font-bold tracking-wider">
+              {card.indicator}
+            </div>
+          )}
           <img
             src={card.url}
             alt={card.name}
@@ -98,7 +70,7 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
 
       <div className="flex justify-center items-center gap-5 absolute -bottom-6 left-1/2 -translate-x-1/2 z-10">
         <button
-          onClick={() => handleOpenChat("1")}
+          onClick={() => handleOpenChat(card.id)}
           className="bg-white rounded-full w-[55px] h-[55px] flex items-center justify-center shadow-[0px_4px_28px_0px_#00000040] hover:scale-105 active:scale-95 transition-transform"
         >
           <img src={images.chatYellow.src} alt="message" className="w-7" />
@@ -120,13 +92,57 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
   );
 };
 
-const MatchedCard: FC = () => {
+interface MatchedCardProps {
+  matches?: any[];
+  indicators?: any[];
+}
+
+const MatchedCard: FC<MatchedCardProps> = ({ matches = [], indicators = [] }) => {
+  if (!matches || matches.length === 0) {
+    return (
+      <div className="w-full py-20 text-center">
+        <p className="text-gray-500 text-lg">No active matches found.</p>
+      </div>
+    )
+  }
+
+  // Create a Set of verified IDs correctly
+  // Assuming indicators might be a list of objects or just IDs.
+  // We'll flexibly handle both.
+  const indicatorSet = new Set(
+    indicators.map((i: any) => {
+      if (typeof i === 'object' && i !== null) {
+        return String(i.match_id || i.id || '');
+      }
+      return String(i);
+    })
+  );
+
   return (
     <div className="w-full mx-auto">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-14">
-        {cardsData.map((card) => (
-          <FlipCard key={card.name} card={card} />
-        ))}
+        {matches.map((match, index) => {
+          const matchId = String(match.match_id || match.id || '');
+          const hasIndicator = indicatorSet.has(matchId);
+
+          return (
+            <FlipCard
+              key={match.id || index}
+              card={{
+                id: match.match_id || match.id,
+                name: match.pet?.name || match.name || "Unknown",
+                info: `(${match.pet?.gender || match.gender || 'Unknown'}, ${match.pet?.age || match.age || '?'} Years)`,
+                url: match.pet?.primary_photo_url || match.primary_photo_url || images.doggo1.src,
+                desc: match.pet?.bio || match.bio || match.description || "No description available",
+                details: [
+                  match.pet?.breed || match.breed || 'Unknown Breed',
+                  match.pet?.weight ? `Weight: ${match.pet?.weight}kg` : ''
+                ].filter(Boolean).join('\n'),
+                indicator: hasIndicator ? "NEW!" : undefined
+              }}
+            />
+          );
+        })}
       </div>
     </div>
   );

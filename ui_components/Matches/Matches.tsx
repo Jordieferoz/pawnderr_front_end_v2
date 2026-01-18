@@ -1,7 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
+
+import { fetchActiveMatches, fetchMatchIndicators } from "@/utils/api";
 
 import { images } from "@/utils/images";
 
@@ -10,6 +12,39 @@ import { CustomAvatar } from "../Shared";
 
 const Matches: FC = () => {
   const router = useRouter();
+  const [matches, setMatches] = useState<any[]>([]);
+  const [indicators, setIndicators] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        setIsLoading(true);
+        const [matchesResponse, indicatorsResponse] = await Promise.all([
+          fetchActiveMatches({
+            page: 1,
+            limit: 20,
+            state: "active"
+          }),
+          fetchMatchIndicators()
+        ]);
+
+        // Assuming response.data contains the array or a paginated object
+        const matchesData = matchesResponse.data?.data || matchesResponse.data || [];
+        setMatches(Array.isArray(matchesData) ? matchesData : []);
+
+        const indicatorsData = indicatorsResponse.data || [];
+        setIndicators(Array.isArray(indicatorsData) ? indicatorsData : []);
+
+      } catch (error) {
+        console.error("Failed to fetch matches data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    getData();
+  }, []);
 
   return (
     <div className="matches_wrapper common_container">
@@ -17,7 +52,7 @@ const Matches: FC = () => {
         <div className="flex items-center gap-3">
           <img
             onClick={() => router.back()}
-            className="w-10 h-10"
+            className="w-10 h-10 cursor-pointer"
             src={images.backBtn.src}
             alt="back"
           />
@@ -62,7 +97,13 @@ const Matches: FC = () => {
         </div>
       </div>
 
-      <MatchedCard />
+      {isLoading ? (
+        <div className="flex justify-center py-20">
+          <p className="text-gray-500">Loading matches...</p>
+        </div>
+      ) : (
+        <MatchedCard matches={matches} indicators={indicators} />
+      )}
     </div>
   );
 };

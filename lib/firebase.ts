@@ -1,17 +1,17 @@
 // lib/firebase.ts
-import { initializeApp, getApps, FirebaseApp } from "firebase/app";
+import { FirebaseApp, getApps, initializeApp } from "firebase/app";
 import {
-  getAuth,
-  signInWithCustomToken,
   Auth,
+  signOut as firebaseSignOut,
+  getAuth,
   onAuthStateChanged,
-  signOut as firebaseSignOut
+  signInWithCustomToken
 } from "firebase/auth";
 import {
-  getDatabase,
-  Database
+  Database,
+  getDatabase
 } from "firebase/database";
-import { getFirestore, Firestore } from "firebase/firestore";
+import { Firestore, getFirestore } from "firebase/firestore";
 
 // Firebase configuration - these should be set in environment variables
 const firebaseConfig = {

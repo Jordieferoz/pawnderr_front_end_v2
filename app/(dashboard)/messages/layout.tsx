@@ -188,9 +188,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     );
   };
   return (
-    <div className="relative h-full common_container">
-      <div className="container mx-auto  h-full">
-        <div className="my-4 mb-0 md:hidden">
+    <div className="relative h-[calc(100vh-90px)] common_container overflow-hidden">
+      <div className="container mx-auto h-full flex flex-col">
+        <div className="my-4 mb-0 md:hidden flex-none">
           <div className="flex items-center gap-3 mb-4">
             <img
               onClick={() => router.back()}
@@ -210,7 +210,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
 
-        <div className="hidden md:flex items-center justify-between my-4 mb-6">
+        <div className="hidden md:flex items-center justify-between my-4 mb-6 flex-none">
           <h4 className="display4_medium text-accent-900">Messages</h4>
           <div
             ref={desktopMatchesRef}
@@ -222,7 +222,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
 
-        {children}
+        <div className="flex-1 min-h-0 pb-4">
+          {children}
+        </div>
       </div>
       <img
         className="absolute w-full left-0 top-0 hidden md:flex pointer-events-none z-[-1]"

@@ -567,7 +567,7 @@ export const swipePetAction = (payload: {
 
 export const fetchFirebaseToken = (): Promise<TResponse<any>> => {
   return new Promise((resolve, reject) => {
-    globalGetService<any, any>(`auth/firebase-token`, {})
+    globalGetService<any, any>(`auth/firebase-token`, { _t: Date.now() })
       .then((response) => {
         if (response.statusCode === 200 || response.statusCode === 201) {
           resolve(response);
@@ -633,6 +633,75 @@ export const undoMatch = (payload: {
     globalPostService<any, any>(`match/undo`, payload)
       .then((response) => {
         resolve(response);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+export const blockMatch = (payload: {
+  blocked_user_id: number;
+  match_id?: number;
+}): Promise<TResponse<any>> => {
+  return new Promise((resolve, reject) => {
+    globalPostService<any, any>(`match/block`, payload)
+      .then((response) => {
+        if (response.statusCode === 200 || response.statusCode === 201) {
+          resolve(response);
+        } else {
+          reject(new Error(`Unexpected status code: ${response.statusCode}`));
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+export const unblockMatch = (payload: {
+  blocked_user_id: number;
+}): Promise<TResponse<any>> => {
+  return new Promise((resolve, reject) => {
+    globalPostService<any, any>(`match/unblock`, payload)
+      .then((response) => {
+        if (response.statusCode === 200 || response.statusCode === 201) {
+          resolve(response);
+        } else {
+          reject(new Error(`Unexpected status code: ${response.statusCode}`));
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+export const fetchUnseenMatchCount = (): Promise<TResponse<any>> => {
+  return new Promise((resolve, reject) => {
+    globalGetService<any, any>(`match/unseen/count`, {})
+      .then((response) => {
+        if (response.statusCode === 200) {
+          resolve(response);
+        } else {
+          reject(new Error(`Unexpected status code: ${response.statusCode}`));
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+export const fetchMatchIndicators = (): Promise<TResponse<any>> => {
+  return new Promise((resolve, reject) => {
+    globalGetService<any, any>(`match/indicator`, {})
+      .then((response) => {
+        if (response.statusCode === 200) {
+          resolve(response);
+        } else {
+          reject(new Error(`Unexpected status code: ${response.statusCode}`));
+        }
       })
       .catch((err) => {
         reject(err);

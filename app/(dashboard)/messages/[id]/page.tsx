@@ -34,9 +34,9 @@ export default function ChatPage() {
   const receiverAvatar = images.doggo1.src;
 
   return (
-    <div className="message_wrapper">
-      <div className="flex gap-2 bg-white/[94%] border border-black/10 rounded-[40px]">
-        <div className="hidden md:flex md:basis-sn">
+    <div className="message_wrapper h-full">
+      <div className="flex gap-0 bg-white border border-black/10 rounded-[32px] overflow-hidden h-full">
+        <div className="hidden md:flex md:basis-[340px] border-r border-black/10">
           <Messages />
         </div>
         {chatId && receiverPetId && myPetId ? (

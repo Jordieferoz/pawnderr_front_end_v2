@@ -1,18 +1,23 @@
 // hooks/useFirebaseChat.ts
-import { onAuthStateChange, signInWithFirebaseToken } from "@/lib/firebase";
-import { fetchFirebaseToken } from "@/utils/api";
 import {
-  getChatId,
-  getUserConversations,
-  markMessagesAsRead,
-  sendMessage as sendFirebaseMessage,
-  subscribeToMessages,
-  type ChatConversation,
-  type ChatMessage
+    getFirebaseFirestore,
+    onAuthStateChange,
+    signInWithFirebaseToken
+} from "@/lib/firebase";
+import { fetchFirebaseToken, messageInitiated } from "@/utils/api";
+import {
+    getChatId,
+    getUserConversations,
+    markMessagesAsRead,
+    sendMessage as sendFirebaseMessage,
+    subscribeToMessages,
+    type ChatConversation,
+    type ChatMessage
 } from "@/utils/firebase-chat";
 import { tokenStorage } from "@/utils/token-storage";
+import { doc, getDoc } from "firebase/firestore";
 import { useSession } from "next-auth/react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export const useFirebaseChat = () => {
   const { data: session } = useSession();
@@ -22,21 +27,65 @@ export const useFirebaseChat = () => {
 
   // Initialize Firebase auth with custom token
   useEffect(() => {
-    const resolveFirebaseToken = async (): Promise<string | null> => {
-      const storedToken =
-        (session as any)?.firebaseToken || tokenStorage.getFirebaseToken();
-      if (storedToken) {
-        return storedToken;
+    const resolveFirebaseToken = async (
+      forceRefresh: boolean = false
+    ): Promise<string | null> => {
+      if (!forceRefresh) {
+        const storedToken =
+          (session as any)?.firebaseToken || tokenStorage.getFirebaseToken();
+        if (storedToken) {
+          return storedToken;
+        }
       }
 
       try {
         const resp = await fetchFirebaseToken();
+        if (process.env.NODE_ENV !== "production") {
+          const payload = resp?.data as any;
+          const rawToken =
+            payload?.firebaseToken ||
+            payload?.data?.firebaseToken ||
+            payload?.token ||
+            payload?.data?.token;
+          console.log("🔎 Firebase token response:", {
+            hasToken: Boolean(rawToken),
+            tokenType: typeof rawToken,
+            tokenLength: typeof rawToken === "string" ? rawToken.length : 0,
+            keys: payload ? Object.keys(payload) : []
+          });
+        }
         const apiToken =
           resp?.data?.firebaseToken ||
           resp?.data?.data?.firebaseToken ||
           resp?.data?.token ||
           resp?.data?.data?.token;
         if (apiToken) {
+          try {
+            // Debug: Decode token to verify project ID match
+            const parts = apiToken.split(".");
+            if (parts.length === 3) {
+              const payload = JSON.parse(atob(parts[1]));
+              console.log("🕵️‍♀️ Firebase Token Debug:", {
+                projectId: payload.aud,
+                issuer: payload.iss,
+                sub: payload.sub,
+                frontendProjectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+                isMatch:
+                  payload.aud === process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID
+              });
+
+              if (
+                payload.aud !== process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID
+              ) {
+                console.error(
+                  `❌ PROJECT ID MISMATCH! Token is for '${payload.aud}' but frontend is '${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID}'`
+                );
+              }
+            }
+          } catch (e) {
+            console.error("❌ Failed to decode token for debug:", e);
+          }
+
           tokenStorage.setFirebaseToken(apiToken);
           return apiToken;
         }
@@ -60,13 +109,38 @@ export const useFirebaseChat = () => {
         await signInWithFirebaseToken(firebaseToken);
         setIsAuthenticated(true);
         setError(null);
-      } catch (error) {
-        console.error("❌ Failed to initialize Firebase:", error);
-        setIsAuthenticated(false);
+      } catch (error: any) {
+        const errorCode = error?.code || "";
         const errorMessage =
           error instanceof Error
             ? error.message
             : "Failed to initialize Firebase";
+
+        if (String(errorCode).includes("auth/invalid-custom-token")) {
+           console.warn("⚠️ Invalid Custom Token detected. Attempting to refresh...", error);
+          tokenStorage.clearFirebaseToken();
+          const freshToken = await resolveFirebaseToken(true);
+          if (freshToken) {
+            try {
+              await signInWithFirebaseToken(freshToken);
+              setIsAuthenticated(true);
+              setError(null);
+              return;
+            } catch (retryError: any) {
+              console.error("❌ Firebase retry failed:", retryError);
+              const retryErrorMessage =
+                retryError instanceof Error
+                  ? retryError.message
+                  : "Failed to authenticate after token refresh";
+              setError(`Retry failed: ${retryErrorMessage}`);
+              setIsAuthenticated(false);
+              return;
+            }
+          }
+        }
+
+        console.error("❌ Failed to initialize Firebase:", error);
+        setIsAuthenticated(false);
         setError(errorMessage);
       } finally {
         setIsInitializing(false);
@@ -95,54 +169,141 @@ export const useFirebaseChat = () => {
   };
 };
 
-export const useChatMessages = (chatId: string | null) => {
+export const useChatMessages = (chatId: string | null, myPetId?: number) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const chatInitiatedRef = useRef<Record<string, boolean>>({});
+
+  const getMatchIdFromChat = useCallback((id: string) => {
+    const match = id.match(/match(\d+)/);
+    return match ? Number(match[1]) : null;
+  }, []);
 
   useEffect(() => {
-    if (!chatId) {
+    if (!chatId || !myPetId) {
       setMessages([]);
       setIsLoading(false);
       return;
     }
 
+    if (chatId?.includes("match12345")) {
+        setMessages([
+            {
+                id: "msg_1",
+                text: "Hello! This is a test message.",
+                senderId: "99999",
+                receiverId: String(myPetId),
+                timestamp: Date.now() - 10000,
+                read: false,
+                type: "text"
+            },
+            {
+                id: "msg_2",
+                text: "You can try replying to me!",
+                senderId: "99999",
+                receiverId: String(myPetId),
+                timestamp: Date.now(),
+                read: false,
+                type: "text"
+            }
+        ]);
+        setIsLoading(false);
+        return;
+    }
+
     setIsLoading(true);
-    const unsubscribe = subscribeToMessages(chatId, (newMessages) => {
+    const unsubscribe = subscribeToMessages(chatId, myPetId, (newMessages) => {
       setMessages(newMessages);
       setIsLoading(false);
+      if (newMessages.length > 0) {
+        chatInitiatedRef.current[chatId] = true;
+      }
     });
 
     return () => {
       unsubscribe();
     };
-  }, [chatId]);
+  }, [chatId, myPetId]);
 
   const sendMessage = useCallback(
     async (
       fromPetId: number,
       toPetId: number,
-      fromUserId: string,
       text: string,
       type: "text" | "image" | "file" = "text",
-      imageUrl?: string,
-      toUserId?: string
+      imageUrl?: string
     ) => {
       if (!chatId) {
         throw new Error("Chat ID is required");
+      }
+
+      if (!fromPetId || !toPetId) {
+        throw new Error("Pet IDs are required");
+      }
+
+      const firestore = getFirebaseFirestore();
+      if (!firestore) {
+        throw new Error("Firebase Firestore is not available");
+      }
+
+      const isFirstMessage = !chatInitiatedRef.current[chatId];
+      if (isFirstMessage) {
+        const matchId = getMatchIdFromChat(chatId);
+        if (!matchId) {
+          throw new Error(
+            "Match ID is missing. Please start the chat from a match."
+          );
+        }
+
+        await messageInitiated({
+          chat_id: chatId,
+          from_pet_id: fromPetId,
+          to_pet_id: toPetId,
+          match_id: matchId
+        });
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        chatInitiatedRef.current[chatId] = true;
+      }
+
+      const chatDoc = await getDoc(doc(firestore, "chats", chatId));
+      if (!chatDoc.exists()) {
+        throw new Error("Chat document not found.");
+      }
+
+      if (chatDoc.data()?.is_disabled) {
+        throw new Error(
+          "This chat has been disabled or blocked. You cannot send messages."
+        );
+      }
+
+      if (chatId.includes("match12345")) {
+        console.log("MOCK SEND:", text);
+        // Simulate local update
+        setMessages(prev => [
+            ...prev,
+            {
+                id: `msg_${Date.now()}`,
+                text,
+                senderId: String(fromPetId),
+                receiverId: String(toPetId),
+                timestamp: Date.now(),
+                read: false,
+                type
+            }
+        ]);
+        return;
       }
 
       await sendFirebaseMessage(
         chatId,
         fromPetId,
         toPetId,
-        fromUserId,
         text,
         type,
-        imageUrl,
-        toUserId
+        imageUrl
       );
     },
-    [chatId]
+    [chatId, getMatchIdFromChat]
   );
 
   const markAsRead = useCallback(
@@ -172,14 +333,44 @@ export const useChatConversations = (petIds: number[]) => {
 
   useEffect(() => {
     if (!petIds.length) {
+      console.log("DEBUG: useChatConversations - No petIds provided");
       setConversations([]);
       setIsLoading(false);
       return;
     }
 
+    console.log("DEBUG: useChatConversations - Subscribing for pets:", petIds);
     setIsLoading(true);
     const unsubscribe = getUserConversations(petIds, (newConversations) => {
-      setConversations(newConversations);
+      // Mock Data for Testing if empty
+      if (newConversations.length === 0 && process.env.NODE_ENV !== "production") {
+        const mockChatId = `pet${petIds[0]}_pet99999_match12345`;
+        setConversations([
+          {
+            chatId: mockChatId,
+            participants: ["99999", String(petIds[0])],
+            myPetId: petIds[0],
+            otherPetId: 99999,
+            otherPetName: "Test Doggo",
+            otherPetPrimaryPhoto:
+              "https://images.unsplash.com/photo-1543466835-00a7907e9de1",
+            lastMessage: {
+                id: "msg_0",
+                text: "Hello! This is a test message.",
+                senderId: "99999",
+                receiverId: String(petIds[0]),
+                timestamp: Date.now(),
+                read: false,
+                type: "text",
+            },
+            lastMessageTime: Date.now(),
+            unreadCount: 1,
+            hasUnread: true
+          }
+        ]);
+      } else {
+        setConversations(newConversations);
+      }
       setIsLoading(false);
     });
 

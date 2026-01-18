@@ -24,27 +24,45 @@ const MessageList: FC = () => {
     isAuthenticated ? petIds : []
   );
 
+  console.log("DEBUG: MessageList", {
+    isAuthenticated,
+    petIds,
+    conversationsLength: conversations.length,
+    isLoading
+  });
+
+
   const openChat = (chatId: string) => {
     router.push(`/messages/${chatId}`);
   };
 
-  // Format timestamp
   const formatTimestamp = (timestamp?: number) => {
     if (!timestamp) return "";
     const date = new Date(timestamp);
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return "Just now";
-    if (diffMins < 60) return `${diffMins}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    if (diffDays === 1) return "Yesterday";
-    if (diffDays < 7)
-      return date.toLocaleDateString("en-US", { weekday: "short" });
-    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    const isSameDay = date.getDate() === now.getDate() &&
+      date.getMonth() === now.getMonth() &&
+      date.getFullYear() === now.getFullYear();
+
+    if (isSameDay) return "Today";
+
+    // Check if it's yesterday
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const isYesterday = date.getDate() === yesterday.getDate() &&
+      date.getMonth() === yesterday.getMonth() &&
+      yesterday.getFullYear() === yesterday.getFullYear();
+
+    if (isYesterday) return "Yesterday";
+
+    if (diffDays < 7) {
+      return `${diffDays} Days Ago`;
+    }
+
+    return date.toLocaleDateString("en-GB", { day: 'numeric', month: 'short', year: 'numeric' });
   };
 
   if (isInitializing) {
@@ -75,14 +93,15 @@ const MessageList: FC = () => {
 
   if (conversations.length === 0) {
     return (
-      <div className="flex items-center justify-center h-full">
+      <div className="flex flex-col items-center justify-center h-full gap-4">
         <p className="text-grey-500">No conversations yet</p>
+
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col space-y-1">
       {conversations.map((conversation: ChatConversation) => {
         const otherPetId =
           conversation.otherPetId ??
@@ -91,50 +110,59 @@ const MessageList: FC = () => {
               (id) => !petIds.includes(Number(id))
             ) || 0
           );
+        const isUnread = (conversation.unreadCount ?? 0) > 0;
 
-        const displayName = otherPetId ? `Pet ${otherPetId}` : "Pet";
-        const displayImage = images.doggo1.src;
+        const displayName =
+          conversation.otherPetName ||
+          (otherPetId ? `Pet ${otherPetId}` : "Pet");
+        const displayImage =
+          conversation.otherPetPrimaryPhoto || images.doggo1.src;
         const lastMessage = conversation.lastMessage?.text || "No messages yet";
 
         return (
           <div
             key={conversation.chatId}
             onClick={() => openChat(conversation.chatId)}
-            className="relative py-4 border-b border-black/10 px-4 cursor-pointer hover:bg-black/5 transition"
+            className="relative py-4 px-3 cursor-pointer hover:bg-black/5 transition rounded-xl"
           >
-            <div className="flex items-center gap-3">
-              <img
-                src={displayImage}
-                className="w-12 h-12 shrink-0 object-cover rounded-full"
-                alt="user"
-              />
-              <div className="w-full">
-                <div className="flex items-center gap-2 justify-between mb-2 md:mb-0.5">
-                  <h3 className="heading3_medium text-accent-900">
+            <div className="flex items-start gap-3">
+              <div className="relative shrink-0">
+                <img
+                  src={displayImage}
+                  className="w-14 h-14 object-cover rounded-full border border-black/5"
+                  alt="user"
+                />
+                {/* Online Indicator - Optional based on design */}
+                {/* <span className="absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full bg-green-500 border-2 border-white" /> */}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-baseline justify-between mb-1">
+                  <h3 className="text-[16px] font-semibold text-accent-900 truncate">
                     {displayName}
                   </h3>
-                  <p className="tp_small_medium text-grey-500">
+                  <span className="text-xs text-grey-500 shrink-0">
                     {formatTimestamp(conversation.lastMessageTime)}
-                  </p>
+                  </span>
                 </div>
 
-                <div className="flex items-center gap-2 justify-between">
-                  <p className="text-grey-500 body_regular truncate">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-sm text-grey-500 truncate max-w-[85%]">
                     {lastMessage}
                   </p>
 
                   {conversation.unreadCount && conversation.unreadCount > 0 && (
-                    <div className="bg-secondary-600 rounded-full w-5 h-5 flex items-center justify-center shrink-0">
-                      <p className="body_medium text-white text-[10px]">
+                    <div className="bg-[#FF4B55] rounded-full w-5 h-5 flex items-center justify-center shrink-0">
+                      <span className="text-[11px] font-bold text-white">
                         {conversation.unreadCount > 9
                           ? "9+"
                           : conversation.unreadCount}
-                      </p>
+                      </span>
                     </div>
                   )}
                 </div>
               </div>
             </div>
+            <div className="absolute bottom-0 right-0 left-[70px] h-[1px] bg-black/5" />
           </div>
         );
       })}

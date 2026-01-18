@@ -1,8 +1,9 @@
 "use client";
 
 import { FC } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
+import { RootState } from "@/store";
 import {
   closeMessageActionModal,
   openBlockModal,
@@ -12,6 +13,7 @@ import { images } from "@/utils/images";
 
 const MessageActionContent: FC = () => {
   const dispatch = useDispatch();
+  const { actionData } = useSelector((state: RootState) => state.modal);
 
   const handleOpenReportModal = () => {
     dispatch(closeMessageActionModal());
@@ -19,7 +21,9 @@ const MessageActionContent: FC = () => {
   };
   const handleOpenBlockModal = () => {
     dispatch(closeMessageActionModal());
-    dispatch(openBlockModal());
+    if (actionData) {
+      dispatch(openBlockModal(actionData));
+    }
   };
   return (
     <div className="w-full bg-white rounded-2xl p-4">

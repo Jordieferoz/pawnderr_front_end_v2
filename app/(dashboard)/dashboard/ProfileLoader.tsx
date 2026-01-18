@@ -7,10 +7,12 @@ import { useDispatch } from "react-redux";
 
 import { setMetadata, updateStepData } from "@/store/registrationSlice";
 import { setUser } from "@/store/userSlice";
+import { setUnseenMatchCount } from "@/store/matchSlice";
 import {
   fetchMyPetsCollection,
   fetchPetRegistrationData,
-  fetchUserProfile
+  fetchUserProfile,
+  fetchUnseenMatchCount
 } from "@/utils/api";
 import { petsStorage } from "@/utils/pets-storage";
 import { userStorage } from "@/utils/user-storage";
@@ -25,9 +27,10 @@ export default function ProfileLoader() {
   const pathname = usePathname();
   const router = useRouter();
   const isLoadingRef = useRef(false);
-  const lastFetchRef = useRef<{ user: number; pets: number }>({
+  const lastFetchRef = useRef<{ user: number; pets: number; match: number }>({
     user: 0,
-    pets: 0
+    pets: 0,
+    match: 0
   });
 
   useEffect(() => {
@@ -134,6 +137,19 @@ export default function ProfileLoader() {
             }
           } catch (error) {
             console.error("❌ Failed to load user pets:", error);
+          }
+        }
+
+        // Fetch match indicator data with throttling
+        const timeSinceLastMatchFetch = now - lastFetchRef.current.match;
+        if (timeSinceLastMatchFetch >= 2000) {
+          try {
+            const matchResponse = await fetchUnseenMatchCount();
+            lastFetchRef.current.match = Date.now();
+            const count = matchResponse.data?.count || matchResponse.data || 0;
+            dispatch(setUnseenMatchCount(Number(count)));
+          } catch (error) {
+            console.error("❌ Failed to load unseen match count:", error);
           }
         }
 

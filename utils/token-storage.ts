@@ -30,6 +30,11 @@ export const tokenStorage = {
     sessionStorage.setItem("firebaseToken", token);
   },
 
+  clearFirebaseToken: () => {
+    if (typeof window === "undefined") return;
+    sessionStorage.removeItem("firebaseToken");
+  },
+
   clearTokens: () => {
     if (typeof window === "undefined") return;
     sessionStorage.removeItem("accessToken");

@@ -19,5 +19,7 @@ export interface IInputFieldProps {
   isPassword?: boolean;
   rightIcon?: string;
   leftIcon?: string;
+  iconClassName?: string;
+  rightIconClassName?: string;
   maxLength?: number;
 }

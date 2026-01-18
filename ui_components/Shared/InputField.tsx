@@ -57,14 +57,14 @@ const InputField: FC<IInputFieldProps> = (props) => {
         {rightIcon && (
           <img
             src={rightIcon}
-            className="absolute top-1/2 right-5 z-10 h-4 w-4 -translate-y-1/2"
+            className={`absolute top-1/2 right-5 z-10 h-4 w-4 -translate-y-1/2 ${props.rightIconClassName || ""}`}
             alt={name}
           />
         )}
         {leftIcon && (
           <img
             src={leftIcon}
-            className="absolute top-1/2 left-5 z-10 h-5 w-5 -translate-y-1/2"
+            className={`absolute top-1/2 left-5 z-10 h-5 w-5 -translate-y-1/2 ${props.iconClassName || ""}`}
             alt={name}
           />
         )}
