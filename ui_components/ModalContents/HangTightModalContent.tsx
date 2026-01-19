@@ -6,7 +6,19 @@ import { Button } from "@/components/ui/button";
 import { images } from "@/utils/images";
 import { GenderCard } from "../Shared";
 
-const HangTightModalContent: FC = () => {
+interface HangTightModalContentProps {
+  userImage: string;
+  matchImage: string;
+  userGender: string;
+  matchGender: string;
+}
+
+const HangTightModalContent: FC<HangTightModalContentProps> = ({
+  userImage,
+  matchImage,
+  userGender,
+  matchGender
+}) => {
   return (
     <div className="w-full bg-white rounded-2xl">
       <img
@@ -23,13 +35,13 @@ const HangTightModalContent: FC = () => {
       </p>
       <div className="relative py-8 flex ml-4">
         <GenderCard
-          imageSrc={images.doggo1.src}
-          gender="male"
+          imageSrc={userImage || images.doggo1.src}
+          gender={userGender as "male" | "female"}
           className="mx-auto -rotate-2"
         />
         <GenderCard
-          imageSrc={images.doggo1.src}
-          gender="female"
+          imageSrc={matchImage || images.doggo1.src}
+          gender={matchGender as "male" | "female"}
           className="mx-auto translate-y-[40px] rotate-2 relative translate-x-[-40px]"
         />
       </div>

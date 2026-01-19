@@ -2,7 +2,7 @@
 import React, { FC, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 
-import { openOutOfSwipesModal } from "@/store/modalSlice";
+import { openHangTightModal, openOutOfSwipesModal } from "@/store/modalSlice";
 import { getUserLocation } from "@/utils";
 import {
   discoverNearbyPets,
@@ -14,7 +14,7 @@ import { useDrag } from "@use-gesture/react";
 import { HangTightModal, OutOfSwipesModal } from "../Modals";
 import { ISwipingCard, ISwipingCardsProps, NearbyPet } from "./types";
 
-const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading }) => {
+const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading, isSubscribed }) => {
   const dispatch = useDispatch();
   const [cards, setCards] = useState<ISwipingCard[]>([]);
   const [currentIndex, setCurrentIndex] = useState(-1);
@@ -56,6 +56,19 @@ const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading }) => {
 
           if (statusCode === 403 && apiMessage === "DAILY_LIKE_LIMIT_REACHED") {
             dispatch(openOutOfSwipesModal());
+          } else if (
+            !isSubscribed &&
+            direction === "right" &&
+            resp?.data?.is_match === false
+          ) {
+            dispatch(
+              openHangTightModal({
+                userImage: petData?.images?.[0]?.image_url || "",
+                matchImage: swipedCard.url,
+                userGender: petData?.gender || "male",
+                matchGender: swipedCard.gender
+              })
+            );
           }
         })
         .catch((error) => {
@@ -175,7 +188,8 @@ const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading }) => {
                 name: pet.name || pet.nickname || "Unknown",
                 info: `(${genderDisplay}, ${ageText})`,
                 url: pet.primary_image?.image_url || "",
-                desc: pet.bark_o_graphy || ""
+                desc: pet.bark_o_graphy || "",
+                gender: pet.gender
               };
             }
           );
@@ -268,8 +282,8 @@ const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading }) => {
                   <div className="absolute inset-0 pointer-events-none">
                     <div
                       className={`absolute top-6 text-2xl font-bold uppercase tracking-wider px-4 py-1.5 rounded-lg border-[3px] transition-opacity duration-200  ${swipeDirection === "right"
-                          ? "left-6 text-secondary-700 border-secondary-700 rotate-[-20deg]"
-                          : "right-6 text-secondary-600 border-secondary-600 rotate-[20deg]"
+                        ? "left-6 text-secondary-700 border-secondary-700 rotate-[-20deg]"
+                        : "right-6 text-secondary-600 border-secondary-600 rotate-[20deg]"
                         }`}
                       style={{
                         textShadow: "0 0 10px rgba(0,0,0,0.3)"

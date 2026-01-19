@@ -10,14 +10,24 @@ import { Modal } from "../Shared";
 
 const HangTightModal = () => {
   const dispatch = useDispatch();
+  const { isHangTightModalOpen, hangTightData } = useSelector(
+    (state: RootState) => state.modal
+  );
 
   return (
     <Modal
-      open={useSelector((state: RootState) => state.modal.isHangTightModalOpen)}
+      open={isHangTightModalOpen}
       setOpen={(val) => {
         if (!val) dispatch(closeHangTightModal());
       }}
-      content={<HangTightModalContent />}
+      content={
+        <HangTightModalContent
+          userImage={hangTightData?.userImage || ""}
+          matchImage={hangTightData?.matchImage || ""}
+          userGender={hangTightData?.userGender || "male"}
+          matchGender={hangTightData?.matchGender || "female"}
+        />
+      }
     />
   );
 };

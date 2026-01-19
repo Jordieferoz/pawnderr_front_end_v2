@@ -15,6 +15,12 @@ interface ModalState {
     match_id?: number;
     name?: string;
   } | null;
+  hangTightData: {
+    userImage: string;
+    matchImage: string;
+    userGender: string;
+    matchGender: string;
+  } | null;
   isBlockModalOpen: boolean;
   isOutOfSwipesModalOpen: boolean;
   isNotificationModalOpen: boolean;
@@ -28,6 +34,7 @@ const initialState: ModalState = {
   isBlockModalOpen: false,
   blockData: null,
   isHangTightModalOpen: false,
+  hangTightData: null,
   isOutOfSwipesModalOpen: false,
   isNotificationModalOpen: false
 };
@@ -56,11 +63,16 @@ const modalSlice = createSlice({
     closeReportModal: (state) => {
       state.isReportModalOpen = false;
     },
-    openHangTightModal: (state) => {
+    openHangTightModal: (
+      state,
+      action: { payload: ModalState["hangTightData"] }
+    ) => {
       state.isHangTightModalOpen = true;
+      state.hangTightData = action.payload;
     },
     closeHangTightModal: (state) => {
       state.isHangTightModalOpen = false;
+      state.hangTightData = null;
     },
     openBlockModal: (state, action: { payload: ModalState["blockData"] }) => {
       state.isBlockModalOpen = true;

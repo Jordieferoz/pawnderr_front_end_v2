@@ -192,7 +192,7 @@ const Discover = () => {
           </div> */}
         </div>
 
-        <SwipingCards petData={petData} loading={loading} />
+        <SwipingCards petData={petData} loading={loading} isSubscribed={isSubscribed} />
 
       </div>
     </div>
