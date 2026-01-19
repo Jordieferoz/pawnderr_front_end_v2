@@ -91,7 +91,7 @@ const MobileMenu: FC = () => {
                     className="block"
                   />
                   {item.key === "matches" && unseenMatchCount > 0 && (
-                    <span className="absolute top-1 -right-1 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full"></span>
+                    <span className="absolute top-1 right-0 w-2.5 h-2.5 bg-secondary-600 rounded-full"></span>
                   )}
                 </div>
 

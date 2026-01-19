@@ -68,7 +68,7 @@ const Header: FC = () => {
                         className="block"
                       />
                       {item.key === "matches" && unseenMatchCount > 0 && (
-                        <span className="absolute top-1 -right-1 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full"></span>
+                        <span className="absolute top-1 right-0 w-2.5 h-2.5 bg-secondary-600 rounded-full"></span>
                       )}
                     </div>
 
@@ -85,12 +85,12 @@ const Header: FC = () => {
 
             {/* Notification Bell */}
             <button
-              className="relative p-2 rounded-full hover:bg-gray-100 transition-colors"
+              className="relative p-2 cursor-pointer"
               onClick={() => dispatch(openNotificationModal())}
             >
-              <Bell className="w-6 h-6 text-gray-500" />
+              <img src={images.bellIcon.src} alt="bell" />
               {/* Mock Unread Badge */}
-              <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full"></span>
+              <span className="absolute top-1 right-0 w-2.5 h-2.5 bg-secondary-600 rounded-full"></span>
             </button>
 
             <DropdownMenu userProfile={userProfile} isLoading={isLoading} />

@@ -8,7 +8,7 @@ import { fetchActiveMatches, fetchMatchIndicators } from "@/utils/api";
 import { images } from "@/utils/images";
 
 import { MatchedCard } from ".";
-import { CustomAvatar } from "../Shared";
+import { CustomAvatar, Loader } from "../Shared";
 
 const Matches: FC = () => {
   const router = useRouter();
@@ -58,7 +58,7 @@ const Matches: FC = () => {
           />
           <h4 className="display4_medium text-accent-900">Matches</h4>
         </div>
-        <div className="grid grid-cols-4 gap-4 items-center justify-center">
+        {/* <div className="grid grid-cols-4 gap-4 items-center justify-center">
           <CustomAvatar
             src={images.doggo1.src}
             size={48}
@@ -94,12 +94,15 @@ const Matches: FC = () => {
             showPlus
             plusIcon={images.pawnderrPlus.src}
           />
-        </div>
+        </div> */}
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center py-20">
-          <p className="text-gray-500">Loading matches...</p>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="flex flex-col items-center gap-4">
+            <Loader size={40} />
+            <p className="text-gray-500">Loading matches...</p>
+          </div>
         </div>
       ) : (
         <MatchedCard matches={matches} indicators={indicators} />

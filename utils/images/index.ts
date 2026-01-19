@@ -105,6 +105,7 @@ import userRightBlur from "public/assets/images/user_right_blur.svg";
 import whyChooseDogs from "public/assets/images/why_choose_dogs.png";
 import x from "public/assets/images/x.svg";
 import yellowStar from "public/assets/images/yellow_star.svg";
+import bellIcon from "public/assets/images/bell_icon.svg";
 
 export type ImageType =
   | "logo"
@@ -213,6 +214,7 @@ export type ImageType =
   | "gallery"
   | "crownYellow"
   | "sadPug"
+  | "bellIcon"
   | "backBtn";
 
 export type NextImage = {
@@ -328,5 +330,6 @@ export const images: Record<ImageType, NextImage> = {
   pawYellowBlueBg,
   gallery,
   crownYellow,
-  sadPug
+  sadPug,
+  bellIcon,
 };

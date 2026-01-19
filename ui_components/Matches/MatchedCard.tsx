@@ -100,7 +100,7 @@ interface MatchedCardProps {
 const MatchedCard: FC<MatchedCardProps> = ({ matches = [], indicators = [] }) => {
   if (!matches || matches.length === 0) {
     return (
-      <div className="w-full py-20 text-center">
+      <div className="w-full min-h-[60vh] flex items-center justify-center">
         <p className="text-gray-500 text-lg">No active matches found.</p>
       </div>
     )
