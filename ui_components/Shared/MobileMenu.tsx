@@ -13,6 +13,7 @@ const MobileMenu: FC = () => {
 
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
   const unseenMatchCount = useSelector((state: RootState) => state.match.unseenMatchCount);
+  const whoLikesMeCount = useSelector((state: RootState) => state.match.whoLikesMeCount);
   const navRef = useRef<HTMLElement>(null);
   const itemRefs = useRef<(HTMLAnchorElement | null)[]>([]);
 
@@ -91,7 +92,10 @@ const MobileMenu: FC = () => {
                     className="block"
                   />
                   {item.key === "matches" && unseenMatchCount > 0 && (
-                    <span className="absolute top-1 right-0 w-2.5 h-2.5 bg-secondary-600 rounded-full"></span>
+                    <span className="absolute top-1 -right-2 w-2.5 h-2.5 bg-secondary-600 rounded-full"></span>
+                  )}
+                  {item.key === "activities" && whoLikesMeCount > 0 && (
+                    <span className="absolute top-1 -right-2 w-2.5 h-2.5 bg-secondary-600 rounded-full"></span>
                   )}
                 </div>
 

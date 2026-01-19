@@ -186,30 +186,7 @@ export const useChatMessages = (chatId: string | null, myPetId?: number) => {
       return;
     }
 
-    if (chatId?.includes("match12345")) {
-        setMessages([
-            {
-                id: "msg_1",
-                text: "Hello! This is a test message.",
-                senderId: "99999",
-                receiverId: String(myPetId),
-                timestamp: Date.now() - 10000,
-                read: false,
-                type: "text"
-            },
-            {
-                id: "msg_2",
-                text: "You can try replying to me!",
-                senderId: "99999",
-                receiverId: String(myPetId),
-                timestamp: Date.now(),
-                read: false,
-                type: "text"
-            }
-        ]);
-        setIsLoading(false);
-        return;
-    }
+
 
     setIsLoading(true);
     const unsubscribe = subscribeToMessages(chatId, myPetId, (newMessages) => {
@@ -276,23 +253,7 @@ export const useChatMessages = (chatId: string | null, myPetId?: number) => {
         );
       }
 
-      if (chatId.includes("match12345")) {
-        console.log("MOCK SEND:", text);
-        // Simulate local update
-        setMessages(prev => [
-            ...prev,
-            {
-                id: `msg_${Date.now()}`,
-                text,
-                senderId: String(fromPetId),
-                receiverId: String(toPetId),
-                timestamp: Date.now(),
-                read: false,
-                type
-            }
-        ]);
-        return;
-      }
+
 
       await sendFirebaseMessage(
         chatId,
@@ -342,35 +303,7 @@ export const useChatConversations = (petIds: number[]) => {
     console.log("DEBUG: useChatConversations - Subscribing for pets:", petIds);
     setIsLoading(true);
     const unsubscribe = getUserConversations(petIds, (newConversations) => {
-      // Mock Data for Testing if empty
-      if (newConversations.length === 0 && process.env.NODE_ENV !== "production") {
-        const mockChatId = `pet${petIds[0]}_pet99999_match12345`;
-        setConversations([
-          {
-            chatId: mockChatId,
-            participants: ["99999", String(petIds[0])],
-            myPetId: petIds[0],
-            otherPetId: 99999,
-            otherPetName: "Test Doggo",
-            otherPetPrimaryPhoto:
-              "https://images.unsplash.com/photo-1543466835-00a7907e9de1",
-            lastMessage: {
-                id: "msg_0",
-                text: "Hello! This is a test message.",
-                senderId: "99999",
-                receiverId: String(petIds[0]),
-                timestamp: Date.now(),
-                read: false,
-                type: "text",
-            },
-            lastMessageTime: Date.now(),
-            unreadCount: 1,
-            hasUnread: true
-          }
-        ]);
-      } else {
-        setConversations(newConversations);
-      }
+      setConversations(newConversations);
       setIsLoading(false);
     });
 

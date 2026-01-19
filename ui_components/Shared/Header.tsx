@@ -4,7 +4,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FC } from "react";
+import { FC, useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 import { headerMenuItems } from "@/constants";
@@ -16,12 +16,23 @@ import { openNotificationModal } from "@/store/modalSlice";
 import { Notifications } from "./Notifications";
 import { DropdownMenu } from "../Dashboard";
 import { RootState } from "@/store";
+import { getMatchIndicators } from "@/store/matchSlice";
 
 const Header: FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<any>();
   const pathname = usePathname();
   const { userProfile, isLoading } = useUserProfileFromStorage();
-  const unseenMatchCount = useSelector((state: RootState) => state.match.unseenMatchCount);
+  const unseenMatchCount = useSelector(
+    (state: RootState) => state.match.unseenMatchCount
+  );
+  const whoLikesMeCount = useSelector(
+    (state: RootState) => state.match.whoLikesMeCount
+  );
+
+  console.log(unseenMatchCount, "unseenMatchCount");
+  useEffect(() => {
+    dispatch(getMatchIndicators());
+  }, [dispatch]);
 
   const isItemActive = (itemHref: string, itemKey: string) => {
     if (itemKey === "discover") {
@@ -67,7 +78,10 @@ const Header: FC = () => {
                         className="block"
                       />
                       {item.key === "matches" && unseenMatchCount > 0 && (
-                        <span className="absolute top-1 right-0 w-2.5 h-2.5 bg-secondary-600 rounded-full"></span>
+                        <span className="absolute top-1 -right-2 w-2.5 h-2.5 bg-secondary-600 rounded-full"></span>
+                      )}
+                      {item.key === "activities" && whoLikesMeCount > 0 && (
+                        <span className="absolute top-1 -right-2 w-2.5 h-2.5 bg-secondary-600 rounded-full"></span>
                       )}
                     </div>
 
@@ -83,14 +97,18 @@ const Header: FC = () => {
             })}
 
             {/* Notification Bell */}
-            <button
+            {/* <button
               className="relative p-2 cursor-pointer flex-1"
               onClick={() => dispatch(openNotificationModal())}
             >
-              <img src={images.bellIcon.src} alt="bell" className="w-[22px] grow-1 shrink-0" />
-              {/* Mock Unread Badge */}
+              <img
+                src={images.bellIcon.src}
+                alt="bell"
+                className="w-[22px] grow-1 shrink-0"
+              />
+
               <span className="absolute top-1 right-0 w-2.5 h-2.5 bg-secondary-600 rounded-full"></span>
-            </button>
+            </button> */}
 
             <DropdownMenu userProfile={userProfile} isLoading={isLoading} />
             <Link href={"/upgrade"} className="cursor-pointer">

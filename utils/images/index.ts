@@ -16,7 +16,6 @@ import browseLeftShape from "public/assets/images/browse_left_shape.svg";
 import browseProfileDogs from "public/assets/images/browse_profile_dogs.png";
 import browseRightRibbon from "public/assets/images/browse_right_ribbon.svg";
 import browseRightShape from "public/assets/images/browse_right_shape.svg";
-import chatYellow from "public/assets/images/chat_yellow.svg";
 import chevronRight from "public/assets/images/chevron_right.svg";
 import chevronRightGrey from "public/assets/images/chevron_right_grey.svg";
 import communityCares from "public/assets/images/community_cares.png";
@@ -151,7 +150,6 @@ export type ImageType =
   | "block"
   | "chevronRightGrey"
   | "eyeBlue"
-  | "chatYellow"
   | "logoHorizontal"
   | "loginBg"
   | "greenRightBlur"
@@ -270,7 +268,6 @@ export const images: Record<ImageType, NextImage> = {
   block,
   chevronRightGrey,
   eyeBlue,
-  chatYellow,
   logoHorizontal,
   loginBg,
   greenRightBlur,

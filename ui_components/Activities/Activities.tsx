@@ -16,11 +16,16 @@ import {
 } from "@/utils/api";
 import { images } from "@/utils/images";
 
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/store";
+import { clearWhoLikesMeCount } from "@/store/matchSlice";
+
 import ActivityCard from "./ActivityCard";
 import { ICard } from "./types";
 
 const Activities: FC = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const [activeTab, setActiveTab] = useState("likes-me");
   const [cards, setCards] = useState<ICard[]>([]);
@@ -34,6 +39,13 @@ const Activities: FC = () => {
     youLike: 0,
     viewedProfile: 0
   });
+
+  const whoLikesMeCount = useSelector((state: RootState) => state.match.whoLikesMeCount);
+
+  useEffect(() => {
+    // Clear badge when component mounts (user enters the route)
+    dispatch(clearWhoLikesMeCount());
+  }, [dispatch]);
 
   const handleUndo = async (card: ICard) => {
     if (activeTab !== "you-like" && activeTab !== "viewed-profile") return;
@@ -88,7 +100,7 @@ const Activities: FC = () => {
 
   const tabs = useMemo(
     () => [
-      { id: "likes-me", label: "Who Likes Me", count: tabCounts.likesMe },
+      { id: "likes-me", label: "Who Likes Me", count: tabCounts.likesMe, hasBadge: whoLikesMeCount > 0 },
       { id: "you-like", label: "You Like Them", count: tabCounts.youLike },
       {
         id: "viewed-profile",
@@ -96,7 +108,7 @@ const Activities: FC = () => {
         count: tabCounts.viewedProfile
       }
     ],
-    [tabCounts.likesMe, tabCounts.youLike, tabCounts.viewedProfile]
+    [tabCounts.likesMe, tabCounts.youLike, tabCounts.viewedProfile, whoLikesMeCount]
   );
 
   const mapPetsToCards = (items: any[]): ICard[] => {
@@ -315,19 +327,25 @@ const Activities: FC = () => {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`flex gap-2 shrink-0 items-center rounded-full body_regular py-2 px-3 cursor-pointer transition-colors ${activeTab === tab.id
-                  ? "bg-blue text-white"
-                  : "border border-neutral-white text-light-grey2"
+                ? "bg-blue text-white"
+                : "border border-neutral-white text-light-grey2"
                 }`}
             >
               {tab.label}
-              <span
-                className={`h-6 w-6 rounded-full flex items-center justify-center ${activeTab === tab.id
+              <div className="relative">
+                <span
+                  className={`h-6 w-6 rounded-full flex items-center justify-center ${activeTab === tab.id
                     ? "bg-white text-blue"
                     : "bg-grey-100 text-grey2-700"
-                  }`}
-              >
-                {tab.count}
-              </span>
+                    }`}
+                >
+                  {tab.count}
+                </span>
+                {/* @ts-ignore */}
+                {tab.hasBadge && (
+                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-secondary-600 rounded-full border border-white"></span>
+                )}
+              </div>
             </li>
           ))}
         </ul>

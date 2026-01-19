@@ -77,8 +77,6 @@ const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading, isSubscribed }
     }
 
     setTimeout(() => {
-      console.log(cards[currentIndex], "cards[currentIndex].");
-      console.log(`Swiped ${direction} on ${cards[currentIndex].name}`);
       setCurrentIndex((prev) => prev - 1);
       setSwipeDirection(null);
       setIsAnimating(false);
@@ -163,7 +161,6 @@ const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading, isSubscribed }
         });
 
         const response = await discoverNearbyPets(petData.id);
-        console.log(response, "nearby pets response");
 
         // Transform API response to cards format
         if (response?.data?.pets && Array.isArray(response.data.pets)) {
@@ -182,7 +179,7 @@ const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading, isSubscribed }
               } else if (pet.age === 1) {
                 ageText = "1 Year";
               }
-              console.log(pet, 'pet')
+
               return {
                 id: pet.id,
                 name: pet.name || pet.nickname || "Unknown",
@@ -305,6 +302,7 @@ const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading, isSubscribed }
                     <span className="text-base font-normal opacity-90 inline-flex items-center gap-1">
                       {card.info}
                       {card?.isVerified && <img src={images.verified.src} alt="verified" />}
+
                     </span>
                   </h3>
                   <p className="text-sm opacity-90 mt-1 max-w-[280px] leading-snug">

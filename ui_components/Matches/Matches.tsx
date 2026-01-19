@@ -3,12 +3,12 @@
 import { useRouter } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 
-import { fetchActiveMatches, fetchMatchIndicators } from "@/utils/api";
+import { fetchActiveMatches } from "@/utils/api";
 
 import { images } from "@/utils/images";
 
 import { MatchedCard } from ".";
-import { CustomAvatar, Loader } from "../Shared";
+import { Loader } from "../Shared";
 
 const Matches: FC = () => {
   const router = useRouter();
@@ -20,22 +20,17 @@ const Matches: FC = () => {
     const getData = async () => {
       try {
         setIsLoading(true);
-        const [matchesResponse, indicatorsResponse] = await Promise.all([
+        const [matchesResponse] = await Promise.all([
           fetchActiveMatches({
             page: 1,
             limit: 20,
             state: "active"
-          }),
-          fetchMatchIndicators()
+          })
         ]);
 
         // Assuming response.data contains the array or a paginated object
-        const matchesData = matchesResponse.data?.data || matchesResponse.data || [];
-        setMatches(Array.isArray(matchesData) ? matchesData : []);
-
-        const indicatorsData = indicatorsResponse.data || [];
-        setIndicators(Array.isArray(indicatorsData) ? indicatorsData : []);
-
+        const matchesData = matchesResponse.data?.data.matches || [];
+        setMatches(matchesData ?? []);
       } catch (error) {
         console.error("Failed to fetch matches data:", error);
       } finally {

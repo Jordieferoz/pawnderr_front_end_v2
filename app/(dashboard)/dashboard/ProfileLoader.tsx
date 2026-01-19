@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 
 import { setMetadata, updateStepData } from "@/store/registrationSlice";
 import { setUser } from "@/store/userSlice";
-import { setUnseenMatchCount } from "@/store/matchSlice";
+import { setUnseenMatchCount, setMatchIndicators } from "@/store/matchSlice";
 import {
   fetchMyPetsCollection,
   fetchPetRegistrationData,
@@ -111,7 +111,7 @@ export default function ProfileLoader() {
             const incompletePets = petsPayload?.incomplete_pets ?? [];
             const hasNoPets =
               myPets.length === 0 && incompletePets.length === 0;
-            console.log(hasNoPets, "hasNoPets");
+
             if (hasNoPets) {
               try {
                 const registrationResponse = await fetchPetRegistrationData();
@@ -123,7 +123,7 @@ export default function ProfileLoader() {
                   registrationPayload?.metadata ?? registrationPayload;
 
                 if (metadata) {
-                  console.log(metadata, "metadata");
+
                   dispatch(setMetadata(metadata));
                   dispatch(updateStepData({ step: 3 }));
                   router.push("/register");
@@ -146,8 +146,14 @@ export default function ProfileLoader() {
           try {
             const matchResponse = await fetchUnseenMatchCount();
             lastFetchRef.current.match = Date.now();
-            const count = matchResponse.data?.count || matchResponse.data || 0;
-            dispatch(setUnseenMatchCount(Number(count)));
+            const data = matchResponse?.data || {};
+            const newMatches = data.new_matches ?? 0;
+            const whoLikesMe = data.who_likes_me ?? 0;
+
+            dispatch(setMatchIndicators({
+              new_matches: Number(newMatches),
+              who_likes_me: Number(whoLikesMe)
+            }));
           } catch (error) {
             console.error("❌ Failed to load unseen match count:", error);
           }

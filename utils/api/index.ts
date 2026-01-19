@@ -682,23 +682,7 @@ export const fetchUnseenMatchCount = (): Promise<TResponse<any>> => {
     globalGetService<any, any>(`match/unseen/count`, {})
       .then((response) => {
         if (response.statusCode === 200) {
-          resolve(response);
-        } else {
-          reject(new Error(`Unexpected status code: ${response.statusCode}`));
-        }
-      })
-      .catch((err) => {
-        reject(err);
-      });
-  });
-};
-
-export const fetchMatchIndicators = (): Promise<TResponse<any>> => {
-  return new Promise((resolve, reject) => {
-    globalGetService<any, any>(`match/indicator`, {})
-      .then((response) => {
-        if (response.statusCode === 200) {
-          resolve(response);
+          resolve(response.data);
         } else {
           reject(new Error(`Unexpected status code: ${response.statusCode}`));
         }

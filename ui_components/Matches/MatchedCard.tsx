@@ -3,9 +3,11 @@ import { useRouter } from "next/navigation";
 import { FC, useState } from "react";
 
 import { images } from "@/utils/images";
+import { petsStorage } from "@/utils/pets-storage";
 
 type Card = {
   id: string | number;
+  petId: string | number;
   name: string;
   info: string;
   url: string;
@@ -23,8 +25,13 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
     router.push(`/messages/${id}`);
   };
 
+
+  const largeButton =
+    "bg-primary-500 rounded-full w-[68px] h-[68px] flex items-center justify-center shadow-[0px_4px_28px_0px_#00000040] hover:scale-105 active:scale-95 transition-transform";
   return (
     <div className="flex flex-col items-center gap-4 relative perspective-[1000px]">
+
+
       <div
         className="relative w-full h-[420px] rounded-[24px] border-[3px] border-white shadow-[0px_4px_10px_rgba(0,0,0,0.1)] transition-all duration-700 ease-in-out hover:shadow-[0px_8px_25px_rgba(0,0,0,0.2)] [transform-style:preserve-3d] cursor-pointer group"
         style={{ transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)" }}
@@ -50,7 +57,7 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
                 {card.info}
               </span>
             </h3>
-            <p className="text-sm opacity-90 mt-1 leading-snug">{card.desc}</p>
+            <p className="text-sm opacity-90 mt-1 leading-snug line-clamp-2 text-ellipsis">{card.desc}</p>
           </div>
         </div>
 
@@ -73,10 +80,20 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
           onClick={() => handleOpenChat(card.id)}
           className="bg-white rounded-full w-[55px] h-[55px] flex items-center justify-center shadow-[0px_4px_28px_0px_#00000040] hover:scale-105 active:scale-95 transition-transform"
         >
-          <img src={images.chatYellow.src} alt="message" className="w-7" />
+          <img src={images.messagesActive.src} alt="message" className="w-7" />
         </button>
-        <button className="bg-white rounded-full w-[55px] h-[55px] flex items-center justify-center shadow-[0px_4px_28px_0px_#00000040] hover:scale-105 active:scale-95 transition-transform">
-          <img src={images.like.src} alt="like" className="w-7.5" />
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            router.push(`/profile/${card.petId}`)
+          }}
+          className={largeButton}
+        >
+          <img
+            src={images.pawYellow.src}
+            alt="Like"
+            className="h-[36px]"
+          />
         </button>
         <button
           onClick={(e) => {
@@ -123,13 +140,16 @@ const MatchedCard: FC<MatchedCardProps> = ({ matches = [], indicators = [] }) =>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-14">
         {matches.map((match, index) => {
           const matchId = String(match.match_id || match.id || '');
+          const fromPetId = petsStorage.getFirstPetId();
+          const chatId = `pet${fromPetId}_pet${match.pet.id}_match${matchId}`
           const hasIndicator = indicatorSet.has(matchId);
 
           return (
             <FlipCard
               key={match.id || index}
               card={{
-                id: match.match_id || match.id,
+                id: chatId,
+                petId: match.pet.id,
                 name: match.pet?.name || match.name || "Unknown",
                 info: `(${match.pet?.gender || match.gender || 'Unknown'}, ${match.pet?.age || match.age || '?'} Years)`,
                 url: match.pet?.primary_photo_url || match.primary_photo_url || images.doggo1.src,

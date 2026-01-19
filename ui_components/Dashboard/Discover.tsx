@@ -16,8 +16,7 @@ const Discover = () => {
   const [loading, setLoading] = useState(true);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isSubscriptionLoading, setIsSubscriptionLoading] = useState(false);
-  console.log(petData, 'petData')
-  console.log(isSubscribed, 'isSubscribed')
+
   useEffect(() => {
     const loadSubscriptionStatus = async () => {
       try {
@@ -45,7 +44,7 @@ const Discover = () => {
       try {
         const storedPet = petsStorage.getFirstPet();
         if (storedPet) {
-          console.log(storedPet, "storedPet");
+
           setPetData(storedPet as any);
           setFirstPetId(storedPet.id);
           setLoading(false);

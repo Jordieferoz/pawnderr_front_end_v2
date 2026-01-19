@@ -30,14 +30,14 @@ const MobileHeader: FC = () => {
 
           <div className="flex items-center gap-3">
             {/* Notification Bell */}
-            <button
+            {/* <button
               className="relative p-2 rounded-full hover:bg-gray-100 transition-colors"
               onClick={() => dispatch(openNotificationModal())}
             >
               <img src={images.bellIcon.src} alt="bell" />
-              {/* Mock Unread Badge */}
+              
               <span className="absolute top-1 right-0 w-2.5 h-2.5 bg-secondary-600 rounded-full"></span>
-            </button>
+            </button> */}
             <DropdownMenu userProfile={userProfile} isLoading={isLoading} />
           </div>
         </nav>
