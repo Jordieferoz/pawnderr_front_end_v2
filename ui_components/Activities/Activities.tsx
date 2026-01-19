@@ -314,19 +314,17 @@ const Activities: FC = () => {
             <li
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex gap-2 shrink-0 items-center rounded-full body_regular py-2 px-3 cursor-pointer transition-colors ${
-                activeTab === tab.id
+              className={`flex gap-2 shrink-0 items-center rounded-full body_regular py-2 px-3 cursor-pointer transition-colors ${activeTab === tab.id
                   ? "bg-blue text-white"
                   : "border border-neutral-white text-light-grey2"
-              }`}
+                }`}
             >
               {tab.label}
               <span
-                className={`h-6 w-6 rounded-full flex items-center justify-center ${
-                  activeTab === tab.id
+                className={`h-6 w-6 rounded-full flex items-center justify-center ${activeTab === tab.id
                     ? "bg-white text-blue"
                     : "bg-grey-100 text-grey2-700"
-                }`}
+                  }`}
               >
                 {tab.count}
               </span>

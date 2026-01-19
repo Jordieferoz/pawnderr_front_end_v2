@@ -113,7 +113,7 @@ const MySubscription: FC = () => {
           <SubscriptionHeader title="My Subscription" />
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mt-6">
             <div className="md:col-span-12 flex items-center justify-center min-h-[400px]">
-              <Loader size="lg" text="Loading subscription details..." />
+              <Loader size={40} text="Loading subscription details..." />
             </div>
           </div>
         </div>
@@ -174,11 +174,10 @@ const MySubscription: FC = () => {
             >
               <ul className="py-5 px-6 md:px-5 bg-white shadow-[0px_4px_16.4px_0px_#0000001A] rounded-lg md:rounded-[40px] mt-6 md:mt-0">
                 <li
-                  className={`py-4 px-5 border-b md:border-0 md:rounded-full last:border-0 border-grey-700 flex items-center justify-between cursor-pointer transition-colors ${
-                    step === 1
-                      ? "md:bg-[#DBEAFF] md:text-blue"
-                      : "text-light-grey2"
-                  }`}
+                  className={`py-4 px-5 border-b md:border-0 md:rounded-full last:border-0 border-grey-700 flex items-center justify-between cursor-pointer transition-colors ${step === 1
+                    ? "md:bg-[#DBEAFF] md:text-blue"
+                    : "text-light-grey2"
+                    }`}
                   onClick={() => dispatch(setStep(1))}
                 >
                   <p className="body_large_medium">Current Plan</p>
@@ -189,11 +188,10 @@ const MySubscription: FC = () => {
                   />
                 </li>
                 <li
-                  className={`py-4 px-5 border-b md:border-0 md:rounded-full last:border-0 border-grey-700 flex items-center justify-between cursor-pointer transition-colors ${
-                    step === 2
-                      ? "md:bg-[#DBEAFF] md:text-blue"
-                      : "text-light-grey2"
-                  }`}
+                  className={`py-4 px-5 border-b md:border-0 md:rounded-full last:border-0 border-grey-700 flex items-center justify-between cursor-pointer transition-colors ${step === 2
+                    ? "md:bg-[#DBEAFF] md:text-blue"
+                    : "text-light-grey2"
+                    }`}
                   onClick={() => dispatch(setStep(2))}
                 >
                   <p className="body_large_medium">Billing History</p>

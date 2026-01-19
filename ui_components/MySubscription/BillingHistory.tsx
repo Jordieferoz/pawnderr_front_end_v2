@@ -105,7 +105,7 @@ const BillingHistory: FC = () => {
     return (
       <div className="bg-white shadow-[0px_4px_16.4px_0px_#0000001A] p-8 md:rounded-[40px] rounded-lg">
         <div className="flex items-center justify-center min-h-[200px]">
-          <Loader size="md" text="Loading billing history..." />
+          <Loader size={40} text="Loading billing history..." />
         </div>
       </div>
     );
@@ -160,13 +160,12 @@ const BillingHistory: FC = () => {
                 </span>
                 <div className="flex items-center gap-2">
                   <span
-                    className={`px-2 py-0.5 rounded text-xs ${
-                      item.status === "active"
+                    className={`px-2 py-0.5 rounded text-xs ${item.status === "active"
                         ? "bg-green-100 text-green-700"
                         : item.status === "expired"
                           ? "bg-red-100 text-red-700"
                           : "bg-orange-100 text-orange-700"
-                    }`}
+                      }`}
                   >
                     {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
                   </span>

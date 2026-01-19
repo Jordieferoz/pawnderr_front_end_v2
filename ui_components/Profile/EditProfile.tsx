@@ -85,7 +85,7 @@ const EditProfile: FC<EditProfileProps> = ({ petData, loading = false }) => {
         <div className="mb-7">
           <ProfileHeader title="Edit Profile" />
           <div className="flex items-center justify-center min-h-[400px] mt-16">
-            <Loader size="lg" text="Loading form data..." />
+            <Loader size={40} text="Loading form data..." />
           </div>
         </div>
       </div>
@@ -113,11 +113,10 @@ const EditProfile: FC<EditProfileProps> = ({ petData, loading = false }) => {
           >
             <ul className="py-5 px-6 md:px-5 bg-white shadow-[0px_4px_16.4px_0px_#0000001A] rounded-lg md:rounded-[40px]">
               <li
-                className={`py-4 px-5 border-b md:border-0 md:rounded-full last:border-0 border-grey-700 flex items-center justify-between cursor-pointer transition-colors ${
-                  step === 1
-                    ? "md:bg-[#DBEAFF] md:text-blue"
-                    : "text-light-grey2"
-                }`}
+                className={`py-4 px-5 border-b md:border-0 md:rounded-full last:border-0 border-grey-700 flex items-center justify-between cursor-pointer transition-colors ${step === 1
+                  ? "md:bg-[#DBEAFF] md:text-blue"
+                  : "text-light-grey2"
+                  }`}
                 onClick={() => dispatch(setStep(1))}
               >
                 <p className="body_large_medium">Personal Information</p>
@@ -128,11 +127,10 @@ const EditProfile: FC<EditProfileProps> = ({ petData, loading = false }) => {
                 />
               </li>
               <li
-                className={`py-4 px-5 border-b md:border-0 md:rounded-full last:border-0 border-grey-700 flex items-center justify-between cursor-pointer transition-colors ${
-                  step === 2
-                    ? "md:bg-[#DBEAFF] md:text-blue"
-                    : "text-light-grey2"
-                }`}
+                className={`py-4 px-5 border-b md:border-0 md:rounded-full last:border-0 border-grey-700 flex items-center justify-between cursor-pointer transition-colors ${step === 2
+                  ? "md:bg-[#DBEAFF] md:text-blue"
+                  : "text-light-grey2"
+                  }`}
                 onClick={() => dispatch(setStep(2))}
               >
                 <p className="body_large_medium">Pet Information</p>
@@ -143,11 +141,10 @@ const EditProfile: FC<EditProfileProps> = ({ petData, loading = false }) => {
                 />
               </li>
               <li
-                className={`py-4 px-5 border-b md:border-0 md:rounded-full last:border-0 border-grey-700 flex items-center justify-between cursor-pointer transition-colors ${
-                  step === 3
-                    ? "md:bg-[#DBEAFF] md:text-blue"
-                    : "text-light-grey2"
-                }`}
+                className={`py-4 px-5 border-b md:border-0 md:rounded-full last:border-0 border-grey-700 flex items-center justify-between cursor-pointer transition-colors ${step === 3
+                  ? "md:bg-[#DBEAFF] md:text-blue"
+                  : "text-light-grey2"
+                  }`}
                 onClick={() => dispatch(setStep(3))}
               >
                 <p className="body_large_medium">Update Gallery</p>
@@ -158,11 +155,10 @@ const EditProfile: FC<EditProfileProps> = ({ petData, loading = false }) => {
                 />
               </li>
               <li
-                className={`py-4 px-5 border-b md:border-0 md:rounded-full last:border-0 border-grey-700 flex items-center justify-between cursor-pointer transition-colors ${
-                  step === 4
-                    ? "md:bg-[#DBEAFF] md:text-blue"
-                    : "text-light-grey2"
-                }`}
+                className={`py-4 px-5 border-b md:border-0 md:rounded-full last:border-0 border-grey-700 flex items-center justify-between cursor-pointer transition-colors ${step === 4
+                  ? "md:bg-[#DBEAFF] md:text-blue"
+                  : "text-light-grey2"
+                  }`}
                 onClick={() => dispatch(setStep(4))}
               >
                 <p className="body_large_medium">Match Preferences</p>

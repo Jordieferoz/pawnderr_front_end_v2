@@ -47,8 +47,8 @@ const MatchPreferences: FC<MatchPreferencesProps> = ({
     () =>
       metadata?.preference_types
         ? [...metadata.preference_types].sort(
-            (a, b) => a.display_order - b.display_order
-          )
+          (a, b) => a.display_order - b.display_order
+        )
         : [],
     [metadata]
   );
@@ -83,24 +83,52 @@ const MatchPreferences: FC<MatchPreferencesProps> = ({
       // Map preference selections from API to form structure
       const preferenceSelections: Record<string, number | number[]> = {};
 
+      if (preferences?.preference_selections && !Array.isArray(preferences.preference_selections)) {
+        // Handle object format: { "1": 1, "2": 4, ... }
+        Object.entries(preferences.preference_selections).forEach(([key, val]) => {
+          const typeId = parseInt(key);
+          if (!isNaN(typeId)) {
+            preferenceSelections[typeId.toString()] = val as number | number[];
+          }
+        });
+      }
+
+      // Existing array handling (if present)
       preferences?.selections?.forEach((selection: any) => {
-        // Find matching preference type in metadata by name
-        const metadataPreferenceType = preferenceTypes.find(
-          (pt) => pt.name === selection.type_name
+        // Find matching preference type in metadata by ID or Name
+        // The API might return 'preference_type_id' or 'id' inside the selection object
+        const typeId = selection.preference_type_id || selection.id;
+
+        let metadataPreferenceType = preferenceTypes.find(
+          (pt) => pt.id === typeId
         );
 
+        // Fallback to name matching if ID lookup fails
+        if (!metadataPreferenceType && selection.type_name) {
+          metadataPreferenceType = preferenceTypes.find(
+            (pt) => pt.name === selection.type_name
+          );
+        }
+
         if (metadataPreferenceType) {
-          const optionId = selection.selected_option?.option_id || 0;
+          const optionId = selection.selected_option?.option_id || selection.selected_option?.id || 0;
 
           if (metadataPreferenceType.allow_multiple) {
             // For multiple selections, store as array
-            preferenceSelections[metadataPreferenceType.id.toString()] = [
-              optionId
-            ];
+            // Check if it's already an array (some APIs return array of selected options directly)
+            const existing = preferenceSelections[metadataPreferenceType.id.toString()];
+            const currentArray = Array.isArray(existing) ? existing : [];
+            if (optionId) {
+              // validation to avoid duplicates if loop runs multiple times (though unlikely here)
+              if (!currentArray.includes(optionId)) {
+                preferenceSelections[metadataPreferenceType.id.toString()] = [...currentArray, optionId];
+              }
+            }
           } else {
             // For single selection, store as number
-            preferenceSelections[metadataPreferenceType.id.toString()] =
-              optionId;
+            if (optionId) {
+              preferenceSelections[metadataPreferenceType.id.toString()] = optionId;
+            }
           }
         }
       });
@@ -219,8 +247,8 @@ const MatchPreferences: FC<MatchPreferencesProps> = ({
         max_age: data.maxAge,
         ...(data.preferredBreedIds &&
           data.preferredBreedIds.length > 0 && {
-            preferred_breed_ids: data.preferredBreedIds
-          })
+          preferred_breed_ids: data.preferredBreedIds
+        })
       };
 
       // Call update API
@@ -257,7 +285,7 @@ const MatchPreferences: FC<MatchPreferencesProps> = ({
     return (
       <div className="md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] md:p-8 md:rounded-[40px]">
         <div className="flex items-center justify-center min-h-[400px]">
-          <Loader size="lg" text="Loading preferences..." />
+          <Loader size={40} text="Loading preferences..." />
         </div>
       </div>
     );
@@ -268,7 +296,7 @@ const MatchPreferences: FC<MatchPreferencesProps> = ({
     return (
       <div className="md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] md:p-8 md:rounded-[40px]">
         <div className="flex items-center justify-center min-h-[400px]">
-          <Loader size="lg" text="Loading pet data..." />
+          <Loader size={40} text="Loading pet data..." />
         </div>
       </div>
     );

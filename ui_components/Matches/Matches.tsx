@@ -99,10 +99,7 @@ const Matches: FC = () => {
 
       {isLoading ? (
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="flex flex-col items-center gap-4">
-            <Loader size={40} />
-            <p className="text-gray-500">Loading matches...</p>
-          </div>
+          <Loader size={40} text="Loading matches..." />
         </div>
       ) : (
         <MatchedCard matches={matches} indicators={indicators} />

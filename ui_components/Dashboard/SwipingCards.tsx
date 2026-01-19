@@ -11,7 +11,7 @@ import {
 } from "@/utils/api";
 import { images } from "@/utils/images";
 import { useDrag } from "@use-gesture/react";
-import { OutOfSwipesModal } from "../Modals";
+import { HangTightModal, OutOfSwipesModal } from "../Modals";
 import { ISwipingCard, ISwipingCardsProps, NearbyPet } from "./types";
 
 const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading }) => {
@@ -267,11 +267,10 @@ const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading }) => {
                 {isTop && swipeDirection && (
                   <div className="absolute inset-0 pointer-events-none">
                     <div
-                      className={`absolute top-6 text-2xl font-bold uppercase tracking-wider px-4 py-1.5 rounded-lg border-[3px] transition-opacity duration-200  ${
-                        swipeDirection === "right"
+                      className={`absolute top-6 text-2xl font-bold uppercase tracking-wider px-4 py-1.5 rounded-lg border-[3px] transition-opacity duration-200  ${swipeDirection === "right"
                           ? "left-6 text-secondary-700 border-secondary-700 rotate-[-20deg]"
                           : "right-6 text-secondary-600 border-secondary-600 rotate-[20deg]"
-                      }`}
+                        }`}
                       style={{
                         textShadow: "0 0 10px rgba(0,0,0,0.3)"
                       }}
@@ -369,7 +368,7 @@ const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading }) => {
           </div>
         </div>
       )}
-
+      <HangTightModal />
       <OutOfSwipesModal />
     </div>
   );

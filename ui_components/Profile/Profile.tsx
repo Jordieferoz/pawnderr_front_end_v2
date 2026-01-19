@@ -64,7 +64,7 @@ const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
 
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="flex flex-col items-center gap-4">
-            <Loader size="lg" text="Loading profile..." />
+            <Loader size={40} text="Loading profile..." />
           </div>
         </div>
       </div>

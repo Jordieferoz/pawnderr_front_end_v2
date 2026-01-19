@@ -50,8 +50,8 @@ const PetInformation: FC<PetInformationProps> = ({
     () =>
       metadata?.attributes
         ? [...metadata.attributes].sort(
-            (a, b) => a.display_order - b.display_order
-          )
+          (a, b) => a.display_order - b.display_order
+        )
         : [],
     [metadata]
   );
@@ -372,7 +372,7 @@ const PetInformation: FC<PetInformationProps> = ({
     return (
       <div className="md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] md:p-8 md:rounded-[40px]">
         <div className="flex items-center justify-center min-h-[400px]">
-          <Loader size="lg" text="Loading form..." />
+          <Loader size={40} text="Loading form..." />
         </div>
       </div>
     );
@@ -383,7 +383,7 @@ const PetInformation: FC<PetInformationProps> = ({
     return (
       <div className="md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] md:p-8 md:rounded-[40px]">
         <div className="flex items-center justify-center min-h-[400px]">
-          <Loader size="lg" text="Loading pet data..." />
+          <Loader size={40} text="Loading pet data..." />
         </div>
       </div>
     );

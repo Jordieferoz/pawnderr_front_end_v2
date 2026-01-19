@@ -1,22 +1,58 @@
 "use client";
 
 import SwipingCards from "@/ui_components/Dashboard/SwipingCards";
-import { fetchMyPet, fetchMyPetsCollection } from "@/utils/api";
+import { fetchMyPet, fetchMyPetsCollection, fetchSubscriptionStatus } from "@/utils/api";
 import { petsStorage } from "@/utils/pets-storage";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { HangTightModal } from "../Modals";
 import { IPetData } from "../Profile/types";
+import { showToast } from "../Shared/ToastMessage";
 
 const Discover = () => {
   const dispatch = useDispatch();
   const [firstPetId, setFirstPetId] = useState<number | null>(null);
   const [petData, setPetData] = useState<IPetData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isSubscriptionLoading, setIsSubscriptionLoading] = useState(false);
+  console.log(petData, 'petData')
+  console.log(isSubscribed, 'isSubscribed')
+  useEffect(() => {
+    const loadSubscriptionStatus = async () => {
+      try {
+
+        const resp = await fetchSubscriptionStatus();
+        setIsSubscribed(Boolean(resp?.data?.is_premium));
+      } catch (error: any) {
+        setIsSubscribed(false);
+        showToast({
+          type: "error",
+          message:
+            error?.message ||
+            "Unable to load subscription status. Please try again."
+        });
+      } finally {
+        setIsSubscriptionLoading(false);
+      }
+    };
+
+    loadSubscriptionStatus();
+  }, []);
 
   useEffect(() => {
     const ensureFirstPetId = async () => {
       try {
+        const storedPet = petsStorage.getFirstPet();
+        if (storedPet) {
+          console.log(storedPet, "storedPet");
+          setPetData(storedPet as any);
+          setFirstPetId(storedPet.id);
+          setLoading(false);
+          // We have the data, but if you want to refresh it from API, you can let the second useEffect run.
+          // However, since we setPetData, the UI is ready.
+        }
+
         let id = petsStorage.getFirstPetId();
 
         if (!id) {
@@ -24,6 +60,11 @@ const Discover = () => {
           if (petsResp?.data) {
             petsStorage.set(petsResp.data);
             id = petsStorage.getFirstPetId();
+            // If we just fetched, we might also want to setPetData if available in the response
+            const newStoredPet = petsStorage.getFirstPet();
+            if (newStoredPet) {
+              setPetData(newStoredPet as any);
+            }
           }
         }
 
@@ -152,7 +193,7 @@ const Discover = () => {
         </div>
 
         <SwipingCards petData={petData} loading={loading} />
-        <HangTightModal />
+
       </div>
     </div>
   );

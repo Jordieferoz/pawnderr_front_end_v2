@@ -391,7 +391,7 @@ const UpdateGallery: FC<UpdateGalleryProps> = ({
     return (
       <div className="md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] md:p-8 md:rounded-[40px]">
         <div className="flex items-center justify-center min-h-[400px]">
-          <Loader size="lg" text="Loading photos..." />
+          <Loader size={40} text="Loading photos..." />
         </div>
       </div>
     );
@@ -530,7 +530,7 @@ const UpdateGallery: FC<UpdateGalleryProps> = ({
 
       {isReordering && (
         <div className="mt-4 flex items-center justify-center text-sm text-gray-600">
-          <Loader size="sm" text="Saving new order..." />
+          <Loader size={40} text="Saving new order..." />
         </div>
       )}
     </div>

@@ -44,6 +44,14 @@ export const petsStorage = {
     return null;
   },
 
+  getFirstPet: (): Pet | null => {
+    const petsData = petsStorage.get();
+    if (petsData?.my_pets && petsData.my_pets.length > 0) {
+      return petsData.my_pets[0];
+    }
+    return null;
+  },
+
   clear: () => {
     if (typeof window === "undefined") return;
     localStorage.removeItem("userPets");

@@ -11,7 +11,6 @@ import { headerMenuItems } from "@/constants";
 import { useUserProfileFromStorage } from "@/hooks";
 import { images } from "@/utils/images";
 
-import { Bell } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { openNotificationModal } from "@/store/modalSlice";
 import { Notifications } from "./Notifications";
@@ -85,10 +84,10 @@ const Header: FC = () => {
 
             {/* Notification Bell */}
             <button
-              className="relative p-2 cursor-pointer"
+              className="relative p-2 cursor-pointer flex-1"
               onClick={() => dispatch(openNotificationModal())}
             >
-              <img src={images.bellIcon.src} alt="bell" />
+              <img src={images.bellIcon.src} alt="bell" className="w-[22px] grow-1 shrink-0" />
               {/* Mock Unread Badge */}
               <span className="absolute top-1 right-0 w-2.5 h-2.5 bg-secondary-600 rounded-full"></span>
             </button>
