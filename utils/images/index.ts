@@ -106,6 +106,8 @@ import whyChooseDogs from "public/assets/images/why_choose_dogs.png";
 import x from "public/assets/images/x.svg";
 import yellowStar from "public/assets/images/yellow_star.svg";
 import bellIcon from "public/assets/images/bell_icon.svg";
+import isFoundingDog from "public/assets/images/is_founding_dog.svg";
+import verified from "public/assets/images/verified.svg";
 
 export type ImageType =
   | "logo"
@@ -215,6 +217,8 @@ export type ImageType =
   | "crownYellow"
   | "sadPug"
   | "bellIcon"
+  | "isFoundingDog"
+  | "verified"
   | "backBtn";
 
 export type NextImage = {
@@ -332,4 +336,6 @@ export const images: Record<ImageType, NextImage> = {
   crownYellow,
   sadPug,
   bellIcon,
+  isFoundingDog,
+  verified
 };

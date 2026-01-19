@@ -182,14 +182,16 @@ const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading, isSubscribed }
               } else if (pet.age === 1) {
                 ageText = "1 Year";
               }
-
+              console.log(pet, 'pet')
               return {
                 id: pet.id,
                 name: pet.name || pet.nickname || "Unknown",
                 info: `(${genderDisplay}, ${ageText})`,
                 url: pet.primary_image?.image_url || "",
                 desc: pet.bark_o_graphy || "",
-                gender: pet.gender
+                gender: pet.gender,
+                isFoundingDog: pet.is_founding_dog,
+                isVerified: pet.is_verified
               };
             }
           );
@@ -278,6 +280,9 @@ const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading, isSubscribed }
 
                 <div className="absolute inset-0 card_gradient rounded-[24px]" />
 
+                {card?.isFoundingDog && !swipeDirection && (
+                  <img src={images.isFoundingDog.src} alt="isFoundingDog" className="absolute top-2.5 left-2.5" />
+                )}
                 {isTop && swipeDirection && (
                   <div className="absolute inset-0 pointer-events-none">
                     <div
@@ -297,8 +302,9 @@ const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading, isSubscribed }
                 <div className="absolute bottom-17 left-6 right-6 z-10 text-white">
                   <h3 className="text-2xl font-semibold leading-tight">
                     {card.name}{" "}
-                    <span className="text-base font-normal opacity-90">
+                    <span className="text-base font-normal opacity-90 inline-flex items-center gap-1">
                       {card.info}
+                      {card?.isVerified && <img src={images.verified.src} alt="verified" />}
                     </span>
                   </h3>
                   <p className="text-sm opacity-90 mt-1 max-w-[280px] leading-snug">
