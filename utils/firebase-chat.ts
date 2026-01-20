@@ -229,6 +229,87 @@ export const subscribeToMessages = (
 };
 
 /**
+ * Block a chat (only blocker sees it)
+ */
+export const blockChat = async (
+  chatId: string,
+  blockedByPetId: number
+): Promise<void> => {
+  const firestore = getFirebaseFirestore();
+  if (!firestore) return;
+
+  await setDoc(
+    doc(firestore, "chats", chatId),
+    { blocked_by: blockedByPetId },
+    { merge: true }
+  );
+};
+
+/**
+ * Unblock a chat
+ */
+export const unblockChat = async (chatId: string): Promise<void> => {
+  const firestore = getFirebaseFirestore();
+  if (!firestore) return;
+
+  await setDoc(
+    doc(firestore, "chats", chatId),
+    { blocked_by: null },
+    { merge: true }
+  );
+};
+
+/**
+ * Get user's conversations
+ */
+/**
+ * Subscribe to single chat details
+ */
+export const subscribeToChat = (
+  chatId: string,
+  myPetId: number,
+  callback: (
+    details: { otherPetName?: string; otherPetPrimaryPhoto?: string } | null
+  ) => void
+): (() => void) => {
+  const firestore = getFirebaseFirestore();
+  if (!firestore) return () => {};
+
+  return onSnapshot(
+    doc(firestore, "chats", chatId),
+    (docSnap) => {
+      if (!docSnap.exists()) {
+        callback(null);
+        return;
+      }
+      const data = docSnap.data();
+      const chatPet1Id = normalizeId(data.pet1_id);
+
+      const normalizedMyPetId = normalizeId(myPetId);
+
+      const otherPetMetadata =
+        normalizedMyPetId === chatPet1Id
+          ? data.pet2_metadata
+          : data.pet1_metadata;
+
+      callback({
+        otherPetName:
+          otherPetMetadata?.name ||
+          otherPetMetadata?.pet_name ||
+          otherPetMetadata?.petName,
+        otherPetPrimaryPhoto:
+          otherPetMetadata?.primary_photo_url ||
+          otherPetMetadata?.primaryPhotoUrl
+      });
+    },
+    (error) => {
+      console.error("Error subscribing to chat details:", error);
+      callback(null);
+    }
+  );
+};
+
+/**
  * Get user's conversations
  */
 export const getUserConversations = (
@@ -296,6 +377,14 @@ export const getUserConversations = (
           otherPetMetadata?.primaryPhotoUrl ||
           undefined;
 
+        // Block logic: Hide chat if blocked by someone else
+        const isBlocked = !!chat.blocked_by;
+        const blockedBy = normalizeId(chat.blocked_by);
+
+        if (isBlocked && blockedBy !== normalizedMyPetId) {
+          return null;
+        }
+
         const lastMsg = lastMessageMap.get(chat.chatId);
         const lastMessageTime = getTimestampMillis(lastMsg?.timestamp);
         const lastMessage = lastMsg
@@ -313,7 +402,11 @@ export const getUserConversations = (
         const lastReadTime = getTimestampMillis(lastRead);
         let unreadCount = 0;
         const lastSenderId = normalizeId(lastMsg?.fromPetId);
-        if (lastMessageTime && lastSenderId && lastSenderId !== normalizedMyPetId) {
+        if (
+          lastMessageTime &&
+          lastSenderId &&
+          lastSenderId !== normalizedMyPetId
+        ) {
           if (!lastReadTime || lastMessageTime > lastReadTime) {
             unreadCount = 1;
           }
@@ -334,8 +427,7 @@ export const getUserConversations = (
       })
       .filter(Boolean)
       .sort(
-        (a, b) =>
-          (b?.lastMessageTime || 0) - (a?.lastMessageTime || 0)
+        (a, b) => (b?.lastMessageTime || 0) - (a?.lastMessageTime || 0)
       ) as ChatConversation[];
 
     callback(conversations);
@@ -407,7 +499,10 @@ export const getUserConversations = (
       msgQuery1,
       (snapshot) => updateFromSnapshot(snapshot, false),
       (error) => {
-        console.warn(`Error listening to last message (sent) ${chatId}:`, error);
+        console.warn(
+          `Error listening to last message (sent) ${chatId}:`,
+          error
+        );
       }
     );
 
@@ -438,7 +533,9 @@ export const getUserConversations = (
     const unsubscribe = onSnapshot(
       chatsQuery,
       (snapshot) => {
-        console.log(`DEBUG: Chats snapshot for ${field}=${petId}: ${snapshot.size} docs found`);
+        console.log(
+          `DEBUG: Chats snapshot for ${field}=${petId}: ${snapshot.size} docs found`
+        );
         const activeChatIds = new Set<string>();
         snapshot.forEach((docSnap) => {
           const data = docSnap.data();

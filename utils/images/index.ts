@@ -93,7 +93,7 @@ import send from "public/assets/images/send.svg";
 import signupBg from "public/assets/images/signup_bg.svg";
 import signupLeftBlur from "public/assets/images/signup_left_blur.svg";
 import signupRightBlur from "public/assets/images/signup_right_blur.svg";
-import smiley from "public/assets/images/smiley.svg";
+import smileyActive from "public/assets/images/smiley_active.svg";
 import sniffSwipe from "public/assets/images/sniff_swipe.png";
 import starBlack from "public/assets/images/star_black.svg";
 import starWhite from "public/assets/images/star_white.svg";
@@ -107,6 +107,7 @@ import yellowStar from "public/assets/images/yellow_star.svg";
 import bellIcon from "public/assets/images/bell_icon.svg";
 import isFoundingDog from "public/assets/images/is_founding_dog.svg";
 import verified from "public/assets/images/verified.svg";
+import sendArrow from "public/assets/images/send_arrow.svg";
 
 export type ImageType =
   | "logo"
@@ -144,7 +145,7 @@ export type ImageType =
   | "searchGrey"
   | "ellipsisHorizontal"
   | "send"
-  | "smiley"
+  | "smileyActive"
   | "attachment"
   | "alert"
   | "block"
@@ -217,6 +218,7 @@ export type ImageType =
   | "bellIcon"
   | "isFoundingDog"
   | "verified"
+  | "sendArrow"
   | "backBtn";
 
 export type NextImage = {
@@ -262,7 +264,7 @@ export const images: Record<ImageType, NextImage> = {
   searchGrey,
   ellipsisHorizontal,
   send,
-  smiley,
+  smileyActive,
   attachment,
   alert,
   block,
@@ -334,5 +336,6 @@ export const images: Record<ImageType, NextImage> = {
   sadPug,
   bellIcon,
   isFoundingDog,
-  verified
+  verified,
+  sendArrow
 };

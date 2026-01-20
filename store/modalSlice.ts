@@ -7,6 +7,8 @@ interface ModalState {
     blocked_user_id: number;
     match_id?: number;
     name?: string;
+    chatId?: string;
+    myPetId?: number;
   } | null;
   isReportModalOpen: boolean;
   isHangTightModalOpen: boolean;
@@ -14,6 +16,8 @@ interface ModalState {
     blocked_user_id: number;
     match_id?: number;
     name?: string;
+    chatId?: string;
+    myPetId?: number;
   } | null;
   hangTightData: {
     userImage: string;
@@ -49,7 +53,10 @@ const modalSlice = createSlice({
     closeFilterModal: (state) => {
       state.isFilterModalOpen = false;
     },
-    openMessageActionModal: (state, action: { payload: ModalState["actionData"] }) => {
+    openMessageActionModal: (
+      state,
+      action: { payload: ModalState["actionData"] }
+    ) => {
       state.isMessageActionModalOpen = true;
       state.actionData = action.payload;
     },

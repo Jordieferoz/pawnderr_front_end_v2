@@ -1,16 +1,20 @@
+import { useRouter } from "next/navigation";
 import { FC, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { RootState } from "@/store";
-import { closeBlockModal } from "@/store/modalSlice";
+import { closeBlockModal, closeMessageActionModal } from "@/store/modalSlice";
 import { showToast } from "@/ui_components/Shared/ToastMessage";
 import { blockMatch } from "@/utils/api";
+import { blockChat } from "@/utils/firebase-chat";
 
 const BlockModalContent: FC = () => {
+  const router = useRouter();
   const dispatch = useDispatch();
-  const { blockData } = useSelector((state: RootState) => state.modal);
+  // Note: Assuming 'modal' is the correct slice name based on file view
+  const blockData = useSelector((state: RootState) => state.modal.blockData);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleBlock = async () => {
@@ -26,8 +30,14 @@ const BlockModalContent: FC = () => {
         match_id: blockData.match_id
       });
       showToast({ type: "error", message: "User blocked successfully" });
+
+      if (blockData.chatId && blockData.myPetId) {
+        await blockChat(blockData.chatId, blockData.myPetId);
+      }
+
       dispatch(closeBlockModal());
-      // Optional: Refresh list or redirect
+      dispatch(closeMessageActionModal());
+      router.push("/messages");
     } catch (error: any) {
       showToast({
         type: "error",
@@ -47,7 +57,10 @@ const BlockModalContent: FC = () => {
       </p>
 
       <RadioGroup className="mt-6 flex flex-col items-center">
-        <div className="flex items-center justify-between gap-3">
+        <label
+          htmlFor="report-before-block"
+          className="flex items-center justify-between gap-3 cursor-pointer hover:opacity-80 transition-opacity"
+        >
           <RadioGroupItem
             value="report-before-block"
             id="report-before-block"
@@ -55,7 +68,7 @@ const BlockModalContent: FC = () => {
           <span className="text-light-grey2 heading4">
             I want to report this user before blocking.
           </span>
-        </div>
+        </label>
       </RadioGroup>
 
       <div className="mt-11">

@@ -8,7 +8,11 @@ import { type ChatConversation } from "@/utils/firebase-chat";
 import { images } from "@/utils/images";
 import { petsStorage } from "@/utils/pets-storage";
 
-const MessageList: FC = () => {
+interface MessageListProps {
+  searchTerm?: string;
+}
+
+const MessageList: FC<MessageListProps> = ({ searchTerm = "" }) => {
   const router = useRouter();
 
   // Initialize Firebase
@@ -24,12 +28,27 @@ const MessageList: FC = () => {
     isAuthenticated ? petIds : []
   );
 
-  console.log("DEBUG: MessageList", {
-    isAuthenticated,
-    petIds,
-    conversationsLength: conversations.length,
-    isLoading
-  });
+  const filteredConversations = useMemo(() => {
+    if (!searchTerm.trim()) return conversations;
+
+    const lowerTerm = searchTerm.toLowerCase();
+    return conversations.filter((conversation) => {
+      // Logic duplicated from render to ensure consistent name matching
+      const otherPetId =
+        conversation.otherPetId ??
+        Number(
+          conversation.participants.find(
+            (id) => !petIds.includes(Number(id))
+          ) || 0
+        );
+
+      const displayName =
+        conversation.otherPetName ||
+        (otherPetId ? `Pet ${otherPetId}` : "Pet");
+
+      return displayName.toLowerCase().includes(lowerTerm);
+    });
+  }, [conversations, searchTerm, petIds]);
 
 
   const openChat = (chatId: string) => {
@@ -91,18 +110,26 @@ const MessageList: FC = () => {
     );
   }
 
-  if (conversations.length === 0) {
+
+  if (searchTerm && filteredConversations.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-full gap-4">
-        <p className="text-grey-500">No conversations yet</p>
+        <p className="text-grey-500">No results found</p>
+      </div>
+    );
+  }
 
+  if (conversations.length === 0 && !searchTerm) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full gap-4">
+        <p className="text-grey-500">No messages yet</p>
       </div>
     );
   }
 
   return (
     <div className="flex flex-col space-y-1">
-      {conversations.map((conversation: ChatConversation) => {
+      {filteredConversations.map((conversation: ChatConversation) => {
         const otherPetId =
           conversation.otherPetId ??
           Number(
@@ -150,10 +177,10 @@ const MessageList: FC = () => {
                     {lastMessage}
                   </p>
 
-                  {conversation.unreadCount && conversation.unreadCount > 0 && (
+                  {(conversation.unreadCount || 0) > 0 && (
                     <div className="bg-[#FF4B55] rounded-full w-5 h-5 flex items-center justify-center shrink-0">
                       <span className="text-[11px] font-bold text-white">
-                        {conversation.unreadCount > 9
+                        {(conversation.unreadCount || 0) > 9
                           ? "9+"
                           : conversation.unreadCount}
                       </span>

@@ -1,18 +1,19 @@
 // hooks/useFirebaseChat.ts
 import {
-    getFirebaseFirestore,
-    onAuthStateChange,
-    signInWithFirebaseToken
+  getFirebaseFirestore,
+  onAuthStateChange,
+  signInWithFirebaseToken
 } from "@/lib/firebase";
 import { fetchFirebaseToken, messageInitiated } from "@/utils/api";
 import {
-    getChatId,
-    getUserConversations,
-    markMessagesAsRead,
-    sendMessage as sendFirebaseMessage,
-    subscribeToMessages,
-    type ChatConversation,
-    type ChatMessage
+  getChatId,
+  getUserConversations,
+  markMessagesAsRead,
+  sendMessage as sendFirebaseMessage,
+  subscribeToChat,
+  subscribeToMessages,
+  type ChatConversation,
+  type ChatMessage
 } from "@/utils/firebase-chat";
 import { tokenStorage } from "@/utils/token-storage";
 import { doc, getDoc } from "firebase/firestore";
@@ -74,9 +75,7 @@ export const useFirebaseChat = () => {
                   payload.aud === process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID
               });
 
-              if (
-                payload.aud !== process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID
-              ) {
+              if (payload.aud !== process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID) {
                 console.error(
                   `❌ PROJECT ID MISMATCH! Token is for '${payload.aud}' but frontend is '${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID}'`
                 );
@@ -117,7 +116,10 @@ export const useFirebaseChat = () => {
             : "Failed to initialize Firebase";
 
         if (String(errorCode).includes("auth/invalid-custom-token")) {
-           console.warn("⚠️ Invalid Custom Token detected. Attempting to refresh...", error);
+          console.warn(
+            "⚠️ Invalid Custom Token detected. Attempting to refresh...",
+            error
+          );
           tokenStorage.clearFirebaseToken();
           const freshToken = await resolveFirebaseToken(true);
           if (freshToken) {
@@ -186,8 +188,6 @@ export const useChatMessages = (chatId: string | null, myPetId?: number) => {
       return;
     }
 
-
-
     setIsLoading(true);
     const unsubscribe = subscribeToMessages(chatId, myPetId, (newMessages) => {
       setMessages(newMessages);
@@ -253,8 +253,6 @@ export const useChatMessages = (chatId: string | null, myPetId?: number) => {
         );
       }
 
-
-
       await sendFirebaseMessage(
         chatId,
         fromPetId,
@@ -316,6 +314,32 @@ export const useChatConversations = (petIds: number[]) => {
     conversations,
     isLoading
   };
+};
+
+export const useChatDetails = (chatId: string | null, myPetId?: number) => {
+  const [details, setDetails] = useState<{
+    otherPetName?: string;
+    otherPetPrimaryPhoto?: string;
+  } | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (!chatId || !myPetId) {
+      setDetails(null);
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+    const unsubscribe = subscribeToChat(chatId, myPetId, (data) => {
+      setDetails(data);
+      setIsLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [chatId, myPetId]);
+
+  return { details, isLoading };
 };
 
 export { getChatId };

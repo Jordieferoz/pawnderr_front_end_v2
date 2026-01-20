@@ -132,13 +132,12 @@ const CurrentPlan: FC<CurrentPlanProps> = ({
           <li className="flex items-center gap-2 justify-between heading4_medium text-accent-900">
             Status:{" "}
             <span
-              className={`${
-                subscription.status === "active"
-                  ? "text-green-500"
-                  : subscription.status === "expired"
-                    ? "text-red-500"
-                    : "text-orange-500"
-              }`}
+              className={`${subscription.status === "active"
+                ? "text-green-500"
+                : subscription.status === "expired"
+                  ? "text-red-500"
+                  : "text-orange-500"
+                }`}
             >
               {subscription.status.charAt(0).toUpperCase() +
                 subscription.status.slice(1)}
@@ -162,12 +161,6 @@ const CurrentPlan: FC<CurrentPlanProps> = ({
           Cancel Subscription
         </Button>
       )}
-      <Link
-        href={"/"}
-        className="heading4_medium underline text-neutral-white block text-center"
-      >
-        Manage Subscription
-      </Link>
 
       {/* Cancel Subscription Modal */}
       <Modal

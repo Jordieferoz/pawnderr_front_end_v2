@@ -1,9 +1,10 @@
 "use client";
 
+import EmojiPicker, { type EmojiClickData } from "emoji-picker-react";
 import { FC, useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 
-import { useChatMessages, useFirebaseChat } from "@/hooks/useFirebaseChat";
+import { useChatDetails, useChatMessages, useFirebaseChat } from "@/hooks/useFirebaseChat";
 import { openMessageActionModal } from "@/store/modalSlice";
 import { type ChatMessage } from "@/utils/firebase-chat";
 import { images } from "@/utils/images";
@@ -29,10 +30,18 @@ const ChatWindow: FC<ChatWindowProps> = ({
   const dispatch = useDispatch();
   const [messageText, setMessageText] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const emojiPickerRef = useRef<HTMLDivElement>(null);
+  const emojiButtonRef = useRef<HTMLButtonElement>(null);
 
   // Initialize Firebase
   const { isAuthenticated, isInitializing, error } = useFirebaseChat();
+
+  // Get chat details (name, avatar) to fix "Pet {id}" issue
+  const { details: chatDetails } = useChatDetails(chatId, myPetId);
+  const displayName = chatDetails?.otherPetName || name;
+  const displayAvatar = chatDetails?.otherPetPrimaryPhoto || avatar;
 
   // Get messages for this chat
   const { messages, isLoading, sendMessage, markAsRead } = useChatMessages(
@@ -40,17 +49,46 @@ const ChatWindow: FC<ChatWindowProps> = ({
     myPetId
   );
 
-  // Mark messages as read when chat is opened
+  // Mark messages as read when chat is opened or new messages arrive
   useEffect(() => {
     if (chatId && myPetId) {
       markAsRead(myPetId);
     }
-  }, [chatId, myPetId, markAsRead]);
+  }, [chatId, myPetId, markAsRead, messages]);
 
   // Scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  // Handle click outside and Escape key for emoji picker
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        showEmojiPicker &&
+        emojiPickerRef.current &&
+        !emojiPickerRef.current.contains(event.target as Node) &&
+        emojiButtonRef.current &&
+        !emojiButtonRef.current.contains(event.target as Node)
+      ) {
+        setShowEmojiPicker(false);
+      }
+    };
+
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && showEmojiPicker) {
+        setShowEmojiPicker(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscapeKey);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscapeKey);
+    };
+  }, [showEmojiPicker]);
 
   const getMatchIdFromChat = (id: string) => {
     const match = id.match(/match(\d+)/);
@@ -62,7 +100,9 @@ const ChatWindow: FC<ChatWindowProps> = ({
       openMessageActionModal({
         blocked_user_id: receiverPetId,
         match_id: getMatchIdFromChat(chatId),
-        name
+        name: displayName,
+        chatId,
+        myPetId
       })
     );
   };
@@ -91,6 +131,10 @@ const ChatWindow: FC<ChatWindowProps> = ({
     } finally {
       setIsSending(false);
     }
+  };
+
+  const onEmojiClick = (emojiData: EmojiClickData) => {
+    setMessageText((prev) => prev + emojiData.emoji);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -138,15 +182,15 @@ const ChatWindow: FC<ChatWindowProps> = ({
       <div className="flex items-center gap-4 px-6 py-4 border-b border-black/5">
         <div className="relative">
           <img
-            src={avatar}
+            src={displayAvatar}
             className="w-12 h-12 rounded-full object-cover border border-black/5"
             alt="avatar"
           />
           {/* Online status dot - matching design */}
-          <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-[#00C055] border-2 border-white rounded-full"></span>
+          {/* <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-[#00C055] border-2 border-white rounded-full"></span> */}
         </div>
         <div>
-          <h2 className="text-[18px] font-bold text-accent-900">{name}</h2>
+          <h2 className="text-[18px] font-bold text-accent-900">{displayName}</h2>
           {/* <p className="text-xs text-grey-500">Active now</p> */}
         </div>
 
@@ -233,7 +277,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
                       <div className="w-10 flex-shrink-0">
                         {showAvatar ? (
                           <img
-                            src={avatar}
+                            src={displayAvatar}
                             className="w-10 h-10 rounded-full object-cover"
                             alt="avatar"
                           />
@@ -265,44 +309,51 @@ const ChatWindow: FC<ChatWindowProps> = ({
       {/* Message Input */}
       <div className="mt-auto bg-white pb-6 pt-2 px-6">
         <div className="flex items-center gap-3">
-          <button
-            type="button"
-            className="w-8 h-8 flex items-center justify-center text-blue transition hover:scale-105"
-          >
-            <span className="text-3xl font-light text-[#0047AB]">+</span>
-          </button>
-
           <div className="relative flex-1" onKeyDown={handleKeyDown}>
+            {showEmojiPicker && (
+              <div
+                ref={emojiPickerRef}
+                className="absolute bottom-full right-0 mb-4 z-50 shadow-2xl rounded-md"
+              >
+                <EmojiPicker
+                  onEmojiClick={onEmojiClick}
+                  width={300}
+                  skinTonesDisabled={true}
+                  height={400}
+                />
+              </div>
+            )}
             <InputField
               placeholder="Type message.."
-              className="w-full bg-white border border-black/10 rounded-xl h-12 pl-4 pr-12 placeholder:text-grey-400"
+              className="w-full bg-white border border-black/10 rounded-xl h-12 pl-4 pr-12 placeholder:text-light-grey2"
               value={messageText}
               onChange={(e) => setMessageText(e.target.value)}
               disabled={isSending || !chatId || !myPetId || !receiverPetId}
             />
-            <div className="absolute top-1/2 -translate-y-1/2 right-4 cursor-pointer opacity-50 hover:opacity-100 transition">
+            <button
+              ref={emojiButtonRef}
+              type="button"
+              className="absolute top-1/2 -translate-y-1/2 right-4 cursor-pointer transition"
+              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+            >
               <img
                 alt="smiley"
-                src={images.smiley.src}
+                src={images.smileyActive.src}
                 className="w-5 h-5"
               />
-            </div>
-
+            </button>
           </div>
           <button
             type="button"
             className={`w-10 h-10 flex items-center justify-center transition hover:scale-105 ${isSending || !messageText.trim()
               ? "opacity-50 cursor-not-allowed"
-              : "opacity-100"
+              : "opacity-100 cursor-pointer"
               }`}
             onClick={handleSendMessage}
             disabled={isSending || !messageText.trim()}
           >
             {/* Using a blue send arrow svg or image */}
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M22 2L11 13" stroke="#0047AB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="#0047AB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+            <img src={images.sendArrow.src} alt="send" className="w-6 h-6" />
           </button>
         </div>
       </div>

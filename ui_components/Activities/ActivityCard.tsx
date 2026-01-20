@@ -62,10 +62,13 @@ const ActivityCard: FC<IActivityCardProps> = ({
         response.data?.matchId ||
         response.data?.data?.matchId ||
         response.data?.data?.match?.id;
+      const minPetId = Math.min(Number(fromPetId), Number(toPetId));
+      const maxPetId = Math.max(Number(fromPetId), Number(toPetId));
+
       const chatId =
         matchId !== undefined && matchId !== null
-          ? `pet${fromPetId}_pet${toPetId}_match${matchId}`
-          : `pet${fromPetId}_pet${toPetId}`;
+          ? `pet${minPetId}_pet${maxPetId}_match${matchId}`
+          : `pet${minPetId}_pet${maxPetId}`;
 
       if (matchId !== undefined && matchId !== null) {
         try {
@@ -117,9 +120,8 @@ const ActivityCard: FC<IActivityCardProps> = ({
               className="flex flex-col items-center gap-4 relative perspective-[1000px] max-w-md w-full"
             >
               <div
-                className={`relative w-full h-[420px] rounded-[24px] border-[3px] border-white shadow-[0px_4px_10px_rgba(0,0,0,0.1)] transition-all duration-700 ease-in-out hover:shadow-[0px_8px_25px_rgba(0,0,0,0.2)] [transform-style:preserve-3d] cursor-pointer group ${
-                  isFlipped ? "bg-grey-100" : "bg-transparent"
-                }`}
+                className={`relative w-full h-[420px] rounded-[24px] border-[3px] border-white shadow-[0px_4px_10px_rgba(0,0,0,0.1)] transition-all duration-700 ease-in-out hover:shadow-[0px_8px_25px_rgba(0,0,0,0.2)] [transform-style:preserve-3d] cursor-pointer group ${isFlipped ? "bg-grey-100" : "bg-transparent"
+                  }`}
                 style={{
                   transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)"
                 }}

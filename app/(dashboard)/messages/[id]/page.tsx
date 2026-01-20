@@ -9,11 +9,20 @@ import {
 import { images } from "@/utils/images";
 import { petsStorage } from "@/utils/pets-storage";
 import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function ChatPage() {
   const params = useParams();
+  const [isMounted, setIsMounted] = useState(false);
   const chatId = params?.id as string;
-  const myPetIds = petsStorage.get()?.my_pets?.map((pet) => pet.id) ?? [];
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const myPetIds = isMounted
+    ? petsStorage.get()?.my_pets?.map((pet) => pet.id) ?? []
+    : [];
 
   const getPetIdsFromChat = () => {
     if (!chatId) return [];
@@ -34,28 +43,23 @@ export default function ChatPage() {
   const receiverAvatar = images.doggo1.src;
 
   return (
-    <div className="message_wrapper h-full">
-      <div className="flex gap-0 bg-white border border-black/10 rounded-[32px] overflow-hidden h-full">
-        <div className="hidden md:flex md:basis-[340px] border-r border-black/10">
-          <Messages />
+    <div className="h-full w-full">
+      {chatId && receiverPetId && myPetId ? (
+        <ChatWindow
+          chatId={chatId}
+          receiverPetId={receiverPetId}
+          myPetId={myPetId}
+          name={receiverName}
+          avatar={receiverAvatar}
+        />
+      ) : (
+        <div className="flex-1 flex items-center justify-center h-full">
+          <p className="text-grey-500">
+            Select a conversation to start chatting
+          </p>
         </div>
-        {chatId && receiverPetId && myPetId ? (
-          <ChatWindow
-            chatId={chatId}
-            receiverPetId={receiverPetId}
-            myPetId={myPetId}
-            name={receiverName}
-            avatar={receiverAvatar}
-          />
-        ) : (
-          <div className="flex-1 flex items-center justify-center">
-            <p className="text-grey-500">
-              Select a conversation to start chatting
-            </p>
-          </div>
-        )}
-        <MessageActionModal />
-      </div>
+      )}
+      <MessageActionModal />
       <ReportModal />
       <BlockModal />
     </div>

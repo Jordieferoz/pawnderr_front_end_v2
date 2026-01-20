@@ -2,6 +2,8 @@
 import { useRouter } from "next/navigation";
 import { FC, useState } from "react";
 
+import { showToast } from "@/ui_components/Shared/ToastMessage";
+import { checkCanChat, messageInitiated } from "@/utils/api";
 import { images } from "@/utils/images";
 import { petsStorage } from "@/utils/pets-storage";
 
@@ -14,6 +16,7 @@ type Card = {
   desc: string;
   details: string;
   indicator?: string;
+  matchId?: string | number;
 };
 
 const FlipCard: FC<{ card: Card }> = ({ card }) => {
@@ -21,8 +24,80 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
 
   const [isFlipped, setIsFlipped] = useState(false);
 
-  const handleOpenChat = (id: string | number) => {
-    router.push(`/messages/${id}`);
+  const handleOpenChat = async (toPetId: string | number) => {
+    const fromPetId = petsStorage.getFirstPetId();
+
+    if (!fromPetId) {
+      showToast({
+        type: "error",
+        message: "No pet found. Please register a pet first."
+      });
+      return;
+    }
+
+    try {
+      const response = await checkCanChat({
+        from_pet_id: Number(fromPetId),
+        to_pet_id: Number(toPetId)
+      });
+
+      const canChatResult =
+        response.data?.canChat ??
+        response.data?.data?.canChat ??
+        response.data?.can_chat ??
+        response.data?.data?.can_chat ??
+        response.statusCode === 200;
+
+      if (!canChatResult) {
+        const message =
+          response.data?.reason ||
+          response.data?.data?.reason ||
+          response.data?.message ||
+          response.data?.data?.message ||
+          "You can't start a chat with this pet yet.";
+        showToast({ type: "error", message });
+        return;
+      }
+
+      const matchId = card.matchId;
+      const minPetId = Math.min(Number(fromPetId), Number(toPetId));
+      const maxPetId = Math.max(Number(fromPetId), Number(toPetId));
+
+      const chatId =
+        matchId !== undefined && matchId !== null
+          ? `pet${minPetId}_pet${maxPetId}_match${matchId}`
+          : `pet${minPetId}_pet${maxPetId}`;
+
+      if (matchId !== undefined && matchId !== null) {
+        try {
+          await messageInitiated({
+            chat_id: chatId,
+            from_pet_id: Number(fromPetId),
+            to_pet_id: Number(toPetId),
+            match_id: Number(matchId)
+          });
+        } catch (initError: any) {
+          showToast({
+            type: "error",
+            message:
+              initError?.response?.data?.message ||
+              initError?.message ||
+              "Failed to initiate chat."
+          });
+          return;
+        }
+      }
+
+      router.push(`/messages/${chatId}`);
+    } catch (error: any) {
+      showToast({
+        type: "error",
+        message:
+          error?.response?.data?.message ||
+          error?.message ||
+          "Failed to check chat permission"
+      });
+    }
   };
 
 
@@ -77,7 +152,7 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
 
       <div className="flex justify-center items-center gap-5 absolute -bottom-6 left-1/2 -translate-x-1/2 z-10">
         <button
-          onClick={() => handleOpenChat(card.id)}
+          onClick={() => handleOpenChat(card.petId)}
           className="bg-white rounded-full w-[55px] h-[55px] flex items-center justify-center shadow-[0px_4px_28px_0px_#00000040] hover:scale-105 active:scale-95 transition-transform"
         >
           <img src={images.messagesActive.src} alt="message" className="w-7" />
@@ -141,7 +216,9 @@ const MatchedCard: FC<MatchedCardProps> = ({ matches = [], indicators = [] }) =>
         {matches.map((match, index) => {
           const matchId = String(match.match_id || match.id || '');
           const fromPetId = petsStorage.getFirstPetId();
-          const chatId = `pet${fromPetId}_pet${match.pet.id}_match${matchId}`
+          const minPetId = Math.min(Number(fromPetId), Number(match.pet.id));
+          const maxPetId = Math.max(Number(fromPetId), Number(match.pet.id));
+          const chatId = `pet${minPetId}_pet${maxPetId}_match${matchId}`;
           const hasIndicator = indicatorSet.has(matchId);
 
           return (
@@ -158,7 +235,8 @@ const MatchedCard: FC<MatchedCardProps> = ({ matches = [], indicators = [] }) =>
                   match.pet?.breed || match.breed || 'Unknown Breed',
                   match.pet?.weight ? `Weight: ${match.pet?.weight}kg` : ''
                 ].filter(Boolean).join('\n'),
-                indicator: hasIndicator ? "NEW!" : undefined
+                indicator: hasIndicator ? "NEW!" : undefined,
+                matchId: match.match_id || match.id
               }}
             />
           );

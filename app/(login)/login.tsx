@@ -546,7 +546,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
                       {(errors as any).password?.message}
                     </p>
                   )}
-                  <div className="flex justify-end mt-1">
+                  <div className="flex justify-end mt-2">
                     <Link
                       href="/forgot-password"
                       className="text-xs font-semibold text-primary-theme hover:underline"

@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { CustomAvatar } from "@/ui_components/Shared";
 import { showToast } from "@/ui_components/Shared/ToastMessage";
+import { Messages } from "@/ui_components/Messages";
 import {
   checkCanChat,
   fetchActiveMatches,
@@ -135,10 +136,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         return;
       }
 
+      const minPetId = Math.min(Number(fromPetId), Number(toPetId));
+      const maxPetId = Math.max(Number(fromPetId), Number(toPetId));
+
       const chatId =
         matchId !== undefined && matchId !== null
-          ? `pet${fromPetId}_pet${toPetId}_match${matchId}`
-          : `pet${fromPetId}_pet${toPetId}`;
+          ? `pet${minPetId}_pet${maxPetId}_match${matchId}`
+          : `pet${minPetId}_pet${maxPetId}`;
 
       if (matchId !== undefined && matchId !== null) {
         await messageInitiated({
@@ -190,6 +194,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative h-[calc(100vh-90px)] common_container overflow-hidden">
       <div className="container mx-auto h-full flex flex-col">
+        {/* Mobile Header & Matches */}
         <div className="my-4 mb-0 md:hidden flex-none">
           <div className="flex items-center gap-3 mb-4">
             <img
@@ -210,6 +215,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
 
+        {/* Desktop Header & Matches */}
         <div className="hidden md:flex items-center justify-between my-4 mb-6 flex-none">
           <h4 className="display4_medium text-accent-900">Messages</h4>
           <div
@@ -222,12 +228,23 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
 
+        {/* Content Area */}
         <div className="flex-1 min-h-0 pb-4">
-          {children}
+          <div className="flex gap-0 bg-white border border-black/10 md:rounded-[32px] overflow-hidden h-full">
+            {/* Desktop Sidebar */}
+            <div className="hidden md:flex md:basis-[340px] border-r border-black/10">
+              <Messages />
+            </div>
+
+            {/* Main Content (Chat or Mobile List) */}
+            <div className="flex-1 w-full relative">
+              {children}
+            </div>
+          </div>
         </div>
       </div>
       <img
-        className="absolute w-full left-0 top-0 hidden md:flex pointer-events-none z-[-1]"
+        className="absolute w-full left-0 top-0 hidden md:flex pointer-events-none z-[-1] h-[calc(100vh-90px)]"
         src={images.discoverBg.src}
         alt="messages_pattern"
       />
