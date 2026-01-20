@@ -14,7 +14,7 @@ import { useDrag } from "@use-gesture/react";
 import { HangTightModal, OutOfSwipesModal } from "../Modals";
 import { ISwipingCard, ISwipingCardsProps, NearbyPet } from "./types";
 
-const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading, isSubscribed }) => {
+const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading, isSubscribed, containerHeight }) => {
   const dispatch = useDispatch();
   const [cards, setCards] = useState<ISwipingCard[]>([]);
   const [currentIndex, setCurrentIndex] = useState(-1);
@@ -220,7 +220,10 @@ const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading, isSubscribed }
 
   if (loading || isLocationLoading) {
     return (
-      <div className="w-full max-w-[340px] h-[520px] relative mx-auto flex items-center justify-center">
+      <div
+        className="w-full max-w-[340px] relative mx-auto flex items-center justify-center"
+        style={{ height: containerHeight ? `${containerHeight}px` : '520px' }}
+      >
         <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10 rounded-full border-4 border-primary-500 border-t-transparent animate-spin" />
           <p className="text-sm text-gray-600 text-center px-4">
@@ -233,7 +236,10 @@ const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading, isSubscribed }
     );
   }
   return (
-    <div className="w-full max-w-[340px] h-[520px] relative mx-auto">
+    <div
+      className="w-full max-w-[340px] relative mx-auto"
+      style={{ height: containerHeight ? `${containerHeight}px` : '520px' }}
+    >
       <div className="relative h-full">
         {cards.map((card, idx) => {
           const isActive = idx <= currentIndex;
@@ -253,9 +259,10 @@ const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading, isSubscribed }
               }}
             >
               <div
-                className="relative w-full max-w-[340px] h-[420px] rounded-[24px] border-[5px] border-white 
+                className="relative w-full max-w-[340px] rounded-[24px] border-[5px] border-white 
                   shadow-[0px_4px_10px_0px_rgba(0,0,0,0.1)] flex items-end justify-center overflow-hidden mx-auto"
                 style={{
+                  height: containerHeight ? `${containerHeight - 100}px` : '420px',
                   transition: isTop
                     ? "none"
                     : "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",

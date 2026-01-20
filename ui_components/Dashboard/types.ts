@@ -30,4 +30,5 @@ export interface ISwipingCardsProps {
   petData: IPetData | null;
   loading: boolean;
   isSubscribed: boolean;
+  containerHeight?: number;
 }
