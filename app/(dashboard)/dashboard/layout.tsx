@@ -2,7 +2,7 @@ import { images } from "@/utils/images";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative overflow-clip h-[calc(100vh-90px)]">
+    <div className="relative overflow-clip md:h-[calc(100vh-90px)] h-[calc(100vh-166px)]">
       <div className="container mx-auto h-full flex items-center justify-center">{children}</div>
       <div
         className="absolute w-full left-0 top-0 hidden md:block pointer-events-none z-[-1] bg-cover bg-center bg-no-repeat"

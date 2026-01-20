@@ -83,6 +83,58 @@ const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading, isSubscribed, 
     }, 500);
   };
 
+  // Helper to calculate stack styles based on depth and interpolation ratio
+  // depth: integer (0, 1, 2...)
+  // ratio: 0 to 1 (0 = at current depth, 1 = at depth-1)
+  // Helper to calculate stack styles based on depth and interpolation ratio
+  const getStackStyle = (depth: number, ratio: number = 0) => {
+    // Current state (at depth)
+    const currentScale = 1 - depth * 0.2;
+    const currentTranslateY = -depth * 14;
+    let currentRotate = 0;
+    if (depth === 1) currentRotate = -6;
+    else if (depth === 2) currentRotate = 6;
+    else if (depth === 3) currentRotate = -6;
+
+    const currentOpacity = depth >= 3 ? 0 : 1;
+
+    // Target state (at depth - 1)
+    const nextDepth = Math.max(0, depth - 1);
+    const nextScale = 1 - nextDepth * 0.2;
+    const nextTranslateY = -nextDepth * 14;
+    let nextRotate = 0;
+    if (nextDepth === 1) nextRotate = -6;
+    else if (nextDepth === 2) nextRotate = 6;
+    else if (nextDepth === 3) nextRotate = -6;
+
+    const nextOpacity = nextDepth >= 3 ? 0 : 1;
+
+    // Interpolate
+    const scale = currentScale + (nextScale - currentScale) * ratio;
+    const translateY = currentTranslateY + (nextTranslateY - currentTranslateY) * ratio;
+    const rotate = currentRotate + (nextRotate - currentRotate) * ratio;
+    const opacity = currentOpacity + (nextOpacity - currentOpacity) * ratio;
+
+    return {
+      transform: `translateY(${translateY}px) scale(${scale}) rotate(${rotate}deg)`,
+      opacity
+    };
+  };
+
+  const updateBackgroundCards = (ratio: number, withTransition: boolean) => {
+    // Update next 3 cards (offsets 1, 2, 3)
+    [1, 2, 3].forEach((offset) => {
+      const idx = currentIndex - offset;
+      const card = cardRefs[idx]?.current;
+      if (card) {
+        card.style.transition = withTransition ? "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)" : "none";
+        const style = getStackStyle(offset, ratio);
+        card.style.transform = style.transform;
+        card.style.opacity = String(style.opacity);
+      }
+    });
+  };
+
   const bind = useDrag(
     ({
       args: [index],
@@ -98,12 +150,16 @@ const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading, isSubscribed, 
 
       const threshold = 100;
       const isSwipe = !active && (Math.abs(mx) > threshold || vx > 0.5);
+      const ratio = Math.min(Math.abs(mx) / (window.innerWidth / 1.5), 1); // 0 to 1 progress
 
       if (active) {
         // While dragging - show overlay based on direction
         const rotation = mx / 15;
         card.style.transform = `translateX(${mx}px) rotate(${rotation}deg)`;
         card.style.transition = "none";
+
+        // Animate background cards
+        updateBackgroundCards(ratio, false);
 
         if (Math.abs(mx) > 20) {
           setSwipeDirection(mx > 0 ? "right" : "left");
@@ -113,10 +169,15 @@ const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading, isSubscribed, 
       } else if (isSwipe) {
         const direction = xDir > 0 ? "right" : "left";
         setIsAnimating(true);
+        // Animate background cards to full next state
+        updateBackgroundCards(1, true);
         finishSwipe(direction, card);
       } else {
+        // Reset top card
         card.style.transform = "translateX(0) rotate(0)";
         card.style.transition = "transform 0.3s ease-out";
+        // Reset background cards
+        updateBackgroundCards(0, true);
         setSwipeDirection(null);
       }
     },
@@ -139,6 +200,9 @@ const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading, isSubscribed, 
 
     card.style.transform = `translateX(${initialMove}px) rotate(${initialRotation}deg)`;
     card.style.transition = "transform 0.2s ease-out";
+
+    // Animate background cards
+    updateBackgroundCards(1, true);
 
     // Then complete the swipe
     setTimeout(() => {
@@ -245,7 +309,19 @@ const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading, isSubscribed, 
           const isActive = idx <= currentIndex;
           const isTop = idx === currentIndex;
 
-          if (!isActive) return null;
+          if (idx > currentIndex || idx < currentIndex - 3) return null;
+
+          const depth = currentIndex - idx;
+          const scale = 1 - depth * 0.2;
+          const translateY = -depth * 14;
+
+          let rotate = 0;
+          if (depth === 1) rotate = -6;
+          else if (depth === 2) rotate = 6;
+          else if (depth === 3) rotate = -6;
+
+          // Fade out the 4th card, others full opacity
+          const opacity = depth >= 3 ? 0 : 1;
 
           return (
             <div
@@ -255,18 +331,26 @@ const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading, isSubscribed, 
               className="absolute top-0 left-1/2 -translate-x-1/2 w-full touch-none"
               style={{
                 zIndex: idx,
-                pointerEvents: isTop && !isAnimating ? "auto" : "none"
+                pointerEvents: isTop && !isAnimating ? "auto" : "none",
+                opacity,
+                transform: !isTop
+                  ? `translateY(${translateY}px) scale(${scale}) rotate(${rotate}deg)`
+                  : undefined,
+                transition: !isTop ? "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)" : undefined,
+                transformOrigin: "top center"
               }}
             >
               <div
                 className="relative w-full max-w-[340px] rounded-[24px] border-[5px] border-white 
                   shadow-[0px_4px_10px_0px_rgba(0,0,0,0.1)] flex items-end justify-center overflow-hidden mx-auto"
                 style={{
-                  height: containerHeight ? `${containerHeight - 100}px` : '420px',
+                  height: containerHeight ? `${containerHeight - 100}px` : "420px",
                   transition: isTop
                     ? "none"
                     : "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-                  transformOrigin: "center bottom"
+                  transformOrigin: "center top",
+                  width: "100%",
+                  boxShadow: "0px 4px 10px 0px rgba(0,0,0,0.1)"
                 }}
               >
                 <img

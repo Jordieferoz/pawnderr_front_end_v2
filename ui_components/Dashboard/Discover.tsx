@@ -132,12 +132,12 @@ const Discover = () => {
   }, []);
 
   return (
-    <div ref={wrapperRef} className="discover_wrapper common_container h-[calc(100vh-120px)]">
+    <div ref={wrapperRef} className="discover_wrapper common_container md:h-[calc(100vh-120px)] h-[calc(100vh-166px)] w-full">
       <div
         className="md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] md:px-5 md:py-5 md:rounded-2xl md:w-[700px] md:mx-auto box-border"
         style={{ height: '100%' }}
       >
-        <div className="items-center justify-between mb-4">
+        <div className="items-center justify-between mb-20">
           {/* <div className="flex my-3 gap-4 items-center overflow-x-auto hide-scrollbar">
             <CustomAvatar
               src={images.doggo1.src}
