@@ -65,8 +65,47 @@ export const loginWithPhone = (payload: {
   });
 };
 
+export const forgotPassword = (payload: {
+  phone: string;
+}): Promise<TResponse<any>> => {
+  return new Promise((resolve, reject) => {
+    globalPostService<any, any>(`auth/forgot-password`, payload)
+      .then((response) => {
+        if (response.statusCode === 200 || response.statusCode === 201) {
+          resolve(response);
+        } else {
+          reject(new Error(`Unexpected status code: ${response.statusCode}`));
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+export const resetPassword = (payload: {
+  phone: string;
+  otp: string;
+  newPassword: string;
+}): Promise<TResponse<any>> => {
+  return new Promise((resolve, reject) => {
+    globalPostService<any, any>(`auth/reset-password`, payload)
+      .then((response) => {
+        if (response.statusCode === 200 || response.statusCode === 201) {
+          resolve(response);
+        } else {
+          reject(new Error(`Unexpected status code: ${response.statusCode}`));
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
 export const resendOTP = (payload: {
   phone: string;
+  purpose?: string;
 }): Promise<TResponse<any>> => {
   return new Promise((resolve, reject) => {
     globalPostService<any, any>(`auth/resend-otp`, payload)

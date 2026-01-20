@@ -17,7 +17,7 @@ import { useDispatch } from "react-redux";
 import { Button } from "@/components/ui/button";
 import { setMetadata, updateStepData } from "@/store/registrationSlice";
 import { setUser } from "@/store/userSlice";
-import { LoginOTPModal } from "@/ui_components/Modals";
+import { OTPModal } from "@/ui_components/Modals";
 import { InputField, Modal } from "@/ui_components/Shared";
 import { showToast } from "@/ui_components/Shared/ToastMessage";
 import {
@@ -546,6 +546,14 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
                       {(errors as any).password?.message}
                     </p>
                   )}
+                  <div className="flex justify-end mt-1">
+                    <Link
+                      href="/forgot-password"
+                      className="text-xs font-semibold text-primary-theme hover:underline"
+                    >
+                      Forgot Password?
+                    </Link>
+                  </div>
                 </div>
               </>
             )}
@@ -647,7 +655,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
           }
         }}
         content={
-          <LoginOTPModal
+          <OTPModal
             phone={otpPhone}
             onOTPVerified={handleOTPVerified}
             onClose={() => {

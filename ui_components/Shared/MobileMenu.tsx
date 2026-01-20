@@ -18,7 +18,7 @@ const MobileMenu: FC = () => {
   const itemRefs = useRef<(HTMLAnchorElement | null)[]>([]);
 
   // Hide footer on authentication pages
-  const hiddenRoutes = ["/sign-in", "/sign-up", "/register"];
+  const hiddenRoutes = ["/sign-in", "/sign-up", "/register", "/forgot-password"];
   if (hiddenRoutes.includes(pathname)) {
     return null;
   }

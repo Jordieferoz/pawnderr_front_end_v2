@@ -15,17 +15,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { showToast } from "../Shared/ToastMessage";
 
-interface LoginOTPModalProps {
+interface OTPModalProps {
   phone: string;
   onOTPVerified: () => void;
   onClose: () => void;
 }
 
-const LoginOTPModal = ({
+const OTPModal = ({
   phone,
   onOTPVerified,
   onClose
-}: LoginOTPModalProps) => {
+}: OTPModalProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
@@ -252,4 +252,4 @@ const LoginOTPModal = ({
   );
 };
 
-export default LoginOTPModal;
+export default OTPModal;
