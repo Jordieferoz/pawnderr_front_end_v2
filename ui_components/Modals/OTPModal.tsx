@@ -21,11 +21,7 @@ interface OTPModalProps {
   onClose: () => void;
 }
 
-const OTPModal = ({
-  phone,
-  onOTPVerified,
-  onClose
-}: OTPModalProps) => {
+const OTPModal = ({ phone, onOTPVerified, onClose }: OTPModalProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);

@@ -7,10 +7,7 @@ import {
   onAuthStateChanged,
   signInWithCustomToken
 } from "firebase/auth";
-import {
-  Database,
-  getDatabase
-} from "firebase/database";
+import { Database, getDatabase } from "firebase/database";
 import { Firestore, getFirestore } from "firebase/firestore";
 
 // Firebase configuration - these should be set in environment variables

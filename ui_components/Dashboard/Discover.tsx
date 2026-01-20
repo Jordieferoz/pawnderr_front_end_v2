@@ -1,7 +1,11 @@
 "use client";
 
 import SwipingCards from "@/ui_components/Dashboard/SwipingCards";
-import { fetchMyPet, fetchMyPetsCollection, fetchSubscriptionStatus } from "@/utils/api";
+import {
+  fetchMyPet,
+  fetchMyPetsCollection,
+  fetchSubscriptionStatus
+} from "@/utils/api";
 import { petsStorage } from "@/utils/pets-storage";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -18,12 +22,13 @@ const Discover = () => {
   const [isSubscriptionLoading, setIsSubscriptionLoading] = useState(false);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const [swipingCardsHeight, setSwipingCardsHeight] = useState<number | undefined>(undefined);
+  const [swipingCardsHeight, setSwipingCardsHeight] = useState<
+    number | undefined
+  >(undefined);
 
   useEffect(() => {
     const loadSubscriptionStatus = async () => {
       try {
-
         const resp = await fetchSubscriptionStatus();
         setIsSubscribed(Boolean(resp?.data?.is_premium));
       } catch (error: any) {
@@ -47,7 +52,6 @@ const Discover = () => {
       try {
         const storedPet = petsStorage.getFirstPet();
         if (storedPet) {
-
           setPetData(storedPet as any);
           setFirstPetId(storedPet.id);
           setLoading(false);
@@ -120,7 +124,7 @@ const Discover = () => {
 
         // Let's assume the white box takes up the full height minus some margin if needed.
         // The swiping cards container inside needs to be:
-        // wrapperHeight - padding (40px) - header (approx 0 if empty) 
+        // wrapperHeight - padding (40px) - header (approx 0 if empty)
         // Let's safe margin of 60px.
         setSwipingCardsHeight(totalHeight - 60);
       }
@@ -132,10 +136,13 @@ const Discover = () => {
   }, []);
 
   return (
-    <div ref={wrapperRef} className="discover_wrapper common_container md:h-[calc(100vh-120px)] h-[calc(100vh-166px)] w-full">
+    <div
+      ref={wrapperRef}
+      className="discover_wrapper common_container md:h-[calc(100vh-120px)] h-[calc(100vh-166px)] w-full"
+    >
       <div
         className="md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] md:px-5 md:py-5 md:rounded-2xl md:w-[700px] md:mx-auto box-border"
-        style={{ height: '100%' }}
+        style={{ height: "100%" }}
       >
         <div className="items-center justify-between mb-20">
           {/* <div className="flex my-3 gap-4 items-center overflow-x-auto hide-scrollbar">
@@ -231,7 +238,6 @@ const Discover = () => {
           isSubscribed={isSubscribed}
           containerHeight={swipingCardsHeight}
         />
-
       </div>
     </div>
   );

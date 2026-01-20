@@ -100,13 +100,10 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
     }
   };
 
-
   const largeButton =
     "bg-primary-500 rounded-full w-[68px] h-[68px] flex items-center justify-center shadow-[0px_4px_28px_0px_#00000040] hover:scale-105 active:scale-95 transition-transform";
   return (
     <div className="flex flex-col items-center gap-4 relative perspective-[1000px]">
-
-
       <div
         className="relative w-full h-[420px] rounded-[24px] border-[3px] border-white shadow-[0px_4px_10px_rgba(0,0,0,0.1)] transition-all duration-700 ease-in-out hover:shadow-[0px_8px_25px_rgba(0,0,0,0.2)] [transform-style:preserve-3d] cursor-pointer group"
         style={{ transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)" }}
@@ -132,7 +129,9 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
                 {card.info}
               </span>
             </h3>
-            <p className="text-sm opacity-90 mt-1 leading-snug line-clamp-2 text-ellipsis">{card.desc}</p>
+            <p className="text-sm opacity-90 mt-1 leading-snug line-clamp-2 text-ellipsis">
+              {card.desc}
+            </p>
           </div>
         </div>
 
@@ -160,15 +159,11 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
         <button
           onClick={(e) => {
             e.stopPropagation();
-            router.push(`/profile/${card.petId}`)
+            router.push(`/profile/${card.petId}`);
           }}
           className={largeButton}
         >
-          <img
-            src={images.pawYellow.src}
-            alt="Like"
-            className="h-[36px]"
-          />
+          <img src={images.pawYellow.src} alt="Like" className="h-[36px]" />
         </button>
         <button
           onClick={(e) => {
@@ -189,13 +184,16 @@ interface MatchedCardProps {
   indicators?: any[];
 }
 
-const MatchedCard: FC<MatchedCardProps> = ({ matches = [], indicators = [] }) => {
+const MatchedCard: FC<MatchedCardProps> = ({
+  matches = [],
+  indicators = []
+}) => {
   if (!matches || matches.length === 0) {
     return (
       <div className="w-full min-h-[60vh] flex items-center justify-center">
         <p className="text-gray-500 text-lg">No active matches found.</p>
       </div>
-    )
+    );
   }
 
   // Create a Set of verified IDs correctly
@@ -203,8 +201,8 @@ const MatchedCard: FC<MatchedCardProps> = ({ matches = [], indicators = [] }) =>
   // We'll flexibly handle both.
   const indicatorSet = new Set(
     indicators.map((i: any) => {
-      if (typeof i === 'object' && i !== null) {
-        return String(i.match_id || i.id || '');
+      if (typeof i === "object" && i !== null) {
+        return String(i.match_id || i.id || "");
       }
       return String(i);
     })
@@ -214,7 +212,7 @@ const MatchedCard: FC<MatchedCardProps> = ({ matches = [], indicators = [] }) =>
     <div className="w-full mx-auto">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-14">
         {matches.map((match, index) => {
-          const matchId = String(match.match_id || match.id || '');
+          const matchId = String(match.match_id || match.id || "");
           const fromPetId = petsStorage.getFirstPetId();
           const minPetId = Math.min(Number(fromPetId), Number(match.pet.id));
           const maxPetId = Math.max(Number(fromPetId), Number(match.pet.id));
@@ -228,13 +226,22 @@ const MatchedCard: FC<MatchedCardProps> = ({ matches = [], indicators = [] }) =>
                 id: chatId,
                 petId: match.pet.id,
                 name: match.pet?.name || match.name || "Unknown",
-                info: `(${match.pet?.gender || match.gender || 'Unknown'}, ${match.pet?.age || match.age || '?'} Years)`,
-                url: match.pet?.primary_photo_url || match.primary_photo_url || images.doggo1.src,
-                desc: match.pet?.bio || match.bio || match.description || "No description available",
+                info: `(${match.pet?.gender || match.gender || "Unknown"}, ${match.pet?.age || match.age || "?"} Years)`,
+                url:
+                  match.pet?.primary_photo_url ||
+                  match.primary_photo_url ||
+                  images.doggo1.src,
+                desc:
+                  match.pet?.bio ||
+                  match.bio ||
+                  match.description ||
+                  "No description available",
                 details: [
-                  match.pet?.breed || match.breed || 'Unknown Breed',
-                  match.pet?.weight ? `Weight: ${match.pet?.weight}kg` : ''
-                ].filter(Boolean).join('\n'),
+                  match.pet?.breed || match.breed || "Unknown Breed",
+                  match.pet?.weight ? `Weight: ${match.pet?.weight}kg` : ""
+                ]
+                  .filter(Boolean)
+                  .join("\n"),
                 indicator: hasIndicator ? "NEW!" : undefined,
                 matchId: match.match_id || match.id
               }}

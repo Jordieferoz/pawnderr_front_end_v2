@@ -4,7 +4,11 @@ import EmojiPicker, { type EmojiClickData } from "emoji-picker-react";
 import { FC, useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 
-import { useChatDetails, useChatMessages, useFirebaseChat } from "@/hooks/useFirebaseChat";
+import {
+  useChatDetails,
+  useChatMessages,
+  useFirebaseChat
+} from "@/hooks/useFirebaseChat";
 import { openMessageActionModal } from "@/store/modalSlice";
 import { type ChatMessage } from "@/utils/firebase-chat";
 import { images } from "@/utils/images";
@@ -108,18 +112,19 @@ const ChatWindow: FC<ChatWindowProps> = ({
   };
 
   const handleSendMessage = async () => {
-    if (!messageText.trim() || !chatId || !myPetId || !receiverPetId || isSending) {
+    if (
+      !messageText.trim() ||
+      !chatId ||
+      !myPetId ||
+      !receiverPetId ||
+      isSending
+    ) {
       return;
     }
 
     try {
       setIsSending(true);
-      await sendMessage(
-        myPetId,
-        receiverPetId,
-        messageText.trim(),
-        "text"
-      );
+      await sendMessage(myPetId, receiverPetId, messageText.trim(), "text");
       setMessageText("");
     } catch (error) {
       console.error("Failed to send message:", error);
@@ -152,11 +157,11 @@ const ChatWindow: FC<ChatWindowProps> = ({
     return isToday
       ? date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
       : date.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
-      });
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit"
+        });
   };
   if (isInitializing) {
     return (
@@ -190,7 +195,9 @@ const ChatWindow: FC<ChatWindowProps> = ({
           {/* <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-[#00C055] border-2 border-white rounded-full"></span> */}
         </div>
         <div>
-          <h2 className="text-[18px] font-bold text-accent-900">{displayName}</h2>
+          <h2 className="text-[18px] font-bold text-accent-900">
+            {displayName}
+          </h2>
           {/* <p className="text-xs text-grey-500">Active now</p> */}
         </div>
 
@@ -200,11 +207,13 @@ const ChatWindow: FC<ChatWindowProps> = ({
             className="p-2 hover:bg-black/5 rounded-full transition"
             onClick={handleOpenMessageActionModal}
           >
-            <img src={images.ellipsisHorizontal.src} alt="more" className="w-6 h-6" />
+            <img
+              src={images.ellipsisHorizontal.src}
+              alt="more"
+              className="w-6 h-6"
+            />
           </button>
         </div>
-
-
       </div>
 
       <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6 bg-white hide-scrollbar">
@@ -214,9 +223,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
           </div>
         ) : messages.length === 0 ? (
           <div className="flex items-center justify-center h-full">
-            <p className="text-grey-500">
-              No messages yet. Say hello!
-            </p>
+            <p className="text-grey-500">No messages yet. Say hello!</p>
           </div>
         ) : (
           <>
@@ -234,24 +241,27 @@ const ChatWindow: FC<ChatWindowProps> = ({
               let showDateSeparator = false;
               let dateSeparatorText = "";
 
-              if (!prevDate ||
+              if (
+                !prevDate ||
                 currentDate.getDate() !== prevDate.getDate() ||
                 currentDate.getMonth() !== prevDate.getMonth() ||
-                currentDate.getFullYear() !== prevDate.getFullYear()) {
+                currentDate.getFullYear() !== prevDate.getFullYear()
+              ) {
                 showDateSeparator = true;
 
                 const now = new Date();
-                const isToday = currentDate.getDate() === now.getDate() &&
+                const isToday =
+                  currentDate.getDate() === now.getDate() &&
                   currentDate.getMonth() === now.getMonth() &&
                   currentDate.getFullYear() === now.getFullYear();
 
                 if (isToday) {
-                  dateSeparatorText = `Today ${currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}`;
+                  dateSeparatorText = `Today ${currentDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false })}`;
                 } else {
                   dateSeparatorText = currentDate.toLocaleDateString("en-GB", {
-                    weekday: 'long',
-                    hour: '2-digit',
-                    minute: '2-digit',
+                    weekday: "long",
+                    hour: "2-digit",
+                    minute: "2-digit",
                     hour12: false
                   });
                 }
@@ -270,8 +280,9 @@ const ChatWindow: FC<ChatWindowProps> = ({
                   )}
 
                   <div
-                    className={`flex items-end gap-3 ${isMe ? "justify-end" : "justify-start"
-                      }`}
+                    className={`flex items-end gap-3 ${
+                      isMe ? "justify-end" : "justify-start"
+                    }`}
                   >
                     {!isMe && (
                       <div className="w-10 flex-shrink-0">
@@ -281,16 +292,21 @@ const ChatWindow: FC<ChatWindowProps> = ({
                             className="w-10 h-10 rounded-full object-cover"
                             alt="avatar"
                           />
-                        ) : <div className="w-10" />}
+                        ) : (
+                          <div className="w-10" />
+                        )}
                       </div>
                     )}
 
-                    <div className={`max-w-[70%] group relative ${isMe ? 'items-end' : 'items-start'} flex flex-col`}>
+                    <div
+                      className={`max-w-[70%] group relative ${isMe ? "items-end" : "items-start"} flex flex-col`}
+                    >
                       <div
-                        className={`px-5 py-3.5 text-[15px] leading-relaxed ${isMe
-                          ? "bg-[#0047AB] text-white rounded-t-[20px] rounded-bl-[20px] rounded-br-[4px]"
-                          : "bg-[#F3F3F3] text-[#1A1A1A] rounded-t-[20px] rounded-br-[20px] rounded-bl-[4px]"
-                          }`}
+                        className={`px-5 py-3.5 text-[15px] leading-relaxed ${
+                          isMe
+                            ? "bg-[#0047AB] text-white rounded-t-[20px] rounded-bl-[20px] rounded-br-[4px]"
+                            : "bg-[#F3F3F3] text-[#1A1A1A] rounded-t-[20px] rounded-br-[20px] rounded-bl-[4px]"
+                        }`}
                       >
                         {msg.text}
                       </div>
@@ -345,10 +361,11 @@ const ChatWindow: FC<ChatWindowProps> = ({
           </div>
           <button
             type="button"
-            className={`w-10 h-10 flex items-center justify-center transition hover:scale-105 ${isSending || !messageText.trim()
-              ? "opacity-50 cursor-not-allowed"
-              : "opacity-100 cursor-pointer"
-              }`}
+            className={`w-10 h-10 flex items-center justify-center transition hover:scale-105 ${
+              isSending || !messageText.trim()
+                ? "opacity-50 cursor-not-allowed"
+                : "opacity-100 cursor-pointer"
+            }`}
             onClick={handleSendMessage}
             disabled={isSending || !messageText.trim()}
           >

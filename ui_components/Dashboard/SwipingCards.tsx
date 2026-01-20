@@ -14,7 +14,12 @@ import { useDrag } from "@use-gesture/react";
 import { HangTightModal, OutOfSwipesModal } from "../Modals";
 import { ISwipingCard, ISwipingCardsProps, NearbyPet } from "./types";
 
-const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading, isSubscribed, containerHeight }) => {
+const SwipingCards: FC<ISwipingCardsProps> = ({
+  petData,
+  loading,
+  isSubscribed,
+  containerHeight
+}) => {
   const dispatch = useDispatch();
   const [cards, setCards] = useState<ISwipingCard[]>([]);
   const [currentIndex, setCurrentIndex] = useState(-1);
@@ -111,7 +116,8 @@ const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading, isSubscribed, 
 
     // Interpolate
     const scale = currentScale + (nextScale - currentScale) * ratio;
-    const translateY = currentTranslateY + (nextTranslateY - currentTranslateY) * ratio;
+    const translateY =
+      currentTranslateY + (nextTranslateY - currentTranslateY) * ratio;
     const rotate = currentRotate + (nextRotate - currentRotate) * ratio;
     const opacity = currentOpacity + (nextOpacity - currentOpacity) * ratio;
 
@@ -127,7 +133,9 @@ const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading, isSubscribed, 
       const idx = currentIndex - offset;
       const card = cardRefs[idx]?.current;
       if (card) {
-        card.style.transition = withTransition ? "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)" : "none";
+        card.style.transition = withTransition
+          ? "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)"
+          : "none";
         const style = getStackStyle(offset, ratio);
         card.style.transform = style.transform;
         card.style.opacity = String(style.opacity);
@@ -286,7 +294,7 @@ const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading, isSubscribed, 
     return (
       <div
         className="w-full max-w-[340px] relative mx-auto flex items-center justify-center"
-        style={{ height: containerHeight ? `${containerHeight}px` : '520px' }}
+        style={{ height: containerHeight ? `${containerHeight}px` : "520px" }}
       >
         <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10 rounded-full border-4 border-primary-500 border-t-transparent animate-spin" />
@@ -302,7 +310,7 @@ const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading, isSubscribed, 
   return (
     <div
       className="w-full max-w-[340px] relative mx-auto"
-      style={{ height: containerHeight ? `${containerHeight}px` : '520px' }}
+      style={{ height: containerHeight ? `${containerHeight}px` : "520px" }}
     >
       <div className="relative h-full">
         {cards.map((card, idx) => {
@@ -336,7 +344,9 @@ const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading, isSubscribed, 
                 transform: !isTop
                   ? `translateY(${translateY}px) scale(${scale}) rotate(${rotate}deg)`
                   : undefined,
-                transition: !isTop ? "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)" : undefined,
+                transition: !isTop
+                  ? "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)"
+                  : undefined,
                 transformOrigin: "top center"
               }}
             >
@@ -344,7 +354,9 @@ const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading, isSubscribed, 
                 className="relative w-full max-w-[340px] rounded-[24px] border-[5px] border-white 
                   shadow-[0px_4px_10px_0px_rgba(0,0,0,0.1)] flex items-end justify-center overflow-hidden mx-auto"
                 style={{
-                  height: containerHeight ? `${containerHeight - 100}px` : "420px",
+                  height: containerHeight
+                    ? `${containerHeight - 100}px`
+                    : "420px",
                   transition: isTop
                     ? "none"
                     : "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
@@ -369,15 +381,20 @@ const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading, isSubscribed, 
                 <div className="absolute inset-0 card_gradient rounded-[24px]" />
 
                 {card?.isFoundingDog && !swipeDirection && (
-                  <img src={images.isFoundingDog.src} alt="isFoundingDog" className="absolute top-2.5 left-2.5" />
+                  <img
+                    src={images.isFoundingDog.src}
+                    alt="isFoundingDog"
+                    className="absolute top-2.5 left-2.5"
+                  />
                 )}
                 {isTop && swipeDirection && (
                   <div className="absolute inset-0 pointer-events-none">
                     <div
-                      className={`absolute top-6 text-2xl font-bold uppercase tracking-wider px-4 py-1.5 rounded-lg border-[3px] transition-opacity duration-200  ${swipeDirection === "right"
-                        ? "left-6 text-secondary-700 border-secondary-700 rotate-[-20deg]"
-                        : "right-6 text-secondary-600 border-secondary-600 rotate-[20deg]"
-                        }`}
+                      className={`absolute top-6 text-2xl font-bold uppercase tracking-wider px-4 py-1.5 rounded-lg border-[3px] transition-opacity duration-200  ${
+                        swipeDirection === "right"
+                          ? "left-6 text-secondary-700 border-secondary-700 rotate-[-20deg]"
+                          : "right-6 text-secondary-600 border-secondary-600 rotate-[20deg]"
+                      }`}
                       style={{
                         textShadow: "0 0 10px rgba(0,0,0,0.3)"
                       }}
@@ -392,8 +409,9 @@ const SwipingCards: FC<ISwipingCardsProps> = ({ petData, loading, isSubscribed, 
                     {card.name}{" "}
                     <span className="text-base font-normal opacity-90 inline-flex items-center gap-1">
                       {card.info}
-                      {card?.isVerified && <img src={images.verified.src} alt="verified" />}
-
+                      {card?.isVerified && (
+                        <img src={images.verified.src} alt="verified" />
+                      )}
                     </span>
                   </h3>
                   <p className="text-sm opacity-90 mt-1 max-w-[280px] leading-snug">

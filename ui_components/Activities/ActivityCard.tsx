@@ -120,8 +120,9 @@ const ActivityCard: FC<IActivityCardProps> = ({
               className="flex flex-col items-center gap-4 relative perspective-[1000px] max-w-md w-full"
             >
               <div
-                className={`relative w-full h-[420px] rounded-[24px] border-[3px] border-white shadow-[0px_4px_10px_rgba(0,0,0,0.1)] transition-all duration-700 ease-in-out hover:shadow-[0px_8px_25px_rgba(0,0,0,0.2)] [transform-style:preserve-3d] cursor-pointer group ${isFlipped ? "bg-grey-100" : "bg-transparent"
-                  }`}
+                className={`relative w-full h-[420px] rounded-[24px] border-[3px] border-white shadow-[0px_4px_10px_rgba(0,0,0,0.1)] transition-all duration-700 ease-in-out hover:shadow-[0px_8px_25px_rgba(0,0,0,0.2)] [transform-style:preserve-3d] cursor-pointer group ${
+                  isFlipped ? "bg-grey-100" : "bg-transparent"
+                }`}
                 style={{
                   transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)"
                 }}

@@ -237,9 +237,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </div>
 
             {/* Main Content (Chat or Mobile List) */}
-            <div className="flex-1 w-full relative">
-              {children}
-            </div>
+            <div className="flex-1 w-full relative">{children}</div>
           </div>
         </div>
       </div>

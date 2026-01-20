@@ -40,7 +40,9 @@ const Activities: FC = () => {
     viewedProfile: 0
   });
 
-  const whoLikesMeCount = useSelector((state: RootState) => state.match.whoLikesMeCount);
+  const whoLikesMeCount = useSelector(
+    (state: RootState) => state.match.whoLikesMeCount
+  );
 
   useEffect(() => {
     // Clear badge when component mounts (user enters the route)
@@ -100,7 +102,12 @@ const Activities: FC = () => {
 
   const tabs = useMemo(
     () => [
-      { id: "likes-me", label: "Who Likes Me", count: tabCounts.likesMe, hasBadge: whoLikesMeCount > 0 },
+      {
+        id: "likes-me",
+        label: "Who Likes Me",
+        count: tabCounts.likesMe,
+        hasBadge: whoLikesMeCount > 0
+      },
       { id: "you-like", label: "You Like Them", count: tabCounts.youLike },
       {
         id: "viewed-profile",
@@ -108,7 +115,12 @@ const Activities: FC = () => {
         count: tabCounts.viewedProfile
       }
     ],
-    [tabCounts.likesMe, tabCounts.youLike, tabCounts.viewedProfile, whoLikesMeCount]
+    [
+      tabCounts.likesMe,
+      tabCounts.youLike,
+      tabCounts.viewedProfile,
+      whoLikesMeCount
+    ]
   );
 
   const mapPetsToCards = (items: any[]): ICard[] => {
@@ -326,18 +338,20 @@ const Activities: FC = () => {
             <li
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex gap-2 shrink-0 items-center rounded-full body_regular py-2 px-3 cursor-pointer transition-colors ${activeTab === tab.id
-                ? "bg-blue text-white"
-                : "border border-neutral-white text-light-grey2"
-                }`}
+              className={`flex gap-2 shrink-0 items-center rounded-full body_regular py-2 px-3 cursor-pointer transition-colors ${
+                activeTab === tab.id
+                  ? "bg-blue text-white"
+                  : "border border-neutral-white text-light-grey2"
+              }`}
             >
               {tab.label}
               <div className="relative">
                 <span
-                  className={`h-6 w-6 rounded-full flex items-center justify-center ${activeTab === tab.id
-                    ? "bg-white text-blue"
-                    : "bg-grey-100 text-grey2-700"
-                    }`}
+                  className={`h-6 w-6 rounded-full flex items-center justify-center ${
+                    activeTab === tab.id
+                      ? "bg-white text-blue"
+                      : "bg-grey-100 text-grey2-700"
+                  }`}
                 >
                   {tab.count}
                 </span>

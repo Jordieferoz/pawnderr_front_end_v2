@@ -72,11 +72,7 @@ const BlockModalContent: FC = () => {
       </RadioGroup>
 
       <div className="mt-11">
-        <Button
-          className="w-full"
-          onClick={handleBlock}
-          disabled={isLoading}
-        >
+        <Button className="w-full" onClick={handleBlock} disabled={isLoading}>
           {isLoading ? "Blocking..." : "Block"}
         </Button>
       </div>

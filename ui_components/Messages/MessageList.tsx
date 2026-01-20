@@ -43,13 +43,11 @@ const MessageList: FC<MessageListProps> = ({ searchTerm = "" }) => {
         );
 
       const displayName =
-        conversation.otherPetName ||
-        (otherPetId ? `Pet ${otherPetId}` : "Pet");
+        conversation.otherPetName || (otherPetId ? `Pet ${otherPetId}` : "Pet");
 
       return displayName.toLowerCase().includes(lowerTerm);
     });
   }, [conversations, searchTerm, petIds]);
-
 
   const openChat = (chatId: string) => {
     router.push(`/messages/${chatId}`);
@@ -62,7 +60,8 @@ const MessageList: FC<MessageListProps> = ({ searchTerm = "" }) => {
     const diffMs = now.getTime() - date.getTime();
     const diffDays = Math.floor(diffMs / 86400000);
 
-    const isSameDay = date.getDate() === now.getDate() &&
+    const isSameDay =
+      date.getDate() === now.getDate() &&
       date.getMonth() === now.getMonth() &&
       date.getFullYear() === now.getFullYear();
 
@@ -71,7 +70,8 @@ const MessageList: FC<MessageListProps> = ({ searchTerm = "" }) => {
     // Check if it's yesterday
     const yesterday = new Date(now);
     yesterday.setDate(yesterday.getDate() - 1);
-    const isYesterday = date.getDate() === yesterday.getDate() &&
+    const isYesterday =
+      date.getDate() === yesterday.getDate() &&
       date.getMonth() === yesterday.getMonth() &&
       yesterday.getFullYear() === yesterday.getFullYear();
 
@@ -81,7 +81,11 @@ const MessageList: FC<MessageListProps> = ({ searchTerm = "" }) => {
       return `${diffDays} Days Ago`;
     }
 
-    return date.toLocaleDateString("en-GB", { day: 'numeric', month: 'short', year: 'numeric' });
+    return date.toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "short",
+      year: "numeric"
+    });
   };
 
   if (isInitializing) {
@@ -109,7 +113,6 @@ const MessageList: FC<MessageListProps> = ({ searchTerm = "" }) => {
       </div>
     );
   }
-
 
   if (searchTerm && filteredConversations.length === 0) {
     return (

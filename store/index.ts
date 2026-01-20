@@ -49,7 +49,7 @@ const rootReducer = combineReducers({
   profileInfo: persistedProfileReducer,
   user: persistedUserReducer,
   modal: modalReducer,
-  match: matchReducer 
+  match: matchReducer
 });
 
 export const store = configureStore({

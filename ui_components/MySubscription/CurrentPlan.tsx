@@ -132,12 +132,13 @@ const CurrentPlan: FC<CurrentPlanProps> = ({
           <li className="flex items-center gap-2 justify-between heading4_medium text-accent-900">
             Status:{" "}
             <span
-              className={`${subscription.status === "active"
-                ? "text-green-500"
-                : subscription.status === "expired"
-                  ? "text-red-500"
-                  : "text-orange-500"
-                }`}
+              className={`${
+                subscription.status === "active"
+                  ? "text-green-500"
+                  : subscription.status === "expired"
+                    ? "text-red-500"
+                    : "text-orange-500"
+              }`}
             >
               {subscription.status.charAt(0).toUpperCase() +
                 subscription.status.slice(1)}

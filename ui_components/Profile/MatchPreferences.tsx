@@ -47,8 +47,8 @@ const MatchPreferences: FC<MatchPreferencesProps> = ({
     () =>
       metadata?.preference_types
         ? [...metadata.preference_types].sort(
-          (a, b) => a.display_order - b.display_order
-        )
+            (a, b) => a.display_order - b.display_order
+          )
         : [],
     [metadata]
   );
@@ -83,14 +83,21 @@ const MatchPreferences: FC<MatchPreferencesProps> = ({
       // Map preference selections from API to form structure
       const preferenceSelections: Record<string, number | number[]> = {};
 
-      if (preferences?.preference_selections && !Array.isArray(preferences.preference_selections)) {
+      if (
+        preferences?.preference_selections &&
+        !Array.isArray(preferences.preference_selections)
+      ) {
         // Handle object format: { "1": 1, "2": 4, ... }
-        Object.entries(preferences.preference_selections).forEach(([key, val]) => {
-          const typeId = parseInt(key);
-          if (!isNaN(typeId)) {
-            preferenceSelections[typeId.toString()] = val as number | number[];
+        Object.entries(preferences.preference_selections).forEach(
+          ([key, val]) => {
+            const typeId = parseInt(key);
+            if (!isNaN(typeId)) {
+              preferenceSelections[typeId.toString()] = val as
+                | number
+                | number[];
+            }
           }
-        });
+        );
       }
 
       // Existing array handling (if present)
@@ -111,23 +118,31 @@ const MatchPreferences: FC<MatchPreferencesProps> = ({
         }
 
         if (metadataPreferenceType) {
-          const optionId = selection.selected_option?.option_id || selection.selected_option?.id || 0;
+          const optionId =
+            selection.selected_option?.option_id ||
+            selection.selected_option?.id ||
+            0;
 
           if (metadataPreferenceType.allow_multiple) {
             // For multiple selections, store as array
             // Check if it's already an array (some APIs return array of selected options directly)
-            const existing = preferenceSelections[metadataPreferenceType.id.toString()];
+            const existing =
+              preferenceSelections[metadataPreferenceType.id.toString()];
             const currentArray = Array.isArray(existing) ? existing : [];
             if (optionId) {
               // validation to avoid duplicates if loop runs multiple times (though unlikely here)
               if (!currentArray.includes(optionId)) {
-                preferenceSelections[metadataPreferenceType.id.toString()] = [...currentArray, optionId];
+                preferenceSelections[metadataPreferenceType.id.toString()] = [
+                  ...currentArray,
+                  optionId
+                ];
               }
             }
           } else {
             // For single selection, store as number
             if (optionId) {
-              preferenceSelections[metadataPreferenceType.id.toString()] = optionId;
+              preferenceSelections[metadataPreferenceType.id.toString()] =
+                optionId;
             }
           }
         }
@@ -247,8 +262,8 @@ const MatchPreferences: FC<MatchPreferencesProps> = ({
         max_age: data.maxAge,
         ...(data.preferredBreedIds &&
           data.preferredBreedIds.length > 0 && {
-          preferred_breed_ids: data.preferredBreedIds
-        })
+            preferred_breed_ids: data.preferredBreedIds
+          })
       };
 
       // Call update API

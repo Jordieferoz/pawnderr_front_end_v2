@@ -66,8 +66,9 @@ const Header: FC = () => {
                 <Link
                   key={item.key}
                   href={item.href}
-                  className={`flex-1 text-center no-underline select-none ${active ? "text-neutral-900" : "text-gray-400"
-                    }`}
+                  className={`flex-1 text-center no-underline select-none ${
+                    active ? "text-neutral-900" : "text-gray-400"
+                  }`}
                 >
                   <div className="flex flex-col items-center justify-between h-[56px]">
                     <div className="flex justify-center items-center h-[40px] relative">
@@ -86,8 +87,9 @@ const Header: FC = () => {
                     </div>
 
                     <p
-                      className={`tp_small_medium mt-1 ${active ? "text-accent-500" : "text-neutral-white"
-                        }`}
+                      className={`tp_small_medium mt-1 ${
+                        active ? "text-accent-500" : "text-neutral-white"
+                      }`}
                     >
                       {item.label}
                     </p>

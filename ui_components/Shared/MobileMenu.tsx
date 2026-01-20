@@ -12,13 +12,22 @@ const MobileMenu: FC = () => {
   const pathname = usePathname();
 
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
-  const unseenMatchCount = useSelector((state: RootState) => state.match.unseenMatchCount);
-  const whoLikesMeCount = useSelector((state: RootState) => state.match.whoLikesMeCount);
+  const unseenMatchCount = useSelector(
+    (state: RootState) => state.match.unseenMatchCount
+  );
+  const whoLikesMeCount = useSelector(
+    (state: RootState) => state.match.whoLikesMeCount
+  );
   const navRef = useRef<HTMLElement>(null);
   const itemRefs = useRef<(HTMLAnchorElement | null)[]>([]);
 
   // Hide footer on authentication pages
-  const hiddenRoutes = ["/sign-in", "/sign-up", "/register", "/forgot-password"];
+  const hiddenRoutes = [
+    "/sign-in",
+    "/sign-up",
+    "/register",
+    "/forgot-password"
+  ];
   if (hiddenRoutes.includes(pathname)) {
     return null;
   }
@@ -80,8 +89,9 @@ const MobileMenu: FC = () => {
               ref={(el) => {
                 itemRefs.current[index] = el;
               }}
-              className={`flex-1 text-center no-underline select-none ${active ? "text-neutral-900" : "text-gray-400"
-                }`}
+              className={`flex-1 text-center no-underline select-none ${
+                active ? "text-neutral-900" : "text-gray-400"
+              }`}
             >
               <div className="flex flex-col items-center justify-between h-[56px]">
                 <div className="flex justify-center items-center h-[40px] relative">
@@ -100,8 +110,9 @@ const MobileMenu: FC = () => {
                 </div>
 
                 <p
-                  className={`tp_small_medium mt-1 ${active ? "text-accent-500" : "text-neutral-white"
-                    }`}
+                  className={`tp_small_medium mt-1 ${
+                    active ? "text-accent-500" : "text-neutral-white"
+                  }`}
                 >
                   {item.label}
                 </p>

@@ -50,8 +50,8 @@ const PetInformation: FC<PetInformationProps> = ({
     () =>
       metadata?.attributes
         ? [...metadata.attributes].sort(
-          (a, b) => a.display_order - b.display_order
-        )
+            (a, b) => a.display_order - b.display_order
+          )
         : [],
     [metadata]
   );

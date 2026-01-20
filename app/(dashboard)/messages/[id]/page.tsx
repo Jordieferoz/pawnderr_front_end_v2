@@ -1,6 +1,6 @@
 "use client";
 
-import { ChatWindow, Messages } from "@/ui_components/Messages";
+import { ChatWindow } from "@/ui_components/Messages";
 import {
   BlockModal,
   MessageActionModal,
@@ -21,7 +21,7 @@ export default function ChatPage() {
   }, []);
 
   const myPetIds = isMounted
-    ? petsStorage.get()?.my_pets?.map((pet) => pet.id) ?? []
+    ? (petsStorage.get()?.my_pets?.map((pet) => pet.id) ?? [])
     : [];
 
   const getPetIdsFromChat = () => {
