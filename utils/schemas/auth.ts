@@ -68,7 +68,20 @@ export const resetPasswordSchema = z
     path: ["confirmPassword"]
   });
 
+// Change Password Schema: OTP, New Password, Confirm Password (similar to Reset Password)
+export const changePasswordSchema = z
+  .object({
+    otp: z.string().min(6, "OTP is required"),
+    newPassword: z.string().min(8, { message: "Use at least 8 characters" }),
+    confirmPassword: z.string().min(8, { message: "Confirm your password" })
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords must match",
+    path: ["confirmPassword"]
+  });
+
 export type SignInValues = z.infer<typeof signInSchema>;
 export type SignUpValues = z.infer<typeof signUpSchema>;
 export type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordValues = z.infer<typeof resetPasswordSchema>;
+export type ChangePasswordValues = z.infer<typeof changePasswordSchema>;

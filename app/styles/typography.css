@@ -16,7 +16,7 @@
     font-family: "Fredoka", sans-serif;
   }
   .display3 {
-    @apply text-[40px] leading-[1.1] font-normal  md:text-[48px];
+    @apply text-[40px] leading-[1.1] font-medium  md:text-[48px];
     font-family: "Fredoka", sans-serif;
   }
   .display4 {

@@ -25,7 +25,7 @@ const PawpStars = () => {
 
         <div className="grid md:grid-cols-3 gap-x-10 gap-y-5 mb-20">
           {PAWP_STARS_PROFILES.map((profile) => (
-            <div key={profile.id} className="rounded-[32px] relative h-[346px]">
+            <div key={profile.id} className="rounded-[32px] relative h-[400px]">
               <div className="img_gradient shadow-[0px_8.25px_16.5px_0px_#00000040] rounded-[32px] absolute inset-0" />
               <img
                 src={profile.image}

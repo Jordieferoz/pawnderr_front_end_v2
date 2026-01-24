@@ -372,7 +372,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
           {isSignup ? "Create Your PAWnderr Profile" : "Welcome Back"}
         </h1>
         <p
-          className={`body_regular text-light-grey2 px-7 md:px-34 text-center mb-10`}
+          className={`heading4_medium text-neutral-white px-7 md:px-30 text-center mb-10`}
         >
           {isSignup
             ? "Because every connection starts with a simple hello."
@@ -546,10 +546,16 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
                       {(errors as any).password?.message}
                     </p>
                   )}
-                  <div className="flex justify-end mt-2">
+                  <div className="flex justify-between mt-2">
                     <Link
                       href="/forgot-password"
-                      className="text-xs font-semibold text-primary-theme hover:underline"
+                      className="text-xs font-semibold text-accent-900 hover:underline"
+                    >
+                      Forgot Password?
+                    </Link>
+                    <Link
+                      href="/forgot-password"
+                      className="text-xs font-semibold text-accent-900 hover:underline"
                     >
                       Forgot Password?
                     </Link>
