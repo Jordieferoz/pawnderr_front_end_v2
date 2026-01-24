@@ -340,7 +340,7 @@ const Activities: FC = () => {
               onClick={() => setActiveTab(tab.id)}
               className={`flex gap-2 shrink-0 items-center rounded-full body_regular py-2 px-3 cursor-pointer transition-colors ${
                 activeTab === tab.id
-                  ? "bg-blue text-white"
+                  ? "bg-primary-500 text-white"
                   : "border border-neutral-white text-light-grey2"
               }`}
             >
@@ -349,13 +349,12 @@ const Activities: FC = () => {
                 <span
                   className={`h-6 w-6 rounded-full flex items-center justify-center ${
                     activeTab === tab.id
-                      ? "bg-white text-blue"
+                      ? "bg-white text-primary-500"
                       : "bg-grey-100 text-grey2-700"
                   }`}
                 >
                   {tab.count}
                 </span>
-                {/* @ts-ignore */}
                 {tab.hasBadge && (
                   <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-secondary-600 rounded-full border border-white"></span>
                 )}
@@ -405,7 +404,7 @@ const Activities: FC = () => {
           </div>
         )}
         {!isSubscribed && activeTab === "likes-me" && (
-          <div className="absolute top-0 backdrop-blur-lg w-full bg-white/80 h-[550px] flex items-center justify-center">
+          <div className="absolute top-0 backdrop-blur-lg w-full bg-white/80 h-inherit mt-20 flex items-center justify-center">
             <div className="text-center">
               <h4 className="display2_medium text-accent-900">
                 Unlock the Fun

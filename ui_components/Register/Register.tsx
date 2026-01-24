@@ -28,7 +28,7 @@ const Register: FC = () => {
         >
           <Image
             src={images.logoHorizontal.src}
-            className="logo w-[240px]"
+            className="logo w-[220px]"
             width={147}
             height={97}
             alt="PAWnderr Logo"

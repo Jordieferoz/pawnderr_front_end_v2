@@ -10,7 +10,8 @@ const PricingCard: FC<PricingCardProps> = ({
   features,
   plan,
   onSubscribe,
-  processingPlanId
+  processingPlanId,
+  buttonText
 }) => {
   const getPriceParts = () => {
     if (!plan) return null;
@@ -77,11 +78,11 @@ const PricingCard: FC<PricingCardProps> = ({
             }`}
           >
             <img
-              className="w-6"
+              className="w-5"
               src={
                 type === "annually"
-                  ? images.starBlack.src
-                  : images.starWhite.src
+                  ? images.checkGrey.src
+                  : images.checkWhite.src
               }
               alt="billing"
             />
@@ -95,7 +96,7 @@ const PricingCard: FC<PricingCardProps> = ({
         onClick={handleClick}
         disabled={!plan || isAnyProcessing}
       >
-        {isProcessing ? "Processing..." : "Go Premium"}
+        {isProcessing ? "Processing..." : buttonText || "Go Premium"}
       </Button>
     </div>
   );

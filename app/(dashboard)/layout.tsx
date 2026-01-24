@@ -12,7 +12,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <ProfileLoader />
       <Header />
       <MobileHeader />
-      <main className="relative pt-22.5 min-h-[calc(100vh-0px)]">
+      <main className="relative pt-22.5 min-h-[calc(100dvh-0px)]">
         {children}
       </main>
     </>

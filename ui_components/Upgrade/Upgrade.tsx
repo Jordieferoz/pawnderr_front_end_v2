@@ -4,6 +4,7 @@ import {
   createSubscriptionOrder,
   fetchSubscriptionFeatures,
   fetchSubscriptionPlans,
+  fetchSubscriptionStatus,
   verifySubscriptionPayment
 } from "@/utils/api";
 import { useRouter } from "next/navigation";
@@ -48,6 +49,9 @@ const Upgrade = () => {
   const [features, setFeatures] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [processingPlanId, setProcessingPlanId] = useState<number | null>(null);
+  const [subscriptionType, setSubscriptionType] = useState<
+    "NONE" | "MONTHLY_PREMIUM" | "YEARLY_PREMIUM"
+  >("NONE");
 
   const pricingType: PricingType = isAnnual ? "annually" : "monthly";
   const selectedPlan = isAnnual ? plans.yearly : plans.monthly;
@@ -55,9 +59,10 @@ const Upgrade = () => {
   useEffect(() => {
     const run = async () => {
       try {
-        const [plansResp, featuresResp] = await Promise.all([
+        const [plansResp, featuresResp, statusResp] = await Promise.all([
           fetchSubscriptionPlans(),
-          fetchSubscriptionFeatures()
+          fetchSubscriptionFeatures(),
+          fetchSubscriptionStatus()
         ]);
 
         if (plansResp.data?.plans) {
@@ -80,7 +85,23 @@ const Upgrade = () => {
           );
           setFeatures(featureNames);
         }
-      } catch (error: any) {
+        console.log(statusResp, "statusResp");
+
+        if (
+          (statusResp as any)?.data?.is_premium &&
+          (statusResp as any).data.subscription?.plan
+        ) {
+          const planDuration = (statusResp as any).data.subscription.plan
+            .duration_type;
+          console.log(planDuration, "planDuration");
+          if (planDuration === "monthly") {
+            setSubscriptionType("MONTHLY_PREMIUM");
+            setIsAnnual(true);
+          } else if (planDuration === "yearly" || planDuration === "annually") {
+            setSubscriptionType("YEARLY_PREMIUM");
+          }
+        }
+      } catch {
         showToast({
           type: "error",
           message: "Failed to load subscription plans"
@@ -174,6 +195,38 @@ const Upgrade = () => {
     );
   }
 
+  if (subscriptionType === "YEARLY_PREMIUM") {
+    return (
+      <div className="upgrade_wrapper common_container">
+        <div className="flex gap-5 my-6 mb-22">
+          <img
+            onClick={() => router.back()}
+            className="w-10 h-10 md:hidden cursor-pointer"
+            src={images.backBtn.src}
+            alt="Go back"
+          />
+          <h4 className="display4_medium text-accent-900 relative w-full">
+            PAWnderr+
+            <span className="body_large_medium text-neutral-white absolute w-full left-0 top-full">
+              More matches. More treats. More tail-wagging perks.
+            </span>
+          </h4>
+        </div>
+        <div className="flex justify-center flex-col items-center mt-20">
+          <p className="display4_medium mb-20 text-accent-900 text-center">
+            You’re a <br /> Pawnderr+ <br /> Member
+          </p>
+          <Button
+            className="w-full md:w-auto px-8"
+            onClick={() => router.push("/activities")}
+          >
+            View Activities
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="upgrade_wrapper common_container">
       <div className="flex gap-5 my-6 mb-22">
@@ -191,41 +244,65 @@ const Upgrade = () => {
           </span>
         </h4>
       </div>
-      <div className="flex items-center gap-3 mb-4 md:hidden">
-        <h3 className="heading3 text-dark-brown">Monthly</h3>
-        <Switch
-          id="billing-period"
-          checked={isAnnual}
-          onCheckedChange={setIsAnnual}
-        />
-        <h3 className="heading3 text-dark-brown">Annually</h3>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 mb-8 gap-12">
-        <div className="">
+      {subscriptionType !== "MONTHLY_PREMIUM" && (
+        <div className="flex items-center gap-3 mb-4 md:hidden">
+          <h3 className="heading3 text-dark-brown">Monthly</h3>
+          <Switch
+            id="billing-period"
+            checked={isAnnual}
+            onCheckedChange={setIsAnnual}
+          />
+          <h3 className="heading3 text-dark-brown">Annually</h3>
+        </div>
+      )}
+      <div
+        className={`grid grid-cols-1 ${
+          subscriptionType === "MONTHLY_PREMIUM"
+            ? "justify-items-center"
+            : "md:grid-cols-2"
+        } mb-8 gap-12`}
+      >
+        <div
+          className={
+            subscriptionType === "MONTHLY_PREMIUM" ? "max-w-md w-full" : ""
+          }
+        >
           <PricingCard
             type={pricingType}
             plan={selectedPlan}
             features={features}
             onSubscribe={handleSubscribe}
             processingPlanId={processingPlanId}
+            buttonText={
+              subscriptionType === "MONTHLY_PREMIUM"
+                ? "Upgrade to Annual Plan"
+                : "Go Premium"
+            }
           />
         </div>
-        <div className="hidden md:block">
-          <PricingCard
-            type={"annually"}
-            plan={plans.yearly}
-            features={features}
-            onSubscribe={handleSubscribe}
-            processingPlanId={processingPlanId}
-          />
-        </div>
+        {subscriptionType !== "MONTHLY_PREMIUM" && (
+          <div className="hidden md:block">
+            <PricingCard
+              type={"annually"}
+              plan={plans.yearly}
+              features={features}
+              onSubscribe={handleSubscribe}
+              processingPlanId={processingPlanId}
+              buttonText="Go Premium"
+            />
+          </div>
+        )}
       </div>
       <Button
         className="w-full md:hidden"
         onClick={() => selectedPlan && handleSubscribe(selectedPlan.id)}
         disabled={!selectedPlan || processingPlanId !== null}
       >
-        {processingPlanId === selectedPlan?.id ? "Processing..." : "Go Premium"}
+        {processingPlanId === selectedPlan?.id
+          ? "Processing..."
+          : subscriptionType === "MONTHLY_PREMIUM"
+            ? "Upgrade to Annual Plan"
+            : "Go Premium"}
       </Button>
     </div>
   );

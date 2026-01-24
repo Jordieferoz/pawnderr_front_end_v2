@@ -16,4 +16,5 @@ export interface PricingCardProps {
   plan: Plan | null;
   onSubscribe?: (planId: number) => void;
   processingPlanId?: number | null;
+  buttonText?: string;
 }

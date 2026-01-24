@@ -64,7 +64,7 @@ import linkedin from "public/assets/images/linkedin.svg";
 import loginBg from "public/assets/images/login_bg.png";
 import logo from "public/assets/images/logo.svg";
 import logoBig from "public/assets/images/logo_big.svg";
-import logoHorizontal from "public/assets/images/logo_horizontal.png";
+import logoHorizontal from "public/assets/images/logo_horizontal.svg";
 import loyalRibbon from "public/assets/images/loyal_ribbon.svg";
 import matchMeet from "public/assets/images/match_meet.png";
 import matches from "public/assets/images/matches.svg";
@@ -95,8 +95,8 @@ import signupLeftBlur from "public/assets/images/signup_left_blur.svg";
 import signupRightBlur from "public/assets/images/signup_right_blur.svg";
 import smileyActive from "public/assets/images/smiley_active.svg";
 import sniffSwipe from "public/assets/images/sniff_swipe.png";
-import starBlack from "public/assets/images/star_black.svg";
-import starWhite from "public/assets/images/star_white.svg";
+import checkGrey from "public/assets/images/check_grey.svg";
+import checkWhite from "public/assets/images/check_white.svg";
 import twitter from "public/assets/images/twitter.svg";
 import userFormBg from "public/assets/images/user_form_bg.svg";
 import userLeftBlur from "public/assets/images/user_left_blur.svg";
@@ -140,8 +140,8 @@ export type ImageType =
   | "filterIcon"
   | "pawnderrPlus"
   | "editIcon"
-  | "starWhite"
-  | "starBlack"
+  | "checkGrey"
+  | "checkWhite"
   | "chevronRight"
   | "searchGrey"
   | "ellipsisHorizontal"
@@ -260,8 +260,8 @@ export const images: Record<ImageType, NextImage> = {
   filterIcon,
   pawnderrPlus,
   editIcon,
-  starWhite,
-  starBlack,
+  checkGrey,
+  checkWhite,
   chevronRight,
   searchGrey,
   ellipsisHorizontal,

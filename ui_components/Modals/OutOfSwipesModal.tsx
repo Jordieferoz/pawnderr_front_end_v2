@@ -3,7 +3,7 @@
 import { useDispatch, useSelector } from "react-redux";
 
 import { RootState } from "@/store";
-import { closeHangTightModal } from "@/store/modalSlice";
+import { closeOutOfSwipesModal } from "@/store/modalSlice";
 
 import { OutOfSwipesContent } from "../ModalContents";
 import { Modal } from "../Shared";
@@ -17,7 +17,7 @@ const OutOfSwipesModal = () => {
         (state: RootState) => state.modal.isOutOfSwipesModalOpen
       )}
       setOpen={(val) => {
-        if (!val) dispatch(closeHangTightModal());
+        if (!val) dispatch(closeOutOfSwipesModal());
       }}
       content={<OutOfSwipesContent />}
     />

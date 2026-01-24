@@ -48,13 +48,13 @@ const Header: FC = () => {
 
   return (
     <>
-      <header className="fixed py-4 w-full left-0 top-0 z-50 bg-white border-b border-blue/10 shadow-[0px_4px_16.4px_0px_#0000000F] hidden md:block">
+      <header className="fixed py-4 w-full left-0 h-22.5 top-0 z-50 bg-white border-b border-blue/10 shadow-[0px_4px_16.4px_0px_#0000000F] hidden md:block">
         <nav className="container mx-auto common_container flex items-center justify-between gap-4">
           <Link href={"/dashboard"}>
             <img
               src={images.logoHorizontal.src}
               alt="logo"
-              className="w-[220px]"
+              className="w-[168px]"
             />
           </Link>
 
@@ -112,12 +112,12 @@ const Header: FC = () => {
               <span className="absolute top-1 right-0 w-2.5 h-2.5 bg-secondary-600 rounded-full"></span>
             </button> */}
 
-            <DropdownMenu userProfile={userProfile} isLoading={isLoading} />
             <Link href={"/upgrade"} className="cursor-pointer">
               <Button>
                 <img src={images.pawnderBlack.src} alt="pawnderr+" /> PAWnderr+
               </Button>
             </Link>
+            <DropdownMenu userProfile={userProfile} isLoading={isLoading} />
           </ul>
         </nav>
       </header>

@@ -450,11 +450,7 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
             disabled={!canSwipe}
             className="bg-white rounded-full w-[55px] h-[55px] flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <img
-              src={images.like.src}
-              alt="Like"
-              className="w-[33px] h-[33px]"
-            />
+            <img src={images.like.src} alt="Like" className="w-[28px]" />
           </button>
         </div>
       )}

@@ -94,7 +94,6 @@ const ChangePassword = () => {
   return (
     <div className="bg-white shadow-[0px_4px_16.4px_0px_#0000001A] p-8 md:rounded-[40px] rounded-lg mt-10 md:mt-0">
       <div className="mb-6">
-        <h3 className="display3 text-accent-900 mb-2">Change Password</h3>
         <p className="heading4_medium text-neutral-white">
           {step === 1
             ? "Click the button below to receive an OTP on your registered mobile number."
