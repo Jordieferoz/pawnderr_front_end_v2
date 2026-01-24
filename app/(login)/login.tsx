@@ -15,6 +15,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { setMetadata, updateStepData } from "@/store/registrationSlice";
 import { setUser } from "@/store/userSlice";
 import { OTPModal } from "@/ui_components/Modals";
@@ -66,6 +67,21 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
 
   const [showOTPModal, setShowOTPModal] = useState(false);
   const [otpPhone, setOtpPhone] = useState<string>("");
+  const [rememberMe, setRememberMe] = useState(false);
+
+  // Load remembered phone number
+  useEffect(() => {
+    if (!isSignup) {
+      const savedPhone = localStorage.getItem("rememberedPhone");
+      if (savedPhone) {
+        setRememberMe(true);
+        // We need to set the value in the form
+        // Since we can't easily access setValue outside here without refactoring,
+        // we'll rely on defaultValues if we could, but react-hook-form is already init.
+        // We will return the values in defaultValues instead for initial render or reset.
+      }
+    }
+  }, [isSignup]);
 
   // Get error from URL if redirected from middleware
   useEffect(() => {
@@ -93,9 +109,17 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
     resolver: zodResolver(schema),
     mode: "onChange",
     reValidateMode: "onChange",
-    defaultValues: (isSignup
-      ? { email: "", password: "", confirmPassword: "" }
-      : { phone: "", password: "" }) as SignInValues | SignUpValues
+    defaultValues: async () => {
+      let savedPhone = "";
+      if (!isSignup && typeof window !== "undefined") {
+        // Check window for SSR safety
+        savedPhone = localStorage.getItem("rememberedPhone") || "";
+      }
+
+      return isSignup
+        ? { email: "", password: "", confirmPassword: "" }
+        : { phone: savedPhone, password: "" };
+    }
   });
 
   const password = watch("password" as keyof (SignInValues | SignUpValues));
@@ -116,6 +140,13 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
         const formattedPhone = signinData.phone?.startsWith("+")
           ? signinData.phone
           : `+91${signinData.phone}`;
+
+        // Save or remove phone number from local storage based on rememberMe
+        if (rememberMe) {
+          localStorage.setItem("rememberedPhone", signinData.phone);
+        } else {
+          localStorage.removeItem("rememberedPhone");
+        }
 
         try {
           const response = await loginWithPhone({
@@ -368,7 +399,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
             alt="PAWnderr Logo"
           />
         </Link>
-        <h1 className="display3 text-accent-900 mb-3 px-6 md:px-18 text-center">
+        <h1 className="display3 text-accent-900 mb-3 px-2 md:px-18 text-center">
           {isSignup ? "Create Your PAWnderr Profile" : "Welcome Back"}
         </h1>
         <p
@@ -378,7 +409,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
             ? "Because every connection starts with a simple hello."
             : "Your dog's next meaningful connection could be just a few clicks away.."}
         </p>
-        <div className="md:px-30">
+        <div className="md:px-30 pb-23 md:pb-0">
           <img
             className="pointer-events-none absolute top-1/2 left-1/2 z-0 -translate-1/2 md:hidden"
             src={images.authPattern.src}
@@ -546,13 +577,22 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
                       {(errors as any).password?.message}
                     </p>
                   )}
-                  <div className="flex justify-between mt-2">
-                    <Link
-                      href="/forgot-password"
-                      className="text-xs font-semibold text-accent-900 hover:underline"
-                    >
-                      Forgot Password?
-                    </Link>
+                  <div className="flex justify-between mt-2 items-center">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="rememberMe"
+                        checked={rememberMe}
+                        onCheckedChange={(checked) =>
+                          setRememberMe(checked as boolean)
+                        }
+                      />
+                      <label
+                        htmlFor="rememberMe"
+                        className="text-xs font-semibold text-accent-900 cursor-pointer select-none"
+                      >
+                        Remember Me
+                      </label>
+                    </div>
                     <Link
                       href="/forgot-password"
                       className="text-xs font-semibold text-accent-900 hover:underline"
@@ -595,51 +635,55 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
               </div>
             )}
 
-            <div className="fixed bottom-0 md:relative py-5 md:pb-0 w-full bg-white shadow-[0px_-4px_12.8px_-3px_#00000012] md:shadow-none">
-              <Button
-                type="submit"
-                disabled={!isValid || isSubmitting}
-                suppressHydrationWarning
-                className="w-[calc(100%-40px)] md:w-full mb-4"
-              >
-                {isSubmitting ? (
-                  <span className="flex items-center gap-2">
-                    <svg
-                      className="animate-spin h-5 w-5"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
+            <div className="fixed bottom-0 left-0 md:relative py-5 w-full bg-white shadow-[0px_-4px_12.8px_-3px_#00000012] md:shadow-none flex justify-center md:block">
+              <div className="w-full flex items-center flex-col">
+                <Button
+                  type="submit"
+                  disabled={!isValid || isSubmitting}
+                  suppressHydrationWarning
+                  className="w-[calc(100%-40px)] md:w-full mb-4"
+                >
+                  {isSubmitting ? (
+                    <span className="flex items-center gap-2">
+                      <svg
+                        className="animate-spin h-5 w-5"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      {isSignup ? "Signing Up..." : "Signing In..."}
+                    </span>
+                  ) : (
+                    <>{isSignup ? "Sign Up" : "Sign In"}</>
+                  )}
+                </Button>
+                <div className="text-center">
+                  <p className="paragraph1_bold text-accent-1000">
+                    {isSignup
+                      ? "Already have an account?"
+                      : " New to PAWnderr?"}{" "}
+                    <Link
+                      href={isSignup ? "/sign-in" : "/sign-up"}
+                      className="text-primary-theme"
                     >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    {isSignup ? "Signing Up..." : "Signing In..."}
-                  </span>
-                ) : (
-                  <>{isSignup ? "Sign Up" : "Sign In"}</>
-                )}
-              </Button>
-              <div className="text-center">
-                <p className="paragraph1_bold text-accent-1000">
-                  {isSignup ? "Already have an account?" : " New to PAWnderr?"}{" "}
-                  <Link
-                    href={isSignup ? "/sign-in" : "/sign-up"}
-                    className="text-primary-theme"
-                  >
-                    {isSignup ? "Sign In" : "Create an Account"}
-                  </Link>
-                </p>
+                      {isSignup ? "Sign In" : "Create an Account"}
+                    </Link>
+                  </p>
+                </div>
               </div>
             </div>
           </form>

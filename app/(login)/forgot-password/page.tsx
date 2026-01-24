@@ -202,7 +202,7 @@ export default function ForgotPassword() {
         <h1 className="display3 text-accent-900 mb-3 px-6 md:px-18 text-center">
           {step === 1 ? "Forgot Password" : "Reset Password"}
         </h1>
-        <p className="body_regular text-light-grey2 px-7 md:px-34 text-center mb-10">
+        <p className="heading4_medium text-neutral-white px-7 md:px-34 text-center mb-10">
           {step === 1
             ? "Enter your phone number to receive an OTP for resetting your password."
             : `Enter the OTP sent to ${resetPhone} and set your new password.`}
@@ -249,27 +249,29 @@ export default function ForgotPassword() {
                 )}
               </div>
 
-              <div className="fixed bottom-0 md:relative py-5 md:pb-0 w-full bg-white shadow-[0px_-4px_12.8px_-3px_#00000012] md:shadow-none">
-                <Button
-                  type="submit"
-                  disabled={!isPhoneValid || isPhoneSubmitting}
-                  className="w-[calc(100%-40px)] md:w-full mb-4"
-                >
-                  {isPhoneSubmitting ? (
-                    <span className="flex items-center gap-2">
-                      Processing...
-                    </span>
-                  ) : (
-                    "Send OTP"
-                  )}
-                </Button>
-                <div className="text-center">
-                  <Link
-                    href="/sign-in"
-                    className="text-primary-theme paragraph1_bold"
+              <div className="fixed bottom-0 left-0 md:relative py-5 w-full bg-white shadow-[0px_-4px_12.8px_-3px_#00000012] md:shadow-none flex justify-center md:block">
+                <div className="w-full flex items-center flex-col">
+                  <Button
+                    type="submit"
+                    disabled={!isPhoneValid || isPhoneSubmitting}
+                    className="w-[calc(100%-40px)] md:w-full mb-4"
                   >
-                    Back to Login
-                  </Link>
+                    {isPhoneSubmitting ? (
+                      <span className="flex items-center gap-2">
+                        Processing...
+                      </span>
+                    ) : (
+                      "Send OTP"
+                    )}
+                  </Button>
+                  <div className="text-center">
+                    <Link
+                      href="/sign-in"
+                      className="text-primary-theme paragraph1_bold"
+                    >
+                      Back to Login
+                    </Link>
+                  </div>
                 </div>
               </div>
             </form>
@@ -386,11 +388,11 @@ export default function ForgotPassword() {
                 )}
               </div>
 
-              <div className="fixed bottom-0 md:relative py-5 md:pb-0 w-full bg-white shadow-[0px_-4px_12.8px_-3px_#00000012] md:shadow-none">
+              <div className="fixed bottom-0 left-0 md:relative py-5 w-full bg-white shadow-[0px_-4px_12.8px_-3px_#00000012] md:shadow-none flex justify-center md:block">
                 <Button
                   type="submit"
                   disabled={!isResetValid || isResetSubmitting}
-                  className="w-[calc(100%-40px)] md:w-full mb-4"
+                  className="w-[calc(100%-40px)] md:w-full"
                 >
                   {isResetSubmitting ? "Resetting..." : "Reset Password"}
                 </Button>
