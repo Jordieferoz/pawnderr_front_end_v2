@@ -104,7 +104,9 @@ const ActivityCard: FC<IActivityCardProps> = ({
 
   return (
     <div className={`w-full mx-auto p-4 pt-12 ${className ?? ""}`}>
-      <div className={`grid gap-14 mb-8 md:grid-cols-3 justify-items-center`}>
+      <div
+        className={`grid gap-14 mb-8 md:grid-cols-2 lg:grid-cols-3 justify-items-center`}
+      >
         {cards?.map((card) => {
           const isFlipped = flippedCardId === card.id;
           const toggleFlip = () =>

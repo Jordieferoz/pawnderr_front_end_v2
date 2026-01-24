@@ -17,11 +17,13 @@ type Card = {
   details: string;
   indicator?: string;
   matchId?: string | number;
+  funFact?: string;
+  barkography?: string;
 };
 
 const FlipCard: FC<{ card: Card }> = ({ card }) => {
   const router = useRouter();
-
+  console.log(card, "card");
   const [isFlipped, setIsFlipped] = useState(false);
 
   const handleOpenChat = async (toPetId: string | number) => {
@@ -136,16 +138,67 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
         </div>
 
         {/* Back Face */}
-        <div className="absolute inset-0 rounded-[24px] bg-gradient-to-br from-blue-500 to-purple-600 [backface-visibility:hidden] [transform:rotateY(180deg)] flex flex-col justify-center items-center  text-white p-8 text-center gap-4">
-          <h3 className="text-2xl font-bold">{card.name}</h3>
-          <div className="text-lg opacity-90 space-y-2">
-            {card.details.split("\n").map((line, i) => (
-              <p key={i}>{line}</p>
-            ))}
+        <div className="absolute inset-0 rounded-[24px] bg-white [backface-visibility:hidden] [transform:rotateY(180deg)] flex flex-col justify-start items-start text-left p-8 overflow-hidden">
+          <img
+            src={images.pawYellow.src}
+            alt="paw"
+            className="absolute top-4 right-4 w-12 h-12 opacity-80"
+          />
+
+          <div className="flex flex-col gap-6 mt-4 w-full">
+            {/* Fun Fact */}
+            {card.funFact && (
+              <div className="text-left w-full">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                  Fun Fact:
+                </h3>
+                <p className="text-gray-600 leading-relaxed text-sm line-clamp-3">
+                  {card.funFact}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push(`/profile/${card.petId}`);
+                    }}
+                    className="text-yellow-500 underline ml-1 font-medium hover:text-yellow-600 inline-block"
+                  >
+                    Read More
+                  </button>
+                </p>
+              </div>
+            )}
+
+            {/* Bark-o-graphy */}
+            {card.barkography && (
+              <div className="text-left w-full">
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  Bio (aka Bark-o-graphy):
+                </h3>
+                <p className="text-gray-600 leading-relaxed text-sm line-clamp-5">
+                  {card.barkography}
+                </p>
+                {(card.barkography.length > 100 ||
+                  card.barkography.split("\n").length > 3) && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push(`/profile/${card.petId}`);
+                    }}
+                    className="text-yellow-500 underline text-sm font-medium hover:text-yellow-600 mt-1"
+                  >
+                    Read More
+                  </button>
+                )}
+              </div>
+            )}
+
+            {!card.funFact && !card.barkography && (
+              <div className="text-lg opacity-90 space-y-2 text-gray-800">
+                {card.details.split("\n").map((line, i) => (
+                  <p key={i}>{line}</p>
+                ))}
+              </div>
+            )}
           </div>
-          <p className="text-sm opacity-75 mt-2 max-w-[280px] leading-relaxed">
-            {card.desc}
-          </p>
         </div>
       </div>
 
@@ -188,6 +241,7 @@ const MatchedCard: FC<MatchedCardProps> = ({
   matches = [],
   indicators = []
 }) => {
+  console.log(matches, "matches");
   if (!matches || matches.length === 0) {
     return (
       <div className="w-full min-h-[60vh] flex items-center justify-center">
@@ -210,7 +264,7 @@ const MatchedCard: FC<MatchedCardProps> = ({
 
   return (
     <div className="w-full mx-auto">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-14">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-14">
         {matches.map((match, index) => {
           const matchId = String(match.match_id || match.id || "");
           const fromPetId = petsStorage.getFirstPetId();
@@ -218,6 +272,14 @@ const MatchedCard: FC<MatchedCardProps> = ({
           const maxPetId = Math.max(Number(fromPetId), Number(match.pet.id));
           const chatId = `pet${minPetId}_pet${maxPetId}_match${matchId}`;
           const hasIndicator = indicatorSet.has(matchId);
+
+          // Find primary image
+          const primaryImage =
+            match.pet?.images?.find((img: any) => img.is_primary)?.image_url ||
+            match.pet?.images?.[0]?.image_url ||
+            match.pet?.primary_photo_url ||
+            match.primary_photo_url ||
+            images.doggo1.src;
 
           return (
             <FlipCard
@@ -227,23 +289,25 @@ const MatchedCard: FC<MatchedCardProps> = ({
                 petId: match.pet.id,
                 name: match.pet?.name || match.name || "Unknown",
                 info: `(${match.pet?.gender || match.gender || "Unknown"}, ${match.pet?.age || match.age || "?"} Years)`,
-                url:
-                  match.pet?.primary_photo_url ||
-                  match.primary_photo_url ||
-                  images.doggo1.src,
+                url: primaryImage,
                 desc:
                   match.pet?.bio ||
                   match.bio ||
                   match.description ||
                   "No description available",
                 details: [
-                  match.pet?.breed || match.breed || "Unknown Breed",
+                  match.pet?.breed?.name ||
+                    match.pet?.breed ||
+                    match.breed ||
+                    "Unknown Breed",
                   match.pet?.weight ? `Weight: ${match.pet?.weight}kg` : ""
                 ]
                   .filter(Boolean)
                   .join("\n"),
                 indicator: hasIndicator ? "NEW!" : undefined,
-                matchId: match.match_id || match.id
+                matchId: match.match_id || match.id,
+                funFact: match.pet?.fun_fact_or_habit,
+                barkography: match.pet?.bark_o_graphy
               }}
             />
           );
