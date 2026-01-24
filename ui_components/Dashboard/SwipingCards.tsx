@@ -377,8 +377,12 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
                     }
                   }}
                 />
-
-                <div className="absolute inset-0 card_gradient rounded-[24px]" />
+                <img
+                  src={images.profileOverlay.src}
+                  alt="profileOverlay"
+                  className="absolute inset-0 w-full h-full pointer-events-none"
+                />
+                {/* <div className="absolute inset-0 card_gradient rounded-[24px]" /> */}
 
                 {card?.isFoundingDog && !swipeDirection && (
                   <img

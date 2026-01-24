@@ -64,7 +64,7 @@ import linkedin from "public/assets/images/linkedin.svg";
 import loginBg from "public/assets/images/login_bg.png";
 import logo from "public/assets/images/logo.svg";
 import logoBig from "public/assets/images/logo_big.svg";
-import logoHorizontal from "public/assets/images/logo_horizontal.svg";
+import logoHorizontal from "public/assets/images/logo_horizontal.png";
 import loyalRibbon from "public/assets/images/loyal_ribbon.svg";
 import matchMeet from "public/assets/images/match_meet.png";
 import matches from "public/assets/images/matches.svg";
@@ -102,6 +102,7 @@ import userFormBg from "public/assets/images/user_form_bg.svg";
 import userLeftBlur from "public/assets/images/user_left_blur.svg";
 import userRightBlur from "public/assets/images/user_right_blur.svg";
 import whyChooseDogs from "public/assets/images/why_choose_dogs.png";
+import profileOverlay from "public/assets/images/profile_overlay.png";
 import x from "public/assets/images/x.svg";
 import yellowStar from "public/assets/images/yellow_star.svg";
 import bellIcon from "public/assets/images/bell_icon.svg";
@@ -219,6 +220,7 @@ export type ImageType =
   | "isFoundingDog"
   | "verified"
   | "sendArrow"
+  | "profileOverlay"
   | "backBtn";
 
 export type NextImage = {
@@ -337,5 +339,6 @@ export const images: Record<ImageType, NextImage> = {
   bellIcon,
   isFoundingDog,
   verified,
-  sendArrow
+  sendArrow,
+  profileOverlay
 };

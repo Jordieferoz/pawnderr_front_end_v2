@@ -47,7 +47,7 @@ const Hero = () => {
               <br />
               Your Pet.
             </h1>
-            <p className="text-2xl text-grey-900 font-medium font_fredoka mb-8 md:mb-0">
+            <p className="text-2xl text-grey-900 font-medium font_fredoka mb-8">
               Join a trusted community of pet lovers. Helping you find safe and
               happy friendships for your pet.
             </p>
