@@ -5,7 +5,11 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 
-import { setMetadata, updateStepData } from "@/store/registrationSlice";
+import {
+  resetRegistration,
+  setMetadata,
+  updateStepData
+} from "@/store/registrationSlice";
 import { setUser } from "@/store/userSlice";
 import { setMatchIndicators } from "@/store/matchSlice";
 import {
@@ -125,7 +129,8 @@ export default function ProfileLoader() {
                 if (metadata) {
                   dispatch(setMetadata(metadata));
                   dispatch(updateStepData({ step: 3 }));
-                  router.push("/register");
+                  dispatch(resetRegistration());
+                  router.push("/sign-in");
                 }
               } catch (error) {
                 console.error(

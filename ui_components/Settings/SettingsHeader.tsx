@@ -3,24 +3,22 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { FC, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 
-import { RootState } from "@/store";
 import { images } from "@/utils/images";
 
-import { ISubscriptionHeaderProps } from "./types";
+interface SettingsHeaderProps {
+  title: string | { base: string; md: string };
+  onBack?: () => void;
+}
 
-const SubscriptionHeader: FC<ISubscriptionHeaderProps> = ({ title }) => {
-  const dispatch = useDispatch();
+const SettingsHeader: FC<SettingsHeaderProps> = ({ title, onBack }) => {
   const router = useRouter();
-  const [isDesktop, setIsDesktop] = useState(false);
-
-  const step = useSelector((state: RootState) => state.profileInfo.step);
+  // const [isDesktop, setIsDesktop] = useState(false);
 
   // Detect if we're on desktop
   useEffect(() => {
     const checkDesktop = () => {
-      setIsDesktop(window.innerWidth >= 768); // md breakpoint
+      // setIsDesktop(window.innerWidth >= 768); // md breakpoint
     };
 
     checkDesktop();
@@ -30,16 +28,10 @@ const SubscriptionHeader: FC<ISubscriptionHeaderProps> = ({ title }) => {
   }, []);
 
   const handleBackClick = () => {
-    // Desktop: always go back to previous route
-    if (isDesktop) {
-      router.back();
+    if (onBack) {
+      onBack();
     } else {
-      // Mobile: go back to step 0 if not already there, otherwise go to previous route
-      if (step !== 0) {
-        dispatch({ type: "profile/setStep", payload: 0 });
-      } else {
-        router.back();
-      }
+      router.back();
     }
   };
 
@@ -74,4 +66,4 @@ const SubscriptionHeader: FC<ISubscriptionHeaderProps> = ({ title }) => {
   );
 };
 
-export default SubscriptionHeader;
+export default SettingsHeader;

@@ -256,7 +256,7 @@ const UserDetailsForm: FC = () => {
             </p>
           )}
         </div> */}
-        <div className="fixed bottom-0 md:relative py-5 w-full bg-white shadow-[0px_-4px_12.8px_-3px_#00000012] md:shadow-none">
+        <div className="fixed bottom-0 left-0 md:relative py-5 w-full bg-white shadow-[0px_-4px_12.8px_-3px_#00000012] md:shadow-none flex justify-center md:block">
           <Button
             type="submit"
             disabled={!isValid || isSubmitting}

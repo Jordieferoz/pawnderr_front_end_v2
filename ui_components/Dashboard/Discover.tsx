@@ -9,7 +9,7 @@ import {
 import { petsStorage } from "@/utils/pets-storage";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import { HangTightModal } from "../Modals";
+
 import { IPetData } from "../Profile/types";
 import { showToast } from "../Shared/ToastMessage";
 

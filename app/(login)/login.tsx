@@ -175,7 +175,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
               } else {
                 showToast({
                   type: "error",
-                  message: "Failed to create session. Please try again."
+                  message: "Failed to create session. Please try again.!"
                 });
               }
             } else {
@@ -199,7 +199,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
           showToast({
             type: "error",
             message:
-              errorMessage || "Failed to create session. Please try again."
+              errorMessage || "Failed to create session. Please try again.!!"
           });
         }
       }
@@ -325,7 +325,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
         console.error("❌ Sign in error after OTP:", result.error);
         showToast({
           type: "error",
-          message: "Failed to create session. Please try again."
+          message: "Failed to create session. Please try again.!!!"
         });
       } else if (result?.ok) {
         await completeLoginFlow(callbackUrl);

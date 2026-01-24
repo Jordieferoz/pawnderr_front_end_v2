@@ -20,10 +20,10 @@ const Register: FC = () => {
   const progressValue = (step / totalSteps) * 100;
 
   return (
-    <div className="relative min-h-[100dvh] px-5 py-6 md:px-8">
+    <div className="relative min-h-[100dvh] px-5 py-6 md:px-8 pb-20 md:pb-6">
       <div className="container">
         <Link
-          href={"/"}
+          href={"/register"}
           className="mb-7.5 md:inline-flex justify-start hidden relative z-20"
         >
           <Image
@@ -35,13 +35,13 @@ const Register: FC = () => {
           />
         </Link>
       </div>
-      <div className="sm:mx-auto sm:w-full sm:max-w-[766px] md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] rounded-4xl md:px-20 md:py-14 relative z-20">
+      <div className="sm:mx-auto sm:w-full sm:max-w-[766px] md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] rounded-4xl md:px-20 md:py-10 relative z-20">
         <div className="md:hidden">
           <Progress value={progressValue} highlightColor="#0C16E0" />
         </div>
 
         <Link
-          href={"/"}
+          href={"/register"}
           className="mb-1 mt-6 inline-flex justify-center md:hidden"
         >
           <Image

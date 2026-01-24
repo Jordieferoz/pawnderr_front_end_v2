@@ -145,7 +145,7 @@ const PersonalInfo: FC = () => {
   };
 
   return (
-    <div className="md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] md:p-8 md:rounded-[40px]">
+    <div className="bg-white shadow-[0px_4px_16.4px_0px_#0000001A] p-8 md:rounded-[40px] rounded-lg mt-10 md:mt-0">
       <form
         className="mb-7 flex flex-col gap-6"
         onSubmit={handleSubmit(onSubmit)}
