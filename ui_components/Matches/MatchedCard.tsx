@@ -127,7 +127,7 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
           <div className="absolute bottom-17 left-5 right-5 text-white z-10">
             <h3 className="text-2xl font-semibold leading-tight">
               {card.name}{" "}
-              <span className="text-base font-normal opacity-90">
+              <span className="text-base font-normal opacity-90 capitalize">
                 {card.info}
               </span>
             </h3>
