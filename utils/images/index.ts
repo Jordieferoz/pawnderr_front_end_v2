@@ -103,6 +103,13 @@ import userLeftBlur from "public/assets/images/user_left_blur.svg";
 import userRightBlur from "public/assets/images/user_right_blur.svg";
 import whyChooseDogs from "public/assets/images/why_choose_dogs.png";
 import profileOverlay from "public/assets/images/profile_overlay.png";
+import premium1 from "public/assets/images/premium_1.png";
+import premium2 from "public/assets/images/premium_2.png";
+import premium3 from "public/assets/images/premium_3.png";
+import premium4 from "public/assets/images/premium_4.png";
+import premium5 from "public/assets/images/premium_5.png";
+import premium6 from "public/assets/images/premium_6.png";
+
 import x from "public/assets/images/x.svg";
 import yellowStar from "public/assets/images/yellow_star.svg";
 import bellIcon from "public/assets/images/bell_icon.svg";
@@ -221,6 +228,12 @@ export type ImageType =
   | "verified"
   | "sendArrow"
   | "profileOverlay"
+  | "premium1"
+  | "premium2"
+  | "premium3"
+  | "premium4"
+  | "premium5"
+  | "premium6"
   | "backBtn";
 
 export type NextImage = {
@@ -340,5 +353,11 @@ export const images: Record<ImageType, NextImage> = {
   isFoundingDog,
   verified,
   sendArrow,
-  profileOverlay
+  profileOverlay,
+  premium1,
+  premium2,
+  premium3,
+  premium4,
+  premium5,
+  premium6
 };

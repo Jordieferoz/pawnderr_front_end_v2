@@ -126,24 +126,17 @@ const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-x-12 gap-y-7">
-        <div className="md:col-span-4 md:order-2 md:sticky md:top-25">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-7">
+        {/* Left Column */}
+        <div className="flex flex-col gap-7.5">
           <ProfileCard {...profileData} />
-        </div>
-        <div className="md:col-span-8 md:order-1 flex flex-col gap-7.5">
+
           <InfoCard
             type="desc"
             title="Bio (aka Bark-o-graphy):"
             image={petData?.images?.[1]?.image_url || images.doggo2.src}
             desc={petData?.bark_o_graphy ?? ""}
             list={[]}
-          />
-          <InfoCard
-            type="list"
-            title="Floof's Story:"
-            image={petData?.images?.[2]?.image_url || images.doggo3.src}
-            list={floofStoryList}
-            desc={""}
           />
 
           <InfoCard
@@ -152,6 +145,17 @@ const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
             image={petData?.images?.[3]?.image_url || images.doggo2.src}
             desc={petData?.fun_fact_or_habit ?? ""}
             list={[]}
+          />
+        </div>
+
+        {/* Right Column */}
+        <div className="flex flex-col gap-7.5">
+          <InfoCard
+            type="list"
+            title="Floof's Story:"
+            image={petData?.images?.[2]?.image_url || images.doggo3.src}
+            list={floofStoryList}
+            desc={""}
           />
 
           <InfoCard

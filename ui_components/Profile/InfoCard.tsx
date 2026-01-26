@@ -11,19 +11,17 @@ const InfoCard: FC<IInfoCardProps> = ({
 }) => {
   return (
     <div className="bg-white p-4 shadow-[0px_4px_10.6px_0px_#0000001A] rounded-xl">
-      <div className="md:flex md:gap-7.5 items-center justify-center">
+      <div className="">
         <img
           src={image}
-          className="md:w-[40%] w-full rounded-xl mb-7.5 grow basis-0"
+          className="w-full rounded-xl grow basis-0 mb-4"
           alt="image"
         />
         <div className="grow basis-0">
-          <h2 className="heading2_medium text-dark-grey2 mb-2 border-b pb-4.5 border-dashed border-[#9B9B9B6E]">
-            {title}
-          </h2>
+          <h2 className="heading4 text-dark-grey mb-3">{title}</h2>
 
           {type === "desc" && (
-            <p className="text-grey-500 heading4 leading-snug pt-4.5 pb-4">
+            <p className="text-dark-black text-2xl font_fredoka font-medium pb-4">
               {desc}
             </p>
           )}

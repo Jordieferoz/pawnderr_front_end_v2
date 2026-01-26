@@ -130,7 +130,7 @@ export const headerMenuItems = [
     href: "/dashboard",
     img: images.discover.src,
     imgActive: images.discoverActive.src,
-    imgWidth: 38
+    imgWidth: 22
   },
   {
     key: "matches",
@@ -146,7 +146,7 @@ export const headerMenuItems = [
     href: "/activities",
     img: images.activities.src,
     imgActive: images.activitiesActive.src,
-    imgWidth: 21
+    imgWidth: 20
   },
 
   {
@@ -155,7 +155,7 @@ export const headerMenuItems = [
     href: "/messages",
     img: images.messages.src,
     imgActive: images.messagesActive.src,
-    imgWidth: 24
+    imgWidth: 22
   }
 ];
 

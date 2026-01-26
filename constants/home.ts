@@ -7,7 +7,7 @@ export const PAWP_STARS_PROFILES = [
     breed: "Golden Retriever",
     gender: "Female",
     age: "1Y",
-    image: images.doggo1.src
+    image: images.premium1.src
   },
   {
     id: 2,
@@ -15,7 +15,7 @@ export const PAWP_STARS_PROFILES = [
     breed: "Labrador",
     gender: "Female",
     age: "2Y",
-    image: images.doggo1.src
+    image: images.premium2.src
   },
   {
     id: 3,
@@ -23,7 +23,7 @@ export const PAWP_STARS_PROFILES = [
     breed: "German Shepherd",
     gender: "Male",
     age: "3Y",
-    image: images.doggo1.src
+    image: images.premium3.src
   },
   {
     id: 4,
@@ -31,7 +31,7 @@ export const PAWP_STARS_PROFILES = [
     breed: "Beagle",
     gender: "Female",
     age: "1.5Y",
-    image: images.doggo1.src
+    image: images.premium4.src
   },
   {
     id: 5,
@@ -39,7 +39,7 @@ export const PAWP_STARS_PROFILES = [
     breed: "Husky",
     gender: "Male",
     age: "2Y",
-    image: images.doggo1.src
+    image: images.premium5.src
   },
   {
     id: 6,
@@ -47,7 +47,7 @@ export const PAWP_STARS_PROFILES = [
     breed: "Poodle",
     gender: "Female",
     age: "4Y",
-    image: images.doggo1.src
+    image: images.premium6.src
   }
 ];
 
