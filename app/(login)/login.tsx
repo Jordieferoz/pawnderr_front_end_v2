@@ -190,7 +190,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
                 };
                 sessionStorage.setItem("userData", JSON.stringify(userProfile));
               }
-
+              console.log(responseData, "responseData");
               // Create NextAuth session
               const callbackUrl =
                 searchParams?.get("callbackUrl") || "/dashboard";
@@ -200,7 +200,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
                 redirect: false,
                 callbackUrl
               });
-
+              console.log(result, "result");
               if (result?.ok) {
                 await completeLoginFlow(callbackUrl);
               } else {
@@ -393,7 +393,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
         >
           <Image
             src={images.logoHorizontal.src}
-            className="logo h-13"
+            className="md:h-13 w-[180px]"
             width={212}
             height={52}
             alt="PAWnderr Logo"

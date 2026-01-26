@@ -11,6 +11,9 @@
     @apply bg-white text-black h-full;
     font-family: "Source Sans 3", sans-serif;
   }
+  html {
+    scroll-behavior: smooth;
+  }
 }
 html,
 body {

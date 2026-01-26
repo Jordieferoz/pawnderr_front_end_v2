@@ -51,10 +51,10 @@ const Footer = () => {
             </li>
           </ul>
 
-          <div className="flex gap-3 items-center text-light-grey2 font-medium text-base md:text-2xl font_fredoka mb-8">
+          <div className="flex gap-3 flex-wrap items-center justify-center px-8 text-light-grey2 font-medium text-base md:text-xl font_fredoka mb-8">
             <Link href={"/"}>Privacy Policy</Link> •
             <Link href={"/"}> Terms of Service</Link> •
-            <Link href={"/"}> Safety Tips</Link>
+            <Link href={"/"}> Safety Tips</Link>•<Link href={"/"}> FAQ's</Link>
           </div>
           <p className="text-xs text-light-grey2 mb-10">
             © {currentYear} PAWnderr | All Rights Reserved

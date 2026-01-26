@@ -16,7 +16,10 @@ const TailsOfLove = () => {
   };
 
   return (
-    <section className="w-full bg-[#FFEBF3] relative my-10 md:my-30 py-10">
+    <section
+      className="w-full bg-[#FFEBF3] relative my-10 md:my-30 py-10 scroll-mt-[120px]"
+      id="reviews"
+    >
       {TAIL_OF_LOVE_DECORATIONS.map((decoration) => (
         <img
           key={decoration.id}

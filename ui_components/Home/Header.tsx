@@ -2,7 +2,7 @@
 import { Menu } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -11,23 +11,54 @@ import { images } from "@/utils/images";
 const Header = () => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("");
 
   const handleLogin = () => {
     router.push("/sign-in");
   };
 
   const menuItems = [
-    { label: "How It Works", href: "/" },
-    { label: "Why PAWnderr", href: "#" },
-    { label: "Reviews", href: "#" },
+    { label: "How It Works", href: "#how-it-works" },
+    { label: "Why PAWnderr", href: "#why-pawnderr" },
+    { label: "Reviews", href: "#reviews" },
+    { label: "Community", href: "#community" },
     { label: "Sign Up", href: "/sign-up" }
   ];
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = ["how-it-works", "why-pawnderr", "reviews"];
+      const scrollPosition = window.scrollY + 150; // Offset for header
+
+      for (const section of sections) {
+        const element = document.getElementById(section);
+        if (element) {
+          const { offsetTop, offsetHeight } = element;
+          if (
+            scrollPosition >= offsetTop &&
+            scrollPosition < offsetTop + offsetHeight
+          ) {
+            setActiveSection(section);
+            return; // Found the active section
+          }
+        }
+      }
+      // Optional: reset if not in any section, or keep last
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <header className="fixed top-0 left-0 w-full bg-white shadow-[0px_4px_19.1px_7px_#0000000A] z-40 backdrop-blur-2xl">
       <div className="container mx-auto px-4 md:px-0 py-4 md:py-6 flex items-center justify-between">
         <Link href={"/"}>
-          <img src={images.logoHorizontal.src} alt="logo" className="h-13" />
+          <img
+            src={images.logoHorizontal.src}
+            alt="logo"
+            className="md:h-13 w-[180px]"
+          />
         </Link>
 
         <div className="flex items-center gap-8 md:gap-12 justify-between">
@@ -37,7 +68,11 @@ const Header = () => {
               <Link
                 key={item.label}
                 href={item.href}
-                className="menu_link_medium text-grey-900 hover:text-blue-600 transition-colors"
+                className={`menu_link_medium transition-colors ${
+                  activeSection === item.href.slice(1)
+                    ? "text-blue-600"
+                    : "text-grey-900 hover:text-blue-600"
+                }`}
               >
                 {item.label}
               </Link>
@@ -67,7 +102,11 @@ const Header = () => {
                     key={item.label}
                     href={item.href}
                     onClick={() => setOpen(false)}
-                    className="menu_link_medium text-grey-900 hover:text-blue-600 transition-colors py-2 px-4 rounded-md hover:bg-gray-100"
+                    className={`menu_link_medium transition-colors py-2 px-4 rounded-md hover:bg-gray-100 ${
+                      activeSection === item.href.slice(1)
+                        ? "text-blue-600 font-bold"
+                        : "text-grey-900"
+                    }`}
                   >
                     {item.label}
                   </Link>

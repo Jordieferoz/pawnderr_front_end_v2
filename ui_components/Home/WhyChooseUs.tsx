@@ -13,7 +13,10 @@ const WhyChooseUs = () => {
   };
 
   return (
-    <section className="w-full bg-primary-500 relative my-10 md:my-30 py-10 flex items-center justify-center">
+    <section
+      className="w-full bg-primary-500 relative my-10 md:my-30 py-10 flex items-center justify-center scroll-mt-[120px]"
+      id="why-pawnderr"
+    >
       <img
         src={images.blueTopPattern.src}
         alt="top"

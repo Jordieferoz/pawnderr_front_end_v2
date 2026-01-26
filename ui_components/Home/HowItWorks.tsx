@@ -12,7 +12,7 @@ const HowItWorks = () => {
     router.push("/sign-up");
   };
   return (
-    <section className="md:pt-25 pt-16">
+    <section className="md:pt-25 pt-16 scroll-mt-[90px]" id="how-it-works">
       <div className="container mx-auto px-5 md:px-10">
         <h3 className="heading1_medium text-center text-dark-brown mb-10 md:mb-15">
           Sniff. Swipe. Match. Meet.

@@ -192,7 +192,7 @@ export default function ForgotPassword() {
         >
           <Image
             src={images.logoHorizontal.src}
-            className="logo h-13"
+            className="md:h-13 w-[180px]"
             width={212}
             height={52}
             alt="PAWnderr Logo"
