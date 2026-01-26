@@ -164,5 +164,7 @@ export const dropdownMenuItems = [
   { icon: CreditCard, label: "My Subscription", href: "/my-subscription" },
   { icon: Settings, label: "Account Settings", href: "/settings" },
   { icon: Shield, label: "Privacy Policy", href: "/privacy-policy" },
-  { icon: FileText, label: "Terms of Service", href: "/terms-of-service" }
+  { icon: FileText, label: "Terms of Service", href: "/terms-of-service" },
+  { icon: FileText, label: "Community", href: "/community" },
+  { icon: FileText, label: "FAQ's", href: "/faqs" }
 ];

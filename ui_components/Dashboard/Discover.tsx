@@ -93,6 +93,7 @@ const Discover = () => {
       if (!firstPetId) return;
       try {
         const resp = await fetchMyPet(Number(firstPetId));
+        console.log(resp, "resp");
         const petDetails = resp?.data;
         setPetData(petDetails);
       } catch (error) {

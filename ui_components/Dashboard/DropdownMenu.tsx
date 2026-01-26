@@ -13,12 +13,23 @@ import { dropdownMenuItems } from "@/constants";
 import { useAuth } from "@/hooks";
 import { images } from "@/utils/images";
 import { PETS_STORAGE_EVENT, petsStorage } from "@/utils/pets-storage";
+import { fetchMyPet } from "@/utils/api";
 
 interface UserProfile {
   id: number;
   name: string;
   email: string;
   avatar?: string;
+}
+
+interface PetImage {
+  id: number;
+  image_url: string;
+  is_primary: boolean;
+}
+
+interface PetData {
+  images: PetImage[];
 }
 
 interface DropdownMenuProps {
@@ -29,8 +40,10 @@ interface DropdownMenuProps {
 const DropdownMenu: FC<DropdownMenuProps> = ({ userProfile, isLoading }) => {
   const { logout } = useAuth();
   const [firstPetId, setFirstPetId] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [petData, setPetData] = useState<PetData | null>(null);
   const [open, setOpen] = useState(false);
-
+  console.log(firstPetId, "firstPetId");
   const handleLogout = async () => {
     setOpen(false);
     await logout();
@@ -65,7 +78,31 @@ const DropdownMenu: FC<DropdownMenuProps> = ({ userProfile, isLoading }) => {
     };
   }, []);
 
-  const avatarUrl = userProfile?.avatar || images.doggoProfilePlaceholder.src;
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!firstPetId) return;
+      try {
+        const resp = await fetchMyPet(Number(firstPetId));
+        console.log(resp, "resp");
+        const petDetails = resp?.data;
+        setPetData(petDetails);
+      } catch (error) {
+        console.error("Error fetching pet:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (firstPetId) {
+      fetchData();
+    }
+  }, [firstPetId]);
+
+  const primaryImage = petData?.images?.find((img) => img.is_primary);
+  const avatarUrl =
+    primaryImage?.image_url ||
+    userProfile?.avatar ||
+    images.doggoProfilePlaceholder.src;
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
