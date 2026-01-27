@@ -35,12 +35,12 @@ const HangTightModalContent: FC<HangTightModalContentProps> = ({
       </p>
       <div className="relative py-8 flex ml-4">
         <GenderCard
-          imageSrc={userImage || images.doggo1.src}
+          imageSrc={userImage}
           gender={userGender as "male" | "female"}
           className="mx-auto -rotate-2"
         />
         <GenderCard
-          imageSrc={matchImage || images.doggo1.src}
+          imageSrc={matchImage}
           gender={matchGender as "male" | "female"}
           className="mx-auto translate-y-[40px] rotate-2 relative translate-x-[-40px]"
         />

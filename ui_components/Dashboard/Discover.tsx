@@ -2,16 +2,20 @@
 
 import SwipingCards from "@/ui_components/Dashboard/SwipingCards";
 import {
+  discoverNearbyPets,
   fetchMyPet,
   fetchMyPetsCollection,
   fetchSubscriptionStatus
 } from "@/utils/api";
+import { images } from "@/utils/images";
 import { petsStorage } from "@/utils/pets-storage";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
+import CustomAvatar from "../Shared/CustomAvatar";
 
 import { IPetData } from "../Profile/types";
 import { showToast } from "../Shared/ToastMessage";
+import { NearbyPet } from "./types";
 
 const Discover = () => {
   const dispatch = useDispatch();
@@ -19,6 +23,7 @@ const Discover = () => {
   const [petData, setPetData] = useState<IPetData | null>(null);
   const [loading, setLoading] = useState(true);
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [premiumPets, setPremiumPets] = useState<NearbyPet[]>([]);
   const [isSubscriptionLoading, setIsSubscriptionLoading] = useState(false);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -55,8 +60,6 @@ const Discover = () => {
           setPetData(storedPet as any);
           setFirstPetId(storedPet.id);
           setLoading(false);
-          // We have the data, but if you want to refresh it from API, you can let the second useEffect run.
-          // However, since we setPetData, the UI is ready.
         }
 
         let id = petsStorage.getFirstPetId();
@@ -66,7 +69,6 @@ const Discover = () => {
           if (petsResp?.data) {
             petsStorage.set(petsResp.data);
             id = petsStorage.getFirstPetId();
-            // If we just fetched, we might also want to setPetData if available in the response
             const newStoredPet = petsStorage.getFirstPet();
             if (newStoredPet) {
               setPetData(newStoredPet as any);
@@ -96,6 +98,18 @@ const Discover = () => {
 
         const petDetails = resp?.data;
         setPetData(petDetails);
+
+        // Fetch premium pets
+        try {
+          const premiumResp = await discoverNearbyPets(Number(firstPetId), {
+            is_premium: true
+          });
+          if (premiumResp?.data?.pets && Array.isArray(premiumResp.data.pets)) {
+            setPremiumPets(premiumResp.data.pets);
+          }
+        } catch (err) {
+          console.error("Error fetching premium pets:", err);
+        }
       } catch (error) {
         console.error("Error fetching pet:", error);
       } finally {
@@ -103,9 +117,6 @@ const Discover = () => {
       }
     };
 
-    if (firstPetId) {
-      fetchData();
-    }
     if (firstPetId) {
       fetchData();
     }
@@ -145,92 +156,20 @@ const Discover = () => {
         className="md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] md:px-5 md:py-5 md:rounded-2xl md:w-[700px] md:mx-auto box-border"
         style={{ height: "100%" }}
       >
-        <div className="items-center justify-between mb-20">
-          {/* <div className="flex my-3 gap-4 items-center overflow-x-auto hide-scrollbar">
-            <CustomAvatar
-              src={images.doggo1.src}
-              size={64}
-              gender="female"
-              name="Frank"
-              showPlus
-              plusIcon={images.pawnderrPlus.src}
-            />
-
-            <CustomAvatar
-              src={images.doggo2.src}
-              size={64}
-              type="countdown"
-              name="Frank"
-              showPlus
-              plusIcon={images.pawnderrPlus.src}
-            />
-
-            <CustomAvatar
-              src={images.doggo3.src}
-              size={64}
-              gender="male"
-              name="Frank"
-              showPlus
-              plusIcon={images.pawnderrPlus.src}
-            />
-
-            <CustomAvatar
-              src={images.doggo4.src}
-              size={64}
-              gender="female"
-              name="Frank"
-              showPlus
-              plusIcon={images.pawnderrPlus.src}
-            />
-            <CustomAvatar
-              src={images.doggo4.src}
-              size={64}
-              gender="female"
-              name="Frank"
-              showPlus
-              plusIcon={images.pawnderrPlus.src}
-            />
-            <CustomAvatar
-              src={images.doggo4.src}
-              size={64}
-              gender="female"
-              name="Frank"
-              showPlus
-              plusIcon={images.pawnderrPlus.src}
-            />
-            <CustomAvatar
-              src={images.doggo4.src}
-              size={64}
-              gender="female"
-              name="Frank"
-              showPlus
-              plusIcon={images.pawnderrPlus.src}
-            />
-            <CustomAvatar
-              src={images.doggo4.src}
-              size={64}
-              gender="female"
-              name="Frank"
-              showPlus
-              plusIcon={images.pawnderrPlus.src}
-            />
-            <CustomAvatar
-              src={images.doggo4.src}
-              size={64}
-              gender="female"
-              name="Frank"
-              showPlus
-              plusIcon={images.pawnderrPlus.src}
-            />
-            <CustomAvatar
-              src={images.doggo4.src}
-              size={64}
-              gender="female"
-              name="Frank"
-              showPlus
-              plusIcon={images.pawnderrPlus.src}
-            />
-          </div> */}
+        <div className="items-center justify-between mb-4">
+          <div className="flex my-3 gap-4 items-center overflow-x-auto hide-scrollbar">
+            {premiumPets.map((pet, index) => (
+              <CustomAvatar
+                key={index}
+                src={pet.primary_image?.image_url}
+                size={64}
+                gender={pet.gender as any}
+                name={pet.name}
+                showPlus={true}
+                plusIcon={images.pawnderrPlus.src}
+              />
+            ))}
+          </div>
         </div>
 
         <SwipingCards

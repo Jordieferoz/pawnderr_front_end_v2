@@ -145,8 +145,7 @@ const MessageList: FC<MessageListProps> = ({ searchTerm = "" }) => {
         const displayName =
           conversation.otherPetName ||
           (otherPetId ? `Pet ${otherPetId}` : "Pet");
-        const displayImage =
-          conversation.otherPetPrimaryPhoto || images.doggo1.src;
+        const displayImage = conversation.otherPetPrimaryPhoto;
         const lastMessage = conversation.lastMessage?.text || "No messages yet";
 
         return (

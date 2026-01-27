@@ -447,7 +447,7 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
                 }}
               >
                 <CardImage
-                  src={card.url || images.doggo1.src}
+                  src={card.url}
                   alt={card.name}
                   className="w-full h-full absolute top-0 left-0 rounded-[24px] object-cover"
                 />

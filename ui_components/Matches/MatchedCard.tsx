@@ -277,8 +277,7 @@ const MatchedCard: FC<MatchedCardProps> = ({
             match.pet?.images?.find((img: any) => img.is_primary)?.image_url ||
             match.pet?.images?.[0]?.image_url ||
             match.pet?.primary_photo_url ||
-            match.primary_photo_url ||
-            images.doggo1.src;
+            match.primary_photo_url;
 
           return (
             <FlipCard

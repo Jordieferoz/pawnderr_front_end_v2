@@ -589,9 +589,12 @@ export const fetchActiveMatches = (params: {
   });
 };
 
-export const discoverNearbyPets = (petId: number): Promise<TResponse<any>> => {
+export const discoverNearbyPets = (
+  petId: number,
+  params?: { is_premium?: boolean }
+): Promise<TResponse<any>> => {
   return new Promise((resolve, reject) => {
-    globalGetService<any, any>(`discovery/nearby/${petId}`, {})
+    globalGetService<any, any>(`discovery/nearby/${petId}`, params || {})
       .then((response) => {
         if (response.statusCode === 200) {
           resolve(response.data);
