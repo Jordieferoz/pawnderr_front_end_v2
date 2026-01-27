@@ -16,7 +16,6 @@ export const getMatchIndicators = createAsyncThunk(
   async (_, { dispatch }) => {
     try {
       const response = await fetchUnseenMatchCount(); // Returns data directly based on user edit
-      console.log(response, "fetchUnseenMatchCount response");
 
       // Assuming response has 'count' or similar structure.
       // If the user said "use only the count api", likely "unseenMatchCount" corresponds to "new_matches".

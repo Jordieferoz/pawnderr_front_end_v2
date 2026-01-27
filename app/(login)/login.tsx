@@ -190,7 +190,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
                 };
                 sessionStorage.setItem("userData", JSON.stringify(userProfile));
               }
-              console.log(responseData, "responseData");
+
               // Create NextAuth session
               const callbackUrl =
                 searchParams?.get("callbackUrl") || "/dashboard";
@@ -200,7 +200,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
                 redirect: false,
                 callbackUrl
               });
-              console.log(result, "result");
+
               if (result?.ok) {
                 await completeLoginFlow(callbackUrl);
               } else {

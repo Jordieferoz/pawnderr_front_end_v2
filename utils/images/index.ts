@@ -109,6 +109,7 @@ import premium3 from "public/assets/images/premium_3.png";
 import premium4 from "public/assets/images/premium_4.png";
 import premium5 from "public/assets/images/premium_5.png";
 import premium6 from "public/assets/images/premium_6.png";
+import premiumBadge from "public/assets/images/premium_badge.svg";
 
 import x from "public/assets/images/x.svg";
 import yellowStar from "public/assets/images/yellow_star.svg";
@@ -234,6 +235,7 @@ export type ImageType =
   | "premium4"
   | "premium5"
   | "premium6"
+  | "premiumBadge"
   | "backBtn";
 
 export type NextImage = {
@@ -359,5 +361,6 @@ export const images: Record<ImageType, NextImage> = {
   premium3,
   premium4,
   premium5,
-  premium6
+  premium6,
+  premiumBadge
 };

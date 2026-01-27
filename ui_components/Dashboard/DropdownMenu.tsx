@@ -43,7 +43,7 @@ const DropdownMenu: FC<DropdownMenuProps> = ({ userProfile, isLoading }) => {
   const [loading, setLoading] = useState(true);
   const [petData, setPetData] = useState<PetData | null>(null);
   const [open, setOpen] = useState(false);
-  console.log(firstPetId, "firstPetId");
+
   const handleLogout = async () => {
     setOpen(false);
     await logout();
@@ -83,7 +83,7 @@ const DropdownMenu: FC<DropdownMenuProps> = ({ userProfile, isLoading }) => {
       if (!firstPetId) return;
       try {
         const resp = await fetchMyPet(Number(firstPetId));
-        console.log(resp, "resp");
+
         const petDetails = resp?.data;
         setPetData(petDetails);
       } catch (error) {

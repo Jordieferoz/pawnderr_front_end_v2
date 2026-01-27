@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from "next/navigation";
 import React, { FC, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 
@@ -14,12 +15,45 @@ import { useDrag } from "@use-gesture/react";
 import { HangTightModal, OutOfSwipesModal } from "../Modals";
 import { ISwipingCard, ISwipingCardsProps, NearbyPet } from "./types";
 
+const CardImage: FC<{ src: string; alt: string; className: string }> = ({
+  src,
+  alt,
+  className
+}) => {
+  const [loaded, setLoaded] = useState(false);
+
+  return (
+    <>
+      {!loaded && (
+        <div className="absolute inset-0 w-full h-full bg-gray-200 animate-pulse rounded-[24px]" />
+      )}
+      <img
+        src={src}
+        alt={alt}
+        className={`${className} ${
+          loaded ? "opacity-100" : "opacity-0"
+        } transition-opacity duration-300`}
+        draggable="false"
+        onLoad={() => setLoaded(true)}
+        onError={(e) => {
+          const target = e.target as HTMLImageElement;
+          if (target.src !== images.doggo1.src) {
+            target.src = images.doggo1.src;
+          }
+          setLoaded(true);
+        }}
+      />
+    </>
+  );
+};
+
 const SwipingCards: FC<ISwipingCardsProps> = ({
   petData,
   loading,
   isSubscribed,
   containerHeight
 }) => {
+  const router = useRouter();
   const dispatch = useDispatch();
   const [cards, setCards] = useState<ISwipingCard[]>([]);
   const [currentIndex, setCurrentIndex] = useState(-1);
@@ -224,13 +258,49 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
       setLocationError(null);
       setIsLocationLoading(true);
 
-      try {
-        const { latitude, longitude } = await getUserLocation();
+      const CACHE_KEY = "user_location_cache";
+      const EXPIRY_TIME = 24 * 60 * 60 * 1000; // 1 Day
 
-        await updateUserLocation({
-          latitude,
-          longitude
-        });
+      try {
+        let latitude: number | null = null;
+        let longitude: number | null = null;
+        let shouldUpdateBackend = false;
+
+        // 1. Check LocalStorage
+        const cachedDataStr = localStorage.getItem(CACHE_KEY);
+        if (cachedDataStr) {
+          const cachedData = JSON.parse(cachedDataStr);
+          const isExpired = Date.now() - cachedData.timestamp > EXPIRY_TIME;
+
+          if (!isExpired && cachedData.latitude && cachedData.longitude) {
+            latitude = cachedData.latitude;
+            longitude = cachedData.longitude;
+            console.log("📍 Using cached location - Skipping API update");
+          }
+        }
+
+        // 2. If no valid cache, fetch precise location
+        if (!latitude || !longitude) {
+          const loc = await getUserLocation();
+          latitude = loc.latitude;
+          longitude = loc.longitude;
+          shouldUpdateBackend = true;
+
+          // Save to cache
+          localStorage.setItem(
+            CACHE_KEY,
+            JSON.stringify({ latitude, longitude, timestamp: Date.now() })
+          );
+          console.log("📍 Fetched new location & cached");
+        }
+
+        // 3. Only update backend if we fetched a fresh location
+        if (shouldUpdateBackend && latitude !== null && longitude !== null) {
+          await updateUserLocation({
+            latitude,
+            longitude
+          });
+        }
 
         const response = await discoverNearbyPets(petData.id);
 
@@ -314,7 +384,7 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
     >
       <div className="relative h-full">
         {cards.map((card, idx) => {
-          const isActive = idx <= currentIndex;
+          // const isActive = idx <= currentIndex;
           const isTop = idx === currentIndex;
 
           if (idx > currentIndex || idx < currentIndex - 3) return null;
@@ -365,17 +435,10 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
                   boxShadow: "0px 4px 10px 0px rgba(0,0,0,0.1)"
                 }}
               >
-                <img
+                <CardImage
                   src={card.url || images.doggo1.src}
                   alt={card.name}
                   className="w-full h-full absolute top-0 left-0 rounded-[24px] object-cover"
-                  draggable="false"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    if (target.src !== images.doggo1.src) {
-                      target.src = images.doggo1.src;
-                    }
-                  }}
                 />
                 <img
                   src={images.profileOverlay.src}
@@ -430,7 +493,7 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
 
       {/* Show action buttons whenever we have any cards and no location error */}
       {cards.length > 0 && !locationError && (
-        <div className="flex justify-center items-center gap-5 absolute bottom-17 left-1/2 -translate-x-1/2 z-10">
+        <div className="flex justify-center items-center gap-5 absolute bottom-17 left-1/2 -translate-x-1/2 z-50">
           <button
             onClick={() => programmaticSwipe("left")}
             disabled={!canSwipe}
@@ -438,7 +501,14 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
           >
             <img src={images.dislike.src} alt="Dislike" className="w-5 h-5" />
           </button>
-          <button className="bg-primary-500 rounded-full w-[68px] h-[68px] flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-transform">
+          <button
+            onClick={() => {
+              if (cards[currentIndex]?.id) {
+                router.push(`/profile/${cards[currentIndex].id}?action=true`);
+              }
+            }}
+            className="bg-primary-500 rounded-full w-[68px] h-[68px] flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-transform"
+          >
             <img
               src={images.pawYellow.src}
               alt="Super like"

@@ -7,7 +7,8 @@ const InfoCard: FC<IInfoCardProps> = ({
   type,
   desc,
   list = [],
-  image
+  image,
+  className
 }) => {
   return (
     <div className="bg-white p-4 shadow-[0px_4px_10.6px_0px_#0000001A] rounded-xl">
@@ -18,7 +19,9 @@ const InfoCard: FC<IInfoCardProps> = ({
           alt="image"
         />
         <div className="grow basis-0">
-          <h2 className="heading4 text-dark-grey mb-3">{title}</h2>
+          <h2 className={`heading4 text-dark-grey mb-3 ${className ?? ""}`}>
+            {title}
+          </h2>
 
           {type === "desc" && (
             <p className="text-dark-black text-2xl font_fredoka font-medium pb-4">

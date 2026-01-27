@@ -1,18 +1,34 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { FC } from "react";
 
 import { images } from "@/utils/images";
 
 import { Button } from "@/components/ui/button";
+import { swipePetAction } from "@/utils/api";
 import { InfoCard, ProfileCard } from ".";
 import Loader from "../Shared/Loader";
 import { IProfileProps } from "./types";
 
 const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const showActions = searchParams.get("action") === "true";
 
+  const handleAction = async (action: "like" | "pass") => {
+    if (petData?.id) {
+      try {
+        await swipePetAction({
+          pet_id: petData.id,
+          action
+        });
+        router.back();
+      } catch (err) {
+        console.error("Error performing action:", err);
+      }
+    }
+  };
   const primaryImage = petData?.images?.find(
     (img) => img.display_order === 0
   )?.image_url;
@@ -23,7 +39,9 @@ const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
     age: petData?.age ?? 0,
     breed: petData?.breed?.name ?? "",
     location: "Gurugram",
-    image: primaryImage
+    image: primaryImage,
+    isVerified: petData?.is_verified,
+    isPremium: petData?.user?.is_premium_user
   };
 
   // Dynamically map all attributes for Floof's Story
@@ -126,10 +144,15 @@ const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-7">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-x-12 gap-y-7">
         {/* Left Column */}
-        <div className="flex flex-col gap-7.5">
-          <ProfileCard {...profileData} />
+        <div className="flex flex-col gap-7.5 md:col-span-8">
+          <ProfileCard
+            {...profileData}
+            showActions={showActions}
+            onLike={() => handleAction("like")}
+            onDislike={() => handleAction("pass")}
+          />
 
           <InfoCard
             type="desc"
@@ -149,13 +172,14 @@ const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
         </div>
 
         {/* Right Column */}
-        <div className="flex flex-col gap-7.5">
+        <div className="flex flex-col gap-7.5 md:col-span-4">
           <InfoCard
             type="list"
             title="Floof's Story:"
             image={petData?.images?.[2]?.image_url || images.doggo3.src}
             list={floofStoryList}
             desc={""}
+            className="text-2xl font-medium text-dark-grey2 border-b border-[#9B9B9B6E] pb-6 border-dashed"
           />
 
           <InfoCard
@@ -164,6 +188,7 @@ const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
             image={petData?.images?.[4]?.image_url || images.doggo3.src}
             list={pupLookingForList}
             desc={""}
+            className="text-2xl font-medium text-dark-grey2 border-b border-[#9B9B9B6E] pb-6 border-dashed"
           />
         </div>
       </div>

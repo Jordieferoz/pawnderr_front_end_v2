@@ -29,7 +29,6 @@ const Header: FC = () => {
     (state: RootState) => state.match.whoLikesMeCount
   );
 
-  console.log(unseenMatchCount, "unseenMatchCount");
   useEffect(() => {
     dispatch(getMatchIndicators());
   }, [dispatch]);

@@ -23,7 +23,7 @@ type Card = {
 
 const FlipCard: FC<{ card: Card }> = ({ card }) => {
   const router = useRouter();
-  console.log(card, "card");
+
   const [isFlipped, setIsFlipped] = useState(false);
 
   const handleOpenChat = async (toPetId: string | number) => {
@@ -241,7 +241,6 @@ const MatchedCard: FC<MatchedCardProps> = ({
   matches = [],
   indicators = []
 }) => {
-  console.log(matches, "matches");
   if (!matches || matches.length === 0) {
     return (
       <div className="w-full min-h-[60vh] flex items-center justify-center">

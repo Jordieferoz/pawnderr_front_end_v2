@@ -85,7 +85,6 @@ const Upgrade = () => {
           );
           setFeatures(featureNames);
         }
-        console.log(statusResp, "statusResp");
 
         if (
           (statusResp as any)?.data?.is_premium &&
@@ -93,7 +92,7 @@ const Upgrade = () => {
         ) {
           const planDuration = (statusResp as any).data.subscription.plan
             .duration_type;
-          console.log(planDuration, "planDuration");
+
           if (planDuration === "monthly") {
             setSubscriptionType("MONTHLY_PREMIUM");
             setIsAnnual(true);

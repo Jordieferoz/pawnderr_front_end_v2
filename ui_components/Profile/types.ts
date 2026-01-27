@@ -5,9 +5,15 @@ export interface IProfileCardProps {
   breed?: string;
   location?: string;
   image?: string;
+  isVerified?: boolean;
+  isPremium?: boolean;
+  showActions?: boolean;
+  onLike?: () => void;
+  onDislike?: () => void;
 }
 export interface IInfoCardProps {
   image: string;
+  className?: string;
   desc: string;
   list?: IInfoCardListItem[];
   title: string;
@@ -42,6 +48,7 @@ export interface IPetData {
     id: number;
     name: string;
   };
+  is_verified: boolean;
   attributes: Array<{
     attribute_id: number;
     attribute_name: string;
@@ -57,6 +64,11 @@ export interface IPetData {
     display_order: number;
   }>;
   preferences: any;
+  user: {
+    id: number;
+    name: string;
+    is_premium_user: boolean;
+  };
 }
 
 export interface IProfileProps {
