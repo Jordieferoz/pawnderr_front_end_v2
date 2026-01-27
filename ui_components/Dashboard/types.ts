@@ -9,6 +9,7 @@ export type NearbyPet = {
   bark_o_graphy: string;
   is_founding_dog: boolean;
   is_verified: boolean;
+  is_premium_user: boolean;
   primary_image: {
     id: number;
     image_url: string;
@@ -24,6 +25,7 @@ export type ISwipingCard = {
   gender: string;
   isFoundingDog: boolean;
   isVerified: boolean;
+  isPremium: boolean;
 };
 
 export interface ISwipingCardsProps {

@@ -330,7 +330,8 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
                 desc: pet.bark_o_graphy || "",
                 gender: pet.gender,
                 isFoundingDog: pet.is_founding_dog,
-                isVerified: pet.is_verified
+                isVerified: pet.is_verified,
+                isPremium: pet.is_premium_user
               };
             }
           );
@@ -445,13 +446,19 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
                   alt="profileOverlay"
                   className="absolute inset-0 w-full h-full pointer-events-none"
                 />
-                {/* <div className="absolute inset-0 card_gradient rounded-[24px]" /> */}
 
                 {card?.isFoundingDog && !swipeDirection && (
                   <img
                     src={images.isFoundingDog.src}
-                    alt="isFoundingDog"
+                    alt="foundingDog"
                     className="absolute top-2.5 left-2.5"
+                  />
+                )}
+                {card?.isPremium && !swipeDirection && (
+                  <img
+                    src={images.premiumBadge.src}
+                    className="absolute top-2.5 left-2.5"
+                    alt="premiumBadge"
                   />
                 )}
                 {isTop && swipeDirection && (
