@@ -42,7 +42,7 @@ const Register: FC = () => {
 
         <Link
           href={"/register"}
-          className="mb-1 mt-6 inline-flex justify-center md:hidden"
+          className="mb-4 mt-6 inline-flex justify-center md:hidden"
         >
           <Image
             src={images.logoHorizontal.src}
