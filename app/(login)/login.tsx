@@ -389,7 +389,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
       <div className="sm:mx-auto sm:w-full sm:max-w-[766px] md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] rounded-4xl md:px-20 md:py-7 relative z-20">
         <Link
           href={"/"}
-          className="mb-7.5 inline-flex justify-center md:hidden"
+          className="mb-7.5 flex w-full justify-center md:hidden"
         >
           <Image
             src={images.logoHorizontal.src}
