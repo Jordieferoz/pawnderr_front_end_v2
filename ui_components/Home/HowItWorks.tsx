@@ -27,8 +27,8 @@ const HowItWorks = () => {
               Create a Profile
             </h3>
             <p className="body_regular text-[#356956] mb-6">
-              Start a conversation and set up a secure, well-matched meet-up for
-              both pets and their parents.
+              Add your Pet’s standout photo and highlight their favourite
+              activities, fun facts <br /> & personality traits.
             </p>
             <div className="aspect-video bg-white/20 rounded-lg overflow-hidden">
               <img
@@ -47,8 +47,8 @@ const HowItWorks = () => {
               Sniff. Swipe.
             </h3>
             <p className="body_regular text-accent-900 mb-6">
-              Start a conversation and set up a secure, well-matched meet-up for
-              both pets and their parents.
+              Discover nearby profiles, review compatibility details, and
+              connect with matches that fit your Pet’s energy level.
             </p>
             <div className="aspect-video bg-white/20 rounded-lg overflow-hidden">
               <img
@@ -68,7 +68,7 @@ const HowItWorks = () => {
             </h3>
             <p className="body_regular text-white mb-6">
               Start a conversation and set up a secure, well-matched meet-up for
-              both pets and their parents.
+              both pets <br /> and their parents.
             </p>
             <div className="aspect-video bg-white/20 rounded-lg overflow-hidden">
               <img
