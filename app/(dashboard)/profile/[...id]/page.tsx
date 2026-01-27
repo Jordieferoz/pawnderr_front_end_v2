@@ -1,14 +1,19 @@
 "use client";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { Profile } from "@/ui_components/Profile";
 import { IPetData } from "@/ui_components/Profile/types";
-import { fetchMyPet } from "@/utils/api";
+import { fetchMyPet, fetchPetProfile } from "@/utils/api";
 
 export default function ProfilePage() {
   const params = useParams();
-  const petId = params.id as string;
+  const searchParams = useSearchParams();
+  const petIdParam = params.id;
+  const petId = Array.isArray(petIdParam) ? petIdParam[0] : petIdParam;
+
+  const action = searchParams.get("action");
+  const isAction = action === "true";
 
   const [petData, setPetData] = useState<IPetData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -18,9 +23,15 @@ export default function ProfilePage() {
     const fetchData = async () => {
       try {
         setError(false);
-        const resp = await fetchMyPet(Number(petId));
+        let petDetails;
 
-        const petDetails = resp?.data;
+        if (isAction) {
+          const resp = await fetchPetProfile(Number(petId));
+          petDetails = resp?.data?.data;
+        } else {
+          const resp = await fetchMyPet(Number(petId));
+          petDetails = resp?.data;
+        }
 
         if (!petDetails) {
           setError(true);
@@ -38,7 +49,7 @@ export default function ProfilePage() {
     if (petId) {
       fetchData();
     }
-  }, [petId]);
+  }, [petId, isAction]);
 
   return <Profile petData={petData} loading={loading} error={error} />;
 }

@@ -62,6 +62,7 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
   );
   const [isAnimating, setIsAnimating] = useState(false);
   const [isLocationLoading, setIsLocationLoading] = useState(false);
+  const [isFetchingPets, setIsFetchingPets] = useState(true);
   const [locationError, setLocationError] = useState<string | null>(null);
 
   const cardRefs = useMemo(
@@ -253,10 +254,12 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
   };
   useEffect(() => {
     const initDiscovery = async () => {
-      if (!petData?.id) return;
+      if (!petData?.id) {
+        return;
+      }
+      setIsFetchingPets(true);
 
       setLocationError(null);
-      setIsLocationLoading(true);
 
       const CACHE_KEY = "user_location_cache";
       const EXPIRY_TIME = 24 * 60 * 60 * 1000; // 1 Day
@@ -275,23 +278,23 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
           if (!isExpired && cachedData.latitude && cachedData.longitude) {
             latitude = cachedData.latitude;
             longitude = cachedData.longitude;
-            console.log("📍 Using cached location - Skipping API update");
           }
         }
 
         // 2. If no valid cache, fetch precise location
         if (!latitude || !longitude) {
+          setIsLocationLoading(true);
           const loc = await getUserLocation();
           latitude = loc.latitude;
           longitude = loc.longitude;
           shouldUpdateBackend = true;
+          setIsLocationLoading(false);
 
           // Save to cache
           localStorage.setItem(
             CACHE_KEY,
             JSON.stringify({ latitude, longitude, timestamp: Date.now() })
           );
-          console.log("📍 Fetched new location & cached");
         }
 
         // 3. Only update backend if we fetched a fresh location
@@ -355,13 +358,22 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
         setCurrentIndex(-1);
       } finally {
         setIsLocationLoading(false);
+        setIsFetchingPets(false);
       }
     };
 
     initDiscovery();
   }, [petData?.id]);
 
-  if (loading || isLocationLoading) {
+  if (loading || isLocationLoading || isFetchingPets) {
+    let loadingText = "Loading your pet details...";
+    if (isLocationLoading) {
+      loadingText =
+        "Fetching your location. Please allow location access to discover nearby pets.";
+    } else if (isFetchingPets) {
+      loadingText = "Finding nearby pets...";
+    }
+
     return (
       <div
         className="w-full max-w-[340px] relative mx-auto flex items-center justify-center"
@@ -370,9 +382,7 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
         <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10 rounded-full border-4 border-primary-500 border-t-transparent animate-spin" />
           <p className="text-sm text-gray-600 text-center px-4">
-            {loading
-              ? "Loading your pet details..."
-              : "Fetching your location. Please allow location access to discover nearby pets."}
+            {loadingText}
           </p>
         </div>
       </div>

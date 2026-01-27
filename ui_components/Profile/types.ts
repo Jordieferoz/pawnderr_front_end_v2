@@ -10,9 +10,10 @@ export interface IProfileCardProps {
   showActions?: boolean;
   onLike?: () => void;
   onDislike?: () => void;
+  disabled?: boolean;
 }
 export interface IInfoCardProps {
-  image: string;
+  image?: string;
   className?: string;
   desc: string;
   list?: IInfoCardListItem[];

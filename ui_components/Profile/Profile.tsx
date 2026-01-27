@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { FC } from "react";
+import { FC, useState } from "react";
 
 import { images } from "@/utils/images";
 
@@ -15,10 +15,12 @@ const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const showActions = searchParams.get("action") === "true";
+  const [processing, setProcessing] = useState(false);
 
   const handleAction = async (action: "like" | "pass") => {
-    if (petData?.id) {
+    if (petData?.id && !processing) {
       try {
+        setProcessing(true);
         await swipePetAction({
           pet_id: petData.id,
           action
@@ -26,12 +28,13 @@ const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
         router.back();
       } catch (err) {
         console.error("Error performing action:", err);
+        setProcessing(false);
       }
     }
   };
-  const primaryImage = petData?.images?.find(
-    (img) => img.display_order === 0
-  )?.image_url;
+  const primaryImage =
+    petData?.images?.find((img) => img.is_primary)?.image_url ||
+    petData?.images?.[0]?.image_url;
 
   const profileData = {
     name: petData?.name ?? "",
@@ -150,6 +153,7 @@ const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
           <ProfileCard
             {...profileData}
             showActions={showActions}
+            disabled={processing}
             onLike={() => handleAction("like")}
             onDislike={() => handleAction("pass")}
           />
@@ -157,7 +161,7 @@ const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
           <InfoCard
             type="desc"
             title="Bio (aka Bark-o-graphy):"
-            image={petData?.images?.[1]?.image_url || images.doggo2.src}
+            image={petData?.images?.[1]?.image_url}
             desc={petData?.bark_o_graphy ?? ""}
             list={[]}
           />
@@ -165,7 +169,7 @@ const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
           <InfoCard
             type="desc"
             title="Fun Fact:"
-            image={petData?.images?.[3]?.image_url || images.doggo2.src}
+            image={petData?.images?.[3]?.image_url}
             desc={petData?.fun_fact_or_habit ?? ""}
             list={[]}
           />
@@ -176,7 +180,7 @@ const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
           <InfoCard
             type="list"
             title="Floof's Story:"
-            image={petData?.images?.[2]?.image_url || images.doggo3.src}
+            image={petData?.images?.[2]?.image_url}
             list={floofStoryList}
             desc={""}
             className="text-2xl font-medium text-dark-grey2 border-b border-[#9B9B9B6E] pb-6 border-dashed"
@@ -185,7 +189,7 @@ const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
           <InfoCard
             type="list"
             title="What's Pup looking for:"
-            image={petData?.images?.[4]?.image_url || images.doggo3.src}
+            image={petData?.images?.[4]?.image_url}
             list={pupLookingForList}
             desc={""}
             className="text-2xl font-medium text-dark-grey2 border-b border-[#9B9B9B6E] pb-6 border-dashed"

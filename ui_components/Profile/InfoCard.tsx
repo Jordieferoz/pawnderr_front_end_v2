@@ -13,11 +13,13 @@ const InfoCard: FC<IInfoCardProps> = ({
   return (
     <div className="bg-white p-4 shadow-[0px_4px_10.6px_0px_#0000001A] rounded-xl">
       <div className="">
-        <img
-          src={image}
-          className="w-full rounded-xl grow basis-0 mb-4"
-          alt="image"
-        />
+        {image && (
+          <img
+            src={image}
+            className="w-full rounded-xl grow basis-0 mb-4"
+            alt="image"
+          />
+        )}
         <div className="grow basis-0">
           <h2 className={`heading4 text-dark-grey mb-3 ${className ?? ""}`}>
             {title}
