@@ -157,7 +157,7 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      router.push(`/profile/${card.petId}`);
+                      router.push(`/profile/${card.petId}?action=false`);
                     }}
                     className="text-yellow-500 underline ml-1 font-medium hover:text-yellow-600 inline-block"
                   >
@@ -181,7 +181,7 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      router.push(`/profile/${card.petId}`);
+                      router.push(`/profile/${card.petId}?action=false`);
                     }}
                     className="text-yellow-500 underline text-sm font-medium hover:text-yellow-600 mt-1"
                   >
@@ -212,7 +212,7 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
         <button
           onClick={(e) => {
             e.stopPropagation();
-            router.push(`/profile/${card.petId}`);
+            router.push(`/profile/${card.petId}?action=false`);
           }}
           className={largeButton}
         >

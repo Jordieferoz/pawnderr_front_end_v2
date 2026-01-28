@@ -112,6 +112,13 @@ const ChatWindow: FC<ChatWindowProps> = ({
   };
 
   const handleSendMessage = async () => {
+    console.log("🚀 handleSendMessage called", {
+      chatId,
+      myPetId,
+      receiverPetId,
+      messageText,
+      isAuthenticated
+    });
     if (
       !messageText.trim() ||
       !chatId ||

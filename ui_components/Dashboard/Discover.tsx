@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import SwipingCards from "@/ui_components/Dashboard/SwipingCards";
 import {
   discoverNearbyPets,
@@ -18,6 +19,7 @@ import { showToast } from "../Shared/ToastMessage";
 import { NearbyPet } from "./types";
 
 const Discover = () => {
+  const router = useRouter();
   const dispatch = useDispatch();
   const [firstPetId, setFirstPetId] = useState<number | null>(null);
   const [petData, setPetData] = useState<IPetData | null>(null);
@@ -138,7 +140,7 @@ const Discover = () => {
         // The swiping cards container inside needs to be:
         // wrapperHeight - padding (40px) - header (approx 0 if empty)
         // Let's safe margin of 60px.
-        setSwipingCardsHeight(totalHeight - 60);
+        setSwipingCardsHeight(totalHeight - 120);
       }
     };
 
@@ -159,15 +161,19 @@ const Discover = () => {
         <div className="items-center justify-between mb-4">
           <div className="flex my-3 gap-4 items-center overflow-x-auto hide-scrollbar">
             {premiumPets.map((pet, index) => (
-              <CustomAvatar
+              <div
                 key={index}
-                src={pet.primary_image?.image_url}
-                size={64}
-                gender={pet.gender as any}
-                name={pet.name}
-                showPlus={true}
-                plusIcon={images.pawnderrPlus.src}
-              />
+                onClick={() => router.push(`/profile/${pet.id}?action=true`)}
+              >
+                <CustomAvatar
+                  src={pet.primary_image?.image_url}
+                  size={64}
+                  gender={pet.gender as any}
+                  name={pet.name}
+                  showPlus={true}
+                  plusIcon={images.pawnderrPlus.src}
+                />
+              </div>
             ))}
           </div>
         </div>

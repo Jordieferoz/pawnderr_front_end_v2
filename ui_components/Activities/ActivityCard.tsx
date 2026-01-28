@@ -101,7 +101,9 @@ const ActivityCard: FC<IActivityCardProps> = ({
       });
     }
   };
-
+  const handleViewProfile = (petId: number) => {
+    router.push(`/profile/${petId}?action=true`);
+  };
   return (
     <div className={`w-full mx-auto p-4 pt-12 ${className ?? ""}`}>
       <div
@@ -171,13 +173,13 @@ const ActivityCard: FC<IActivityCardProps> = ({
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        onLike?.(card);
+                        handleViewProfile(card.id);
                       }}
                       className={largeButton}
                     >
                       <img
                         src={images.pawYellow.src}
-                        alt="Like"
+                        alt="Chat"
                         className="h-[36px]"
                       />
                     </button>
@@ -214,7 +216,7 @@ const ActivityCard: FC<IActivityCardProps> = ({
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleOpenChat(card.id);
+                        handleViewProfile(card.id);
                       }}
                       className={largeButton}
                     >
@@ -231,20 +233,20 @@ const ActivityCard: FC<IActivityCardProps> = ({
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        onUndo?.(card);
+                        handleViewProfile(card.id);
                       }}
                       className={largeButton}
                     >
                       <img
                         src={images.pawYellow.src}
-                        alt="Undo"
+                        alt="Chat"
                         className="h-[36px]"
                       />
                     </button>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        onLike?.(card);
+                        onUndo?.(card);
                       }}
                       className={buttonBase}
                     >

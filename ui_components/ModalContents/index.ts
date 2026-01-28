@@ -4,6 +4,7 @@ import HangTightModalContent from "./HangTightModalContent";
 import MessageActionContent from "./MessageActionContent";
 import OutOfSwipesContent from "./OutOfSwipesContent";
 import ReportModalContent from "./ReportModalContent";
+import MatchModalContent from "./MatchModalContent";
 
 export {
   BlockModalContent,
@@ -11,5 +12,6 @@ export {
   HangTightModalContent,
   MessageActionContent,
   OutOfSwipesContent,
-  ReportModalContent
+  ReportModalContent,
+  MatchModalContent
 };

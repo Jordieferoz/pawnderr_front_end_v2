@@ -3,7 +3,11 @@ import { useRouter } from "next/navigation";
 import React, { FC, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 
-import { openHangTightModal, openOutOfSwipesModal } from "@/store/modalSlice";
+import {
+  openHangTightModal,
+  openMatchModal,
+  openOutOfSwipesModal
+} from "@/store/modalSlice";
 import { getUserLocation } from "@/utils";
 import {
   discoverNearbyPets,
@@ -12,7 +16,7 @@ import {
 } from "@/utils/api";
 import { images } from "@/utils/images";
 import { useDrag } from "@use-gesture/react";
-import { HangTightModal, OutOfSwipesModal } from "../Modals";
+import { HangTightModal, MatchModal, OutOfSwipesModal } from "../Modals";
 import { ISwipingCard, ISwipingCardsProps, NearbyPet } from "./types";
 
 const CardImage: FC<{ src: string; alt: string; className: string }> = ({
@@ -93,13 +97,30 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
         .then((resp) => {
           const statusCode = resp && resp.statusCode;
           const apiMessage = resp?.data?.message;
-
+          console.log(resp, "resp");
           if (statusCode === 403 && apiMessage === "DAILY_LIKE_LIMIT_REACHED") {
             dispatch(openOutOfSwipesModal());
           } else if (
+            direction === "right" &&
+            resp?.data?.data?.is_match === true
+          ) {
+            // It's a match!
+            dispatch(
+              openMatchModal({
+                userImage: petData?.images?.[0]?.image_url || "",
+                matchImage: swipedCard.url,
+                userGender: petData?.gender || "male",
+                matchGender: swipedCard.gender,
+                matchName: swipedCard.name,
+                matchId: resp?.data?.data?.match_id || 0,
+                matchPetId: swipedCard.id,
+                myPetId: petData?.id ?? 0
+              })
+            );
+          } else if (
             !isSubscribed &&
             direction === "right" &&
-            resp?.data?.is_match === false
+            resp?.data?.data?.is_match
           ) {
             dispatch(
               openHangTightModal({
@@ -334,7 +355,8 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
                 gender: pet.gender,
                 isFoundingDog: pet.is_founding_dog,
                 isVerified: pet.is_verified,
-                isPremium: pet.is_premium_user
+                isPremium: pet.is_premium_user,
+                matchPercentage: 98
               };
             }
           );
@@ -365,6 +387,11 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
     initDiscovery();
   }, [petData?.id]);
 
+  const MAX_HEIGHT = 560;
+  const effectiveHeight = containerHeight
+    ? Math.min(containerHeight, MAX_HEIGHT)
+    : 520;
+
   if (loading || isLocationLoading || isFetchingPets) {
     let loadingText = "Loading your pet details...";
     if (isLocationLoading) {
@@ -377,7 +404,7 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
     return (
       <div
         className="w-full max-w-[340px] relative mx-auto flex items-center justify-center"
-        style={{ height: containerHeight ? `${containerHeight}px` : "520px" }}
+        style={{ height: `${effectiveHeight}px` }}
       >
         <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10 rounded-full border-4 border-primary-500 border-t-transparent animate-spin" />
@@ -390,8 +417,8 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
   }
   return (
     <div
-      className="w-full max-w-[340px] relative mx-auto"
-      style={{ height: containerHeight ? `${containerHeight}px` : "520px" }}
+      className="w-full max-w-[340px] relative mx-auto mt-12"
+      style={{ height: `${effectiveHeight}px` }}
     >
       <div className="relative h-full">
         {cards.map((card, idx) => {
@@ -435,9 +462,7 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
                 className="relative w-full max-w-[340px] rounded-[24px] border-[5px] border-white 
                   shadow-[0px_4px_10px_0px_rgba(0,0,0,0.1)] flex items-end justify-center overflow-hidden mx-auto"
                 style={{
-                  height: containerHeight
-                    ? `${containerHeight - 100}px`
-                    : "420px",
+                  height: `${effectiveHeight - 100}px`,
                   transition: isTop
                     ? "none"
                     : "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
@@ -471,6 +496,21 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
                     alt="premiumBadge"
                   />
                 )}
+
+                {/* Match Badge */}
+                {!swipeDirection && (
+                  <div className="absolute top-4 right-4 bg-white/30 rounded-full px-2 py-1 flex items-center gap-1.5 z-10 border border-white/90">
+                    <img
+                      src={images.matchIndicator.src}
+                      alt="matchIndicator"
+                      className="w-3"
+                    />
+                    <span className="text-white font_fredoka font-medium text-xs">
+                      98% Match
+                    </span>
+                  </div>
+                )}
+
                 {isTop && swipeDirection && (
                   <div className="absolute inset-0 pointer-events-none">
                     <div
@@ -498,7 +538,7 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
                       )}
                     </span>
                   </h3>
-                  <p className="text-sm opacity-90 mt-1 max-w-[280px] leading-snug">
+                  <p className="text-sm opacity-90 mt-1 max-w-[280px] line-clamp-2 text-ellipsis leading-snug">
                     {card.desc}
                   </p>
                 </div>
@@ -583,6 +623,7 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
         </div>
       )}
       <HangTightModal />
+      <MatchModal />
       <OutOfSwipesModal />
     </div>
   );

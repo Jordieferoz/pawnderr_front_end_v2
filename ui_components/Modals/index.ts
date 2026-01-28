@@ -6,6 +6,7 @@ import OTPModal from "./OTPModal";
 import MessageActionModal from "./MessageActionModal";
 import OutOfSwipesModal from "./OutOfSwipesModal";
 import ReportModal from "./ReportModal";
+import MatchModal from "./MatchModal";
 
 export {
   BlockModal,
@@ -15,5 +16,6 @@ export {
   OTPModal,
   MessageActionModal,
   OutOfSwipesModal,
-  ReportModal
+  ReportModal,
+  MatchModal
 };

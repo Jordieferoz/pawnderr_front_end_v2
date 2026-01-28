@@ -86,8 +86,8 @@ export const sendMessage = async (
 
   const message = {
     chatId,
-    fromPetId,
-    toPetId,
+    fromPetId: String(fromPetId),
+    toPetId: String(toPetId),
     message: text,
     type,
     ...(imageUrl ? { imageUrl } : {}),

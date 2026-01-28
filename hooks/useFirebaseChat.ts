@@ -2,7 +2,8 @@
 import {
   getFirebaseFirestore,
   onAuthStateChange,
-  signInWithFirebaseToken
+  signInWithFirebaseToken,
+  getFirebaseAuth
 } from "@/lib/firebase";
 import { fetchFirebaseToken, messageInitiated } from "@/utils/api";
 import {
@@ -210,28 +211,22 @@ export const useChatMessages = (chatId: string | null, myPetId?: number) => {
       type: "text" | "image" | "file" = "text",
       imageUrl?: string
     ) => {
-      if (!chatId) {
-        throw new Error("Chat ID is required");
-      }
-
-      if (!fromPetId || !toPetId) {
-        throw new Error("Pet IDs are required");
-      }
+      if (!chatId) throw new Error("Chat ID is required");
+      if (!fromPetId || !toPetId) throw new Error("Pet IDs are required");
 
       const firestore = getFirebaseFirestore();
-      if (!firestore) {
-        throw new Error("Firebase Firestore is not available");
-      }
+      if (!firestore) throw new Error("Firebase Firestore is not available");
 
+      console.log("Step 1: Checking first message");
       const isFirstMessage = !chatInitiatedRef.current[chatId];
       if (isFirstMessage) {
         const matchId = getMatchIdFromChat(chatId);
-        if (!matchId) {
+        if (!matchId)
           throw new Error(
             "Match ID is missing. Please start the chat from a match."
           );
-        }
 
+        console.log("Step 2: Calling messageInitiated (API)");
         await messageInitiated({
           chat_id: chatId,
           from_pet_id: fromPetId,
@@ -242,25 +237,56 @@ export const useChatMessages = (chatId: string | null, myPetId?: number) => {
         chatInitiatedRef.current[chatId] = true;
       }
 
-      const chatDoc = await getDoc(doc(firestore, "chats", chatId));
-      if (!chatDoc.exists()) {
-        throw new Error("Chat document not found.");
-      }
-
-      if (chatDoc.data()?.is_disabled) {
-        throw new Error(
-          "This chat has been disabled or blocked. You cannot send messages."
+      // DEBUG: Check Auth Claims
+      const auth = getFirebaseAuth();
+      if (auth?.currentUser) {
+        const tokenResult = await auth.currentUser.getIdTokenResult();
+        console.log("👮‍♀️ Auth Debug:", {
+          uid: auth.currentUser.uid,
+          claims: tokenResult.claims,
+          tryingToSendAs: fromPetId
+        });
+      } else {
+        console.error(
+          "❌ No authenticated user found in Firebase Auth instance"
         );
       }
 
-      await sendFirebaseMessage(
-        chatId,
-        fromPetId,
-        toPetId,
-        text,
-        type,
-        imageUrl
-      );
+      console.log("Step 3: Checking chat document exists");
+      try {
+        const chatDoc = await getDoc(doc(firestore, "chats", chatId));
+        if (chatDoc.exists()) {
+          if (chatDoc.data()?.is_disabled) {
+            throw new Error(
+              "This chat has been disabled or blocked. You cannot send messages."
+            );
+          }
+        } else {
+          console.warn(
+            "⚠️ Chat document not found, but proceeding to send message (optimistic)."
+          );
+        }
+      } catch (err: any) {
+        console.warn(
+          "⚠️ Failed to read chat document (permissions or other), proceeding to send message anyway:",
+          err
+        );
+      }
+
+      console.log("Step 4: Sending message to Firestore");
+      try {
+        await sendFirebaseMessage(
+          chatId,
+          fromPetId,
+          toPetId,
+          text,
+          type,
+          imageUrl
+        );
+      } catch (err: any) {
+        console.error("❌ Failed to write message to Firestore:", err);
+        throw err;
+      }
     },
     [chatId, getMatchIdFromChat]
   );

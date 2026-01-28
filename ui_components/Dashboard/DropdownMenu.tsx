@@ -99,10 +99,7 @@ const DropdownMenu: FC<DropdownMenuProps> = ({ userProfile, isLoading }) => {
   }, [firstPetId]);
 
   const primaryImage = petData?.images?.find((img) => img.is_primary);
-  const avatarUrl =
-    primaryImage?.image_url ||
-    userProfile?.avatar ||
-    images.doggoProfilePlaceholder.src;
+  const avatarUrl = primaryImage?.image_url || userProfile?.avatar;
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

@@ -37,7 +37,7 @@ const OutOfSwipesContent: FC = () => {
           Get More Swipes
         </Button>
         <p className="body_large_medium text-center text-light-grey2 mt-4">
-          Wait for 24 Hours
+          Or Wait for 24 Hours
         </p>
       </div>
     </div>

@@ -26,6 +26,7 @@ export type ISwipingCard = {
   isFoundingDog: boolean;
   isVerified: boolean;
   isPremium: boolean;
+  matchPercentage: number;
 };
 
 export interface ISwipingCardsProps {

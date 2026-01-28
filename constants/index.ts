@@ -167,5 +167,6 @@ export const dropdownMenuItems = [
   { icon: FileText, label: "Terms of Service", href: "/" },
   { icon: FileText, label: "Community", href: "/" },
   { icon: FileText, label: "FAQ's", href: "/" },
+  { icon: FileText, label: "Safety Tips", href: "/" },
   { icon: FileText, label: "Support", href: "/" }
 ];

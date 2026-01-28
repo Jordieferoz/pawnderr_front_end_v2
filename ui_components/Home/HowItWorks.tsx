@@ -19,16 +19,16 @@ const HowItWorks = () => {
         </h3>
 
         <div className="grid md:grid-cols-3 gap-6 mb-8 md:mb-20">
-          <div className="bg-[#67D6AD] rounded-xl p-5 relative">
+          <div className="bg-[#67D6AD] rounded-xl p-5 relative flex flex-col">
             <p className="text-[#3569561A] font_fredoka font-semibold text-[200px] absolute left-5 -top-15">
               01
             </p>
             <h3 className="heading2_semibold text-[#356956] mt-25 mb-3">
               Create a Profile
             </h3>
-            <p className="body_regular text-[#356956] mb-6">
+            <p className="body_regular text-[#356956] mb-6 flex-1">
               Add your Pet’s standout photo and highlight their favourite
-              activities, fun facts <br /> & personality traits.
+              activities, fun facts & personality traits.
             </p>
             <div className="aspect-video bg-white/20 rounded-lg overflow-hidden">
               <img
@@ -39,14 +39,14 @@ const HowItWorks = () => {
             </div>
           </div>
 
-          <div className="bg-accent-500 rounded-xl p-5 relative">
+          <div className="bg-accent-500 rounded-xl p-5 relative flex flex-col">
             <p className="text-accent-900/10 font_fredoka font-semibold text-[200px] absolute left-5 -top-15">
               02
             </p>
             <h3 className="heading2_semibold text-accent-900 mt-25 mb-3">
               Sniff. Swipe.
             </h3>
-            <p className="body_regular text-accent-900 mb-6">
+            <p className="body_regular text-accent-900 mb-6 flex-1">
               Discover nearby profiles, review compatibility details, and
               connect with matches that fit your Pet’s energy level.
             </p>
@@ -59,16 +59,16 @@ const HowItWorks = () => {
             </div>
           </div>
 
-          <div className="bg-secondary-600 rounded-xl p-5 relative">
+          <div className="bg-secondary-600 rounded-xl p-5 relative flex flex-col">
             <p className="text-white/10 font_fredoka font-semibold text-[200px] absolute left-5 -top-15">
               03
             </p>
             <h3 className="heading2_semibold text-white mt-25 mb-3">
               Match. Meet.
             </h3>
-            <p className="body_regular text-white mb-6">
+            <p className="body_regular text-white mb-6 flex-1">
               Start a conversation and set up a secure, well-matched meet-up for
-              both pets <br /> and their parents.
+              both pets and their parents.
             </p>
             <div className="aspect-video bg-white/20 rounded-lg overflow-hidden">
               <img

@@ -102,10 +102,10 @@ const MobileMenu: FC = () => {
                     className="block"
                   />
                   {item.key === "matches" && unseenMatchCount > 0 && (
-                    <span className="absolute top-1 -right-2 w-2.5 h-2.5 bg-secondary-600 rounded-full"></span>
+                    <span className="absolute -top-1 -right-2 w-2.5 h-2.5 bg-secondary-600 rounded-full"></span>
                   )}
                   {item.key === "activities" && whoLikesMeCount > 0 && (
-                    <span className="absolute top-1 -right-2 w-2.5 h-2.5 bg-secondary-600 rounded-full"></span>
+                    <span className="absolute -top-1 -right-2 w-2.5 h-2.5 bg-secondary-600 rounded-full"></span>
                   )}
                 </div>
 

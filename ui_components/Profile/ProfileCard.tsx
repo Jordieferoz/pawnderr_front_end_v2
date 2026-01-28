@@ -24,7 +24,7 @@ const ProfileCard: FC<IProfileCardProps> = ({
         {isPremium && (
           <img
             src={images.premiumBadge.src}
-            className="absolute top-10 left-10"
+            className="absolute top-4 left-4"
             alt="image"
           />
         )}
@@ -47,7 +47,7 @@ const ProfileCard: FC<IProfileCardProps> = ({
           </div>
         )}
       </div>
-      <div className="flex items-center justify-between">
+      <div className="flex items-start lg:items-center justify-between flex-col lg:flex-row pb-2">
         <h3 className="text-[32px] font_fredoka font-medium text-dark-grey2 flex items-baseline gap-2">
           {name}{" "}
           <div className="flex items-center gap-2">

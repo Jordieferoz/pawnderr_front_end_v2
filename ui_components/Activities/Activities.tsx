@@ -8,6 +8,7 @@ import Loader from "@/ui_components/Shared/Loader";
 import { showToast } from "@/ui_components/Shared/ToastMessage";
 import {
   fetchSubscriptionStatus,
+  fetchUnseenMatchCount,
   fetchWhoLikesMe,
   fetchWhomIDisliked,
   fetchWhomILiked,
@@ -46,8 +47,10 @@ const Activities: FC = () => {
 
   useEffect(() => {
     // Clear badge when component mounts (user enters the route)
-    dispatch(clearWhoLikesMeCount());
-  }, [dispatch]);
+    if (!isSubscriptionLoading && isSubscribed) {
+      dispatch(clearWhoLikesMeCount());
+    }
+  }, [dispatch, isSubscribed, isSubscriptionLoading]);
 
   const handleUndo = async (card: ICard) => {
     if (activeTab !== "you-like" && activeTab !== "viewed-profile") return;
@@ -256,16 +259,20 @@ const Activities: FC = () => {
 
     const fetchInitialCounts = async () => {
       try {
-        const [likesMeResp, youLikeResp, dislikedResp] = await Promise.all([
-          isSubscribed
-            ? fetchWhoLikesMe({ page: 1, limit: 1 })
-            : Promise.resolve(null),
-          fetchWhomILiked({ page: 1, limit: 1 }),
-          fetchWhomIDisliked({ page: 1, limit: 1 })
-        ]);
-
+        const [likesMeResp, youLikeResp, dislikedResp, unseenMatchesResp] =
+          await Promise.all([
+            isSubscribed
+              ? fetchWhoLikesMe({ page: 1, limit: 1 })
+              : Promise.resolve(null),
+            fetchWhomILiked({ page: 1, limit: 1 }),
+            fetchWhomIDisliked({ page: 1, limit: 1 }),
+            !isSubscribed ? fetchUnseenMatchCount() : Promise.resolve(null)
+          ]);
+        console.log(unseenMatchesResp, "unseenMatchesResp");
         setTabCounts({
-          likesMe: isSubscribed ? getTotalFromPagination(likesMeResp, 0) : 0,
+          likesMe: isSubscribed
+            ? getTotalFromPagination(likesMeResp, 0)
+            : unseenMatchesResp?.data?.who_likes_me || 0,
           youLike: getTotalFromPagination(youLikeResp, 0),
           viewedProfile: getTotalFromPagination(dislikedResp, 0)
         });
@@ -337,8 +344,13 @@ const Activities: FC = () => {
           {tabs.map((tab) => (
             <li
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex gap-2 shrink-0 items-center rounded-full body_regular py-2 px-3 cursor-pointer transition-colors ${
+              onClick={() => {
+                if (!isSubscribed) return;
+                setActiveTab(tab.id);
+              }}
+              className={`flex gap-2 shrink-0 items-center rounded-full body_regular py-2 px-3 transition-colors ${
+                !isSubscribed ? "cursor-not-allowed" : "cursor-pointer"
+              } ${
                 activeTab === tab.id
                   ? "bg-primary-500 text-white"
                   : "border border-neutral-white text-light-grey2"

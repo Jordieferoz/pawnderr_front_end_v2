@@ -67,8 +67,8 @@ const LoyalCompanions = () => {
                 Habits Match:
               </h6>
               <p className="text-xl font-medium mb-5 text-dark-brown/60">
-                He enjoys early morning activity, she prefers <br /> afternoon
-                rest; a good balance.
+                He enjoys early morning activity, she prefers afternoon rest
+                <br className="md:hidden" /> a good balance.
               </p>
               <div className="relative">
                 <Progress
@@ -86,8 +86,8 @@ const LoyalCompanions = () => {
                 Personality Match:
               </h6>
               <p className="text-xl font-medium mb-5 text-dark-brown/60">
-                Both pets are gentle and affectionate, <br /> preferring calm
-                over chaos.
+                Both pets are gentle and affectionate, preferring
+                <br className="md:hidden" /> calm over chaos.
               </p>
               <div className="relative">
                 <Progress

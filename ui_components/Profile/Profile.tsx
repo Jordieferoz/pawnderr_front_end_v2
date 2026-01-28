@@ -122,7 +122,7 @@ const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
   }
 
   return (
-    <div className="profile_wrapper common_container pb-10">
+    <div className="profile_wrapper common_container pb-25 md:pb-10">
       <div className="flex items-center my-4 justify-between mb-7">
         <div className="flex items-center gap-3">
           <img

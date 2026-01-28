@@ -25,6 +25,17 @@ interface ModalState {
     userGender: string;
     matchGender: string;
   } | null;
+  isMatchModalOpen: boolean;
+  matchModalData: {
+    userImage: string;
+    matchImage: string;
+    userGender: string;
+    matchGender: string;
+    matchName: string;
+    matchId: number;
+    matchPetId: number;
+    myPetId: number;
+  } | null;
   isBlockModalOpen: boolean;
   isOutOfSwipesModalOpen: boolean;
   isNotificationModalOpen: boolean;
@@ -39,6 +50,8 @@ const initialState: ModalState = {
   blockData: null,
   isHangTightModalOpen: false,
   hangTightData: null,
+  isMatchModalOpen: false,
+  matchModalData: null,
   isOutOfSwipesModalOpen: false,
   isNotificationModalOpen: false
 };
@@ -81,6 +94,17 @@ const modalSlice = createSlice({
       state.isHangTightModalOpen = false;
       state.hangTightData = null;
     },
+    openMatchModal: (
+      state,
+      action: { payload: ModalState["matchModalData"] }
+    ) => {
+      state.isMatchModalOpen = true;
+      state.matchModalData = action.payload;
+    },
+    closeMatchModal: (state) => {
+      state.isMatchModalOpen = false;
+      state.matchModalData = null;
+    },
     openBlockModal: (state, action: { payload: ModalState["blockData"] }) => {
       state.isBlockModalOpen = true;
       state.blockData = action.payload;
@@ -114,6 +138,8 @@ export const {
   closeBlockModal,
   openHangTightModal,
   closeHangTightModal,
+  openMatchModal,
+  closeMatchModal,
   openOutOfSwipesModal,
   closeOutOfSwipesModal,
   openNotificationModal,
