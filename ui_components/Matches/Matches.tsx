@@ -42,7 +42,7 @@ const Matches: FC = () => {
   }, []);
 
   return (
-    <div className="matches_wrapper common_container">
+    <div className="matches_wrapper common_container pb-35 md:pb-10">
       <div className="flex items-start my-4 justify-between mb-7">
         <div className="flex items-center gap-3">
           <img

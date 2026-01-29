@@ -191,7 +191,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     );
   };
   return (
-    <div className="relative h-[calc(100vh-90px)] common_container overflow-hidden">
+    <div className="relative h-[calc(100vh-160px)] md:h-[calc(100vh-90px)] common_container overflow-hidden">
       <div className="container mx-auto h-full flex flex-col">
         {/* Mobile Header & Matches */}
         <div className="my-4 mb-0 md:hidden flex-none">
@@ -203,14 +203,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               alt="back"
             />
             <h4 className="display4_medium text-accent-900">Messages</h4>
-          </div>
-          <div
-            ref={mobileMatchesRef}
-            className="flex items-center gap-4 overflow-x-auto hide-scrollbar pb-2"
-          >
-            {isLoadingMatches
-              ? null
-              : matches.map((match) => renderMatchAvatar(match))}
           </div>
         </div>
 
