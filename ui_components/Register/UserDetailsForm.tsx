@@ -113,6 +113,44 @@ const UserDetailsForm: FC = () => {
 
         // signupStorage.clear();
       } else {
+        // Parse validation errors from API response
+        // Structure based on observation: response.data.data = { field: "error" }
+        const responseData = response.data;
+        let validationErrors = responseData?.data;
+
+        // Check if there is another layer of 'data' (in case structure varies)
+        if (
+          validationErrors &&
+          validationErrors.data &&
+          typeof validationErrors.data === "object"
+        ) {
+          validationErrors = validationErrors.data;
+        }
+
+        if (
+          validationErrors &&
+          typeof validationErrors === "object" &&
+          Object.keys(validationErrors).length > 0
+        ) {
+          // Get the first error message
+          const firstErrorKey = Object.keys(validationErrors)[0];
+          let errorMessage = validationErrors[firstErrorKey];
+
+          // Custom messages
+          if (firstErrorKey === "email") {
+            errorMessage = "Must be a valid email";
+          }
+
+          if (typeof errorMessage === "string") {
+            showToast({
+              type: "error",
+              message: errorMessage
+            });
+            setIsSubmitting(false);
+            return;
+          }
+        }
+
         showToast({
           type: "error",
           message: `${response.data?.message || "Failed to create account. Please try again."}`

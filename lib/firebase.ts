@@ -53,13 +53,7 @@ export const signInWithFirebaseToken = async (
     throw new Error("Firebase auth is not available");
   }
 
-  try {
-    await signInWithCustomToken(auth, customToken);
-    console.log("✅ Firebase authentication successful");
-  } catch (error: any) {
-    console.error("❌ Firebase authentication error:", error);
-    throw new Error(`Firebase authentication failed: ${error.message}`);
-  }
+  await signInWithCustomToken(auth, customToken);
 };
 
 /**
@@ -72,7 +66,6 @@ export const signOutFirebase = async (): Promise<void> => {
 
   try {
     await firebaseSignOut(auth);
-    console.log("✅ Firebase sign out successful");
   } catch (error: any) {
     console.error("❌ Firebase sign out error:", error);
     throw error;

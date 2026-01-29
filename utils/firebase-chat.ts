@@ -153,7 +153,7 @@ export const subscribeToMessages = (
   const q1 = query(
     collection(firestore, "messages"),
     where("chatId", "==", chatId),
-    where("fromPetId", "==", myPetId),
+    where("fromPetId", "==", String(myPetId)),
     where("isDisabled", "==", false),
     orderBy("timestamp", "desc"),
     firestoreLimit(limit)
@@ -162,7 +162,7 @@ export const subscribeToMessages = (
   const q2 = query(
     collection(firestore, "messages"),
     where("chatId", "==", chatId),
-    where("toPetId", "==", myPetId),
+    where("toPetId", "==", String(myPetId)),
     where("isDisabled", "==", false),
     orderBy("timestamp", "desc"),
     firestoreLimit(limit)
@@ -460,7 +460,7 @@ export const getUserConversations = (
     const msgQuery1 = query(
       collection(firestore, "messages"),
       where("chatId", "==", chatId),
-      where("fromPetId", "==", petId),
+      where("fromPetId", "==", String(petId)),
       where("isDisabled", "==", false),
       orderBy("timestamp", "desc"),
       firestoreLimit(1)
@@ -469,7 +469,7 @@ export const getUserConversations = (
     const msgQuery2 = query(
       collection(firestore, "messages"),
       where("chatId", "==", chatId),
-      where("toPetId", "==", petId),
+      where("toPetId", "==", String(petId)),
       where("isDisabled", "==", false),
       orderBy("timestamp", "desc"),
       firestoreLimit(1)
@@ -533,13 +533,9 @@ export const getUserConversations = (
     const unsubscribe = onSnapshot(
       chatsQuery,
       (snapshot) => {
-        console.log(
-          `DEBUG: Chats snapshot for ${field}=${petId}: ${snapshot.size} docs found`
-        );
         const activeChatIds = new Set<string>();
         snapshot.forEach((docSnap) => {
           const data = docSnap.data();
-          console.log(`DEBUG: Chat Doc ${docSnap.id}:`, data);
           const chatId = docSnap.id;
           activeChatIds.add(chatId);
           chatMap.set(chatId, { chatId, ...data });

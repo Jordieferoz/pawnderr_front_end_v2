@@ -97,7 +97,7 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
         .then((resp) => {
           const statusCode = resp && resp.statusCode;
           const apiMessage = resp?.data?.message;
-          console.log(resp, "resp");
+
           if (statusCode === 403 && apiMessage === "DAILY_LIKE_LIMIT_REACHED") {
             dispatch(openOutOfSwipesModal());
           } else if (

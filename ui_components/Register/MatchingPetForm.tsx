@@ -4,7 +4,8 @@
 import {
   setStep,
   updatePreference,
-  updateStepData
+  updateStepData,
+  resetRegistration
 } from "@/store/registrationSlice";
 import {
   matchingPetSchema,
@@ -179,6 +180,8 @@ const MatchingPetForm: FC = () => {
           type: "success",
           message: "Registration completed successfully!"
         });
+        // Reset registration data after success
+        dispatch(resetRegistration());
 
         // Navigate to dashboard
         router.push("/dashboard");

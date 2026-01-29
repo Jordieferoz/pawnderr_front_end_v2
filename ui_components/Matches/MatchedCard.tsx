@@ -152,18 +152,20 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">
                   Fun Fact:
                 </h3>
-                <p className="text-gray-600 leading-relaxed text-sm line-clamp-3">
+                <p className="text-gray-600 leading-relaxed text-sm line-clamp-2">
                   {card.funFact}
+                </p>
+                {card.funFact.length > 50 && (
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       router.push(`/profile/${card.petId}?action=false`);
                     }}
-                    className="text-yellow-500 underline ml-1 font-medium hover:text-yellow-600 inline-block"
+                    className="text-yellow-500 underline text-sm font-medium hover:text-yellow-600 mt-1"
                   >
                     Read More
                   </button>
-                </p>
+                )}
               </div>
             )}
 

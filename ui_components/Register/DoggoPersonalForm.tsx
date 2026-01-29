@@ -747,6 +747,48 @@ const DoggoPersonalForm: FC = () => {
     );
   }
 
+  const onError = (errors: any) => {
+    // Order of fields in the form
+    const fieldOrder = [
+      "images",
+      "petName",
+      "nicknames",
+      "petGender",
+      "age",
+      "breed",
+      // Attributes are special case
+      "vaccinationStatus",
+      "funFact",
+      "barkography"
+    ];
+
+    // Check standard fields
+    for (const field of fieldOrder) {
+      if (errors[field]) {
+        const element = document.getElementById(`field-${field}`);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "center" });
+          return;
+        }
+      }
+    }
+
+    // Check attributes
+    if (errors.attributes) {
+      // Find the first attribute with an error
+      // sortedAttributes is available in scope
+      for (const attr of sortedAttributes) {
+        if (errors.attributes[attr.id]) {
+          const element = document.getElementById(`field-attribute-${attr.id}`);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth", block: "center" });
+            return;
+          }
+        }
+      }
+    }
+  };
+
   return (
     <div>
       <BackBtnRegister
@@ -757,11 +799,11 @@ const DoggoPersonalForm: FC = () => {
 
       <form
         className="my-7 flex flex-col gap-6 md:px-20"
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(onSubmit, onError)}
         noValidate
       >
         {/* Upload Images */}
-        <div>
+        <div id="field-images">
           <div className="flex gap-3 mb-4 flex-wrap">
             {imageSlots.map((slot, idx) => (
               <div key={idx} className="relative">
@@ -844,7 +886,7 @@ const DoggoPersonalForm: FC = () => {
         </div>
 
         {/* Pet Name */}
-        <div className="relative">
+        <div className="relative" id="field-petName">
           <Controller
             control={control}
             name="petName"
@@ -872,7 +914,7 @@ const DoggoPersonalForm: FC = () => {
         </div>
 
         {/* Nicknames */}
-        <div className="relative">
+        <div className="relative" id="field-nicknames">
           <label className="block text-sm font-medium text-dark-grey mb-1">
             Nickname(s)
           </label>
@@ -901,7 +943,7 @@ const DoggoPersonalForm: FC = () => {
         </div>
 
         {/* Gender */}
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2" id="field-petGender">
           <label className="block text-sm font-medium text-dark-grey">
             Pet's a
           </label>
@@ -937,7 +979,7 @@ const DoggoPersonalForm: FC = () => {
         </div>
 
         {/* Age */}
-        <div className="relative">
+        <div className="relative" id="field-age">
           <Controller
             control={control}
             name="age"
@@ -965,7 +1007,7 @@ const DoggoPersonalForm: FC = () => {
         </div>
 
         {/* Breed Selection */}
-        <div className="relative">
+        <div className="relative" id="field-breed">
           <label className="block text-sm font-medium text-dark-grey mb-1">
             Breed
           </label>
@@ -1001,10 +1043,14 @@ const DoggoPersonalForm: FC = () => {
         </div>
 
         {/* Dynamic Attributes */}
-        {sortedAttributes.map((attribute) => renderAttributeField(attribute))}
+        {sortedAttributes.map((attribute) => (
+          <div key={attribute.id} id={`field-attribute-${attribute.id}`}>
+            {renderAttributeField(attribute)}
+          </div>
+        ))}
 
         {/* Vaccination Status */}
-        <div className="relative">
+        <div className="relative" id="field-vaccinationStatus">
           <label className="block text-sm font-medium text-dark-grey mb-1">
             Vaccination Status
             <span className="text-neutral-white"> (optional)</span>
@@ -1037,7 +1083,7 @@ const DoggoPersonalForm: FC = () => {
         </div>
 
         {/* Fun Fact or Habit */}
-        <div className="relative">
+        <div className="relative" id="field-funFact">
           <label className="block text-sm font-medium text-dark-grey mb-1">
             Fun Fact or Habit
           </label>
@@ -1057,10 +1103,15 @@ const DoggoPersonalForm: FC = () => {
               />
             )}
           />
+          {errors.funFact && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.funFact.message}
+            </p>
+          )}
         </div>
 
         {/* Barkography */}
-        <div className="relative">
+        <div className="relative" id="field-barkography">
           <label className="block text-sm font-medium text-dark-grey mb-1">
             Bark-o-graphy
           </label>
@@ -1080,6 +1131,11 @@ const DoggoPersonalForm: FC = () => {
               />
             )}
           />
+          {errors.barkography && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.barkography.message}
+            </p>
+          )}
         </div>
         <div className="fixed bottom-0 left-0 md:relative py-5 w-full bg-white shadow-[0px_-4px_12.8px_-3px_#00000012] md:shadow-none flex justify-center md:block">
           <Button

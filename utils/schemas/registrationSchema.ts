@@ -42,8 +42,14 @@ export const petProfileSchema = z.object({
     z.array(z.number()).min(1, "This field is required")
   ),
   vaccinationStatus: z.string().optional(),
-  funFact: z.string().max(200).optional(),
-  barkography: z.string().max(300).optional()
+  funFact: z
+    .string()
+    .min(1, "Fun fact is required")
+    .max(200, "Max limit 200 chars"),
+  barkography: z
+    .string()
+    .min(1, "Barkography is required")
+    .max(300, "Max limit 300 chars")
 });
 
 // utils/schemas/registrationSchema.ts

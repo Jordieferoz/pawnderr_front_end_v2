@@ -123,77 +123,92 @@ const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
 
   return (
     <div className="profile_wrapper common_container pb-25 md:pb-10">
-      <div className="flex items-center my-4 justify-between mb-7">
-        <div className="flex items-center gap-3">
-          <img
-            onClick={() => router.back()}
-            className="w-10 h-10 cursor-pointer"
-            src={images.backBtn.src}
-            alt="back"
-          />
-          <h4 className="display4_medium text-accent-900">Profile</h4>
-        </div>
-        {petData?.preferences?.preference_id && (
-          <img
-            className="cursor-pointer"
-            onClick={() => {
-              if (petData?.id) {
-                router.push(`/profile/edit/${petData.id}`);
-              }
-            }}
-            src={images.editIcon.src}
-            alt="edit"
-          />
-        )}
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-x-12 gap-y-7">
-        {/* Left Column */}
-        <div className="flex flex-col gap-7.5 md:col-span-8">
-          <ProfileCard
-            {...profileData}
-            showActions={showActions}
-            disabled={processing}
-            onLike={() => handleAction("like")}
-            onDislike={() => handleAction("pass")}
-          />
-
-          <InfoCard
-            type="desc"
-            title="Bio (aka Bark-o-graphy):"
-            image={petData?.images?.[1]?.image_url}
-            desc={petData?.bark_o_graphy ?? ""}
-            list={[]}
-          />
-
-          <InfoCard
-            type="desc"
-            title="Fun Fact:"
-            image={petData?.images?.[3]?.image_url}
-            desc={petData?.fun_fact_or_habit ?? ""}
-            list={[]}
-          />
+      <div>
+        <div className="flex items-center my-4 justify-between mb-7">
+          <div className="flex items-center gap-3">
+            <img
+              onClick={() => router.back()}
+              className="w-10 h-10 cursor-pointer"
+              src={images.backBtn.src}
+              alt="back"
+            />
+            <h4 className="display4_medium text-accent-900">Profile</h4>
+          </div>
+          {petData?.preferences?.id && (
+            <img
+              className="cursor-pointer"
+              onClick={() => {
+                if (petData?.id) {
+                  router.push(`/profile/edit/${petData.id}`);
+                }
+              }}
+              src={images.editIcon.src}
+              alt="edit"
+            />
+          )}
         </div>
 
-        {/* Right Column */}
-        <div className="flex flex-col gap-7.5 md:col-span-4">
-          <InfoCard
-            type="list"
-            title="Floof's Story:"
-            image={petData?.images?.[2]?.image_url}
-            list={floofStoryList}
-            desc={""}
-            className="text-2xl font-medium text-dark-grey2 border-b border-[#9B9B9B6E] pb-6 border-dashed"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-x-12 gap-y-7">
+          {/* Left Column */}
+          <div className="flex flex-col gap-7.5 md:col-span-8">
+            <ProfileCard
+              {...profileData}
+              showActions={showActions}
+              disabled={processing}
+              onLike={() => handleAction("like")}
+              onDislike={() => handleAction("pass")}
+            />
 
-          <InfoCard
-            type="list"
-            title="What's Pup looking for:"
-            image={petData?.images?.[4]?.image_url}
-            list={pupLookingForList}
-            desc={""}
-            className="text-2xl font-medium text-dark-grey2 border-b border-[#9B9B9B6E] pb-6 border-dashed"
-          />
+            <InfoCard
+              type="desc"
+              title="Bio (aka Bark-o-graphy):"
+              image={petData?.images?.[1]?.image_url}
+              desc={petData?.bark_o_graphy ?? ""}
+              list={[]}
+            />
+
+            <div className="block md:hidden">
+              <InfoCard
+                type="list"
+                title="Floof's Story:"
+                image={petData?.images?.[2]?.image_url}
+                list={floofStoryList}
+                desc={""}
+                className="text-2xl font-medium text-dark-grey2 border-b border-[#9B9B9B6E] pb-6 border-dashed"
+              />
+            </div>
+
+            <InfoCard
+              type="desc"
+              title="Fun Fact:"
+              image={petData?.images?.[3]?.image_url}
+              desc={petData?.fun_fact_or_habit ?? ""}
+              list={[]}
+            />
+          </div>
+
+          {/* Right Column */}
+          <div className="flex flex-col gap-7.5 md:col-span-4">
+            <div className="hidden md:block">
+              <InfoCard
+                type="list"
+                title="Floof's Story:"
+                image={petData?.images?.[2]?.image_url}
+                list={floofStoryList}
+                desc={""}
+                className="text-2xl font-medium text-dark-grey2 border-b border-[#9B9B9B6E] pb-6 border-dashed"
+              />
+            </div>
+
+            <InfoCard
+              type="list"
+              title="What's Pup looking for:"
+              image={petData?.images?.[4]?.image_url}
+              list={pupLookingForList}
+              desc={""}
+              className="text-2xl font-medium text-dark-grey2 border-b border-[#9B9B9B6E] pb-6 border-dashed"
+            />
+          </div>
         </div>
       </div>
     </div>

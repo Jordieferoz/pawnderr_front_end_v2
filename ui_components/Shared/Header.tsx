@@ -98,24 +98,24 @@ const Header: FC = () => {
             })}
 
             {/* Notification Bell */}
-            {/* <button
-              className="relative p-2 cursor-pointer flex-1"
-              onClick={() => dispatch(openNotificationModal())}
-            >
-              <img
-                src={images.bellIcon.src}
-                alt="bell"
-                className="w-[22px] grow-1 shrink-0"
-              />
-
-              <span className="absolute top-1 right-0 w-2.5 h-2.5 bg-secondary-600 rounded-full"></span>
-            </button> */}
 
             <Link href={"/upgrade"} className="cursor-pointer">
               <Button>
                 <img src={images.pawnderBlack.src} alt="pawnderr+" /> PAWnderr+
               </Button>
             </Link>
+            <button
+              className="relative p-2 cursor-pointer flex-1"
+              onClick={() => dispatch(openNotificationModal())}
+            >
+              <img
+                src={images.bellIcon.src}
+                alt="bell"
+                className="w-[26px] grow-1 shrink-0"
+              />
+
+              <span className="absolute top-1 right-0 w-2.5 h-2.5 bg-secondary-600 rounded-full"></span>
+            </button>
             <DropdownMenu userProfile={userProfile} isLoading={isLoading} />
           </ul>
         </nav>

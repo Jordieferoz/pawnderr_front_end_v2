@@ -42,20 +42,20 @@ export const useFirebaseChat = () => {
 
       try {
         const resp = await fetchFirebaseToken();
-        if (process.env.NODE_ENV !== "production") {
-          const payload = resp?.data as any;
-          const rawToken =
-            payload?.firebaseToken ||
-            payload?.data?.firebaseToken ||
-            payload?.token ||
-            payload?.data?.token;
-          console.log("🔎 Firebase token response:", {
-            hasToken: Boolean(rawToken),
-            tokenType: typeof rawToken,
-            tokenLength: typeof rawToken === "string" ? rawToken.length : 0,
-            keys: payload ? Object.keys(payload) : []
-          });
-        }
+        // if (process.env.NODE_ENV !== "production") {
+        //   const payload = resp?.data as any;
+        //   const rawToken =
+        //     payload?.firebaseToken ||
+        //     payload?.data?.firebaseToken ||
+        //     payload?.token ||
+        //     payload?.data?.token;
+        //   console.log("🔎 Firebase token response:", {
+        //     hasToken: Boolean(rawToken),
+        //     tokenType: typeof rawToken,
+        //     tokenLength: typeof rawToken === "string" ? rawToken.length : 0,
+        //     keys: payload ? Object.keys(payload) : []
+        //   });
+        // }
         const apiToken =
           resp?.data?.firebaseToken ||
           resp?.data?.data?.firebaseToken ||
@@ -176,7 +176,6 @@ export const useChatMessages = (chatId: string | null, myPetId?: number) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const chatInitiatedRef = useRef<Record<string, boolean>>({});
-
   const getMatchIdFromChat = useCallback((id: string) => {
     const match = id.match(/match(\d+)/);
     return match ? Number(match[1]) : null;
@@ -217,7 +216,6 @@ export const useChatMessages = (chatId: string | null, myPetId?: number) => {
       const firestore = getFirebaseFirestore();
       if (!firestore) throw new Error("Firebase Firestore is not available");
 
-      console.log("Step 1: Checking first message");
       const isFirstMessage = !chatInitiatedRef.current[chatId];
       if (isFirstMessage) {
         const matchId = getMatchIdFromChat(chatId);
@@ -226,7 +224,6 @@ export const useChatMessages = (chatId: string | null, myPetId?: number) => {
             "Match ID is missing. Please start the chat from a match."
           );
 
-        console.log("Step 2: Calling messageInitiated (API)");
         await messageInitiated({
           chat_id: chatId,
           from_pet_id: fromPetId,
@@ -252,7 +249,6 @@ export const useChatMessages = (chatId: string | null, myPetId?: number) => {
         );
       }
 
-      console.log("Step 3: Checking chat document exists");
       try {
         const chatDoc = await getDoc(doc(firestore, "chats", chatId));
         if (chatDoc.exists()) {
@@ -273,7 +269,6 @@ export const useChatMessages = (chatId: string | null, myPetId?: number) => {
         );
       }
 
-      console.log("Step 4: Sending message to Firestore");
       try {
         await sendFirebaseMessage(
           chatId,

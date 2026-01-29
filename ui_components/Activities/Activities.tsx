@@ -12,8 +12,7 @@ import {
   fetchWhoLikesMe,
   fetchWhomIDisliked,
   fetchWhomILiked,
-  swipePetAction,
-  undoMatch
+  swipePetAction
 } from "@/utils/api";
 import { images } from "@/utils/images";
 
@@ -56,7 +55,8 @@ const Activities: FC = () => {
     if (activeTab !== "you-like" && activeTab !== "viewed-profile") return;
 
     try {
-      await undoMatch({ pet_id: card.id });
+      const action = activeTab === "you-like" ? "pass" : "like";
+      await swipePetAction({ pet_id: card.id, action });
       setCards((prev) => prev.filter((item) => item.id !== card.id));
       setTabCounts((prev) => ({
         ...prev,
@@ -268,7 +268,7 @@ const Activities: FC = () => {
             fetchWhomIDisliked({ page: 1, limit: 1 }),
             !isSubscribed ? fetchUnseenMatchCount() : Promise.resolve(null)
           ]);
-        console.log(unseenMatchesResp, "unseenMatchesResp");
+
         setTabCounts({
           likesMe: isSubscribed
             ? getTotalFromPagination(likesMeResp, 0)
@@ -340,7 +340,7 @@ const Activities: FC = () => {
       </div>
 
       <div className="my-3 flex items-center gap-4.5">
-        <ul className="flex pl-8  items-center hide-scrollbar gap-2 flex-nowrap overflow-x-auto snap-x snap-mandatory pr-[var(--container-padding,1rem)]">
+        <ul className="flex pl-8 items-center hide-scrollbar gap-2 flex-nowrap overflow-x-auto snap-x snap-mandatory pr-[var(--container-padding,1rem)]">
           {tabs.map((tab) => (
             <li
               key={tab.id}

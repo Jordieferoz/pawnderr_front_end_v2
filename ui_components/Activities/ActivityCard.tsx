@@ -116,7 +116,7 @@ const ActivityCard: FC<IActivityCardProps> = ({
           const buttonBase =
             "bg-white rounded-full w-[55px] h-[55px] flex items-center justify-center shadow-[0px_4px_28px_0px_#00000040] hover:scale-105 active:scale-95 transition-transform";
           const largeButton =
-            "bg-primary-500 rounded-full w-[68px] h-[68px] flex items-center justify-center shadow-[0px_4px_28px_0px_#00000040] hover:scale-105 active:scale-95 transition-transform";
+            "bg-primary-500 rounded-full w-[55px] h-[55px] flex items-center justify-center shadow-[0px_4px_28px_0px_#00000040] hover:scale-105 active:scale-95 transition-transform";
 
           return (
             <div
@@ -180,7 +180,7 @@ const ActivityCard: FC<IActivityCardProps> = ({
                       <img
                         src={images.pawYellow.src}
                         alt="Chat"
-                        className="h-[36px]"
+                        className="h-[30px]"
                       />
                     </button>
                     <button
@@ -223,7 +223,7 @@ const ActivityCard: FC<IActivityCardProps> = ({
                       <img
                         src={images.pawYellow.src}
                         alt="Chat"
-                        className="h-[36px]"
+                        className="h-[30px]"
                       />
                     </button>
                   </>
@@ -240,7 +240,7 @@ const ActivityCard: FC<IActivityCardProps> = ({
                       <img
                         src={images.pawYellow.src}
                         alt="Chat"
-                        className="h-[36px]"
+                        className="h-[30px]"
                       />
                     </button>
                     <button
