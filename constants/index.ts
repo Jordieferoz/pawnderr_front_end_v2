@@ -88,7 +88,7 @@ export const mobileMenuItems = [
     href: "/matches",
     img: images.matches.src,
     imgActive: images.matchesActive.src,
-    imgWidth: 18
+    imgWidth: 24
   },
   {
     key: "activities",
@@ -96,7 +96,7 @@ export const mobileMenuItems = [
     href: "/activities",
     img: images.activities.src,
     imgActive: images.activitiesActive.src,
-    imgWidth: 21
+    imgWidth: 24
   },
   {
     key: "discover",
@@ -104,7 +104,7 @@ export const mobileMenuItems = [
     href: "/dashboard",
     img: images.discover.src,
     imgActive: images.discoverActive.src,
-    imgWidth: 38
+    imgWidth: 28
   },
   {
     key: "messages",
@@ -120,7 +120,7 @@ export const mobileMenuItems = [
     href: "/upgrade",
     img: images.pawnderr.src,
     imgActive: images.pawnderrActive.src,
-    imgWidth: 26
+    imgWidth: 24
   }
 ];
 export const headerMenuItems = [

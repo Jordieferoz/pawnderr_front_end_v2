@@ -19,6 +19,7 @@ type Card = {
   matchId?: string | number;
   funFact?: string;
   barkography?: string;
+  is_verified?: boolean;
 };
 
 const FlipCard: FC<{ card: Card }> = ({ card }) => {
@@ -129,6 +130,9 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
               {card.name}{" "}
               <span className="text-base font-normal opacity-90 capitalize">
                 {card.info}
+                {card?.is_verified && (
+                  <img src={images.verified.src} alt="verified" />
+                )}
               </span>
             </h3>
             <p className="text-sm opacity-90 mt-1 leading-snug line-clamp-2 text-ellipsis">
@@ -275,11 +279,9 @@ const MatchedCard: FC<MatchedCardProps> = ({
           const hasIndicator = indicatorSet.has(matchId);
 
           // Find primary image
-          const primaryImage =
-            match.pet?.images?.find((img: any) => img.is_primary)?.image_url ||
-            match.pet?.images?.[0]?.image_url ||
-            match.pet?.primary_photo_url ||
-            match.primary_photo_url;
+          const primaryImage = match.pet?.images?.find(
+            (img: any) => img.is_primary
+          )?.image_url;
 
           return (
             <FlipCard
@@ -287,14 +289,10 @@ const MatchedCard: FC<MatchedCardProps> = ({
               card={{
                 id: chatId,
                 petId: match.pet.id,
-                name: match.pet?.name || match.name || "Unknown",
-                info: `(${match.pet?.gender || match.gender || "Unknown"}, ${match.pet?.age || match.age || "?"} Years)`,
+                name: match.pet?.name,
+                info: `(${match.pet?.gender}, ${match.pet?.age || match.age || "?"} Years)`,
                 url: primaryImage,
-                desc:
-                  match.pet?.bio ||
-                  match.bio ||
-                  match.description ||
-                  "No description available",
+                desc: match.pet?.bark_o_graphy || match.pet.fun_fact_or_habit,
                 details: [
                   match.pet?.breed?.name ||
                     match.pet?.breed ||

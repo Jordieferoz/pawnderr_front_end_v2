@@ -41,7 +41,7 @@ const EditProfile: FC<EditProfileProps> = ({ petData, loading = false }) => {
   const [isLoadingMetadata, setIsLoadingMetadata] = useState(false);
 
   const stepDescriptions: Record<number, string> = {
-    3: "Drag photos to change their order"
+    3: "Click a photo to make it primary"
   };
 
   // Fetch metadata on mount
@@ -93,7 +93,7 @@ const EditProfile: FC<EditProfileProps> = ({ petData, loading = false }) => {
   }
 
   return (
-    <div className="edit_profile_wrapper common_container">
+    <div className="edit_profile_wrapper common_container pb-22">
       <div className="mb-7">
         {/* Mobile: Show dynamic title, Desktop: Always show "Edit Profile" */}
         <ProfileHeader

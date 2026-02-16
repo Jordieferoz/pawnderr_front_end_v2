@@ -1,26 +1,5 @@
 "use client";
 
-import {
-  closestCenter,
-  DndContext,
-  DragEndEvent,
-  DragOverEvent,
-  DragOverlay,
-  DragStartEvent,
-  KeyboardSensor,
-  MeasuringStrategy,
-  PointerSensor,
-  TouchSensor,
-  useSensor,
-  useSensors
-} from "@dnd-kit/core";
-import {
-  arrayMove,
-  rectSortingStrategy,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable
-} from "@dnd-kit/sortable";
 import { X } from "lucide-react";
 import { FC, useEffect, useRef, useState } from "react";
 
@@ -43,51 +22,45 @@ const haptic = (ms = 10) => {
   }
 };
 
-interface SortableImageProps {
+interface GalleryImageItemProps {
   image: GalleryImage;
   isMain?: boolean;
   onDelete: (id: number) => void;
+  onSetPrimary: (id: number) => void;
   isDeleting?: boolean;
-  isOver?: boolean;
-  isDragging?: boolean;
+  isReordering?: boolean;
 }
 
-const SortableImage: FC<SortableImageProps> = ({
+const GalleryImageItem: FC<GalleryImageItemProps> = ({
   image,
   isMain = false,
   onDelete,
+  onSetPrimary,
   isDeleting = false,
-  isOver = false,
-  isDragging = false
+  isReordering = false
 }) => {
-  const { attributes, listeners, setNodeRef } = useSortable({
-    id: image.id
-  });
-
   return (
-    <div className="relative">
+    <div className="relative group">
       {/* Delete Button - Outside the image container */}
-      {!isDragging && (
-        <button
-          onClick={() => onDelete(image.id)}
-          disabled={isDeleting}
-          className="absolute -top-2 -right-2 z-20 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
-          type="button"
-        >
-          <X className="w-4 h-4" />
-        </button>
-      )}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onDelete(image.id);
+        }}
+        disabled={isDeleting || isReordering}
+        className="absolute -top-2 -right-2 z-20 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+        type="button"
+      >
+        <X className="w-4 h-4" />
+      </button>
 
       <div
-        ref={setNodeRef}
-        {...attributes}
-        {...listeners}
+        onClick={() => !isMain && !isReordering && onSetPrimary(image.id)}
         className={`
-          relative w-full overflow-hidden cursor-grab active:cursor-grabbing
-          ${isMain ? "aspect-[4/3] md:aspect-square rounded-3xl" : "aspect-square rounded-2xl"}
-          ${isDragging ? "opacity-30" : "opacity-100"}
-          ${isDeleting ? "pointer-events-none opacity-50" : ""}
-          ${isOver && !isDragging ? "ring-4 ring-blue-500" : ""}
+          relative w-full overflow-hidden transition-all duration-200
+          ${isMain ? "aspect-[4/3] md:aspect-square rounded-3xl cursor-default" : "aspect-square rounded-2xl cursor-pointer hover:opacity-90 active:scale-95"}
+          ${isDeleting || isReordering ? "pointer-events-none opacity-50" : ""}
+          ${!isMain && !isReordering ? "hover:ring-4 hover:ring-blue-200" : ""}
         `}
       >
         <img
@@ -97,48 +70,12 @@ const SortableImage: FC<SortableImageProps> = ({
           draggable={false}
         />
 
-        {isMain && !isDragging && (
-          <div className="absolute top-3 left-3 bg-blue text-white text-xs font-medium px-3 py-1 rounded-full shadow-md">
+        {isMain && (
+          <div className="absolute bottom-3 left-3 bg-blue text-white text-xs font-medium px-3 py-1 rounded-full shadow-md">
             Primary
           </div>
         )}
       </div>
-    </div>
-  );
-};
-
-interface DragOverlayImageProps {
-  image: GalleryImage;
-  isOverMain: boolean;
-  isMain: boolean;
-}
-
-const DragOverlayImage: FC<DragOverlayImageProps> = ({
-  image,
-  isOverMain,
-  isMain
-}) => {
-  const shouldShowAsMain = isOverMain;
-  const isDraggingMain = isMain;
-
-  return (
-    <div
-      className={`
-        relative overflow-hidden shadow-2xl cursor-grabbing
-        ${shouldShowAsMain ? "aspect-[4/3] md:aspect-square rounded-3xl w-[280px] md:w-[180px]" : "aspect-square rounded-2xl w-[140px] md:w-[120px]"}
-      `}
-    >
-      <img
-        src={image.url}
-        alt="Dragging"
-        className="w-full h-full object-cover"
-        draggable={false}
-      />
-      {isDraggingMain && shouldShowAsMain && (
-        <div className="absolute top-3 left-3 bg-blue text-white text-xs font-medium px-3 py-1 rounded-full shadow-md">
-          Primary
-        </div>
-      )}
     </div>
   );
 };
@@ -153,31 +90,12 @@ const UpdateGallery: FC<UpdateGalleryProps> = ({
   loading = false
 }) => {
   const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
-  const [activeId, setActiveId] = useState<number | null>(null);
-  const [overId, setOverId] = useState<number | null>(null);
   const [isReordering, setIsReordering] = useState(false);
   const [deletingImageId, setDeletingImageId] = useState<number | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const MAX_IMAGES = 5;
-
-  const sensors = useSensors(
-    useSensor(TouchSensor, {
-      activationConstraint: {
-        delay: 250,
-        tolerance: 8
-      }
-    }),
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8
-      }
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates
-    })
-  );
 
   // Load images from petData
   useEffect(() => {
@@ -193,35 +111,22 @@ const UpdateGallery: FC<UpdateGalleryProps> = ({
     }
   }, [petData]);
 
-  const handleDragStart = ({ active }: DragStartEvent) => {
-    setActiveId(active.id as number);
-    haptic();
-  };
+  const handleSetPrimary = async (imageId: number) => {
+    if (isReordering) return;
 
-  const handleDragOver = ({ over }: DragOverEvent) => {
-    setOverId(over?.id as number | null);
-  };
+    const index = galleryImages.findIndex((img) => img.id === imageId);
+    if (index <= 0) return; // Already primary or not found
 
-  const handleDragEnd = async ({ active, over }: DragEndEvent) => {
-    if (over && active.id !== over.id) {
-      const oldIndex = galleryImages.findIndex((i) => i.id === active.id);
-      const newIndex = galleryImages.findIndex((i) => i.id === over.id);
-      const reorderedImages = arrayMove(galleryImages, oldIndex, newIndex);
+    const newImages = [...galleryImages];
+    // Swap the clicked image with the first image (primary)
+    [newImages[0], newImages[index]] = [newImages[index], newImages[0]];
 
-      // Update local state immediately for smooth UX
-      setGalleryImages(reorderedImages);
-      haptic(15);
+    // Update local state
+    setGalleryImages(newImages);
+    haptic(15);
 
-      // Call reorder API
-      await handleReorder(reorderedImages);
-    }
-    setActiveId(null);
-    setOverId(null);
-  };
-
-  const handleDragCancel = () => {
-    setActiveId(null);
-    setOverId(null);
+    // Call API
+    await handleReorder(newImages);
   };
 
   const handleReorder = async (reorderedImages: GalleryImage[]) => {
@@ -245,7 +150,7 @@ const UpdateGallery: FC<UpdateGalleryProps> = ({
       if (response.statusCode === 200 || response.statusCode === 201) {
         showToast({
           type: "success",
-          message: "Photos reordered successfully"
+          message: "Primary photo updated"
         });
 
         // Update display_order in local state
@@ -257,25 +162,13 @@ const UpdateGallery: FC<UpdateGalleryProps> = ({
         );
       }
     } catch (error: any) {
-      console.error("❌ Failed to reorder photos:", error);
-
-      // Revert to original order on error
-      if (petData?.images) {
-        const originalImages = [...petData.images]
-          .sort((a, b) => a.display_order - b.display_order)
-          .map((img) => ({
-            id: img.id,
-            url: img.image_url,
-            display_order: img.display_order
-          }));
-        setGalleryImages(originalImages);
-      }
+      console.error("❌ Failed to update photos:", error);
 
       showToast({
         type: "error",
         message:
           error?.response?.data?.message ||
-          "Failed to reorder photos. Please try again."
+          "Failed to update photos. Please try again."
       });
     } finally {
       setIsReordering(false);
@@ -421,86 +314,56 @@ const UpdateGallery: FC<UpdateGalleryProps> = ({
   const mainImage = galleryImages[0];
   const thumbnails = galleryImages.slice(1);
   const canAddMore = galleryImages.length < MAX_IMAGES;
-  const activeImage = galleryImages.find((i) => i.id === activeId);
-  const isOverMain = overId === mainImage.id;
-  const isDraggingMain = activeId === mainImage.id;
 
   return (
     <div className="md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] md:p-8 md:rounded-[40px]">
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        measuring={{
-          droppable: { strategy: MeasuringStrategy.WhileDragging }
-        }}
-        onDragStart={handleDragStart}
-        onDragOver={handleDragOver}
-        onDragEnd={handleDragEnd}
-        onDragCancel={handleDragCancel}
-      >
-        <SortableContext
-          items={galleryImages.map((i) => i.id)}
-          strategy={rectSortingStrategy}
-        >
-          {/* Mobile Layout */}
-          <div className="md:hidden space-y-6">
-            <SortableImage
-              image={mainImage}
-              isMain
+      {/* Mobile Layout */}
+      <div className="md:hidden space-y-6">
+        <GalleryImageItem
+          image={mainImage}
+          isMain
+          onDelete={handleDelete}
+          onSetPrimary={handleSetPrimary}
+          isDeleting={deletingImageId === mainImage.id}
+          isReordering={isReordering}
+        />
+        <div className="grid grid-cols-2 gap-4">
+          {thumbnails.map((img) => (
+            <GalleryImageItem
+              key={img.id}
+              image={img}
               onDelete={handleDelete}
-              isDeleting={deletingImageId === mainImage.id}
-              isOver={overId === mainImage.id}
-              isDragging={activeId === mainImage.id}
+              onSetPrimary={handleSetPrimary}
+              isDeleting={deletingImageId === img.id}
+              isReordering={isReordering}
             />
-            <div className="grid grid-cols-2 gap-4">
-              {thumbnails.map((img) => (
-                <SortableImage
-                  key={img.id}
-                  image={img}
-                  onDelete={handleDelete}
-                  isDeleting={deletingImageId === img.id}
-                  isOver={overId === img.id}
-                  isDragging={activeId === img.id}
-                />
-              ))}
-            </div>
-          </div>
+          ))}
+        </div>
+      </div>
 
-          {/* Desktop Layout */}
-          <div className="hidden md:grid md:grid-cols-2 md:gap-6">
-            <SortableImage
-              image={mainImage}
-              isMain
+      {/* Desktop Layout */}
+      <div className="hidden md:grid md:grid-cols-2 md:gap-6">
+        <GalleryImageItem
+          image={mainImage}
+          isMain
+          onDelete={handleDelete}
+          onSetPrimary={handleSetPrimary}
+          isDeleting={deletingImageId === mainImage.id}
+          isReordering={isReordering}
+        />
+        <div className="grid grid-cols-2 gap-4">
+          {thumbnails.map((img) => (
+            <GalleryImageItem
+              key={img.id}
+              image={img}
               onDelete={handleDelete}
-              isDeleting={deletingImageId === mainImage.id}
-              isOver={overId === mainImage.id}
-              isDragging={activeId === mainImage.id}
+              onSetPrimary={handleSetPrimary}
+              isDeleting={deletingImageId === img.id}
+              isReordering={isReordering}
             />
-            <div className="grid grid-cols-2 gap-4">
-              {thumbnails.map((img) => (
-                <SortableImage
-                  key={img.id}
-                  image={img}
-                  onDelete={handleDelete}
-                  isDeleting={deletingImageId === img.id}
-                  isOver={overId === img.id}
-                  isDragging={activeId === img.id}
-                />
-              ))}
-            </div>
-          </div>
-        </SortableContext>
-
-        <DragOverlay dropAnimation={null}>
-          {activeImage && (
-            <DragOverlayImage
-              image={activeImage}
-              isOverMain={isOverMain}
-              isMain={isDraggingMain}
-            />
-          )}
-        </DragOverlay>
-      </DndContext>
+          ))}
+        </div>
+      </div>
 
       {/* Add Photos Button */}
       <div className="mt-6 flex flex-col items-center gap-3">
