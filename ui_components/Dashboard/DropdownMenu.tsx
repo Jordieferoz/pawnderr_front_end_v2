@@ -11,9 +11,8 @@ import { FC, useEffect, useState } from "react";
 
 import { dropdownMenuItems } from "@/constants";
 import { useAuth } from "@/hooks";
-import { images } from "@/utils/images";
-import { PETS_STORAGE_EVENT, petsStorage } from "@/utils/pets-storage";
 import { fetchMyPet } from "@/utils/api";
+import { PETS_STORAGE_EVENT, petsStorage } from "@/utils/pets-storage";
 
 interface UserProfile {
   id: number;
@@ -121,7 +120,7 @@ const DropdownMenu: FC<DropdownMenuProps> = ({ userProfile, isLoading }) => {
 
       <PopoverContent className="w-56 p-2" align="end">
         <div className="flex flex-col gap-1">
-          {dropdownMenuItems.map((item) => {
+          {dropdownMenuItems.map((item, index) => {
             // Modify href for profile to include pet ID
             const href =
               item.href === "/profile" && firstPetId
@@ -130,7 +129,7 @@ const DropdownMenu: FC<DropdownMenuProps> = ({ userProfile, isLoading }) => {
 
             return (
               <Link
-                key={item.href}
+                key={index}
                 href={href}
                 onClick={handleMenuItemClick}
                 className="flex items-center gap-3 px-3 py-2.5 rounded-md hover:bg-gray-100 transition-colors"

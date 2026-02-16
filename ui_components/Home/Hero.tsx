@@ -56,12 +56,6 @@ const Hero = () => {
               >
                 Create Account
               </Button>
-              <div className="flex items-center gap-2">
-                <img src={images.playBlue.src} alt="" />
-                <p className="text-accent-900 text-base font-medium font_fredoka hidden md:block">
-                  Watch Our Demo
-                </p>
-              </div>
             </div>
           </div>
 
