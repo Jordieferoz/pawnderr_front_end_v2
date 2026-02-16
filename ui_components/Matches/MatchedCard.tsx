@@ -19,7 +19,9 @@ type Card = {
   matchId?: string | number;
   funFact?: string;
   barkography?: string;
-  is_verified?: boolean;
+  isVerified?: boolean;
+  isFoundingDog?: boolean;
+  isPremiumUser?: boolean;
 };
 
 const FlipCard: FC<{ card: Card }> = ({ card }) => {
@@ -114,10 +116,24 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
       >
         {/* Front Face */}
         <div className="absolute inset-0 rounded-[24px] [backface-visibility:hidden]">
-          {card.indicator && (
+          {/* {card.indicator && (
             <div className="absolute top-6 left-6 z-20 bg-black text-white px-3 py-1 rounded-lg border-[1.5px] border-white text-sm font-bold tracking-wider">
               {card.indicator}
             </div>
+          )} */}
+          {card.isFoundingDog && (
+            <img
+              src={images.isFoundingDog.src}
+              alt="foundingDog"
+              className="w-14 h-14 absolute top-4.5 left-5 z-20"
+            />
+          )}
+          {card.isPremiumUser && (
+            <img
+              src={images.crownYellowBg.src}
+              alt="premium"
+              className="w-10 h-10 absolute top-4.5 right-5 z-20"
+            />
           )}
           <img
             src={card.url}
@@ -128,10 +144,14 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
           <div className="absolute bottom-17 left-5 right-5 text-white z-10">
             <h3 className="text-2xl font-semibold leading-tight">
               {card.name}{" "}
-              <span className="text-base font-normal opacity-90 capitalize">
+              <span className="text-base font-normal opacity-90 capitalize inline-flex items-center gap-1">
                 {card.info}
-                {card?.is_verified && (
-                  <img src={images.verified.src} alt="verified" />
+                {card?.isVerified && (
+                  <img
+                    src={images.verified.src}
+                    alt="verified"
+                    className="w-4 h-4"
+                  />
                 )}
               </span>
             </h3>
@@ -305,7 +325,10 @@ const MatchedCard: FC<MatchedCardProps> = ({
                 indicator: hasIndicator ? "NEW!" : undefined,
                 matchId: match.match_id || match.id,
                 funFact: match.pet?.fun_fact_or_habit,
-                barkography: match.pet?.bark_o_graphy
+                barkography: match.pet?.bark_o_graphy,
+                isFoundingDog: match.pet?.is_founding_dog,
+                isVerified: match.pet?.is_verified,
+                isPremiumUser: match.user?.is_premium_user
               }}
             />
           );
