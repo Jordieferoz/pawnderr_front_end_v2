@@ -53,7 +53,7 @@ const BrowseProfiles = () => {
         />
         <img
           src={images.browseProfileDogs.src}
-          className=" relative md:absolute -bottom-16 md:-bottom-30 mx-auto right-0 pointer-events-none z-20 md:w-[50vw] w-full"
+          className="relative md:absolute -bottom-16 md:-bottom-30 mx-auto right-0 pointer-events-none z-20 md:w-[50vw] w-full"
           alt="dogs"
         />
       </div>
