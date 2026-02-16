@@ -459,6 +459,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
                         placeholder="Email"
                         type="email"
                         {...field}
+                        value={field.value ?? ""}
                         onChange={(e) => {
                           const sanitized = sanitizeInput(e.target.value);
                           field.onChange(sanitized);
@@ -492,6 +493,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
                         placeholder="Create a password"
                         type="password"
                         {...field}
+                        value={field.value ?? ""}
                         aria-invalid={Boolean(
                           "password" in errors && errors.password
                         )}
@@ -525,6 +527,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
                         placeholder="+1234567890"
                         type="tel"
                         {...field}
+                        value={field.value ?? ""}
                         onChange={(e) => {
                           const sanitized = sanitizePhoneInput(e.target.value);
                           field.onChange(sanitized);
@@ -558,6 +561,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
                         placeholder="Password"
                         type="password"
                         {...field}
+                        value={field.value ?? ""}
                         aria-invalid={Boolean(
                           "password" in errors && (errors as any).password
                         )}
@@ -616,6 +620,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
                       placeholder="Re-enter password"
                       type="password"
                       {...field}
+                      value={field.value ?? ""}
                       aria-invalid={Boolean(
                         "confirmPassword" in errors && errors.confirmPassword
                       )}

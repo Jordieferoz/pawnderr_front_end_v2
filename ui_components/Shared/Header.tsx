@@ -11,12 +11,12 @@ import { headerMenuItems } from "@/constants";
 import { useUserProfileFromStorage } from "@/hooks";
 import { images } from "@/utils/images";
 
-import { useDispatch, useSelector } from "react-redux";
-import { openNotificationModal } from "@/store/modalSlice";
-import { Notifications } from "./Notifications";
-import { DropdownMenu } from "../Dashboard";
 import { RootState } from "@/store";
 import { getMatchIndicators } from "@/store/matchSlice";
+import { openNotificationModal } from "@/store/modalSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { DropdownMenu } from "../Dashboard";
+import { Notifications } from "./Notifications";
 
 const Header: FC = () => {
   const dispatch = useDispatch<any>();
@@ -48,7 +48,7 @@ const Header: FC = () => {
   return (
     <>
       <header className="fixed py-4 w-full left-0 h-22.5 top-0 z-50 bg-white border-b border-blue/10 shadow-[0px_4px_16.4px_0px_#0000000F] hidden md:block">
-        <nav className="container mx-auto common_container flex items-center justify-between gap-4">
+        <nav className="px-10 common_container flex items-center justify-between gap-4">
           <Link href={"/dashboard"}>
             <img
               src={images.logoHorizontal.src}

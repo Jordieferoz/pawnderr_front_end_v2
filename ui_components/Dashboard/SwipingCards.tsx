@@ -486,30 +486,18 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
                   <img
                     src={images.isFoundingDog.src}
                     alt="foundingDog"
-                    className="absolute top-2.5 left-2.5"
+                    className="w-14 h-14 absolute top-4.5 left-5 z-20"
                   />
                 )}
                 {card?.isPremium && !swipeDirection && (
                   <img
-                    src={images.premiumBadge.src}
-                    className="absolute top-2.5 left-2.5"
-                    alt="premiumBadge"
+                    src={images.crownYellowBg.src}
+                    alt="premium"
+                    className="w-10 h-10 absolute top-4.5 right-5 z-20"
                   />
                 )}
 
                 {/* Match Badge */}
-                {!swipeDirection && (
-                  <div className="absolute top-4 right-4 bg-white/30 rounded-full px-2 py-1 flex items-center gap-1.5 z-10 border border-white/90">
-                    <img
-                      src={images.matchIndicator.src}
-                      alt="matchIndicator"
-                      className="w-3"
-                    />
-                    <span className="text-white font_fredoka font-medium text-xs">
-                      98% Match
-                    </span>
-                  </div>
-                )}
 
                 {isTop && swipeDirection && (
                   <div className="absolute inset-0 pointer-events-none">
