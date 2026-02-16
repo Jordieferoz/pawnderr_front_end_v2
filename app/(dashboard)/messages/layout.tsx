@@ -3,9 +3,9 @@
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { Messages } from "@/ui_components/Messages";
 import { CustomAvatar } from "@/ui_components/Shared";
 import { showToast } from "@/ui_components/Shared/ToastMessage";
-import { Messages } from "@/ui_components/Messages";
 import {
   checkCanChat,
   fetchActiveMatches,
@@ -191,7 +191,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     );
   };
   return (
-    <div className="relative h-[calc(100vh-160px)] md:h-[calc(100vh-90px)] common_container overflow-hidden">
+    <div className="relative h-[calc(100dvh-190px)] md:h-[calc(100vh-90px)] common_container overflow-hidden">
       <div className="container mx-auto h-full flex flex-col">
         {/* Mobile Header & Matches */}
         <div className="my-4 mb-0 md:hidden flex-none">

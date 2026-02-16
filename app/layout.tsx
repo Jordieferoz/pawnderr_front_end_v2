@@ -26,9 +26,15 @@ export default function RootLayout({
   const isHomeRoute = pathname === "/";
 
   // Define routes where MobileMenu should NOT appear
-  const hideMobileMenuRoutes = ["/sign-up", "/sign-in", "/register", "/"];
-  const shouldHideMobileMenu = hideMobileMenuRoutes.includes(pathname);
-
+  const hideMobileMenuRoutes = [
+    "/sign-up",
+    "/sign-in",
+    "/register",
+    "/",
+    "/messages"
+  ];
+  const shouldHideMobileMenu =
+    hideMobileMenuRoutes.includes(pathname) || pathname.startsWith("/messages");
   return (
     <html lang="en" className={`${fredoka.className} ${sourceSans3.className}`}>
       <head>

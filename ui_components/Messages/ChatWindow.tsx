@@ -10,9 +10,9 @@ import {
   useFirebaseChat
 } from "@/hooks/useFirebaseChat";
 import { openMessageActionModal } from "@/store/modalSlice";
+import { showToast } from "@/ui_components/Shared/ToastMessage";
 import { type ChatMessage } from "@/utils/firebase-chat";
 import { images } from "@/utils/images";
-import { showToast } from "@/ui_components/Shared/ToastMessage";
 
 import { InputField } from "../Shared";
 
@@ -216,7 +216,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-6 pt-4 space-y-6 pb-30 md:pb-4 bg-white hide-scrollbar">
+      <div className="flex-1 overflow-y-auto px-6 pt-4 space-y-6 pb-10 md:pb-4 bg-white hide-scrollbar">
         {isLoading ? (
           <div className="flex items-center justify-center h-full">
             <p className="text-grey-500">Loading messages...</p>
@@ -323,7 +323,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
       </div>
 
       {/* Message Input */}
-      <div className="mt-auto bg-white shadow-[0px_-6px_11px_0px_#8787871C] fixed md:relative bottom-[88px] md:bottom-0 left-0 w-full md:shadow-none pb-6 pt-6 lg:pt-2 px-6">
+      <div className="mt-auto bg-white shadow-[0px_-6px_11px_0px_#8787871C] fixed md:relative bottom-0 md:bottom-0 left-0 w-full md:shadow-none pb-6 pt-6 lg:pt-2 px-6">
         <div className="flex items-center gap-3">
           <div className="relative flex-1" onKeyDown={handleKeyDown}>
             {showEmojiPicker && (
