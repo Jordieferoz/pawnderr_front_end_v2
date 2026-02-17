@@ -517,7 +517,16 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
                 )}
 
                 <div className="absolute bottom-17 left-6 right-6 z-10 text-white">
-                  <h3 className="text-2xl font-semibold leading-tight">
+                  <h3
+                    className="text-2xl font-semibold leading-tight cursor-pointer"
+                    onClick={() => {
+                      if (cards[currentIndex]?.id) {
+                        router.push(
+                          `/profile/${cards[currentIndex].id}?action=true`
+                        );
+                      }
+                    }}
+                  >
                     {card.name}{" "}
                     <span className="text-base font-normal opacity-90 inline-flex items-center gap-1">
                       {card.info}

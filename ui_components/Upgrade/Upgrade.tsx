@@ -38,7 +38,7 @@ interface Feature {
 
 const Upgrade = () => {
   const router = useRouter();
-  const [isAnnual, setIsAnnual] = useState(false);
+  const [isAnnual, setIsAnnual] = useState(true);
   const [plans, setPlans] = useState<{
     monthly: Plan | null;
     yearly: Plan | null;
@@ -205,7 +205,7 @@ const Upgrade = () => {
             alt="Go back"
           />
           <h4 className="display4_medium text-accent-900 relative w-full">
-            PAWnderr+
+            Premium
             <span className="body_large_medium text-neutral-white absolute w-full left-0 top-full">
               More matches. More treats. More tail-wagging perks.
             </span>
@@ -213,7 +213,7 @@ const Upgrade = () => {
         </div>
         <div className="flex justify-center flex-col items-center mt-20">
           <p className="display4_medium mb-20 text-accent-900 text-center">
-            You’re a <br /> Pawnderr+ <br /> Member
+            You’re a <br /> Premium <br /> Member
           </p>
           <Button
             className="w-full md:w-auto px-8"
@@ -236,7 +236,14 @@ const Upgrade = () => {
           alt="Go back"
         />
         <h4 className="display4_medium text-accent-900 relative w-full">
-          PAWnderr+
+          <span className="flex gap-3 items-center">
+            Premium{" "}
+            <img
+              src={images.crownYellowBg.src}
+              alt="premium"
+              className="w-8 h-8"
+            />
+          </span>
           <span className="body_large_medium text-neutral-white absolute w-full left-0 top-full">
             More matches. More treats. More <br className="block md:hidden" />{" "}
             tail-wagging perks.
@@ -245,13 +252,14 @@ const Upgrade = () => {
       </div>
       {subscriptionType !== "MONTHLY_PREMIUM" && (
         <div className="flex items-center gap-3 mb-4 md:hidden">
-          <h3 className="heading3 text-dark-brown">Monthly</h3>
+          <h3 className="heading3 text-dark-brown">Annually</h3>
           <Switch
             id="billing-period"
-            checked={isAnnual}
-            onCheckedChange={setIsAnnual}
+            checked={!isAnnual}
+            onCheckedChange={(c) => setIsAnnual(!c)}
+            className="data-[state=checked]:bg-grey-400 data-[state=unchecked]:bg-accent-500 dark:data-[state=checked]:bg-grey-400 dark:data-[state=unchecked]:bg-accent-500"
           />
-          <h3 className="heading3 text-dark-brown">Annually</h3>
+          <h3 className="heading3 text-dark-brown">Monthly</h3>
         </div>
       )}
       <div
@@ -261,9 +269,35 @@ const Upgrade = () => {
             : "md:grid-cols-2"
         } mb-8 gap-12`}
       >
+        {subscriptionType !== "MONTHLY_PREMIUM" && (
+          <div className="hidden md:block">
+            <PricingCard
+              type={"annually"}
+              plan={plans.yearly}
+              features={features}
+              onSubscribe={handleSubscribe}
+              processingPlanId={processingPlanId}
+              buttonText="Go Premium"
+            />
+          </div>
+        )}
+        {subscriptionType !== "MONTHLY_PREMIUM" && (
+          <div className="hidden md:block">
+            <PricingCard
+              type={"monthly"}
+              plan={plans.monthly}
+              features={features}
+              onSubscribe={handleSubscribe}
+              processingPlanId={processingPlanId}
+              buttonText="Go Premium"
+            />
+          </div>
+        )}
         <div
           className={
-            subscriptionType === "MONTHLY_PREMIUM" ? "max-w-md w-full" : ""
+            subscriptionType === "MONTHLY_PREMIUM"
+              ? "max-w-md w-full"
+              : "block md:hidden"
           }
         >
           <PricingCard
@@ -279,18 +313,6 @@ const Upgrade = () => {
             }
           />
         </div>
-        {subscriptionType !== "MONTHLY_PREMIUM" && (
-          <div className="hidden md:block">
-            <PricingCard
-              type={"annually"}
-              plan={plans.yearly}
-              features={features}
-              onSubscribe={handleSubscribe}
-              processingPlanId={processingPlanId}
-              buttonText="Go Premium"
-            />
-          </div>
-        )}
       </div>
       <Button
         className="w-full md:hidden"

@@ -101,7 +101,7 @@ const Header: FC = () => {
 
             <Link href={"/upgrade"} className="cursor-pointer">
               <Button>
-                <img src={images.pawnderBlack.src} alt="pawnderr+" /> PAWnderr+
+                <img src={images.pawnderBlack.src} alt="pawnderr+" /> Go Premium
               </Button>
             </Link>
             <button
