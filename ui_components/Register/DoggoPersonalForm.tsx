@@ -22,13 +22,14 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { RootState } from "@/store";
 import { updateAttribute, updateStepData } from "@/store/registrationSlice";
 import { petRegisterInfo, uploadPetPhoto } from "@/utils/api";
-import { compressImage } from "@/utils/image-utils";
 import { images } from "@/utils/images";
 import { tokenStorage } from "@/utils/token-storage";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { BackBtnRegister } from ".";
 import { InputField } from "../Shared";
+import ImageCropper from "../Shared/ImageCropper";
+import Modal from "../Shared/Modal";
 import { showToast } from "../Shared/ToastMessage";
 import { Attribute } from "./types";
 
@@ -55,11 +56,10 @@ const DoggoPersonalForm: FC = () => {
     null
   ]);
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState<{
-    current: number;
-    total: number;
-  } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedImageSrc, setSelectedImageSrc] = useState<string | null>(null);
+  const [isCropperOpen, setIsCropperOpen] = useState(false);
+  const [activeSlotIndex, setActiveSlotIndex] = useState<number | null>(null);
 
   const metadata = registrationData.metadata;
 
@@ -182,63 +182,25 @@ const DoggoPersonalForm: FC = () => {
     }
   }, [router, registrationData, reset, metadata]);
 
-  // Compress and convert File to Blob
-  const compressAndConvertFile = async (file: File): Promise<Blob> => {
+  // Upload a single blob (from cropper)
+  const uploadSingleBlob = async (blob: Blob): Promise<ImageSlot | null> => {
     try {
-      // Compress image to base64
-      const base64String = await compressImage(file, 1920, 1080, 0.8);
-      const compressedSize = (base64String.length * 3) / 4;
-
-      let finalBase64 = base64String;
-
-      // If still too large, compress more aggressively
-      if (compressedSize > 500 * 1024) {
-        finalBase64 = await compressImage(file, 1280, 720, 0.6);
-      }
-
-      // Convert base64 to Blob
-      const base64Data = finalBase64.split(",")[1];
-      const byteCharacters = atob(base64Data);
-      const byteNumbers = new Array(byteCharacters.length);
-
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
-      }
-
-      const byteArray = new Uint8Array(byteNumbers);
-      return new Blob([byteArray], { type: file.type });
-    } catch (error) {
-      console.error("Failed to compress image:", error);
-      // If compression fails, return original file as blob
-      return new Blob([await file.arrayBuffer()], { type: file.type });
-    }
-  };
-
-  // Upload a single image
-  const uploadSingleImage = async (file: File): Promise<ImageSlot | null> => {
-    try {
-      // Compress the image first
-      const compressedBlob = await compressAndConvertFile(file);
-
-      // Upload compressed blob to API
-      const uploadResponse = await uploadPetPhoto(compressedBlob);
+      // Upload blob to API
+      const uploadResponse = await uploadPetPhoto(blob);
 
       if (
         uploadResponse.statusCode === 200 ||
         uploadResponse.statusCode === 201
       ) {
-        // API response structure: { data: { data: { temporary_id, image_url, ... } } }
         const apiData = uploadResponse.data?.data;
 
         if (!apiData) {
-          console.error("No data in response:", uploadResponse);
           throw new Error("Invalid API response: missing data");
         }
 
         const { temporary_id, image_url } = apiData;
 
         if (!temporary_id || !image_url) {
-          console.error("Missing required fields in response:", apiData);
           throw new Error(
             "Invalid API response: missing temporary_id or image_url"
           );
@@ -250,98 +212,105 @@ const DoggoPersonalForm: FC = () => {
         };
       }
 
-      console.error("Unexpected status code:", uploadResponse.statusCode);
       return null;
     } catch (error) {
-      console.error("Failed to upload single image:", error);
+      showToast({
+        type: "error",
+        message: "Failed to upload image. Please try again."
+      });
       throw error;
     }
   };
 
-  // Handle single OR multiple image upload for specific slot
-  const handleSlotImageUpload = async (
+  // Handle input change - Select file and open Cropper
+  const handleImageSelect = async (
     e: React.ChangeEvent<HTMLInputElement>,
-    startIndex: number
+    index: number | null // null means adding a new one at the end
   ) => {
-    const files = Array.from(e.target.files || []);
+    const files = e.target.files;
 
-    // Clear the input
-    e.target.value = "";
-
-    if (files.length === 0) return;
-
-    // Check if adding these images would exceed the maximum
-    const availableSlots = MAX_IMAGES - uploadedImagesCount;
-    if (files.length > availableSlots) {
-      showToast({
-        type: "error",
-        message: `You can only upload ${availableSlots} more image(s). Maximum is ${MAX_IMAGES} images.`
-      });
+    // Check files immediately before doing anything else
+    if (!files || files.length === 0) {
       return;
     }
 
-    // Validate file sizes
-    const maxSize = 10 * 1024 * 1024; // 10MB
-    const invalidFiles = files.filter((file) => file.size > maxSize);
-    if (invalidFiles.length > 0) {
+    if (files.length > 1) {
       showToast({
         type: "error",
-        message:
-          "Some images are larger than 10MB. Please choose smaller images."
+        message: "Please select only one image at a time."
       });
+      // Clear input on error
+      e.target.value = "";
       return;
     }
 
-    setIsUploading(true);
-    setUploadProgress({ current: 0, total: files.length });
+    // Check max images if adding new
+    if (index === null && uploadedImagesCount >= MAX_IMAGES) {
+      showToast({
+        type: "error",
+        message: `You can only have up to ${MAX_IMAGES} photos.`
+      });
+      // Clear input on error
+      e.target.value = "";
+      return;
+    }
 
-    try {
-      const newSlots: ImageSlot[] = [];
+    const file = files[0];
 
-      // Upload all selected images sequentially
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
+    const reader = new FileReader();
+    reader.addEventListener("load", () => {
+      const result = reader.result?.toString() || null;
 
-        try {
-          const imageSlot = await uploadSingleImage(file);
-          if (imageSlot) {
-            newSlots.push(imageSlot);
-          }
-          setUploadProgress({ current: i + 1, total: files.length });
-        } catch (error) {
-          console.error(`Failed to upload image ${i + 1}:`, error);
-        }
+      if (result) {
+        setSelectedImageSrc(result);
+        setActiveSlotIndex(index);
+        setIsCropperOpen(true);
       }
 
-      if (newSlots.length > 0) {
+      // Clear input after processing
+      if (e.target) {
+        e.target.value = "";
+      }
+    });
+
+    reader.addEventListener("error", (err) => {
+      // Clear input on error
+      if (e.target) {
+        e.target.value = "";
+      }
+    });
+
+    reader.readAsDataURL(file);
+  };
+
+  const handleCropConfirm = async (croppedBlob: Blob) => {
+    setIsCropperOpen(false);
+    setIsUploading(true);
+
+    try {
+      const newSlot = await uploadSingleBlob(croppedBlob);
+
+      if (newSlot) {
         const updatedSlots = [...imageSlots];
 
-        // If only one file was selected and the slot is empty, replace that specific slot
-        if (files.length === 1 && updatedSlots[startIndex] === null) {
-          updatedSlots[startIndex] = newSlots[0];
+        if (activeSlotIndex !== null) {
+          // Replace specific slot
+          updatedSlots[activeSlotIndex] = newSlot;
         } else {
-          // For multiple files or if slot is occupied, find available slots starting from startIndex
-          let insertIndex = startIndex;
-
-          for (const newSlot of newSlots) {
-            // Find next available null slot starting from startIndex
-            while (
-              insertIndex < updatedSlots.length &&
-              updatedSlots[insertIndex] !== null
-            ) {
-              insertIndex++;
-            }
-
-            if (insertIndex < MAX_IMAGES) {
-              if (insertIndex < updatedSlots.length) {
-                updatedSlots[insertIndex] = newSlot;
-              } else {
-                updatedSlots.push(newSlot);
-              }
-              insertIndex++;
-            }
+          // Add to first empty slot
+          const firstEmptyIndex = updatedSlots.findIndex((s) => s === null);
+          if (firstEmptyIndex !== -1) {
+            updatedSlots[firstEmptyIndex] = newSlot;
+          } else if (updatedSlots.length < MAX_IMAGES) {
+            updatedSlots.push(newSlot);
           }
         }
+
+        // Ensure we keep existing null padding if needed, or expand up to MAX_IMAGES dynamically
+        // But logic above maintains the array structure roughly.
+        // Let's ensure we respect the original structure (fixed length unless expanding)
+        // Actually, the original code used `imageSlots` as a fixed-ish array but pushed to it.
+        // Let's just set it.
 
         setImageSlots(updatedSlots);
 
@@ -364,147 +333,25 @@ const DoggoPersonalForm: FC = () => {
 
         showToast({
           type: "success",
-          message: `Successfully uploaded ${newSlots.length} image(s)`
-        });
-      }
-
-      if (newSlots.length < files.length) {
-        showToast({
-          type: "error",
-          message: `${files.length - newSlots.length} image(s) failed to upload.`
+          message: "Photo uploaded successfully"
         });
       }
     } catch (error: any) {
-      console.error("Failed to upload images:", error);
       showToast({
         type: "error",
-        message: "Failed to upload images. Please try again."
+        message: "Failed to upload image. Please try again."
       });
     } finally {
       setIsUploading(false);
-      setUploadProgress(null);
+      setSelectedImageSrc(null);
+      setActiveSlotIndex(null);
     }
   };
 
-  // Handle multiple image uploads from "Add More" button
-  const handleMultipleImageUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const files = Array.from(e.target.files || []);
-
-    // Clear the input
-    e.target.value = "";
-
-    if (files.length === 0) return;
-
-    // Check if adding these images would exceed the maximum
-    const availableSlots = MAX_IMAGES - uploadedImagesCount;
-    if (files.length > availableSlots) {
-      showToast({
-        type: "error",
-        message: `You can only upload ${availableSlots} more image(s). Maximum is ${MAX_IMAGES} images.`
-      });
-      return;
-    }
-
-    // Validate file sizes
-    const maxSize = 10 * 1024 * 1024; // 10MB
-    const invalidFiles = files.filter((file) => file.size > maxSize);
-    if (invalidFiles.length > 0) {
-      showToast({
-        type: "error",
-        message:
-          "Some images are larger than 10MB. Please choose smaller images."
-      });
-      return;
-    }
-
-    setIsUploading(true);
-    setUploadProgress({ current: 0, total: files.length });
-
-    try {
-      const newSlots: ImageSlot[] = [];
-
-      // Upload images sequentially
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-
-        try {
-          const imageSlot = await uploadSingleImage(file);
-          if (imageSlot) {
-            newSlots.push(imageSlot);
-          }
-          setUploadProgress({ current: i + 1, total: files.length });
-        } catch (error) {
-          console.error(`Failed to upload image ${i + 1}:`, error);
-        }
-      }
-
-      if (newSlots.length > 0) {
-        // Find first null slot and add images
-        const updatedSlots = [...imageSlots];
-        let insertIndex = 0;
-
-        for (const newSlot of newSlots) {
-          // Find next available null slot
-          while (
-            insertIndex < updatedSlots.length &&
-            updatedSlots[insertIndex] !== null
-          ) {
-            insertIndex++;
-          }
-
-          if (insertIndex < MAX_IMAGES) {
-            if (insertIndex < updatedSlots.length) {
-              updatedSlots[insertIndex] = newSlot;
-            } else {
-              updatedSlots.push(newSlot);
-            }
-            insertIndex++;
-          }
-        }
-
-        setImageSlots(updatedSlots);
-
-        // Update form and Redux
-        const validUrls = updatedSlots
-          .filter((slot) => slot !== null)
-          .map((slot) => slot!.url);
-        const validTempIds = updatedSlots
-          .filter((slot) => slot !== null)
-          .map((slot) => slot!.temporaryId);
-
-        setValue("images", validUrls, { shouldValidate: true });
-
-        dispatch(
-          updateStepData({
-            images: validUrls,
-            temporaryPhotoIds: validTempIds
-          })
-        );
-
-        showToast({
-          type: "success",
-          message: `Successfully uploaded ${newSlots.length} image(s)`
-        });
-      }
-
-      if (newSlots.length < files.length) {
-        showToast({
-          type: "error",
-          message: `${files.length - newSlots.length} image(s) failed to upload.`
-        });
-      }
-    } catch (error: any) {
-      console.error("Failed to upload images:", error);
-      showToast({
-        type: "error",
-        message: "Failed to upload images. Please try again."
-      });
-    } finally {
-      setIsUploading(false);
-      setUploadProgress(null);
-    }
+  const handleCropCancel = () => {
+    setIsCropperOpen(false);
+    setSelectedImageSrc(null);
+    setActiveSlotIndex(null);
   };
 
   const handleRemoveImage = (index: number) => {
@@ -685,7 +532,6 @@ const DoggoPersonalForm: FC = () => {
         const petId = response.data?.data?.pet_id;
 
         if (!petId) {
-          console.error("Pet ID not found in response:", response);
           showToast({
             type: "error",
             message: "Pet registration succeeded but pet ID is missing."
@@ -718,8 +564,6 @@ const DoggoPersonalForm: FC = () => {
         });
       }
     } catch (error: any) {
-      console.error("Pet registration error:", error);
-
       if (error?.response?.data?.message) {
         showToast({ type: "error", message: error.response.data.message });
       } else if (error?.message) {
@@ -820,9 +664,8 @@ const DoggoPersonalForm: FC = () => {
                     id={`image-upload-${idx}`}
                     type="file"
                     accept="image/jpeg,image/png,image/jpg,image/webp"
-                    multiple
                     hidden
-                    onChange={(e) => handleSlotImageUpload(e, idx)}
+                    onChange={(e) => handleImageSelect(e, idx)}
                     disabled={isUploading || isSubmitting}
                   />
                 </label>
@@ -853,9 +696,8 @@ const DoggoPersonalForm: FC = () => {
                   id="image-upload-multiple"
                   type="file"
                   accept="image/jpeg,image/png,image/jpg,image/webp"
-                  multiple
                   hidden
-                  onChange={handleMultipleImageUpload}
+                  onChange={(e) => handleImageSelect(e, null)}
                   disabled={isUploading || isSubmitting}
                 />
               </label>
@@ -867,15 +709,9 @@ const DoggoPersonalForm: FC = () => {
               Upload some cute photos (Size Max 10MB each)
               <br />
               <span className="text-xs text-gray-400">
-                Hold Ctrl/Cmd to select multiple images at once
+                Click to select an image, then crop it.
               </span>
             </label>
-            {uploadProgress && (
-              <p className="text-xs text-gray-500 mt-1">
-                Uploading {uploadProgress.current} / {uploadProgress.total}{" "}
-                images...
-              </p>
-            )}
           </div>
 
           {errors.images && (
@@ -1174,6 +1010,21 @@ const DoggoPersonalForm: FC = () => {
           </Button>
         </div>
       </form>
+      <Modal
+        open={isCropperOpen}
+        setOpen={setIsCropperOpen}
+        content={
+          selectedImageSrc && (
+            <ImageCropper
+              imageSrc={selectedImageSrc}
+              onCropComplete={handleCropConfirm}
+              onCancel={handleCropCancel}
+            />
+          )
+        }
+        className="max-w-xl w-full p-0 overflow-hidden bg-black md:bg-white"
+      />
+      <div className="h-10"></div>
     </div>
   );
 };

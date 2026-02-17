@@ -6,7 +6,9 @@ import { FC, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { addPetPhoto, deletePetPhoto, reorderPetPhotos } from "@/utils/api";
 
+import ImageCropper from "../Shared/ImageCropper";
 import Loader from "../Shared/Loader";
+import Modal from "../Shared/Modal";
 import { showToast } from "../Shared/ToastMessage";
 import { IPetData } from "./types";
 
@@ -93,6 +95,8 @@ const UpdateGallery: FC<UpdateGalleryProps> = ({
   const [isReordering, setIsReordering] = useState(false);
   const [deletingImageId, setDeletingImageId] = useState<number | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [selectedImageSrc, setSelectedImageSrc] = useState<string | null>(null);
+  const [isCropperOpen, setIsCropperOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const MAX_IMAGES = 5;
@@ -222,57 +226,74 @@ const UpdateGallery: FC<UpdateGalleryProps> = ({
     if (!files || files.length === 0 || !petData?.id) return;
 
     // Check if adding would exceed MAX_IMAGES
-    if (galleryImages.length + files.length > MAX_IMAGES) {
+    if (galleryImages.length >= MAX_IMAGES) {
       showToast({
         type: "error",
-        message: `You can only have up to ${MAX_IMAGES} photos. You can add ${MAX_IMAGES - galleryImages.length} more.`
+        message: `You can only have up to ${MAX_IMAGES} photos.`
       });
       return;
     }
 
+    const file = files[0];
+    const reader = new FileReader();
+    reader.addEventListener("load", () => {
+      setSelectedImageSrc(reader.result?.toString() || null);
+      setIsCropperOpen(true);
+    });
+    reader.readAsDataURL(file);
+
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleCropConfirm = async (croppedBlob: Blob) => {
+    if (!petData?.id) return;
+
+    setIsCropperOpen(false);
     setIsUploading(true);
 
     try {
-      // Upload files one by one
-      for (const file of Array.from(files)) {
-        const response = await addPetPhoto(petData.id, file);
+      // Convert blob to file
+      const file = new File([croppedBlob], "image.jpg", { type: "image/jpeg" });
 
-        if (response.statusCode === 200 || response.statusCode === 201) {
-          // Add new image to local state
-          const newImage: GalleryImage = {
-            id: response.data.data.id,
-            url: response.data.data.image_url,
-            display_order: response.data.data.display_order
-          };
+      const response = await addPetPhoto(petData.id, file);
 
-          setGalleryImages((prev) =>
-            [...prev, newImage].sort(
-              (a, b) => a.display_order - b.display_order
-            )
-          );
-        }
+      if (response.statusCode === 200 || response.statusCode === 201) {
+        // Add new image to local state
+        const newImage: GalleryImage = {
+          id: response.data.data.id,
+          url: response.data.data.image_url,
+          display_order: response.data.data.display_order
+        };
+
+        setGalleryImages((prev) =>
+          [...prev, newImage].sort((a, b) => a.display_order - b.display_order)
+        );
+
+        showToast({
+          type: "success",
+          message: "Photo uploaded successfully"
+        });
       }
-
-      showToast({
-        type: "success",
-        message: "Photos uploaded successfully"
-      });
     } catch (error: any) {
-      console.error("❌ Failed to upload photos:", error);
-
+      console.error("❌ Failed to upload photo:", error);
       showToast({
         type: "error",
         message:
           error?.response?.data?.message ||
-          "Failed to upload photos. Please try again."
+          "Failed to upload photo. Please try again."
       });
     } finally {
       setIsUploading(false);
-      // Reset file input
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
+      setSelectedImageSrc(null);
     }
+  };
+
+  const handleCropCancel = () => {
+    setIsCropperOpen(false);
+    setSelectedImageSrc(null);
   };
 
   const handleAddPhotos = () => {
@@ -302,7 +323,6 @@ const UpdateGallery: FC<UpdateGalleryProps> = ({
             ref={fileInputRef}
             type="file"
             accept="image/*"
-            multiple
             onChange={handleFileSelect}
             className="hidden"
           />
@@ -385,7 +405,6 @@ const UpdateGallery: FC<UpdateGalleryProps> = ({
           ref={fileInputRef}
           type="file"
           accept="image/*"
-          multiple
           onChange={handleFileSelect}
           className="hidden"
         />
@@ -396,6 +415,22 @@ const UpdateGallery: FC<UpdateGalleryProps> = ({
           <Loader size={40} text="Saving new order..." />
         </div>
       )}
+
+      {/* Cropper Modal */}
+      <Modal
+        open={isCropperOpen}
+        setOpen={setIsCropperOpen}
+        content={
+          selectedImageSrc && (
+            <ImageCropper
+              imageSrc={selectedImageSrc}
+              onCropComplete={handleCropConfirm}
+              onCancel={handleCropCancel}
+            />
+          )
+        }
+        className="max-w-xl w-full p-0 overflow-hidden bg-black md:bg-white"
+      />
     </div>
   );
 };
