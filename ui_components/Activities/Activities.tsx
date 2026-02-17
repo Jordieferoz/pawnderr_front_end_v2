@@ -16,9 +16,9 @@ import {
 } from "@/utils/api";
 import { images } from "@/utils/images";
 
-import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { clearWhoLikesMeCount } from "@/store/matchSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 import ActivityCard from "./ActivityCard";
 import { ICard } from "./types";
@@ -353,7 +353,7 @@ const Activities: FC = () => {
               } ${
                 activeTab === tab.id
                   ? "bg-primary-500 text-white"
-                  : "border border-neutral-white text-light-grey2"
+                  : "border border-neutral-white text-light-grey2 bg-white"
               }`}
             >
               {tab.label}
@@ -416,7 +416,7 @@ const Activities: FC = () => {
           </div>
         )}
         {!isSubscribed && activeTab === "likes-me" && (
-          <div className="absolute top-0 backdrop-blur-lg w-full bg-white/80 h-inherit mt-20 flex items-center justify-center">
+          <div className="absolute top-0 backdrop-blur-lg w-full  h-inherit mt-20 flex items-center justify-center">
             <div className="text-center">
               <h4 className="display2_medium text-accent-900">
                 Unlock the Fun

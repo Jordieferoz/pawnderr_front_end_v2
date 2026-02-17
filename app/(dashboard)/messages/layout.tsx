@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { Messages } from "@/ui_components/Messages";
@@ -16,6 +16,9 @@ import { petsStorage } from "@/utils/pets-storage";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const pathname = usePathname();
+  const isMessageList = pathname === "/messages";
+  const isMessageDetail = /^\/messages\/[^/]+$/.test(pathname);
   const [matches, setMatches] = useState<any[]>([]);
   const [isLoadingMatches, setIsLoadingMatches] = useState(false);
   const [matchesPage, setMatchesPage] = useState(1);
@@ -191,7 +194,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     );
   };
   return (
-    <div className="relative h-[calc(100dvh-190px)] md:h-[calc(100vh-90px)] common_container overflow-hidden">
+    <div
+      className={`common_container relative overflow-hidden md:h-[calc(100vh-90px)] ${
+        isMessageList
+          ? "h-[calc(100dvh-102px)]"
+          : isMessageDetail
+            ? "h-[calc(100dvh-190px)]"
+            : "h-[calc(100dvh-102px)]"
+      }`}
+    >
       <div className="container mx-auto h-full flex flex-col">
         {/* Mobile Header & Matches */}
         <div className="my-4 mb-0 md:hidden flex-none">
@@ -221,7 +232,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
         {/* Content Area */}
         <div className="flex-1 min-h-0 pb-4">
-          <div className="flex gap-0 bg-white border border-black/10 md:rounded-[32px] overflow-hidden h-full">
+          <div className="flex gap-0 bg-white border border-black/10 rounded-2xl md:rounded-[32px] overflow-hidden h-full">
             {/* Desktop Sidebar */}
             <div className="hidden md:flex md:basis-[340px] border-r border-black/10">
               <Messages />
@@ -232,11 +243,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </div>
-      <img
+      {/* <img
         className="absolute w-full left-0 top-0 hidden md:flex pointer-events-none z-[-1] h-[calc(100vh-90px)]"
         src={images.discoverBg.src}
         alt="messages_pattern"
-      />
+      /> */}
     </div>
   );
 }

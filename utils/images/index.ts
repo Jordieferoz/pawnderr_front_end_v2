@@ -112,6 +112,7 @@ import userLeftBlur from "public/assets/images/user_left_blur.svg";
 import userRightBlur from "public/assets/images/user_right_blur.svg";
 import whyChooseDogs from "public/assets/images/why_choose_dogs.png";
 
+import appPattern from "public/assets/images/app_pattern.svg";
 import bellIcon from "public/assets/images/bell_icon.svg";
 import crownYellowBg from "public/assets/images/crown_yellow_bg.svg";
 import isFoundingDog from "public/assets/images/is_founding_dog.svg";
@@ -240,6 +241,7 @@ export type ImageType =
   | "premiumBadge"
   | "matchIndicator"
   | "backBtn"
+  | "appPattern"
   | "crownYellowBg";
 
 export type NextImage = {
@@ -368,5 +370,6 @@ export const images: Record<ImageType, NextImage> = {
   premium6,
   premiumBadge,
   matchIndicator,
-  crownYellowBg
+  crownYellowBg,
+  appPattern
 };
