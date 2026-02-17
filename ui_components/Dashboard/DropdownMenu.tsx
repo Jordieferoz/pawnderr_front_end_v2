@@ -39,7 +39,7 @@ interface DropdownMenuProps {
 const DropdownMenu: FC<DropdownMenuProps> = ({ userProfile, isLoading }) => {
   const { logout } = useAuth();
   const [firstPetId, setFirstPetId] = useState<number | null>(null);
-  const [loading, setLoading] = useState(true);
+
   const [petData, setPetData] = useState<PetData | null>(null);
   const [open, setOpen] = useState(false);
 
@@ -87,8 +87,6 @@ const DropdownMenu: FC<DropdownMenuProps> = ({ userProfile, isLoading }) => {
         setPetData(petDetails);
       } catch (error) {
         console.error("Error fetching pet:", error);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -122,10 +120,16 @@ const DropdownMenu: FC<DropdownMenuProps> = ({ userProfile, isLoading }) => {
         <div className="flex flex-col gap-1">
           {dropdownMenuItems.map((item, index) => {
             // Modify href for profile to include pet ID
-            const href =
-              item.href === "/profile" && firstPetId
-                ? `/profile/${firstPetId}`
-                : item.href;
+            let href = item.href;
+            if (firstPetId) {
+              if (item.href === "/profile") {
+                href = `/profile/${firstPetId}`;
+              } else if (item.href.startsWith("/profile/edit")) {
+                // Handle /profile/edit?query... -> /profile/edit/[id]?query...
+                const [path, query] = item.href.split("?");
+                href = `${path}/${firstPetId}${query ? `?${query}` : ""}`;
+              }
+            }
 
             return (
               <Link
