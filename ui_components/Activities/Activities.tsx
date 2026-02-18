@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import Loader from "@/ui_components/Shared/Loader";
 import { showToast } from "@/ui_components/Shared/ToastMessage";
 import {
-  fetchSubscriptionStatus,
   fetchUnseenMatchCount,
   fetchWhoLikesMe,
   fetchWhomIDisliked,
@@ -26,14 +25,15 @@ import { ICard } from "./types";
 const Activities: FC = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-
+  const isSubscribed = useSelector(
+    (state: RootState) => state.subscription.isSubscribed
+  );
   const [activeTab, setActiveTab] = useState("likes-me");
   const [cards, setCards] = useState<ICard[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [isSubscribed, setIsSubscribed] = useState(false);
-  const [isSubscriptionLoading, setIsSubscriptionLoading] = useState(true);
+
   const [tabCounts, setTabCounts] = useState({
     likesMe: 0,
     youLike: 0,
@@ -45,11 +45,10 @@ const Activities: FC = () => {
   );
 
   useEffect(() => {
-    // Clear badge when component mounts (user enters the route)
-    if (!isSubscriptionLoading && isSubscribed) {
+    if (isSubscribed) {
       dispatch(clearWhoLikesMeCount());
     }
-  }, [dispatch, isSubscribed, isSubscriptionLoading]);
+  }, [dispatch, isSubscribed]);
 
   const handleUndo = async (card: ICard) => {
     if (activeTab !== "you-like" && activeTab !== "viewed-profile") return;
@@ -231,32 +230,6 @@ const Activities: FC = () => {
   };
 
   useEffect(() => {
-    const loadSubscriptionStatus = async () => {
-      try {
-        setIsSubscriptionLoading(true);
-        const resp = await fetchSubscriptionStatus();
-        setIsSubscribed(Boolean(resp?.data?.is_premium));
-      } catch (error: any) {
-        setIsSubscribed(false);
-        showToast({
-          type: "error",
-          message:
-            error?.message ||
-            "Unable to load subscription status. Please try again."
-        });
-      } finally {
-        setIsSubscriptionLoading(false);
-      }
-    };
-
-    loadSubscriptionStatus();
-  }, []);
-
-  useEffect(() => {
-    if (isSubscriptionLoading) {
-      return;
-    }
-
     const fetchInitialCounts = async () => {
       try {
         const [likesMeResp, youLikeResp, dislikedResp, unseenMatchesResp] =
@@ -287,16 +260,14 @@ const Activities: FC = () => {
     };
 
     fetchInitialCounts();
-  }, [isSubscribed, isSubscriptionLoading]);
+  }, [isSubscribed]);
 
   useEffect(() => {
     setCards([]);
     setPage(1);
     setHasMore(true);
-    if (!isSubscriptionLoading) {
-      fetchActivities(1, false);
-    }
-  }, [activeTab, isSubscribed, isSubscriptionLoading]);
+    fetchActivities(1, false);
+  }, [activeTab, isSubscribed]);
 
   useEffect(() => {
     const handleScroll = () => {

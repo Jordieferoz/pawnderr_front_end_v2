@@ -1,8 +1,9 @@
 "use client";
 import { useRouter } from "next/navigation";
 import React, { FC, useEffect, useMemo, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
+import { RootState } from "@/store";
 import {
   openHangTightModal,
   openMatchModal,
@@ -54,11 +55,14 @@ const CardImage: FC<{ src: string; alt: string; className: string }> = ({
 const SwipingCards: FC<ISwipingCardsProps> = ({
   petData,
   loading,
-  isSubscribed,
   containerHeight
 }) => {
   const router = useRouter();
   const dispatch = useDispatch();
+  const isSubscribed = useSelector(
+    (state: RootState) => state.subscription.isSubscribed
+  );
+
   const [cards, setCards] = useState<ISwipingCard[]>([]);
   const [currentIndex, setCurrentIndex] = useState(-1);
   const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | null>(

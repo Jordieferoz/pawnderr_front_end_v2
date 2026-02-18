@@ -1,58 +1,32 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import SwipingCards from "@/ui_components/Dashboard/SwipingCards";
 import {
   discoverNearbyPets,
   fetchMyPet,
-  fetchMyPetsCollection,
-  fetchSubscriptionStatus
+  fetchMyPetsCollection
 } from "@/utils/api";
 import { images } from "@/utils/images";
 import { petsStorage } from "@/utils/pets-storage";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
 import CustomAvatar from "../Shared/CustomAvatar";
 
 import { IPetData } from "../Profile/types";
-import { showToast } from "../Shared/ToastMessage";
 import { NearbyPet } from "./types";
 
 const Discover = () => {
   const router = useRouter();
-  const dispatch = useDispatch();
   const [firstPetId, setFirstPetId] = useState<number | null>(null);
   const [petData, setPetData] = useState<IPetData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isSubscribed, setIsSubscribed] = useState(false);
+
   const [premiumPets, setPremiumPets] = useState<NearbyPet[]>([]);
-  const [isSubscriptionLoading, setIsSubscriptionLoading] = useState(false);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [swipingCardsHeight, setSwipingCardsHeight] = useState<
     number | undefined
   >(undefined);
-
-  useEffect(() => {
-    const loadSubscriptionStatus = async () => {
-      try {
-        const resp = await fetchSubscriptionStatus();
-        setIsSubscribed(Boolean(resp?.data?.is_premium));
-      } catch (error: any) {
-        setIsSubscribed(false);
-        showToast({
-          type: "error",
-          message:
-            error?.message ||
-            "Unable to load subscription status. Please try again."
-        });
-      } finally {
-        setIsSubscriptionLoading(false);
-      }
-    };
-
-    loadSubscriptionStatus();
-  }, []);
 
   useEffect(() => {
     const ensureFirstPetId = async () => {
@@ -181,7 +155,6 @@ const Discover = () => {
         <SwipingCards
           petData={petData}
           loading={loading}
-          isSubscribed={isSubscribed}
           containerHeight={swipingCardsHeight}
         />
       </div>

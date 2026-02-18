@@ -15,7 +15,7 @@ const Matches: FC = () => {
   const [matches, setMatches] = useState<any[]>([]);
   const [indicators, setIndicators] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  console.log(matches, "matches");
+
   useEffect(() => {
     const getData = async () => {
       try {

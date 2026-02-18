@@ -25,8 +25,12 @@ const Header: FC = () => {
   const unseenMatchCount = useSelector(
     (state: RootState) => state.match.unseenMatchCount
   );
+
   const whoLikesMeCount = useSelector(
     (state: RootState) => state.match.whoLikesMeCount
+  );
+  const isSubscribed = useSelector(
+    (state: RootState) => state.subscription.isSubscribed
   );
 
   useEffect(() => {
@@ -99,11 +103,14 @@ const Header: FC = () => {
 
             {/* Notification Bell */}
 
-            <Link href={"/upgrade"} className="cursor-pointer">
-              <Button>
-                <img src={images.pawnderBlack.src} alt="pawnderr+" /> Go Premium
-              </Button>
-            </Link>
+            {!isSubscribed && (
+              <Link href={"/upgrade"} className="cursor-pointer">
+                <Button>
+                  <img src={images.pawnderBlack.src} alt="pawnderr+" /> Go
+                  Premium
+                </Button>
+              </Link>
+            )}
             <button
               className="relative p-2 cursor-pointer flex-1"
               onClick={() => dispatch(openNotificationModal())}
