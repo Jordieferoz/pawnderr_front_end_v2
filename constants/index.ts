@@ -95,7 +95,7 @@ export const mobileMenuItems = [
     href: "/matches",
     img: images.matches.src,
     imgActive: images.matchesActive.src,
-    imgWidth: 24
+    imgWidth: 28
   },
   {
     key: "activities",
@@ -145,7 +145,7 @@ export const headerMenuItems = [
     href: "/matches",
     img: images.matches.src,
     imgActive: images.matchesActive.src,
-    imgWidth: 18
+    imgWidth: 24
   },
   {
     key: "activities",

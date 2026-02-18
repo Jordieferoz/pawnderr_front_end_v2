@@ -103,7 +103,14 @@ const Header: FC = () => {
 
             {/* Notification Bell */}
 
-            {!isSubscribed && (
+            {isSubscribed ? (
+              <Link href={"/my-subscription"} className="cursor-pointer">
+                <Button>
+                  <img src={images.pawnderBlack.src} alt="pawnderr+" /> View
+                  Subscription
+                </Button>
+              </Link>
+            ) : (
               <Link href={"/upgrade"} className="cursor-pointer">
                 <Button>
                   <img src={images.pawnderBlack.src} alt="pawnderr+" /> Go
