@@ -19,6 +19,8 @@ export interface IInfoCardProps {
   list?: IInfoCardListItem[];
   title: string;
   type: "list" | "desc";
+  imagePosition?: "top" | "bottom";
+  gender?: string;
 }
 
 export interface IInfoCardListItem {

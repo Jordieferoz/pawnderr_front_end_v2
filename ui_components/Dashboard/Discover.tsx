@@ -20,7 +20,7 @@ const Discover = () => {
   const [firstPetId, setFirstPetId] = useState<number | null>(null);
   const [petData, setPetData] = useState<IPetData | null>(null);
   const [loading, setLoading] = useState(true);
-
+  console.log(petData, "petData");
   const [premiumPets, setPremiumPets] = useState<NearbyPet[]>([]);
 
   const wrapperRef = useRef<HTMLDivElement>(null);

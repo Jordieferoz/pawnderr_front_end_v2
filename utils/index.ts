@@ -26,3 +26,7 @@ export const getUserLocation = (): Promise<{
     );
   });
 };
+
+export const getGenderColor = (gender: string): string => {
+  return gender?.toLowerCase() === "male" ? "#3b82f6" : "#ec4899";
+};

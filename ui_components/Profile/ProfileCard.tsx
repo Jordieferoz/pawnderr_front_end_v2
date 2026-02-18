@@ -1,7 +1,8 @@
 import { FC } from "react";
 
-import { IProfileCardProps } from "./types";
+import { getGenderColor } from "@/utils";
 import { images } from "@/utils/images";
+import { IProfileCardProps } from "./types";
 
 const ProfileCard: FC<IProfileCardProps> = ({
   name,
@@ -17,8 +18,13 @@ const ProfileCard: FC<IProfileCardProps> = ({
   onDislike,
   disabled
 }) => {
+  const borderColor = getGenderColor(gender || "");
+
   return (
-    <div className="bg-white p-4 shadow-[0px_4px_10.6px_0px_#0000001A] rounded-xl relative">
+    <div
+      className="bg-white p-4 shadow-[0px_4px_10.6px_0px_#0000001A] rounded-xl relative border-2"
+      style={{ borderColor }}
+    >
       <div className="relative">
         <img src={image} className="w-full rounded-xl mb-4" alt="image" />
         {isPremium && (
@@ -47,7 +53,7 @@ const ProfileCard: FC<IProfileCardProps> = ({
           </div>
         )}
       </div>
-      <div className="flex items-start lg:items-center justify-between flex-col lg:flex-row pb-2">
+      <div className="flex items-start justify-between flex-col pb-2">
         <h3 className="text-[32px] font_fredoka font-medium text-dark-grey2 flex items-baseline gap-2">
           {name}{" "}
           <div className="flex items-center gap-2">
