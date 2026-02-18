@@ -765,3 +765,19 @@ export const fetchUnseenMatchCount = (): Promise<TResponse<any>> => {
       });
   });
 };
+
+export const deleteUserAccount = (): Promise<TResponse<any>> => {
+  return new Promise((resolve, reject) => {
+    globalDeleteService<any, any>(`user/profile`, null)
+      .then((response) => {
+        if (response.statusCode === 200 || response.statusCode === 201) {
+          resolve(response);
+        } else {
+          reject(new Error(`Unexpected status code: ${response.statusCode}`));
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
