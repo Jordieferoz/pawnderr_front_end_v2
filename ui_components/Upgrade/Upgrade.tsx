@@ -2,6 +2,7 @@
 
 import {
   createSubscriptionOrder,
+  fetchPetProfile,
   fetchSubscriptionFeatures,
   fetchSubscriptionPlans,
   fetchSubscriptionStatus,
@@ -9,13 +10,18 @@ import {
 } from "@/utils/api";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+
+import { openSubscribedModal } from "@/store/modalSlice";
 
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { images } from "@/utils/images";
+import { petsStorage } from "@/utils/pets-storage";
 import { initiateRazorpayPayment } from "@/utils/razorPay";
 
 import { PricingCard } from ".";
+import { SubscribedModal } from "../Modals";
 import { showToast } from "../Shared/ToastMessage";
 import { PricingType } from "./types";
 
@@ -38,6 +44,10 @@ interface Feature {
 
 const Upgrade = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
+  const petId = petsStorage.getFirstPetId();
+  const [petImage, setPetImage] = useState<string | undefined>(undefined);
+  const [petGender, setPetGender] = useState<string>("male");
   const [isAnnual, setIsAnnual] = useState(true);
   const [plans, setPlans] = useState<{
     monthly: Plan | null;
@@ -112,6 +122,25 @@ const Upgrade = () => {
     run();
   }, []);
 
+  useEffect(() => {
+    const fetchPetData = async () => {
+      try {
+        const resp = await fetchPetProfile(Number(petId));
+        const petDetails = resp?.data?.data;
+        if (petDetails) {
+          setPetGender(petDetails.gender || "male");
+          const primary =
+            petDetails.images?.find((img: any) => img.is_primary)?.image_url ||
+            petDetails.images?.[0]?.image_url;
+          setPetImage(primary);
+        }
+      } catch (error) {
+        console.error("Error fetching pet:", error);
+      }
+    };
+    if (petId) fetchPetData();
+  }, [petId]);
+
   const handlePaymentSuccess = async (paymentResponse: any, planId: number) => {
     try {
       const verifyResponse = await verifySubscriptionPayment({
@@ -127,7 +156,7 @@ const Upgrade = () => {
           message: "Subscription activated successfully! 🎉"
         });
 
-        router.push("/dashboard");
+        dispatch(openSubscribedModal());
       }
     } catch (error) {
       showToast({
@@ -325,6 +354,7 @@ const Upgrade = () => {
             ? "Upgrade to Annual Plan"
             : "Go Premium"}
       </Button>
+      <SubscribedModal primaryImage={petImage} gender={petGender} />
     </div>
   );
 };
