@@ -175,7 +175,12 @@ const OTPModal = ({ phone, onOTPVerified, onClose }: OTPModalProps) => {
                 inputMode="numeric"
                 autoFocus
                 value={field.value || ""}
-                onChange={(value: string) => field.onChange(value)}
+                onChange={(value: string) => {
+                  field.onChange(value);
+                  if (value.length === 6) {
+                    handleSubmit(onSubmit)();
+                  }
+                }}
                 disabled={isSubmitting}
               >
                 <InputOTPGroup className="gap-5 w-full">

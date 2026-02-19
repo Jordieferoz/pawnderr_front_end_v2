@@ -1,21 +1,21 @@
 "use client";
 
-import { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot
 } from "@/components/ui/input-otp";
-import { InputField } from "../Shared";
-import { showToast } from "../Shared/ToastMessage";
-import { requestChangePasswordOtp, confirmChangePassword } from "@/utils/api";
+import { confirmChangePassword, requestChangePasswordOtp } from "@/utils/api";
 import {
   changePasswordSchema,
   ChangePasswordValues
 } from "@/utils/schemas/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { InputField } from "../Shared";
+import { showToast } from "../Shared/ToastMessage";
 
 const ChangePassword = () => {
   const [step, setStep] = useState<1 | 2>(1); // Step 1: Request OTP, Step 2: Verify & Change
@@ -123,9 +123,14 @@ const ChangePassword = () => {
                 <InputOTP
                   {...field}
                   maxLength={6}
-                  onChange={(val: string) => field.onChange(val)}
+                  onChange={(val: string) => {
+                    field.onChange(val);
+                    if (val.length === 6) {
+                      handleSubmit(onSubmit)();
+                    }
+                  }}
                 >
-                  <InputOTPGroup>
+                  <InputOTPGroup className="gap-5 w-full">
                     <InputOTPSlot index={0} />
                     <InputOTPSlot index={1} />
                     <InputOTPSlot index={2} />
