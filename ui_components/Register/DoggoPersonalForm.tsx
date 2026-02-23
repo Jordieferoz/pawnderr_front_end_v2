@@ -1,5 +1,11 @@
 "use client";
 
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -7,10 +13,13 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 import {
   petProfileSchema,
   type PetProfileValues
 } from "@/utils/schemas/registrationSchema";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { FC, useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -111,7 +120,7 @@ const DoggoPersonalForm: FC = () => {
       petName: "",
       nicknames: "",
       petGender: undefined,
-      age: "",
+      birthDate: undefined,
       breed: undefined,
       attributes: getDefaultAttributeValues(),
       vaccinationStatus: "",
@@ -172,7 +181,9 @@ const DoggoPersonalForm: FC = () => {
         petName: registrationData.petName || "",
         nicknames: registrationData.nicknames || "",
         petGender: registrationData.petGender || undefined,
-        age: registrationData.age || "",
+        birthDate: registrationData.birthDate
+          ? new Date(registrationData.birthDate)
+          : undefined,
         breed: registrationData.breed || undefined,
         attributes: attributesForForm,
         vaccinationStatus: registrationData.vaccinationStatus || "",
@@ -514,7 +525,7 @@ const DoggoPersonalForm: FC = () => {
         name: data.petName,
         nickname: data.nicknames || "",
         gender: data.petGender,
-        age: parseInt(data.age),
+        birth_date: format(data.birthDate, "yyyy-MM-dd"),
         bark_o_graphy: data.barkography || "",
         fun_fact_or_habit: data.funFact || "",
         vaccination_status: data.vaccinationStatus || "",
@@ -548,7 +559,7 @@ const DoggoPersonalForm: FC = () => {
             petName: data.petName,
             nicknames: data.nicknames,
             petGender: data.petGender,
-            age: data.age,
+            birthDate: data.birthDate.toISOString(),
             breed: data.breed,
             attributes: attributesForRedux,
             vaccinationStatus: data.vaccinationStatus,
@@ -598,7 +609,7 @@ const DoggoPersonalForm: FC = () => {
       "petName",
       "nicknames",
       "petGender",
-      "age",
+      "birthDate",
       "breed",
       // Attributes are special case
       "vaccinationStatus",
@@ -814,30 +825,57 @@ const DoggoPersonalForm: FC = () => {
           )}
         </div>
 
-        {/* Age */}
-        <div className="relative" id="field-age">
+        {/* Birth Date */}
+        <div className="relative flex flex-col gap-2" id="field-birthDate">
+          <label className="block text-sm font-medium text-dark-grey">
+            Date of Birth
+          </label>
           <Controller
             control={control}
-            name="age"
+            name="birthDate"
             render={({ field }) => (
-              <InputField
-                label="Age"
-                placeholder="Enter your Pet's Age"
-                type="number"
-                {...field}
-                onChange={(e) => {
-                  field.onChange(e);
-                  dispatch(updateStepData({ age: e.target.value }));
-                }}
-                aria-invalid={!!errors.age}
-                aria-describedby={errors.age ? "age-error" : undefined}
-                disabled={isSubmitting}
-              />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    className={cn(
+                      "w-full justify-start text-left text-sm font-normal border hover:bg-transparent shadow-none border-medium-grey bg-white h-[50px] rounded-[16px] px-5",
+                      !field.value && "text-muted-foreground"
+                    )}
+                    disabled={isSubmitting}
+                  >
+                    <CalendarIcon className="mr-3 h-5 w-5 opacity-70" />
+                    {field.value ? (
+                      format(field.value, "PPP")
+                    ) : (
+                      <span className="text-[#a0a0a0]">Pick a date</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 z-[100]" align="start">
+                  <Calendar
+                    className="!text-sm"
+                    captionLayout="dropdown"
+                    mode="single"
+                    selected={field.value}
+                    onSelect={(date) => {
+                      field.onChange(date);
+                      if (date) {
+                        dispatch(
+                          updateStepData({ birthDate: date.toISOString() })
+                        );
+                      }
+                    }}
+                    disabled={(date) =>
+                      date > new Date() || date < new Date("2000-01-01")
+                    }
+                  />
+                </PopoverContent>
+              </Popover>
             )}
           />
-          {errors.age && (
-            <p id="age-error" className="mt-1 text-sm text-red-500">
-              {errors.age.message}
+          {errors.birthDate && (
+            <p id="birthDate-error" className="mt-1 text-sm text-red-500">
+              {errors.birthDate.message}
             </p>
           )}
         </div>
