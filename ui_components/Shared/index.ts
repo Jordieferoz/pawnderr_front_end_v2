@@ -5,6 +5,7 @@ import InputField from "./InputField";
 import Loader from "./Loader";
 import MobileMenu from "./MobileMenu";
 import Modal from "./Modal";
+import NoState from "./NoState";
 
 export {
   CustomAvatar,
@@ -13,5 +14,6 @@ export {
   InputField,
   Loader,
   MobileMenu,
-  Modal
+  Modal,
+  NoState
 };

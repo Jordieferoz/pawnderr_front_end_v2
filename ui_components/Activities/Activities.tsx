@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { FC, useEffect, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { NoState } from "@/ui_components/Shared";
 import Loader from "@/ui_components/Shared/Loader";
 import { showToast } from "@/ui_components/Shared/ToastMessage";
 import {
@@ -352,8 +353,8 @@ const Activities: FC = () => {
             <Loader />
           </div>
         ) : cards.length === 0 ? (
-          <div className="flex items-center justify-center h-[480px] text-dark-grey">
-            No activities found.
+          <div className="flex items-center justify-center h-[480px]">
+            <NoState title="No activities found" />
           </div>
         ) : (
           <ActivityCard

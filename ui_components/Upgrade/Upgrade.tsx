@@ -157,6 +157,11 @@ const Upgrade = () => {
         });
 
         dispatch(openSubscribedModal());
+
+        // Refresh page after successful subscription to reflect changes everywhere
+        setTimeout(() => {
+          router.refresh();
+        }, 1500); // Small delay to let modal animate in
       }
     } catch (error) {
       showToast({
@@ -240,9 +245,9 @@ const Upgrade = () => {
             </span>
           </h4>
         </div>
-        <div className="flex justify-center flex-col items-center mt-20">
-          <p className="display4_medium mb-20 text-accent-900 text-center">
-            You’re a <br /> Premium <br /> Member
+        <div className="flex justify-center flex-col items-center mt-30">
+          <p className="display4_medium mb-10 text-accent-900 text-center">
+            You’re a Premium <br /> Member
           </p>
           <Button
             className="w-full md:w-auto px-8"

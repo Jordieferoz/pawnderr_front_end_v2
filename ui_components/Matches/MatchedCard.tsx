@@ -2,6 +2,7 @@
 import { useRouter } from "next/navigation";
 import { FC, useState } from "react";
 
+import { NoState } from "@/ui_components/Shared";
 import { showToast } from "@/ui_components/Shared/ToastMessage";
 import { checkCanChat, messageInitiated } from "@/utils/api";
 import { images } from "@/utils/images";
@@ -270,7 +271,7 @@ const MatchedCard: FC<MatchedCardProps> = ({
   if (!matches || matches.length === 0) {
     return (
       <div className="w-full min-h-[60vh] flex items-center justify-center">
-        <p className="text-gray-500 text-lg">No active matches found.</p>
+        <NoState title="No Matches Found" />
       </div>
     );
   }

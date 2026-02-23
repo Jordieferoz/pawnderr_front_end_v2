@@ -18,6 +18,7 @@ import {
 import { images } from "@/utils/images";
 import { useDrag } from "@use-gesture/react";
 import { HangTightModal, MatchModal, OutOfSwipesModal } from "../Modals";
+import { NoState } from "../Shared";
 import { ISwipingCard, ISwipingCardsProps, NearbyPet } from "./types";
 
 const CardImage: FC<{ src: string; alt: string; className: string }> = ({
@@ -600,27 +601,20 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
 
       {!canSwipe && !isAnimating && !locationError && cards.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="bg-white rounded-2xl p-8 shadow-lg text-center">
-            <p className="text-xl font-semibold text-gray-800">
-              No pets found nearby! 🐕
-            </p>
-            <p className="text-sm text-gray-600 mt-2">
-              Check back later for more matches
-            </p>
-          </div>
+          <NoState
+            title="No pets found nearby!"
+            desc="Check back later for more matches"
+          />
         </div>
       )}
 
       {!canSwipe && !isAnimating && !locationError && cards.length > 0 && (
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="bg-white rounded-2xl p-8 shadow-lg text-center">
-            <p className="text-xl font-semibold text-gray-800">
-              No more pets to view...
-            </p>
-            <p className="text-sm text-gray-600 mt-2">
-              Check back later for more matches
-            </p>
-          </div>
+          <NoState
+            hideImage
+            title="No more pets to view..."
+            desc="Check back later for more matches"
+          />
         </div>
       )}
       <HangTightModal />
