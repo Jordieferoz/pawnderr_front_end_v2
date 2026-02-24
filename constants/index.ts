@@ -108,7 +108,7 @@ export const mobileMenuItems = [
   {
     key: "discover",
     label: "Discover",
-    href: "/dashboard",
+    href: "/discover",
     img: images.discover.src,
     imgActive: images.discoverActive.src,
     imgWidth: 28
@@ -134,7 +134,7 @@ export const headerMenuItems = [
   {
     key: "discover",
     label: "Discover",
-    href: "/dashboard",
+    href: "/discover",
     img: images.discover.src,
     imgActive: images.discoverActive.src,
     imgWidth: 22

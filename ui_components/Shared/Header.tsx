@@ -40,9 +40,9 @@ const Header: FC = () => {
   const isItemActive = (itemHref: string, itemKey: string) => {
     if (itemKey === "discover") {
       return (
-        pathname === "/dashboard" ||
+        pathname === "/discover" ||
         pathname === "/profile" ||
-        pathname.startsWith("/dashboard/") ||
+        pathname.startsWith("/discover/") ||
         pathname.startsWith("/profile/")
       );
     }
@@ -53,7 +53,7 @@ const Header: FC = () => {
     <>
       <header className="fixed py-4 w-full left-0 h-22.5 top-0 z-50 bg-white border-b border-blue/10 shadow-[0px_4px_16.4px_0px_#0000000F] hidden md:block">
         <nav className="px-10 common_container flex items-center justify-between gap-4">
-          <Link href={"/dashboard"}>
+          <Link href={"/discover"}>
             <img
               src={images.logoHorizontal.src}
               alt="logo"

@@ -6,9 +6,8 @@ import { FC } from "react";
 import { useUserProfileFromStorage } from "@/hooks";
 import { images } from "@/utils/images";
 
-import { Bell } from "lucide-react";
-import { useDispatch } from "react-redux";
 import { openNotificationModal } from "@/store/modalSlice";
+import { useDispatch } from "react-redux";
 import { DropdownMenu } from ".";
 import { Notifications } from "../Shared/Notifications";
 
@@ -20,7 +19,7 @@ const MobileHeader: FC = () => {
     <>
       <header className="fixed py-4 w-full left-0 top-0 z-50 bg-white md:hidden border-b border-gray-100">
         <nav className="container mx-auto px-5 flex items-center justify-between gap-4">
-          <Link href={"/dashboard"}>
+          <Link href={"/discover"}>
             <img
               src={images.logoHorizontal.src}
               alt="logo"

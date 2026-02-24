@@ -1,7 +1,7 @@
 import { MobileHeader } from "@/ui_components/Dashboard";
 import { Header } from "@/ui_components/Shared";
 import { images } from "@/utils/images";
-import ProfileLoader from "./dashboard/ProfileLoader";
+import ProfileLoader from "./discover/ProfileLoader";
 
 export const metadata = {
   title: "Pawnderr - Dashboard",
