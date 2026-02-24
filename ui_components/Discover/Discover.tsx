@@ -1,6 +1,6 @@
 "use client";
 
-import SwipingCards from "@/ui_components/Dashboard/SwipingCards";
+import SwipingCards from "@/ui_components/Discover/SwipingCards";
 import {
   discoverNearbyPets,
   fetchMyPet,
@@ -9,13 +9,13 @@ import {
 import { images } from "@/utils/images";
 import { petsStorage } from "@/utils/pets-storage";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import CustomAvatar from "../Shared/CustomAvatar";
 
 import { IPetData } from "../Profile/types";
 import { NearbyPet } from "./types";
 
-const Discover = () => {
+const Discover: FC = () => {
   const router = useRouter();
   const [firstPetId, setFirstPetId] = useState<number | null>(null);
   const [petData, setPetData] = useState<IPetData | null>(null);

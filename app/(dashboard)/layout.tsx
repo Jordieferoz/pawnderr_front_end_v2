@@ -1,11 +1,11 @@
-import { MobileHeader } from "@/ui_components/Dashboard";
+import { MobileHeader } from "@/ui_components/Discover";
 import { Header } from "@/ui_components/Shared";
 import { images } from "@/utils/images";
 import ProfileLoader from "./discover/ProfileLoader";
 
 export const metadata = {
-  title: "Pawnderr - Dashboard",
-  description: "Pawnderr - Dashboard"
+  title: "Pawnderr - Discover",
+  description: "Pawnderr - Discover"
 };
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (

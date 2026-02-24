@@ -15,7 +15,7 @@ import { RootState } from "@/store";
 import { getMatchIndicators } from "@/store/matchSlice";
 import { openNotificationModal } from "@/store/modalSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { DropdownMenu } from "../Dashboard";
+import { DropdownMenu } from "../Discover";
 import { Notifications } from "./Notifications";
 
 const Header: FC = () => {
