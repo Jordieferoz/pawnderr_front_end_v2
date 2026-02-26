@@ -18,7 +18,7 @@ const NoState: FC<NoStateProps> = ({
 }) => {
   return (
     <div
-      className={`bg-white rounded-[12px] shadow-[0_4px_30px_0_#0000001A] py-[30px] px-4 w-[320px] mx-auto flex flex-col items-center justify-center text-center ${className}`}
+      className={`bg-white rounded-[12px] shadow-[0_4px_30px_0_#0000001A] p-[30px] w-[320px] mx-auto flex flex-col items-center justify-center text-center ${className}`}
     >
       {!hideImage && (
         <div className="mb-4">

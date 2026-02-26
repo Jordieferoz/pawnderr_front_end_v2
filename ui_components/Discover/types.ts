@@ -33,4 +33,5 @@ export interface ISwipingCardsProps {
   petData: IPetData | null;
   loading: boolean;
   containerHeight?: number;
+  onGeoRestricted?: (isRestricted: boolean) => void;
 }

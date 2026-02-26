@@ -9,12 +9,8 @@ import {
   openMatchModal,
   openOutOfSwipesModal
 } from "@/store/modalSlice";
-import { getUserLocation } from "@/utils";
-import {
-  discoverNearbyPets,
-  swipePetAction,
-  updateUserLocation
-} from "@/utils/api";
+import { ensureUserLocationAndUpdate } from "@/utils";
+import { discoverNearbyPets, swipePetAction } from "@/utils/api";
 import { images } from "@/utils/images";
 import { useDrag } from "@use-gesture/react";
 import { HangTightModal, MatchModal, OutOfSwipesModal } from "../Modals";
@@ -56,7 +52,8 @@ const CardImage: FC<{ src: string; alt: string; className: string }> = ({
 const SwipingCards: FC<ISwipingCardsProps> = ({
   petData,
   loading,
-  containerHeight
+  containerHeight,
+  onGeoRestricted
 }) => {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -73,6 +70,7 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
   const [isLocationLoading, setIsLocationLoading] = useState(false);
   const [isFetchingPets, setIsFetchingPets] = useState(true);
   const [locationError, setLocationError] = useState<string | null>(null);
+  const [isGeoRestricted, setIsGeoRestricted] = useState(false);
 
   const cardRefs = useMemo(
     () =>
@@ -286,53 +284,36 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
       setIsFetchingPets(true);
 
       setLocationError(null);
-
-      const CACHE_KEY = "user_location_cache";
-      const EXPIRY_TIME = 24 * 60 * 60 * 1000; // 1 Day
-
+      setIsGeoRestricted(false);
       try {
-        let latitude: number | null = null;
-        let longitude: number | null = null;
-        let shouldUpdateBackend = false;
-
-        // 1. Check LocalStorage
+        const CACHE_KEY = "user_location_cache";
         const cachedDataStr = localStorage.getItem(CACHE_KEY);
-        if (cachedDataStr) {
-          const cachedData = JSON.parse(cachedDataStr);
-          const isExpired = Date.now() - cachedData.timestamp > EXPIRY_TIME;
+        let needsPrompt = true;
 
-          if (!isExpired && cachedData.latitude && cachedData.longitude) {
-            latitude = cachedData.latitude;
-            longitude = cachedData.longitude;
+        if (cachedDataStr) {
+          try {
+            const cached = JSON.parse(cachedDataStr);
+            if (
+              Date.now() - cached.timestamp <= 24 * 60 * 60 * 1000 &&
+              cached.latitude &&
+              cached.longitude
+            ) {
+              needsPrompt = false;
+            }
+          } catch (e) {
+            console.error("Cache parse error", e);
           }
         }
 
-        // 2. If no valid cache, fetch precise location
-        if (!latitude || !longitude) {
+        if (needsPrompt) {
           setIsLocationLoading(true);
-          const loc = await getUserLocation();
-          latitude = loc.latitude;
-          longitude = loc.longitude;
-          shouldUpdateBackend = true;
-          setIsLocationLoading(false);
-
-          // Save to cache
-          localStorage.setItem(
-            CACHE_KEY,
-            JSON.stringify({ latitude, longitude, timestamp: Date.now() })
-          );
         }
 
-        // 3. Only update backend if we fetched a fresh location
-        if (shouldUpdateBackend && latitude !== null && longitude !== null) {
-          await updateUserLocation({
-            latitude,
-            longitude
-          });
-        }
+        await ensureUserLocationAndUpdate();
+        setIsLocationLoading(false);
 
         const response = await discoverNearbyPets(petData.id);
-
+        console.log(response, "response");
         // Transform API response to cards format
         if (response?.data?.pets && Array.isArray(response.data.pets)) {
           const transformedCards: ISwipingCard[] = response.data.pets.map(
@@ -368,19 +349,28 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
 
           setCards(transformedCards);
           setCurrentIndex(transformedCards.length - 1);
+          onGeoRestricted?.(false);
         } else {
           setCards([]);
           setCurrentIndex(-1);
+          onGeoRestricted?.(false);
         }
       } catch (error: any) {
-        console.error("Error initializing discovery:", error);
+        const isGeoRestrictedError =
+          error?.data?.data?.error === "GEO_RESTRICTED";
 
-        const message =
-          error?.message === "User denied Geolocation"
-            ? "We need your location to show nearby pets. Please allow location access in your browser/app and try again."
-            : "Unable to fetch your location. Please check your location settings and try again.";
+        if (isGeoRestrictedError) {
+          setIsGeoRestricted(true);
+          onGeoRestricted?.(true);
+        } else {
+          const message =
+            error?.message === "User denied Geolocation"
+              ? "We need your location to show nearby pets. Please allow location access in your browser/app and try again."
+              : "Unable to fetch your location. Please check your location settings and try again.";
 
-        setLocationError(message);
+          setLocationError(message);
+          onGeoRestricted?.(false);
+        }
         setCards([]);
         setCurrentIndex(-1);
       } finally {
@@ -398,6 +388,20 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
     : 520;
 
   if (loading || isLocationLoading || isFetchingPets) {
+    if (isGeoRestricted) {
+      return (
+        <div
+          className="w-full max-w-[340px] relative mx-auto flex items-center justify-center mt-4"
+          style={{ height: `${effectiveHeight}px` }}
+        >
+          <NoState
+            title="Coming to your city soon."
+            desc="We’re not live in your area right now. Pawnderr is expanding and your city is on our list."
+          />
+        </div>
+      );
+    }
+
     let loadingText = "Loading your pet details...";
     if (isLocationLoading) {
       loadingText =
@@ -422,7 +426,7 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
   }
   return (
     <div
-      className="w-full max-w-[340px] relative mx-auto mt-12"
+      className="w-full max-w-[340px] relative mx-auto mt-4"
       style={{ height: `${effectiveHeight}px` }}
     >
       <div className="relative h-full">
@@ -585,7 +589,7 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
       )}
 
       {locationError && (
-        <div className="absolute inset-0 flex items-center justify-center bg-white/80 backdrop-blur-sm">
+        <div className="absolute inset-0 flex items-center justify-center backdrop-blur-sm">
           <div className="bg-white rounded-2xl p-6 shadow-lg max-w-xs text-center">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
               Location needed
@@ -608,12 +612,25 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
         </div>
       )}
 
-      {!canSwipe && !isAnimating && !locationError && cards.length > 0 && (
+      {!canSwipe &&
+        !isAnimating &&
+        !locationError &&
+        !isGeoRestricted &&
+        cards.length > 0 && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <NoState
+              hideImage
+              title="No more pets to view..."
+              desc="Check back later for more matches"
+            />
+          </div>
+        )}
+
+      {isGeoRestricted && (
         <div className="absolute inset-0 flex items-center justify-center">
           <NoState
-            hideImage
-            title="No more pets to view..."
-            desc="Check back later for more matches"
+            title="Coming to your city soon."
+            desc="We’re not live in your area right now. Pawnderr is expanding and your city is on our list."
           />
         </div>
       )}

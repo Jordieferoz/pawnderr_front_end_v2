@@ -6,14 +6,17 @@ import {
   fetchMyPet,
   fetchMyPetsCollection
 } from "@/utils/api";
-import { images } from "@/utils/images";
 import { petsStorage } from "@/utils/pets-storage";
 import { useRouter } from "next/navigation";
 import { FC, useEffect, useRef, useState } from "react";
-import CustomAvatar from "../Shared/CustomAvatar";
 
+import { ensureUserLocationAndUpdate } from "@/utils";
+import { images } from "@/utils/images";
 import { IPetData } from "../Profile/types";
+import { CustomAvatar } from "../Shared";
+import FeaturedProfile from "./FeaturedProfile";
 import { NearbyPet } from "./types";
+import YourStats from "./YourStats";
 
 const Discover: FC = () => {
   const router = useRouter();
@@ -27,6 +30,8 @@ const Discover: FC = () => {
   const [swipingCardsHeight, setSwipingCardsHeight] = useState<
     number | undefined
   >(undefined);
+  // Default to true (hidden) until location is successfully fetched
+  const [isGeoRestricted, setIsGeoRestricted] = useState(true);
 
   useEffect(() => {
     const ensureFirstPetId = async () => {
@@ -77,6 +82,7 @@ const Discover: FC = () => {
 
         // Fetch premium pets
         try {
+          await ensureUserLocationAndUpdate();
           const premiumResp = await discoverNearbyPets(Number(firstPetId), {
             is_premium: true
           });
@@ -126,37 +132,61 @@ const Discover: FC = () => {
   return (
     <div
       ref={wrapperRef}
-      className="discover_wrapper common_container md:h-[calc(100vh-120px)] h-[calc(100vh-166px)] w-full"
+      className="discover_wrapper common_container md:min-h-[calc(100vh-120px)] min-h-[calc(100vh-166px)] w-full"
     >
-      <div
-        className="md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] md:px-5 md:py-5 md:rounded-2xl md:w-[700px] md:mx-auto box-border"
-        style={{ height: "100%" }}
-      >
-        <div className="items-center justify-between mb-4">
-          <div className="flex my-3 gap-4 items-center overflow-x-auto hide-scrollbar">
-            {premiumPets.map((pet, index) => (
-              <div
-                key={index}
-                onClick={() => router.push(`/profile/${pet.id}?action=true`)}
-              >
-                <CustomAvatar
-                  src={pet.primary_image?.image_url}
-                  size={64}
-                  gender={pet.gender as any}
-                  name={pet.name}
-                  showPlus={true}
-                  plusIcon={images.pawnderrPlus.src}
-                />
-              </div>
-            ))}
+      {!isGeoRestricted && (
+        <div className="flex my-3 gap-4 items-center overflow-x-auto hide-scrollbar">
+          {premiumPets.map((pet, index) => (
+            <div
+              key={index}
+              onClick={() => router.push(`/profile/${pet.id}?action=true`)}
+            >
+              <CustomAvatar
+                src={pet.primary_image?.image_url}
+                size={64}
+                gender={pet.gender as any}
+                name={pet.name}
+                showPlus={true}
+                plusIcon={images.pawnderrPlus.src}
+              />
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="flex flex-col lg:flex-row gap-6 justify-center w-full h-full items-start">
+        {/* Left Column - Your Stats */}
+        {!isGeoRestricted && (
+          <div className="hidden lg:block w-[320px] shrink-0">
+            <YourStats />
+          </div>
+        )}
+
+        {/* Middle Column - Swiping Cards */}
+        <div className="flex-1 w-full max-w-[700px] flex justify-center">
+          <div className="md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] md:px-5 md:py-8 md:rounded-[24px] box-border w-full flex flex-col h-[520px] md:h-[560px]">
+            <h2 className="font_fredoka text-2xl font-medium mb-3 text-center text-dark-grey hidden md:block">
+              Discover Nearby Profiles
+            </h2>
+            <div className="flex-1 relative w-full h-full min-h-[440px]">
+              <SwipingCards
+                petData={petData}
+                loading={loading}
+                containerHeight={
+                  swipingCardsHeight ? swipingCardsHeight - 60 : undefined
+                }
+                onGeoRestricted={(restricted) => setIsGeoRestricted(restricted)}
+              />
+            </div>
           </div>
         </div>
 
-        <SwipingCards
-          petData={petData}
-          loading={loading}
-          containerHeight={swipingCardsHeight}
-        />
+        {/* Right Column - Featured Profile */}
+        {!isGeoRestricted && (
+          <div className="hidden lg:block w-[320px] shrink-0">
+            <FeaturedProfile pet={premiumPets[0]} />
+          </div>
+        )}
       </div>
     </div>
   );
