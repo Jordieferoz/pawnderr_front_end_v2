@@ -1,6 +1,5 @@
 "use client";
 
-import SwipingCards from "@/ui_components/Discover/SwipingCards";
 import {
   discoverNearbyPets,
   fetchMyPet,
@@ -10,13 +9,12 @@ import { petsStorage } from "@/utils/pets-storage";
 import { useRouter } from "next/navigation";
 import { FC, useEffect, useRef, useState } from "react";
 
-import { ensureUserLocationAndUpdate } from "@/utils";
+import { ensureUserLocationAndUpdate, getGenderColor } from "@/utils";
 import { images } from "@/utils/images";
+import { MyProfileCard, SwipingCards, YourStats } from ".";
 import { IPetData } from "../Profile/types";
 import { CustomAvatar } from "../Shared";
-import FeaturedProfile from "./FeaturedProfile";
 import { NearbyPet } from "./types";
-import YourStats from "./YourStats";
 
 const Discover: FC = () => {
   const router = useRouter();
@@ -25,6 +23,7 @@ const Discover: FC = () => {
   const [loading, setLoading] = useState(true);
   console.log(petData, "petData");
   const [premiumPets, setPremiumPets] = useState<NearbyPet[]>([]);
+  const borderColor = getGenderColor(petData?.gender ?? "");
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [swipingCardsHeight, setSwipingCardsHeight] = useState<
@@ -129,12 +128,31 @@ const Discover: FC = () => {
     return () => window.removeEventListener("resize", updateHeight);
   }, []);
 
+  const primaryImage =
+    petData?.images?.find((img) => img.is_primary)?.image_url ||
+    petData?.images?.[0]?.image_url;
+
+  const profileData = {
+    name: petData?.name ?? "",
+    gender: petData?.gender ?? "",
+    age: petData?.age ?? 0,
+    barkoGraphy: petData?.bark_o_graphy ?? "",
+    funFactOrHabit: petData?.fun_fact_or_habit ?? "",
+    breed: petData?.breed?.name ?? "",
+    location: "Gurugram",
+    image: primaryImage,
+    isVerified: petData?.is_verified,
+    isPremium: petData?.user?.is_premium_user,
+    isFoundingDog: petData?.is_founding_dog,
+    petId: petData?.id
+  };
+
   return (
     <div
       ref={wrapperRef}
-      className="discover_wrapper common_container md:min-h-[calc(100vh-120px)] min-h-[calc(100vh-166px)] w-full"
+      className="discover_wrapper common_container w-full my-6"
     >
-      {!isGeoRestricted && (
+      {!isGeoRestricted && premiumPets?.length > 0 && (
         <div className="flex my-3 gap-4 items-center overflow-x-auto hide-scrollbar">
           {premiumPets.map((pet, index) => (
             <div
@@ -158,13 +176,16 @@ const Discover: FC = () => {
         {/* Left Column - Your Stats */}
         {!isGeoRestricted && (
           <div className="hidden lg:block w-[320px] shrink-0">
-            <YourStats />
+            <YourStats borderColor={borderColor} />
           </div>
         )}
 
         {/* Middle Column - Swiping Cards */}
         <div className="flex-1 w-full max-w-[700px] flex justify-center">
-          <div className="md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] md:px-5 md:py-8 md:rounded-[24px] box-border w-full flex flex-col h-[520px] md:h-[560px]">
+          <div
+            className="md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] border-2 md:px-5 md:py-8 md:rounded-xl box-border w-full flex flex-col h-[520px] md:h-[560px]"
+            style={{ borderColor }}
+          >
             <h2 className="font_fredoka text-2xl font-medium mb-3 text-center text-dark-grey hidden md:block">
               Discover Nearby Profiles
             </h2>
@@ -184,7 +205,7 @@ const Discover: FC = () => {
         {/* Right Column - Featured Profile */}
         {!isGeoRestricted && (
           <div className="hidden lg:block w-[320px] shrink-0">
-            <FeaturedProfile pet={premiumPets[0]} />
+            <MyProfileCard {...profileData} borderColor={borderColor} />
           </div>
         )}
       </div>

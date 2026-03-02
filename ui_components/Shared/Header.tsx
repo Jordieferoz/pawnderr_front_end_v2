@@ -105,14 +105,14 @@ const Header: FC = () => {
 
             {isSubscribed ? (
               <Link href={"/my-subscription"} className="cursor-pointer">
-                <Button>
+                <Button className="font_fredoka font-medium">
                   <img src={images.pawnderBlack.src} alt="pawnderr+" /> View
                   Subscription
                 </Button>
               </Link>
             ) : (
               <Link href={"/upgrade"} className="cursor-pointer">
-                <Button>
+                <Button className="font_fredoka font-medium">
                   <img src={images.pawnderBlack.src} alt="pawnderr+" /> Go
                   Premium
                 </Button>

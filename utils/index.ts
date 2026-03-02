@@ -92,3 +92,8 @@ export const ensureUserLocationAndUpdate = async (): Promise<{
 
   return locationUpdatePromise;
 };
+
+export const formatAgeText = (gender: string, age: number) => {
+  const yearText = age === 1 ? "Year" : "Years";
+  return `${gender}, ${age} ${yearText}`;
+};

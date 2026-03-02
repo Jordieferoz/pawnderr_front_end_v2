@@ -35,3 +35,7 @@ export interface ISwipingCardsProps {
   containerHeight?: number;
   onGeoRestricted?: (isRestricted: boolean) => void;
 }
+
+export interface IYourStatsProps {
+  borderColor?: string;
+}

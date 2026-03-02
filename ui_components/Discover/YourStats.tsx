@@ -11,8 +11,9 @@ import {
 import { useRouter } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { IYourStatsProps } from "./types";
 
-const YourStats: FC = () => {
+const YourStats: FC<IYourStatsProps> = ({ borderColor }) => {
   const router = useRouter();
   const isSubscribed = useSelector(
     (state: RootState) => state.subscription.isSubscribed
@@ -60,40 +61,45 @@ const YourStats: FC = () => {
   }, [isSubscribed]);
 
   return (
-    <div className="bg-white rounded-[24px] shadow-[0px_4px_16.4px_0px_#0000001A] p-5 w-full flex flex-col h-[520px] md:h-[560px]">
-      <div className="bg-indigo-100 rounded-lg p-3 mb-6">
-        <h3 className="text-indigo-500 font-medium text-center">Your Stats</h3>
+    <div
+      className="bg-white rounded-xl border-2 shadow-[0px_4px_19.1px_7px_#0000000A] p-4 w-full flex flex-col h-[520px] md:h-[560px]"
+      style={{ borderColor }}
+    >
+      <div className="bg-secondary-400 rounded py-2 px-4 mb-6">
+        <h3 className="text-secondary-800 text-base font_fredoka">
+          Your Stats
+        </h3>
       </div>
 
-      <div className="flex-1 flex flex-col gap-6">
-        <div className="flex justify-between items-center text-gray-800 text-lg font-semibold px-2">
+      <div className="flex-1 flex flex-col gap-5 font_fredoka">
+        <div className="flex justify-between items-center text-dark-grey text-2xl font-medium px-2">
           <span>Matches</span>
           <span>{stats.matches}</span>
         </div>
         <div className="border-b border-dashed border-gray-200"></div>
 
-        <div className="flex justify-between items-center text-gray-800 text-lg font-semibold px-2">
+        <div className="flex justify-between items-center text-dark-grey text-2xl font-medium px-2">
           <span>Likes You</span>
           <span>{stats.likesMe}</span>
         </div>
         <div className="border-b border-dashed border-gray-200"></div>
 
-        <div className="flex justify-between items-center text-gray-800 text-lg font-semibold px-2">
+        <div className="flex justify-between items-center text-dark-grey text-2xl font-medium px-2">
           <span>You Liked</span>
           <span>{stats.youLiked}</span>
         </div>
         <div className="border-b border-dashed border-gray-200"></div>
 
-        <div className="flex justify-between items-center text-gray-800 text-lg font-semibold px-2">
+        <div className="flex justify-between items-center text-dark-grey text-2xl font-medium px-2">
           <span>You Disliked</span>
           <span>{stats.youDisliked}</span>
         </div>
       </div>
 
-      <div className="mt-auto pt-6">
+      <div className="mt-auto pt-6 pb-3">
         <Button
+          className="font_fredoka font-medium w-full"
           onClick={() => router.push("/activities")}
-          className="w-full bg-primary-500 hover:bg-primary-600 text-black font-semibold py-6 rounded-2xl shadow-md text-lg"
         >
           View Activities
         </Button>

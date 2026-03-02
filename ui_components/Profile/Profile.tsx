@@ -44,7 +44,8 @@ const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
     location: "Gurugram",
     image: primaryImage,
     isVerified: petData?.is_verified,
-    isPremium: petData?.user?.is_premium_user
+    isPremium: petData?.user?.is_premium_user,
+    isFoundingDog: petData?.is_founding_dog
   };
 
   // Dynamically map all attributes for Floof's Story

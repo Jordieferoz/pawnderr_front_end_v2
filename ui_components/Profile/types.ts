@@ -7,10 +7,26 @@ export interface IProfileCardProps {
   image?: string;
   isVerified?: boolean;
   isPremium?: boolean;
+  isFoundingDog?: boolean;
   showActions?: boolean;
   onLike?: () => void;
   onDislike?: () => void;
   disabled?: boolean;
+}
+export interface IMyProfileCardProps {
+  name?: string;
+  gender?: string;
+  age?: number;
+  petId?: number;
+  breed?: string;
+  location?: string;
+  barkoGraphy?: string;
+  funFactOrHabit?: string;
+  image?: string;
+  isVerified?: boolean;
+  isPremium?: boolean;
+  isFoundingDog?: boolean;
+  borderColor?: string;
 }
 export interface IInfoCardProps {
   image?: string;
@@ -43,6 +59,7 @@ export interface IPetData {
   fun_fact_or_habit: string;
   vaccination_status: string;
   is_spayed_neutered: boolean;
+  is_founding_dog: boolean;
   breed: {
     id: number;
     name: string;

@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-import { getGenderColor } from "@/utils";
+import { formatAgeText, getGenderColor } from "@/utils";
 import { images } from "@/utils/images";
 import { IProfileCardProps } from "./types";
 
@@ -13,6 +13,7 @@ const ProfileCard: FC<IProfileCardProps> = ({
   image,
   isVerified,
   isPremium,
+  isFoundingDog,
   showActions,
   onLike,
   onDislike,
@@ -27,11 +28,18 @@ const ProfileCard: FC<IProfileCardProps> = ({
     >
       <div className="relative">
         <img src={image} className="w-full rounded-xl mb-4" alt="image" />
+        {isFoundingDog && (
+          <img
+            src={images.isFoundingDog.src}
+            alt="foundingDog"
+            className="w-14 h-14 absolute top-4.5 left-5 z-20"
+          />
+        )}
         {isPremium && (
           <img
-            src={images.premiumBadge.src}
-            className="absolute top-4 left-4"
-            alt="image"
+            src={images.crownYellowBg.src}
+            alt="premium"
+            className="w-10 h-10 absolute top-4.5 right-5 z-20"
           />
         )}
         {showActions && (
@@ -58,7 +66,7 @@ const ProfileCard: FC<IProfileCardProps> = ({
           {name}{" "}
           <div className="flex items-center gap-2">
             <span className="body_large_medium capitalize block">
-              {gender}, {age} Years
+              {formatAgeText(gender ?? "", age ?? 0)}
             </span>
             {isVerified && <img src={images.verified.src} alt="verified" />}
           </div>
