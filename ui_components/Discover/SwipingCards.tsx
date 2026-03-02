@@ -315,8 +315,11 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
         const response = await discoverNearbyPets(petData.id);
         console.log(response, "response");
         // Transform API response to cards format
-        if (response?.data?.pets && Array.isArray(response.data.pets)) {
-          const transformedCards: ISwipingCard[] = response.data.pets.map(
+        if (
+          response?.data?.data?.pets &&
+          Array.isArray(response.data.data.pets)
+        ) {
+          const transformedCards: ISwipingCard[] = response.data.data.pets.map(
             (pet: NearbyPet) => {
               let genderDisplay = pet.gender;
               if (pet.gender === "male") {

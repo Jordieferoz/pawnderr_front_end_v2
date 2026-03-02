@@ -32,7 +32,7 @@ const MyProfileCard: FC<IMyProfileCardProps> = ({
       <div className="relative">
         <img
           src={image}
-          className="w-full rounded-xl mb-4 object-cover"
+          className="w-[284px] h-[284px] rounded-xl mb-4 object-cover"
           alt="image"
         />
         {isFoundingDog && (

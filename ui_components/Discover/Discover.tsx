@@ -85,8 +85,11 @@ const Discover: FC = () => {
           const premiumResp = await discoverNearbyPets(Number(firstPetId), {
             is_premium: true
           });
-          if (premiumResp?.data?.pets && Array.isArray(premiumResp.data.pets)) {
-            setPremiumPets(premiumResp.data.pets);
+          if (
+            premiumResp?.data?.data?.pets &&
+            Array.isArray(premiumResp.data.data.pets)
+          ) {
+            setPremiumPets(premiumResp.data.data.pets);
           }
         } catch (err) {
           console.error("Error fetching premium pets:", err);
