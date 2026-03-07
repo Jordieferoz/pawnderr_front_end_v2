@@ -2,14 +2,14 @@
 
 import { images } from "@/utils/images";
 import { FC, useEffect, useState } from "react";
-import ChangePassword from "./ChangePassword";
-import PersonalInfo from "./PersonalInfo";
-import SettingsHeader from "./SettingsHeader";
+import { ChangePassword, DeleteAccount, PersonalInfo, SettingsHeader } from ".";
 
 const stepTitles: Record<number, string> = {
-  0: "Settings",
+  0: "Account Settings",
   1: "Personal Information",
-  2: "Change Password"
+  2: "Change Password",
+  3: "Deactivate Account",
+  4: "Delete Account"
 };
 
 const Settings: FC = () => {
@@ -37,7 +37,7 @@ const Settings: FC = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, [step]);
 
-  const currentTitle = stepTitles[step] || "Settings";
+  const currentTitle = stepTitles[step] || "Account Settings";
 
   const handleBack = () => {
     if (window.innerWidth < 768 && step !== 0) {
@@ -52,7 +52,9 @@ const Settings: FC = () => {
       <div className="mb-7">
         <SettingsHeader
           title={
-            step === 0 ? currentTitle : { base: currentTitle, md: "Settings" }
+            step === 0
+              ? currentTitle
+              : { base: currentTitle, md: "Account Settings" }
           }
           onBack={handleBack}
         />
@@ -94,6 +96,36 @@ const Settings: FC = () => {
                   alt="Navigate"
                 />
               </li>
+              {/* <li
+                className={`py-4 px-5 border-b md:border-0 md:rounded-full last:border-0 border-grey-700 flex items-center justify-between cursor-pointer transition-colors ${
+                  step === 3
+                    ? "md:bg-[#DBEAFF] md:text-blue"
+                    : "text-light-grey2"
+                }`}
+                onClick={() => setStep(3)}
+              >
+                <p className="body_large_medium">Deactivate Account</p>
+                <img
+                  src={images.chevronRight.src}
+                  className="w-2 block md:hidden"
+                  alt="Navigate"
+                />
+              </li> */}
+              <li
+                className={`py-4 px-5 border-b md:border-0 md:rounded-full last:border-0 border-grey-700 flex items-center justify-between cursor-pointer transition-colors ${
+                  step === 4
+                    ? "md:bg-[#DBEAFF] md:text-blue"
+                    : "text-light-grey2"
+                }`}
+                onClick={() => setStep(4)}
+              >
+                <p className="body_large_medium">Delete Account</p>
+                <img
+                  src={images.chevronRight.src}
+                  className="w-2 block md:hidden"
+                  alt="Navigate"
+                />
+              </li>
             </ul>
           </div>
 
@@ -102,6 +134,7 @@ const Settings: FC = () => {
           >
             {step === 1 && <PersonalInfo />}
             {step === 2 && <ChangePassword />}
+            {step === 4 && <DeleteAccount />}
           </div>
         </div>
       </div>

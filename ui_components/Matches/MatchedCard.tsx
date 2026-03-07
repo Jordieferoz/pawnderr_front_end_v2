@@ -2,6 +2,7 @@
 import { useRouter } from "next/navigation";
 import { FC, useState } from "react";
 
+import { NoState } from "@/ui_components/Shared";
 import { showToast } from "@/ui_components/Shared/ToastMessage";
 import { checkCanChat, messageInitiated } from "@/utils/api";
 import { images } from "@/utils/images";
@@ -19,6 +20,9 @@ type Card = {
   matchId?: string | number;
   funFact?: string;
   barkography?: string;
+  isVerified?: boolean;
+  isFoundingDog?: boolean;
+  isPremiumUser?: boolean;
 };
 
 const FlipCard: FC<{ card: Card }> = ({ card }) => {
@@ -113,10 +117,24 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
       >
         {/* Front Face */}
         <div className="absolute inset-0 rounded-[24px] [backface-visibility:hidden]">
-          {card.indicator && (
+          {/* {card.indicator && (
             <div className="absolute top-6 left-6 z-20 bg-black text-white px-3 py-1 rounded-lg border-[1.5px] border-white text-sm font-bold tracking-wider">
               {card.indicator}
             </div>
+          )} */}
+          {card.isFoundingDog && (
+            <img
+              src={images.isFoundingDog.src}
+              alt="foundingDog"
+              className="w-14 h-14 absolute top-4.5 left-5 z-20"
+            />
+          )}
+          {card.isPremiumUser && (
+            <img
+              src={images.crownYellowBg.src}
+              alt="premium"
+              className="w-10 h-10 absolute top-4.5 right-5 z-20"
+            />
           )}
           <img
             src={card.url}
@@ -127,8 +145,15 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
           <div className="absolute bottom-17 left-5 right-5 text-white z-10">
             <h3 className="text-2xl font-semibold leading-tight">
               {card.name}{" "}
-              <span className="text-base font-normal opacity-90 capitalize">
+              <span className="text-base font-normal opacity-90 capitalize inline-flex items-center gap-1">
                 {card.info}
+                {card?.isVerified && (
+                  <img
+                    src={images.verified.src}
+                    alt="verified"
+                    className="w-4 h-4"
+                  />
+                )}
               </span>
             </h3>
             <p className="text-sm opacity-90 mt-1 leading-snug line-clamp-2 text-ellipsis">
@@ -246,7 +271,7 @@ const MatchedCard: FC<MatchedCardProps> = ({
   if (!matches || matches.length === 0) {
     return (
       <div className="w-full min-h-[60vh] flex items-center justify-center">
-        <p className="text-gray-500 text-lg">No active matches found.</p>
+        <NoState title="No Matches Found" />
       </div>
     );
   }
@@ -275,11 +300,9 @@ const MatchedCard: FC<MatchedCardProps> = ({
           const hasIndicator = indicatorSet.has(matchId);
 
           // Find primary image
-          const primaryImage =
-            match.pet?.images?.find((img: any) => img.is_primary)?.image_url ||
-            match.pet?.images?.[0]?.image_url ||
-            match.pet?.primary_photo_url ||
-            match.primary_photo_url;
+          const primaryImage = match.pet?.images?.find(
+            (img: any) => img.is_primary
+          )?.image_url;
 
           return (
             <FlipCard
@@ -287,14 +310,10 @@ const MatchedCard: FC<MatchedCardProps> = ({
               card={{
                 id: chatId,
                 petId: match.pet.id,
-                name: match.pet?.name || match.name || "Unknown",
-                info: `(${match.pet?.gender || match.gender || "Unknown"}, ${match.pet?.age || match.age || "?"} Years)`,
+                name: match.pet?.name,
+                info: `(${match.pet?.gender}, ${match.pet?.age || match.age || "?"} Years)`,
                 url: primaryImage,
-                desc:
-                  match.pet?.bio ||
-                  match.bio ||
-                  match.description ||
-                  "No description available",
+                desc: match.pet?.bark_o_graphy || match.pet.fun_fact_or_habit,
                 details: [
                   match.pet?.breed?.name ||
                     match.pet?.breed ||
@@ -307,7 +326,10 @@ const MatchedCard: FC<MatchedCardProps> = ({
                 indicator: hasIndicator ? "NEW!" : undefined,
                 matchId: match.match_id || match.id,
                 funFact: match.pet?.fun_fact_or_habit,
-                barkography: match.pet?.bark_o_graphy
+                barkography: match.pet?.bark_o_graphy,
+                isFoundingDog: match.pet?.is_founding_dog,
+                isVerified: match.pet?.is_verified,
+                isPremiumUser: match.user?.is_premium_user
               }}
             />
           );

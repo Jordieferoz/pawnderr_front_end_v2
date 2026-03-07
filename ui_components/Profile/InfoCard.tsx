@@ -1,5 +1,6 @@
 import { FC } from "react";
 
+import { getGenderColor } from "@/utils";
 import { IInfoCardProps } from "./types";
 
 const InfoCard: FC<IInfoCardProps> = ({
@@ -8,18 +9,22 @@ const InfoCard: FC<IInfoCardProps> = ({
   desc,
   list = [],
   image,
-  className
+  className,
+  imagePosition = "top",
+  gender
 }) => {
+  const borderColor = getGenderColor(gender || "");
+  const imageElement = image && (
+    <img src={image} className="w-full rounded-xl grow basis-0" alt="image" />
+  );
+
   return (
-    <div className="bg-white p-4 shadow-[0px_4px_10.6px_0px_#0000001A] rounded-xl">
-      <div className="">
-        {image && (
-          <img
-            src={image}
-            className="w-full rounded-xl grow basis-0 mb-4"
-            alt="image"
-          />
-        )}
+    <div
+      className="bg-white p-4 shadow-[0px_4px_10.6px_0px_#0000001A] border-2 rounded-xl"
+      style={{ borderColor }}
+    >
+      <div className="flex flex-col gap-4">
+        {imagePosition === "top" && imageElement}
         <div className="grow basis-0">
           <h2 className={`heading4 text-dark-grey mb-3 ${className ?? ""}`}>
             {title}
@@ -47,6 +52,7 @@ const InfoCard: FC<IInfoCardProps> = ({
             </div>
           )}
         </div>
+        {imagePosition === "bottom" && imageElement}
       </div>
     </div>
   );

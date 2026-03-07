@@ -16,6 +16,8 @@ import browseLeftShape from "public/assets/images/browse_left_shape.svg";
 import browseProfileDogs from "public/assets/images/browse_profile_dogs.png";
 import browseRightRibbon from "public/assets/images/browse_right_ribbon.svg";
 import browseRightShape from "public/assets/images/browse_right_shape.svg";
+import checkGrey from "public/assets/images/check_grey.svg";
+import checkWhite from "public/assets/images/check_white.svg";
 import chevronRight from "public/assets/images/chevron_right.svg";
 import chevronRightGrey from "public/assets/images/chevron_right_grey.svg";
 import communityCares from "public/assets/images/community_cares.png";
@@ -66,6 +68,7 @@ import logo from "public/assets/images/logo.svg";
 import logoBig from "public/assets/images/logo_big.svg";
 import logoHorizontal from "public/assets/images/logo_horizontal.svg";
 import loyalRibbon from "public/assets/images/loyal_ribbon.svg";
+import matchIndicator from "public/assets/images/match_indicator.svg";
 import matchMeet from "public/assets/images/match_meet.png";
 import matches from "public/assets/images/matches.svg";
 import matchesActive from "public/assets/images/matches_active.svg";
@@ -84,7 +87,15 @@ import pinkLeftShape from "public/assets/images/pink_left_shape.svg";
 import pinkRightShape from "public/assets/images/pink_right_shape.svg";
 import pinkTopPattern from "public/assets/images/pink_top_pattern.svg";
 import playBlue from "public/assets/images/play_blue.svg";
+import premium1 from "public/assets/images/premium_1.png";
+import premium2 from "public/assets/images/premium_2.png";
+import premium3 from "public/assets/images/premium_3.png";
+import premium4 from "public/assets/images/premium_4.png";
+import premium5 from "public/assets/images/premium_5.png";
+import premium6 from "public/assets/images/premium_6.png";
+import premiumBadge from "public/assets/images/premium_badge.svg";
 import premiumYellow from "public/assets/images/premium_yellow.svg";
+import profileOverlay from "public/assets/images/profile_overlay.png";
 import purpleIcon from "public/assets/images/purple_icon.svg";
 import reliableDogs from "public/assets/images/reliable_dogs.png";
 import sadPug from "public/assets/images/sad_pug.png";
@@ -95,29 +106,20 @@ import signupLeftBlur from "public/assets/images/signup_left_blur.svg";
 import signupRightBlur from "public/assets/images/signup_right_blur.svg";
 import smileyActive from "public/assets/images/smiley_active.svg";
 import sniffSwipe from "public/assets/images/sniff_swipe.png";
-import checkGrey from "public/assets/images/check_grey.svg";
-import checkWhite from "public/assets/images/check_white.svg";
 import twitter from "public/assets/images/twitter.svg";
 import userFormBg from "public/assets/images/user_form_bg.svg";
 import userLeftBlur from "public/assets/images/user_left_blur.svg";
 import userRightBlur from "public/assets/images/user_right_blur.svg";
 import whyChooseDogs from "public/assets/images/why_choose_dogs.png";
-import profileOverlay from "public/assets/images/profile_overlay.png";
-import premium1 from "public/assets/images/premium_1.png";
-import premium2 from "public/assets/images/premium_2.png";
-import premium3 from "public/assets/images/premium_3.png";
-import premium4 from "public/assets/images/premium_4.png";
-import premium5 from "public/assets/images/premium_5.png";
-import premium6 from "public/assets/images/premium_6.png";
-import premiumBadge from "public/assets/images/premium_badge.svg";
-import matchIndicator from "public/assets/images/match_indicator.svg";
 
+import appPattern from "public/assets/images/app_pattern.svg";
+import bellIcon from "public/assets/images/bell_icon.svg";
+import crownYellowBg from "public/assets/images/crown_yellow_bg.svg";
+import isFoundingDog from "public/assets/images/is_founding_dog.svg";
+import sendArrow from "public/assets/images/send_arrow.svg";
+import verified from "public/assets/images/verified.svg";
 import x from "public/assets/images/x.svg";
 import yellowStar from "public/assets/images/yellow_star.svg";
-import bellIcon from "public/assets/images/bell_icon.svg";
-import isFoundingDog from "public/assets/images/is_founding_dog.svg";
-import verified from "public/assets/images/verified.svg";
-import sendArrow from "public/assets/images/send_arrow.svg";
 
 export type ImageType =
   | "logo"
@@ -238,7 +240,9 @@ export type ImageType =
   | "premium6"
   | "premiumBadge"
   | "matchIndicator"
-  | "backBtn";
+  | "backBtn"
+  | "appPattern"
+  | "crownYellowBg";
 
 export type NextImage = {
   src: string;
@@ -365,5 +369,7 @@ export const images: Record<ImageType, NextImage> = {
   premium5,
   premium6,
   premiumBadge,
-  matchIndicator
+  matchIndicator,
+  crownYellowBg,
+  appPattern
 };

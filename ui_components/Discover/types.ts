@@ -32,6 +32,10 @@ export type ISwipingCard = {
 export interface ISwipingCardsProps {
   petData: IPetData | null;
   loading: boolean;
-  isSubscribed: boolean;
   containerHeight?: number;
+  onGeoRestricted?: (isRestricted: boolean) => void;
+}
+
+export interface IYourStatsProps {
+  borderColor?: string;
 }

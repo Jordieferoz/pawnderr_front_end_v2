@@ -39,6 +39,7 @@ interface ModalState {
   isBlockModalOpen: boolean;
   isOutOfSwipesModalOpen: boolean;
   isNotificationModalOpen: boolean;
+  isSubscribedModalOpen: boolean;
 }
 
 const initialState: ModalState = {
@@ -53,7 +54,8 @@ const initialState: ModalState = {
   isMatchModalOpen: false,
   matchModalData: null,
   isOutOfSwipesModalOpen: false,
-  isNotificationModalOpen: false
+  isNotificationModalOpen: false,
+  isSubscribedModalOpen: false
 };
 
 const modalSlice = createSlice({
@@ -123,6 +125,12 @@ const modalSlice = createSlice({
     },
     closeNotificationModal: (state) => {
       state.isNotificationModalOpen = false;
+    },
+    openSubscribedModal: (state) => {
+      state.isSubscribedModalOpen = true;
+    },
+    closeSubscribedModal: (state) => {
+      state.isSubscribedModalOpen = false;
     }
   }
 });
@@ -143,6 +151,8 @@ export const {
   openOutOfSwipesModal,
   closeOutOfSwipesModal,
   openNotificationModal,
-  closeNotificationModal
+  closeNotificationModal,
+  openSubscribedModal,
+  closeSubscribedModal
 } = modalSlice.actions;
 export default modalSlice.reducer;

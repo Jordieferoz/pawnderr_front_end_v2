@@ -592,10 +592,10 @@ export const discoverNearbyPets = (
   return new Promise((resolve, reject) => {
     globalGetService<any, any>(`discovery/nearby/${petId}`, params || {})
       .then((response) => {
-        if (response.statusCode === 200) {
-          resolve(response.data);
+        if (response) {
+          resolve(response);
         } else {
-          reject(new Error(`Unexpected status code: ${response.statusCode}`));
+          reject(new Error(`Unexpected status code: ${response}`));
         }
       })
       .catch((err) => {
@@ -611,10 +611,11 @@ export const updateUserLocation = (payload: {
   return new Promise((resolve, reject) => {
     globalPostService<any, any>(`discovery/location`, payload)
       .then((response) => {
+        console.log({ response });
         if (response.statusCode === 200 || response.statusCode === 201) {
           resolve(response);
         } else {
-          reject(new Error(`Unexpected status code: ${response.statusCode}`));
+          reject(response);
         }
       })
       .catch((err) => {
@@ -756,6 +757,22 @@ export const fetchUnseenMatchCount = (): Promise<TResponse<any>> => {
       .then((response) => {
         if (response.statusCode === 200) {
           resolve(response.data);
+        } else {
+          reject(new Error(`Unexpected status code: ${response.statusCode}`));
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+export const deleteUserAccount = (): Promise<TResponse<any>> => {
+  return new Promise((resolve, reject) => {
+    globalDeleteService<any, any>(`user/profile`, null)
+      .then((response) => {
+        if (response.statusCode === 200 || response.statusCode === 201) {
+          resolve(response);
         } else {
           reject(new Error(`Unexpected status code: ${response.statusCode}`));
         }

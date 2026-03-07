@@ -2,6 +2,7 @@
 
 import {
   createSubscriptionOrder,
+  fetchPetProfile,
   fetchSubscriptionFeatures,
   fetchSubscriptionPlans,
   fetchSubscriptionStatus,
@@ -9,13 +10,18 @@ import {
 } from "@/utils/api";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+
+import { openSubscribedModal } from "@/store/modalSlice";
 
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { images } from "@/utils/images";
+import { petsStorage } from "@/utils/pets-storage";
 import { initiateRazorpayPayment } from "@/utils/razorPay";
 
 import { PricingCard } from ".";
+import { SubscribedModal } from "../Modals";
 import { showToast } from "../Shared/ToastMessage";
 import { PricingType } from "./types";
 
@@ -38,7 +44,11 @@ interface Feature {
 
 const Upgrade = () => {
   const router = useRouter();
-  const [isAnnual, setIsAnnual] = useState(false);
+  const dispatch = useDispatch();
+  const petId = petsStorage.getFirstPetId();
+  const [petImage, setPetImage] = useState<string | undefined>(undefined);
+  const [petGender, setPetGender] = useState<string>("male");
+  const [isAnnual, setIsAnnual] = useState(true);
   const [plans, setPlans] = useState<{
     monthly: Plan | null;
     yearly: Plan | null;
@@ -112,6 +122,25 @@ const Upgrade = () => {
     run();
   }, []);
 
+  useEffect(() => {
+    const fetchPetData = async () => {
+      try {
+        const resp = await fetchPetProfile(Number(petId));
+        const petDetails = resp?.data?.data;
+        if (petDetails) {
+          setPetGender(petDetails.gender || "male");
+          const primary =
+            petDetails.images?.find((img: any) => img.is_primary)?.image_url ||
+            petDetails.images?.[0]?.image_url;
+          setPetImage(primary);
+        }
+      } catch (error) {
+        console.error("Error fetching pet:", error);
+      }
+    };
+    if (petId) fetchPetData();
+  }, [petId]);
+
   const handlePaymentSuccess = async (paymentResponse: any, planId: number) => {
     try {
       const verifyResponse = await verifySubscriptionPayment({
@@ -127,7 +156,12 @@ const Upgrade = () => {
           message: "Subscription activated successfully! 🎉"
         });
 
-        router.push("/dashboard");
+        dispatch(openSubscribedModal());
+
+        // Refresh page after successful subscription to reflect changes everywhere
+        setTimeout(() => {
+          router.refresh();
+        }, 1500); // Small delay to let modal animate in
       }
     } catch (error) {
       showToast({
@@ -205,15 +239,15 @@ const Upgrade = () => {
             alt="Go back"
           />
           <h4 className="display4_medium text-accent-900 relative w-full">
-            PAWnderr+
+            Premium
             <span className="body_large_medium text-neutral-white absolute w-full left-0 top-full">
               More matches. More treats. More tail-wagging perks.
             </span>
           </h4>
         </div>
-        <div className="flex justify-center flex-col items-center mt-20">
-          <p className="display4_medium mb-20 text-accent-900 text-center">
-            You’re a <br /> Pawnderr+ <br /> Member
+        <div className="flex justify-center flex-col items-center mt-30">
+          <p className="display4_medium mb-10 text-accent-900 text-center">
+            You’re a Premium <br /> Member
           </p>
           <Button
             className="w-full md:w-auto px-8"
@@ -236,7 +270,14 @@ const Upgrade = () => {
           alt="Go back"
         />
         <h4 className="display4_medium text-accent-900 relative w-full">
-          PAWnderr+
+          <span className="flex gap-3 items-center">
+            Premium{" "}
+            <img
+              src={images.crownYellowBg.src}
+              alt="premium"
+              className="w-8 h-8"
+            />
+          </span>
           <span className="body_large_medium text-neutral-white absolute w-full left-0 top-full">
             More matches. More treats. More <br className="block md:hidden" />{" "}
             tail-wagging perks.
@@ -245,13 +286,14 @@ const Upgrade = () => {
       </div>
       {subscriptionType !== "MONTHLY_PREMIUM" && (
         <div className="flex items-center gap-3 mb-4 md:hidden">
-          <h3 className="heading3 text-dark-brown">Monthly</h3>
+          <h3 className="heading3 text-dark-brown">Annually</h3>
           <Switch
             id="billing-period"
-            checked={isAnnual}
-            onCheckedChange={setIsAnnual}
+            checked={!isAnnual}
+            onCheckedChange={(c) => setIsAnnual(!c)}
+            className="data-[state=checked]:bg-grey-400 data-[state=unchecked]:bg-accent-500 dark:data-[state=checked]:bg-grey-400 dark:data-[state=unchecked]:bg-accent-500"
           />
-          <h3 className="heading3 text-dark-brown">Annually</h3>
+          <h3 className="heading3 text-dark-brown">Monthly</h3>
         </div>
       )}
       <div
@@ -261,9 +303,35 @@ const Upgrade = () => {
             : "md:grid-cols-2"
         } mb-8 gap-12`}
       >
+        {subscriptionType !== "MONTHLY_PREMIUM" && (
+          <div className="hidden md:block">
+            <PricingCard
+              type={"annually"}
+              plan={plans.yearly}
+              features={features}
+              onSubscribe={handleSubscribe}
+              processingPlanId={processingPlanId}
+              buttonText="Go Premium"
+            />
+          </div>
+        )}
+        {subscriptionType !== "MONTHLY_PREMIUM" && (
+          <div className="hidden md:block">
+            <PricingCard
+              type={"monthly"}
+              plan={plans.monthly}
+              features={features}
+              onSubscribe={handleSubscribe}
+              processingPlanId={processingPlanId}
+              buttonText="Go Premium"
+            />
+          </div>
+        )}
         <div
           className={
-            subscriptionType === "MONTHLY_PREMIUM" ? "max-w-md w-full" : ""
+            subscriptionType === "MONTHLY_PREMIUM"
+              ? "max-w-md w-full"
+              : "block md:hidden"
           }
         >
           <PricingCard
@@ -279,18 +347,6 @@ const Upgrade = () => {
             }
           />
         </div>
-        {subscriptionType !== "MONTHLY_PREMIUM" && (
-          <div className="hidden md:block">
-            <PricingCard
-              type={"annually"}
-              plan={plans.yearly}
-              features={features}
-              onSubscribe={handleSubscribe}
-              processingPlanId={processingPlanId}
-              buttonText="Go Premium"
-            />
-          </div>
-        )}
       </div>
       <Button
         className="w-full md:hidden"
@@ -303,6 +359,7 @@ const Upgrade = () => {
             ? "Upgrade to Annual Plan"
             : "Go Premium"}
       </Button>
+      <SubscribedModal primaryImage={petImage} gender={petGender} />
     </div>
   );
 };

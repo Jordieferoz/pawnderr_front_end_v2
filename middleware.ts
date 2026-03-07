@@ -13,12 +13,12 @@ export default withAuth(
 
     // If user is authenticated and tries to access auth pages, redirect to dashboard
     if (isAuthPage && isAuth) {
-      return NextResponse.redirect(new URL("/dashboard", req.url));
+      return NextResponse.redirect(new URL("/discover", req.url));
     }
 
     // If user is authenticated and tries to access landing page, redirect to dashboard
     if (isLandingPage && isAuth) {
-      return NextResponse.redirect(new URL("/dashboard", req.url));
+      return NextResponse.redirect(new URL("/discover", req.url));
     }
 
     // For all other cases, continue

@@ -4,11 +4,12 @@ import storage from "redux-persist/lib/storage"; // defaults to localStorage for
 
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 
+import matchReducer from "./matchSlice";
 import modalReducer from "./modalSlice";
 import profileReducer from "./profileInfoSlice";
 import registrationReducer from "./registrationSlice";
+import subscriptionReducer from "./subscriptionSlice";
 import userReducer from "./userSlice";
-import matchReducer from "./matchSlice";
 
 // Persist config for registration slice - persist everything
 const registrationPersistConfig = {
@@ -49,7 +50,8 @@ const rootReducer = combineReducers({
   profileInfo: persistedProfileReducer,
   user: persistedUserReducer,
   modal: modalReducer,
-  match: matchReducer
+  match: matchReducer,
+  subscription: subscriptionReducer
 });
 
 export const store = configureStore({

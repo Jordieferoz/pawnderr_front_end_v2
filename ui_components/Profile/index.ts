@@ -1,4 +1,5 @@
 import EditProfile from "./EditProfile";
+import ImageCard from "./ImageCard";
 import InfoCard from "./InfoCard";
 import MatchPreferences from "./MatchPreferences";
 import PetInformation from "./PetInformation";
@@ -9,6 +10,7 @@ import UpdateGallery from "./UpdateGallery";
 
 export {
   EditProfile,
+  ImageCard,
   InfoCard,
   MatchPreferences,
   PetInformation,

@@ -11,7 +11,8 @@ const buttonVariants = cva(
       variant: {
         default:
           "bg-primary-theme text-dark-black border border-dark-black hover:bg-primary-theme/90 shadow-[6px_4px_0px_0px_#1E1E1E]",
-        link: "text-primary underline-offset-4 hover:underline"
+        link: "text-primary underline-offset-4 hover:underline",
+        secondary: "bg-transparent text-dark-black hover:bg-primary-theme/90"
       },
       size: {
         default: "h-12 px-4 py-3 has-[>svg]:px-3",

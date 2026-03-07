@@ -11,12 +11,12 @@ import { headerMenuItems } from "@/constants";
 import { useUserProfileFromStorage } from "@/hooks";
 import { images } from "@/utils/images";
 
-import { useDispatch, useSelector } from "react-redux";
-import { openNotificationModal } from "@/store/modalSlice";
-import { Notifications } from "./Notifications";
-import { DropdownMenu } from "../Dashboard";
 import { RootState } from "@/store";
 import { getMatchIndicators } from "@/store/matchSlice";
+import { openNotificationModal } from "@/store/modalSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { DropdownMenu } from "../Discover";
+import { Notifications } from "./Notifications";
 
 const Header: FC = () => {
   const dispatch = useDispatch<any>();
@@ -25,8 +25,12 @@ const Header: FC = () => {
   const unseenMatchCount = useSelector(
     (state: RootState) => state.match.unseenMatchCount
   );
+
   const whoLikesMeCount = useSelector(
     (state: RootState) => state.match.whoLikesMeCount
+  );
+  const isSubscribed = useSelector(
+    (state: RootState) => state.subscription.isSubscribed
   );
 
   useEffect(() => {
@@ -36,9 +40,9 @@ const Header: FC = () => {
   const isItemActive = (itemHref: string, itemKey: string) => {
     if (itemKey === "discover") {
       return (
-        pathname === "/dashboard" ||
+        pathname === "/discover" ||
         pathname === "/profile" ||
-        pathname.startsWith("/dashboard/") ||
+        pathname.startsWith("/discover/") ||
         pathname.startsWith("/profile/")
       );
     }
@@ -48,8 +52,8 @@ const Header: FC = () => {
   return (
     <>
       <header className="fixed py-4 w-full left-0 h-22.5 top-0 z-50 bg-white border-b border-blue/10 shadow-[0px_4px_16.4px_0px_#0000000F] hidden md:block">
-        <nav className="container mx-auto common_container flex items-center justify-between gap-4">
-          <Link href={"/dashboard"}>
+        <nav className="px-10 common_container flex items-center justify-between gap-4">
+          <Link href={"/discover"}>
             <img
               src={images.logoHorizontal.src}
               alt="logo"
@@ -99,11 +103,21 @@ const Header: FC = () => {
 
             {/* Notification Bell */}
 
-            <Link href={"/upgrade"} className="cursor-pointer">
-              <Button>
-                <img src={images.pawnderBlack.src} alt="pawnderr+" /> PAWnderr+
-              </Button>
-            </Link>
+            {isSubscribed ? (
+              <Link href={"/my-subscription"} className="cursor-pointer">
+                <Button className="font_fredoka font-medium">
+                  <img src={images.pawnderBlack.src} alt="pawnderr+" /> View
+                  Subscription
+                </Button>
+              </Link>
+            ) : (
+              <Link href={"/upgrade"} className="cursor-pointer">
+                <Button className="font_fredoka font-medium">
+                  <img src={images.pawnderBlack.src} alt="pawnderr+" /> Go
+                  Premium
+                </Button>
+              </Link>
+            )}
             <button
               className="relative p-2 cursor-pointer flex-1"
               onClick={() => dispatch(openNotificationModal())}

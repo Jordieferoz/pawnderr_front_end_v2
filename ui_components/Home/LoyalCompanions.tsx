@@ -40,7 +40,7 @@ const LoyalCompanions = () => {
             <img
               src={images.companionDogs.src}
               alt="companion dogs"
-              className="w-full md:scale-125"
+              className="w-full md:w-[75%]  mx-auto"
             />
           </div>
           <div className="bg-white mt-10 md:mt-0 basis-[100vw] md:basis-[40vw] flex flex-col gap-5">

@@ -1,4 +1,11 @@
-import { CreditCard, FileText, Settings, Shield, User } from "lucide-react";
+import {
+  CreditCard,
+  FileText,
+  Heart,
+  Settings,
+  Shield,
+  User
+} from "lucide-react";
 
 import { ICard } from "@/ui_components/Activities/types";
 import { images } from "@/utils/images";
@@ -88,7 +95,7 @@ export const mobileMenuItems = [
     href: "/matches",
     img: images.matches.src,
     imgActive: images.matchesActive.src,
-    imgWidth: 18
+    imgWidth: 28
   },
   {
     key: "activities",
@@ -96,15 +103,15 @@ export const mobileMenuItems = [
     href: "/activities",
     img: images.activities.src,
     imgActive: images.activitiesActive.src,
-    imgWidth: 21
+    imgWidth: 24
   },
   {
     key: "discover",
     label: "Discover",
-    href: "/dashboard",
+    href: "/discover",
     img: images.discover.src,
     imgActive: images.discoverActive.src,
-    imgWidth: 38
+    imgWidth: 28
   },
   {
     key: "messages",
@@ -120,14 +127,14 @@ export const mobileMenuItems = [
     href: "/upgrade",
     img: images.pawnderr.src,
     imgActive: images.pawnderrActive.src,
-    imgWidth: 26
+    imgWidth: 24
   }
 ];
 export const headerMenuItems = [
   {
     key: "discover",
     label: "Discover",
-    href: "/dashboard",
+    href: "/discover",
     img: images.discover.src,
     imgActive: images.discoverActive.src,
     imgWidth: 22
@@ -138,7 +145,7 @@ export const headerMenuItems = [
     href: "/matches",
     img: images.matches.src,
     imgActive: images.matchesActive.src,
-    imgWidth: 18
+    imgWidth: 24
   },
   {
     key: "activities",
@@ -161,6 +168,11 @@ export const headerMenuItems = [
 
 export const dropdownMenuItems = [
   { icon: User, label: "My Profile", href: "/profile" },
+  {
+    icon: Heart,
+    label: "Match Preferences",
+    href: "/profile/edit?activetab=match_preferences"
+  },
   { icon: CreditCard, label: "My Subscription", href: "/my-subscription" },
   { icon: Settings, label: "Account Settings", href: "/settings" },
   { icon: Shield, label: "Privacy Policy", href: "/" },

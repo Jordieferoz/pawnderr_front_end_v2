@@ -53,43 +53,6 @@ const Matches: FC = () => {
           />
           <h4 className="display4_medium text-accent-900">Matches</h4>
         </div>
-        {/* <div className="grid grid-cols-4 gap-4 items-center justify-center">
-          <CustomAvatar
-            src={images.doggo1.src}
-            size={48}
-            gender="female"
-            name="Frank"
-            showPlus
-            plusIcon={images.pawnderrPlus.src}
-          />
-
-          <CustomAvatar
-            src={images.doggo2.src}
-            size={48}
-            type="countdown"
-            name="Frank"
-            showPlus
-            plusIcon={images.pawnderrPlus.src}
-          />
-
-          <CustomAvatar
-            src={images.doggo3.src}
-            size={48}
-            gender="male"
-            name="Frank"
-            showPlus
-            plusIcon={images.pawnderrPlus.src}
-          />
-
-          <CustomAvatar
-            src={images.doggo4.src}
-            size={48}
-            gender="female"
-            name="Frank"
-            showPlus
-            plusIcon={images.pawnderrPlus.src}
-          />
-        </div> */}
       </div>
 
       {isLoading ? (
