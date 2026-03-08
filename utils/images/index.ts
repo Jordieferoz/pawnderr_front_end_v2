@@ -116,6 +116,7 @@ import appPattern from "public/assets/images/app_pattern.svg";
 import bellIcon from "public/assets/images/bell_icon.svg";
 import crownYellowBg from "public/assets/images/crown_yellow_bg.svg";
 import isFoundingDog from "public/assets/images/is_founding_dog.svg";
+import premiumPlaceholder from "public/assets/images/premium_placeholder.svg";
 import sendArrow from "public/assets/images/send_arrow.svg";
 import verified from "public/assets/images/verified.svg";
 import x from "public/assets/images/x.svg";
@@ -242,7 +243,8 @@ export type ImageType =
   | "matchIndicator"
   | "backBtn"
   | "appPattern"
-  | "crownYellowBg";
+  | "crownYellowBg"
+  | "premiumPlaceholder";
 
 export type NextImage = {
   src: string;
@@ -371,5 +373,6 @@ export const images: Record<ImageType, NextImage> = {
   premiumBadge,
   matchIndicator,
   crownYellowBg,
-  appPattern
+  appPattern,
+  premiumPlaceholder
 };

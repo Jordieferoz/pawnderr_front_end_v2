@@ -384,7 +384,7 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
 
     initDiscovery();
   }, [petData?.id]);
-
+  console.log(containerHeight, "containerHeight");
   const MAX_HEIGHT = 560;
   const effectiveHeight = containerHeight
     ? Math.min(containerHeight, MAX_HEIGHT)
@@ -592,7 +592,7 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
       )}
 
       {locationError && (
-        <div className="absolute inset-0 flex items-center justify-center backdrop-blur-sm">
+        <div className="absolute inset-0 flex items-center justify-center backdrop-blur-sm h-fit">
           <div className="bg-white rounded-2xl p-6 shadow-lg max-w-xs text-center">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
               Location needed

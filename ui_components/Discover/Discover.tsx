@@ -26,9 +26,11 @@ const Discover: FC = () => {
   const borderColor = getGenderColor(petData?.gender ?? "");
 
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const premiumRowRef = useRef<HTMLDivElement>(null);
   const [swipingCardsHeight, setSwipingCardsHeight] = useState<
     number | undefined
   >(undefined);
+  const [premiumSlotCount, setPremiumSlotCount] = useState(5);
   // Default to true (hidden) until location is successfully fetched
   const [isGeoRestricted, setIsGeoRestricted] = useState(true);
 
@@ -109,20 +111,8 @@ const Discover: FC = () => {
   useEffect(() => {
     const updateHeight = () => {
       if (wrapperRef.current) {
-        // Total height of the wrapper
         const totalHeight = wrapperRef.current.clientHeight;
-        // Subtract vertical padding (md:py-5 = 40px) + mb-4 (16px) + some buffer
-        // Note: The inner div layout might vary, but let's try to fit it.
-        // If we want the white card to fill the wrapper, we should probably set height on it.
-        // For now, let's calculate the height for SwipingCards.
-        // 520px (default) + 40px padding = 560px approx required.
-        // If screen is small, we naturally shrink.
-
-        // Let's assume the white box takes up the full height minus some margin if needed.
-        // The swiping cards container inside needs to be:
-        // wrapperHeight - padding (40px) - header (approx 0 if empty)
-        // Let's safe margin of 60px.
-        setSwipingCardsHeight(totalHeight - 120);
+        setSwipingCardsHeight(totalHeight + 10);
       }
     };
 
@@ -130,6 +120,35 @@ const Discover: FC = () => {
     window.addEventListener("resize", updateHeight);
     return () => window.removeEventListener("resize", updateHeight);
   }, []);
+
+  // Recalculate how many slots fit in the premium-pets row using ResizeObserver
+  useEffect(() => {
+    const SLOT_WIDTH = 80; // avatar 64px + gap 16px
+    const PADDING = 32; // p-4 = 16px each side
+
+    const calcCount = (width: number) => {
+      const count = Math.max(1, Math.floor((width - PADDING) / SLOT_WIDTH));
+      setPremiumSlotCount(count);
+    };
+
+    let observer: ResizeObserver | null = null;
+    const raf = requestAnimationFrame(() => {
+      const el = premiumRowRef.current;
+      if (!el) return;
+      calcCount(el.clientWidth);
+      observer = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          calcCount(entry.contentRect.width);
+        }
+      });
+      observer.observe(el);
+    });
+
+    return () => {
+      cancelAnimationFrame(raf);
+      observer?.disconnect();
+    };
+  }, [isGeoRestricted, premiumPets.length]);
 
   const primaryImage =
     petData?.images?.find((img) => img.is_primary)?.image_url ||
@@ -156,8 +175,13 @@ const Discover: FC = () => {
       className="discover_wrapper common_container w-full my-6"
     >
       {!isGeoRestricted && premiumPets?.length > 0 && (
-        <div className="flex my-3 gap-4 items-center overflow-x-auto hide-scrollbar">
-          {premiumPets.map((pet, index) => (
+        <div
+          ref={premiumRowRef}
+          className="flex my-3 shadow-[0px_4px_19.1px_7px_#0000000A] p-4 bg-white rounded-xl border-2 gap-4 items-center overflow-x-auto hide-scrollbar"
+          style={{ borderColor }}
+        >
+          {/* Real premium pets */}
+          {premiumPets.slice(0, premiumSlotCount).map((pet, index) => (
             <div
               key={index}
               onClick={() => router.push(`/profile/${pet.id}?action=true`)}
@@ -172,44 +196,80 @@ const Discover: FC = () => {
               />
             </div>
           ))}
+
+          {/* Empty placeholder slots to fill remaining space */}
+          {Array.from({
+            length: Math.max(0, premiumSlotCount - premiumPets.length)
+          }).map((_, i) => (
+            <div
+              key={`empty-${i}`}
+              className="inline-flex flex-col items-center gap-1.5"
+            >
+              <div className="relative" style={{ width: 64, height: 64 }}>
+                {/* Crown badge */}
+                {images.pawnderrPlus?.src && (
+                  <img
+                    src={images.pawnderrPlus.src}
+                    className="absolute top-1 -right-1 w-[18px] h-[18px] z-20"
+                    alt="plus"
+                  />
+                )}
+                {/* Grey border ring */}
+                <div
+                  className="absolute inset-0 rounded-full"
+                  style={{
+                    background: "#D1D5DB",
+                    WebkitMask:
+                      "radial-gradient(farthest-side, transparent calc(100% - 2px), white calc(100% - 2px))",
+                    mask: "radial-gradient(farthest-side, transparent calc(100% - 2px), white calc(100% - 2px))"
+                  }}
+                />
+                {/* Inner placeholder */}
+                <div className="w-full h-full rounded-full overflow-hidden p-1">
+                  <div className="w-full h-full rounded-full bg-[#F3F4F6] flex items-center justify-center">
+                    {/* Image placeholder icon */}
+                    <img
+                      src={images.premiumPlaceholder.src}
+                      className="w-8"
+                      alt="premium"
+                    />
+                  </div>
+                </div>
+              </div>
+              {/* Dashed name placeholder */}
+              <p className="text-xs text-[#D1D5DB] tracking-widest">———</p>
+            </div>
+          ))}
         </div>
       )}
 
       <div className="flex flex-col lg:flex-row gap-6 justify-center w-full h-full items-start">
         {/* Left Column - Your Stats */}
-        {!isGeoRestricted && (
-          <div className="hidden lg:block w-[320px] shrink-0">
-            <YourStats borderColor={borderColor} />
-          </div>
-        )}
+        {!isGeoRestricted && <YourStats borderColor={borderColor} />}
 
         {/* Middle Column - Swiping Cards */}
-        <div className="flex-1 w-full max-w-[700px] flex justify-center">
-          <div
-            className="md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] border-2 md:px-5 md:py-8 md:rounded-xl box-border w-full flex flex-col h-[520px] md:h-[560px]"
-            style={{ borderColor }}
-          >
-            <h2 className="font_fredoka text-2xl font-medium mb-3 text-center text-dark-grey hidden md:block">
-              Discover Nearby Profiles
-            </h2>
-            <div className="flex-1 relative w-full h-full min-h-[440px]">
-              <SwipingCards
-                petData={petData}
-                loading={loading}
-                containerHeight={
-                  swipingCardsHeight ? swipingCardsHeight - 60 : undefined
-                }
-                onGeoRestricted={(restricted) => setIsGeoRestricted(restricted)}
-              />
-            </div>
+        <div
+          className="md:bg-white flex-1 w-full min-h-[589px] max-w-[700px] flex justify-center md:shadow-[0px_4px_16.4px_0px_#0000001A] border-2 md:px-5 md:py-8 md:rounded-xl box-border flex-col h-[520px] md:h-[560px]"
+          style={{ borderColor }}
+        >
+          <h2 className="font_fredoka text-2xl font-medium mb-10 text-center text-dark-grey hidden md:block">
+            Discover Nearby Profiles
+          </h2>
+          <div className="flex-1 relative w-full h-full min-h-[440px]">
+            <SwipingCards
+              petData={petData}
+              loading={loading}
+              containerHeight={
+                swipingCardsHeight ? swipingCardsHeight - 100 : undefined
+              }
+              onGeoRestricted={(restricted) => setIsGeoRestricted(restricted)}
+            />
           </div>
         </div>
 
         {/* Right Column - Featured Profile */}
         {!isGeoRestricted && (
-          <div className="hidden lg:block w-[320px] shrink-0">
-            <MyProfileCard {...profileData} borderColor={borderColor} />
-          </div>
+          <MyProfileCard {...profileData} borderColor={borderColor} />
         )}
       </div>
     </div>
