@@ -244,7 +244,8 @@ export type ImageType =
   | "backBtn"
   | "appPattern"
   | "crownYellowBg"
-  | "premiumPlaceholder";
+  | "premiumPlaceholder"
+  | "crownYellowBg";
 
 export type NextImage = {
   src: string;
@@ -374,5 +375,6 @@ export const images: Record<ImageType, NextImage> = {
   matchIndicator,
   crownYellowBg,
   appPattern,
-  premiumPlaceholder
+  premiumPlaceholder,
+  appPattern
 };
