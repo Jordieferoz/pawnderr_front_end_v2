@@ -115,6 +115,7 @@ import whyChooseDogs from "public/assets/images/why_choose_dogs.png";
 import appPattern from "public/assets/images/app_pattern.svg";
 import bellIcon from "public/assets/images/bell_icon.svg";
 import crownYellowBg from "public/assets/images/crown_yellow_bg.svg";
+import flipOverlay from "public/assets/images/flip_overlay.svg";
 import isFoundingDog from "public/assets/images/is_founding_dog.svg";
 import premiumPlaceholder from "public/assets/images/premium_placeholder.svg";
 import sendArrow from "public/assets/images/send_arrow.svg";
@@ -245,7 +246,8 @@ export type ImageType =
   | "appPattern"
   | "crownYellowBg"
   | "premiumPlaceholder"
-  | "crownYellowBg";
+  | "crownYellowBg"
+  | "flipOverlay";
 
 export type NextImage = {
   src: string;
@@ -375,5 +377,6 @@ export const images: Record<ImageType, NextImage> = {
   matchIndicator,
   crownYellowBg,
   premiumPlaceholder,
-  appPattern
+  appPattern,
+  flipOverlay
 };

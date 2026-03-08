@@ -9,6 +9,11 @@ import { petsStorage } from "@/utils/pets-storage";
 import { useRouter } from "next/navigation";
 import { FC, useEffect, useRef, useState } from "react";
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from "@/components/ui/tooltip";
 import { ensureUserLocationAndUpdate, getGenderColor } from "@/utils";
 import { images } from "@/utils/images";
 import { MyProfileCard, SwipingCards, YourStats } from ".";
@@ -201,44 +206,48 @@ const Discover: FC = () => {
           {Array.from({
             length: Math.max(0, premiumSlotCount - premiumPets.length)
           }).map((_, i) => (
-            <div
-              key={`empty-${i}`}
-              className="inline-flex flex-col items-center gap-1.5"
-            >
-              <div className="relative" style={{ width: 64, height: 64 }}>
-                {/* Crown badge */}
-                {images.pawnderrPlus?.src && (
-                  <img
-                    src={images.pawnderrPlus.src}
-                    className="absolute top-1 -right-1 w-[18px] h-[18px] z-20"
-                    alt="plus"
-                  />
-                )}
-                {/* Grey border ring */}
-                <div
-                  className="absolute inset-0 rounded-full"
-                  style={{
-                    background: "#D1D5DB",
-                    WebkitMask:
-                      "radial-gradient(farthest-side, transparent calc(100% - 2px), white calc(100% - 2px))",
-                    mask: "radial-gradient(farthest-side, transparent calc(100% - 2px), white calc(100% - 2px))"
-                  }}
-                />
-                {/* Inner placeholder */}
-                <div className="w-full h-full rounded-full overflow-hidden p-1">
-                  <div className="w-full h-full rounded-full bg-[#F3F4F6] flex items-center justify-center">
-                    {/* Image placeholder icon */}
-                    <img
-                      src={images.premiumPlaceholder.src}
-                      className="w-8"
-                      alt="premium"
+            <Tooltip key={`empty-${i}`}>
+              <TooltipTrigger asChild>
+                <div className="inline-flex flex-col items-center gap-1.5">
+                  <div className="relative" style={{ width: 64, height: 64 }}>
+                    {/* Crown badge */}
+                    {images.pawnderrPlus?.src && (
+                      <img
+                        src={images.pawnderrPlus.src}
+                        className="absolute top-1 -right-1 w-[18px] h-[18px] z-20"
+                        alt="plus"
+                      />
+                    )}
+                    {/* Grey border ring */}
+                    <div
+                      className="absolute inset-0 rounded-full"
+                      style={{
+                        background: "#D1D5DB",
+                        WebkitMask:
+                          "radial-gradient(farthest-side, transparent calc(100% - 2px), white calc(100% - 2px))",
+                        mask: "radial-gradient(farthest-side, transparent calc(100% - 2px), white calc(100% - 2px))"
+                      }}
                     />
+                    {/* Inner placeholder */}
+                    <div className="w-full h-full rounded-full overflow-hidden p-1">
+                      <div className="w-full h-full rounded-full bg-[#F3F4F6] flex items-center justify-center">
+                        {/* Image placeholder icon */}
+                        <img
+                          src={images.premiumPlaceholder.src}
+                          className="w-8"
+                          alt="premium"
+                        />
+                      </div>
+                    </div>
                   </div>
+                  {/* Dashed name placeholder */}
+                  <p className="text-xs text-[#D1D5DB] tracking-widest">———</p>
                 </div>
-              </div>
-              {/* Dashed name placeholder */}
-              <p className="text-xs text-[#D1D5DB] tracking-widest">———</p>
-            </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                No More Premium Members in your area
+              </TooltipContent>
+            </Tooltip>
           ))}
         </div>
       )}

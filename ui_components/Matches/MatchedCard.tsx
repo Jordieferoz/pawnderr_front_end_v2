@@ -169,6 +169,11 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
             alt="paw"
             className="absolute top-4 right-4 w-12 h-12 opacity-80"
           />
+          <img
+            src={images.flipOverlay.src}
+            alt="paw"
+            className="absolute inset-0"
+          />
 
           <div className="flex flex-col gap-6 mt-4 w-full">
             {/* Fun Fact */}

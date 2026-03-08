@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import Script from "next/script";
 
 import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { ReduxProvider } from "@/store/Provider";
 import { Footer, Header } from "@/ui_components/Home";
 import { MobileMenu } from "@/ui_components/Shared";
@@ -43,11 +44,13 @@ export default function RootLayout({
       <body>
         <SessionProvider>
           <ReduxProvider>
-            {isHomeRoute && <Header />}
+            <TooltipProvider>
+              {isHomeRoute && <Header />}
 
-            {children}
-            {!shouldHideMobileMenu && <MobileMenu />}
-            {isHomeRoute && <Footer />}
+              {children}
+              {!shouldHideMobileMenu && <MobileMenu />}
+              {isHomeRoute && <Footer />}
+            </TooltipProvider>
           </ReduxProvider>
         </SessionProvider>
         <Toaster theme="dark" duration={3000} />
