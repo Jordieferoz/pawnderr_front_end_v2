@@ -21,7 +21,7 @@ const Discover: FC = () => {
   const [firstPetId, setFirstPetId] = useState<number | null>(null);
   const [petData, setPetData] = useState<IPetData | null>(null);
   const [loading, setLoading] = useState(true);
-  console.log(petData, "petData");
+
   const [premiumPets, setPremiumPets] = useState<NearbyPet[]>([]);
   const borderColor = getGenderColor(petData?.gender ?? "");
 
@@ -172,12 +172,12 @@ const Discover: FC = () => {
   return (
     <div
       ref={wrapperRef}
-      className="discover_wrapper common_container w-full my-6"
+      className="discover_wrapper common_container w-full lg:my-6"
     >
       {!isGeoRestricted && premiumPets?.length > 0 && (
         <div
           ref={premiumRowRef}
-          className="flex my-3 shadow-[0px_4px_19.1px_7px_#0000000A] p-4 bg-white rounded-xl border-2 gap-4 items-center overflow-x-auto hide-scrollbar"
+          className="flex my-3 absolute left-0 top-[-26px] w-[inherit] lg:relative lg:top-0 lg:w-auto shadow-[0px_4px_19.1px_7px_#0000000A] p-4 bg-white lg:rounded-xl border-b-2 lg:border-2 gap-4 items-center overflow-x-auto hide-scrollbar"
           style={{ borderColor }}
         >
           {/* Real premium pets */}
@@ -243,13 +243,13 @@ const Discover: FC = () => {
         </div>
       )}
 
-      <div className="flex flex-col lg:flex-row gap-6 justify-center w-full h-full items-start">
+      <div className="flex flex-col lg:flex-row gap-6 justify-center w-full h-full items-start mt-10 lg:mt-0">
         {/* Left Column - Your Stats */}
         {!isGeoRestricted && <YourStats borderColor={borderColor} />}
 
         {/* Middle Column - Swiping Cards */}
         <div
-          className="md:bg-white flex-1 w-full min-h-[589px] max-w-[700px] flex justify-center md:shadow-[0px_4px_16.4px_0px_#0000001A] border-2 md:px-5 md:py-8 md:rounded-xl box-border flex-col h-[520px] md:h-[560px]"
+          className="md:bg-white flex-1 w-full min-h-[589px] max-w-[700px] flex justify-center md:shadow-[0px_4px_16.4px_0px_#0000001A] border-0 lg:border-2 md:px-5 md:py-8 md:rounded-xl box-border flex-col h-[520px] md:h-[560px]"
           style={{ borderColor }}
         >
           <h2 className="font_fredoka text-2xl font-medium mb-10 text-center text-dark-grey hidden md:block">
