@@ -62,7 +62,7 @@ const YourStats: FC<IYourStatsProps> = ({ borderColor }) => {
 
   return (
     <div
-      className="bg-white rounded-xl border-2 shadow-[0px_4px_19.1px_7px_#0000000A] p-4 w-full flex flex-col h-[520px] md:h-[560px]"
+      className="bg-white hidden min-h-[589px] lg:flex w-[320px] shrink-0 rounded-xl border-2 shadow-[0px_4px_19.1px_7px_#0000000A] p-4 flex-col h-[520px] md:h-[560px]"
       style={{ borderColor }}
     >
       <div className="bg-secondary-400 rounded py-2 px-4 mb-6">

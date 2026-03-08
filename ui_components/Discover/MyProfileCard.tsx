@@ -26,7 +26,7 @@ const MyProfileCard: FC<IMyProfileCardProps> = ({
   const router = useRouter();
   return (
     <div
-      className="bg-white p-4 shadow-[0px_4px_10.6px_0px_#0000001A] rounded-xl relative border-2"
+      className="bg-white hidden min-h-[589px] lg:block w-[320px] shrink-0 p-4 shadow-[0px_4px_10.6px_0px_#0000001A] rounded-xl relative border-2"
       style={{ borderColor }}
     >
       <div className="relative">

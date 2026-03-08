@@ -73,7 +73,7 @@ const CustomAvatar: React.FC<ICustomAvatarProps> = ({
               style={{
                 background: `conic-gradient(from 0deg, #FFB510 ${progress}deg, rgba(255,181,16,0.2) ${progress}deg)`,
                 WebkitMask:
-                  "radial-gradient(farthest-side, transparent calc(100% - 1.5px), white calc(100% - 1.5px))",
+                  "radial-gradient(farthest-side, transparent calc(100% - 2px), white calc(100% - 2px))",
                 mask: "radial-gradient(farthest-side, transparent calc(100% - 1.5px), white calc(100% - 1.5px))"
               }}
             />
@@ -83,7 +83,7 @@ const CustomAvatar: React.FC<ICustomAvatarProps> = ({
               style={{
                 background: getGenderColor(gender || ""),
                 WebkitMask:
-                  "radial-gradient(farthest-side, transparent calc(100% - 1.5px), white calc(100% - 1.5px))",
+                  "radial-gradient(farthest-side, transparent calc(100% - 2px), white calc(100% - 2px))",
                 mask: "radial-gradient(farthest-side, transparent calc(100% - 1.5px), white calc(100% - 1.5px))"
               }}
             />
