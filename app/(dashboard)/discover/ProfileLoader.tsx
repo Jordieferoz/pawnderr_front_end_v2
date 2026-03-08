@@ -5,18 +5,19 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 
+import { setMatchIndicators } from "@/store/matchSlice";
 import {
   resetRegistration,
   setMetadata,
   updateStepData
 } from "@/store/registrationSlice";
+import { getSubscriptionStatus } from "@/store/subscriptionSlice";
 import { setUser } from "@/store/userSlice";
-import { setMatchIndicators } from "@/store/matchSlice";
 import {
   fetchMyPetsCollection,
   fetchPetRegistrationData,
-  fetchUserProfile,
-  fetchUnseenMatchCount
+  fetchUnseenMatchCount,
+  fetchUserProfile
 } from "@/utils/api";
 import { petsStorage } from "@/utils/pets-storage";
 import { userStorage } from "@/utils/user-storage";
@@ -164,6 +165,12 @@ export default function ProfileLoader() {
             console.error("❌ Failed to load unseen match count:", error);
           }
         }
+
+        // Fetch subscription status
+        // We can just fire this off, it has its own internal state management in redux
+        dispatch(getSubscriptionStatus() as any);
+
+        isLoadingRef.current = false;
 
         isLoadingRef.current = false;
       }

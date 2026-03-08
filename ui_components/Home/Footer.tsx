@@ -9,12 +9,8 @@ const Footer = () => {
     <footer className="pt-20 md:pt-30 relative">
       <div className="container mx-auto flex items-center flex-col justify-center">
         <div className="mx-auto text-center ">
-          <Link href={"/"} className="mb-2 inline-block">
-            <img
-              src={images.logoBig.src}
-              alt="logo"
-              className="h-[180px] mx-auto"
-            />
+          <Link href={"/"} className="mb-8 inline-block">
+            <img src={images.logoBig.src} alt="logo" className="h-30 mx-auto" />
           </Link>
           <ul className="flex items-center gap-3 justify-center mb-7 md:mb-20">
             <li>

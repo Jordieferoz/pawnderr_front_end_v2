@@ -2,8 +2,7 @@
 import {
   getFirebaseFirestore,
   onAuthStateChange,
-  signInWithFirebaseToken,
-  getFirebaseAuth
+  signInWithFirebaseToken
 } from "@/lib/firebase";
 import { fetchFirebaseToken, messageInitiated } from "@/utils/api";
 import {
@@ -49,12 +48,6 @@ export const useFirebaseChat = () => {
         //     payload?.data?.firebaseToken ||
         //     payload?.token ||
         //     payload?.data?.token;
-        //   console.log("🔎 Firebase token response:", {
-        //     hasToken: Boolean(rawToken),
-        //     tokenType: typeof rawToken,
-        //     tokenLength: typeof rawToken === "string" ? rawToken.length : 0,
-        //     keys: payload ? Object.keys(payload) : []
-        //   });
         // }
         const apiToken =
           resp?.data?.firebaseToken ||
@@ -67,14 +60,6 @@ export const useFirebaseChat = () => {
             const parts = apiToken.split(".");
             if (parts.length === 3) {
               const payload = JSON.parse(atob(parts[1]));
-              console.log("🕵️‍♀️ Firebase Token Debug:", {
-                projectId: payload.aud,
-                issuer: payload.iss,
-                sub: payload.sub,
-                frontendProjectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-                isMatch:
-                  payload.aud === process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID
-              });
 
               if (payload.aud !== process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID) {
                 console.error(
@@ -235,19 +220,14 @@ export const useChatMessages = (chatId: string | null, myPetId?: number) => {
       }
 
       // DEBUG: Check Auth Claims
-      const auth = getFirebaseAuth();
-      if (auth?.currentUser) {
-        const tokenResult = await auth.currentUser.getIdTokenResult();
-        console.log("👮‍♀️ Auth Debug:", {
-          uid: auth.currentUser.uid,
-          claims: tokenResult.claims,
-          tryingToSendAs: fromPetId
-        });
-      } else {
-        console.error(
-          "❌ No authenticated user found in Firebase Auth instance"
-        );
-      }
+      // const auth = getFirebaseAuth();
+      // if (auth?.currentUser) {
+      //   const tokenResult = await auth.currentUser.getIdTokenResult();
+      // } else {
+      //   console.error(
+      //     "❌ No authenticated user found in Firebase Auth instance"
+      //   );
+      // }
 
       try {
         const chatDoc = await getDoc(doc(firestore, "chats", chatId));
@@ -313,13 +293,11 @@ export const useChatConversations = (petIds: number[]) => {
 
   useEffect(() => {
     if (!petIds.length) {
-      console.log("DEBUG: useChatConversations - No petIds provided");
       setConversations([]);
       setIsLoading(false);
       return;
     }
 
-    console.log("DEBUG: useChatConversations - Subscribing for pets:", petIds);
     setIsLoading(true);
     const unsubscribe = getUserConversations(petIds, (newConversations) => {
       setConversations(newConversations);

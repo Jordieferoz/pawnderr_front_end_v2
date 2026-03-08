@@ -35,11 +35,11 @@ const MobileMenu: FC = () => {
   // Helper to decide which menuItem is active for indicator & styles
   const isItemActive = (itemHref: string, itemKey: string) => {
     if (itemKey === "discover") {
-      // Dashboard tab is active on /dashboard and /profile
+      // Dashboard tab is active on /discover and /profile
       return (
-        pathname === "/dashboard" ||
+        pathname === "/discover" ||
         pathname === "/profile" ||
-        pathname.startsWith("/dashboard/") ||
+        pathname.startsWith("/discover/") ||
         pathname.startsWith("/profile/")
       );
     }

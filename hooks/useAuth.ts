@@ -16,7 +16,7 @@ const useAuth = () => {
     (state: RootState) => state.user
   );
 
-  const logout = async () => {
+  const logout = async (redirectTo: string = "/sign-in") => {
     // Clear Redux user state (this will also clear persist:user from localStorage)
     dispatch(clearUser());
 
@@ -30,8 +30,8 @@ const useAuth = () => {
     // Clear session storage
     sessionStorage.clear();
 
-    // Redirect to sign in
-    router.push("/sign-in");
+    // Redirect to specified route
+    router.push(redirectTo);
   };
 
   return {

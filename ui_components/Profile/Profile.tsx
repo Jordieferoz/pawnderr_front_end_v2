@@ -7,7 +7,7 @@ import { images } from "@/utils/images";
 
 import { Button } from "@/components/ui/button";
 import { swipePetAction } from "@/utils/api";
-import { InfoCard, ProfileCard } from ".";
+import { ImageCard, InfoCard, ProfileCard } from ".";
 import Loader from "../Shared/Loader";
 import { IProfileProps } from "./types";
 
@@ -16,7 +16,7 @@ const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
   const searchParams = useSearchParams();
   const showActions = searchParams.get("action") === "true";
   const [processing, setProcessing] = useState(false);
-
+  console.log(petData, "petData");
   const handleAction = async (action: "like" | "pass") => {
     if (petData?.id && !processing) {
       try {
@@ -44,7 +44,8 @@ const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
     location: "Gurugram",
     image: primaryImage,
     isVerified: petData?.is_verified,
-    isPremium: petData?.user?.is_premium_user
+    isPremium: petData?.user?.is_premium_user,
+    isFoundingDog: petData?.is_founding_dog
   };
 
   // Dynamically map all attributes for Floof's Story
@@ -148,9 +149,59 @@ const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-x-12 gap-y-7">
-          {/* Left Column */}
-          <div className="flex flex-col gap-7.5 md:col-span-8">
+        {/* Mobile Layout - Single Column */}
+        <div className="flex flex-col gap-7.5 md:hidden">
+          <ProfileCard
+            {...profileData}
+            showActions={showActions}
+            disabled={processing}
+            onLike={() => handleAction("like")}
+            onDislike={() => handleAction("pass")}
+          />
+
+          <InfoCard
+            type="desc"
+            title="Bio (aka Bark-o-graphy):"
+            image={petData?.images?.[1]?.image_url}
+            desc={petData?.bark_o_graphy ?? ""}
+            list={[]}
+            gender={profileData?.gender}
+          />
+
+          <InfoCard
+            type="list"
+            title={`${petData?.name}'s Story:`}
+            image={petData?.images?.[2]?.image_url}
+            list={floofStoryList}
+            desc={""}
+            gender={profileData?.gender}
+            className="text-2xl font-medium text-dark-grey2 border-b border-[#9B9B9B6E] pb-6 border-dashed"
+          />
+
+          <InfoCard
+            type="desc"
+            title="Fun Fact:"
+            image={petData?.images?.[3]?.image_url}
+            desc={petData?.fun_fact_or_habit ?? ""}
+            list={[]}
+            gender={profileData?.gender}
+          />
+
+          <InfoCard
+            type="list"
+            title={`What's ${petData?.name} looking for:`}
+            image={petData?.images?.[4]?.image_url}
+            list={pupLookingForList}
+            desc={""}
+            className="text-2xl font-medium text-dark-grey2 border-b border-[#9B9B9B6E] pb-6 border-dashed"
+            gender={profileData?.gender}
+          />
+        </div>
+
+        {/* Desktop Layout - 3 Column Masonry */}
+        <div className="hidden md:grid md:grid-cols-3 gap-6 items-start">
+          {/* Column 1: Profile Card + Fun Fact */}
+          <div className="flex flex-col gap-6">
             <ProfileCard
               {...profileData}
               showActions={showActions}
@@ -158,55 +209,51 @@ const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
               onLike={() => handleAction("like")}
               onDislike={() => handleAction("pass")}
             />
-
-            <InfoCard
-              type="desc"
-              title="Bio (aka Bark-o-graphy):"
-              image={petData?.images?.[1]?.image_url}
-              desc={petData?.bark_o_graphy ?? ""}
-              list={[]}
-            />
-
-            <div className="block md:hidden">
-              <InfoCard
-                type="list"
-                title="Floof's Story:"
-                image={petData?.images?.[2]?.image_url}
-                list={floofStoryList}
-                desc={""}
-                className="text-2xl font-medium text-dark-grey2 border-b border-[#9B9B9B6E] pb-6 border-dashed"
-              />
-            </div>
-
             <InfoCard
               type="desc"
               title="Fun Fact:"
               image={petData?.images?.[3]?.image_url}
               desc={petData?.fun_fact_or_habit ?? ""}
               list={[]}
+              gender={profileData?.gender}
             />
           </div>
 
-          {/* Right Column */}
-          <div className="flex flex-col gap-7.5 md:col-span-4">
-            <div className="hidden md:block">
-              <InfoCard
-                type="list"
-                title="Floof's Story:"
-                image={petData?.images?.[2]?.image_url}
-                list={floofStoryList}
-                desc={""}
-                className="text-2xl font-medium text-dark-grey2 border-b border-[#9B9B9B6E] pb-6 border-dashed"
-              />
-            </div>
-
+          {/* Column 2: Story (no image) + Preferences (with image) */}
+          <div className="flex flex-col gap-6">
             <InfoCard
               type="list"
-              title="What's Pup looking for:"
+              title={`${petData?.name}'s Story:`}
+              list={floofStoryList}
+              desc={""}
+              className="text-2xl font-medium text-dark-grey2 border-b border-[#9B9B9B6E] pb-6 border-dashed"
+              gender={profileData?.gender}
+            />
+            <InfoCard
+              type="list"
+              title={`What's ${petData?.name} looking for:`}
               image={petData?.images?.[4]?.image_url}
               list={pupLookingForList}
               desc={""}
               className="text-2xl font-medium text-dark-grey2 border-b border-[#9B9B9B6E] pb-6 border-dashed"
+              gender={profileData?.gender}
+            />
+          </div>
+
+          {/* Column 3: Image Card + Bio (text first, image bottom) */}
+          <div className="flex flex-col gap-6">
+            <ImageCard
+              image={petData?.images?.[2]?.image_url}
+              gender={profileData?.gender}
+            />
+            <InfoCard
+              type="desc"
+              title="Bio (aka Bark-o-graphy):"
+              image={petData?.images?.[1]?.image_url}
+              desc={petData?.bark_o_graphy ?? ""}
+              list={[]}
+              imagePosition="bottom"
+              gender={profileData?.gender}
             />
           </div>
         </div>

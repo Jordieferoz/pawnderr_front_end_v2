@@ -4,10 +4,10 @@ import { useRouter } from "next/navigation";
 import { FC, useEffect, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { NoState } from "@/ui_components/Shared";
 import Loader from "@/ui_components/Shared/Loader";
 import { showToast } from "@/ui_components/Shared/ToastMessage";
 import {
-  fetchSubscriptionStatus,
   fetchUnseenMatchCount,
   fetchWhoLikesMe,
   fetchWhomIDisliked,
@@ -16,9 +16,9 @@ import {
 } from "@/utils/api";
 import { images } from "@/utils/images";
 
-import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { clearWhoLikesMeCount } from "@/store/matchSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 import ActivityCard from "./ActivityCard";
 import { ICard } from "./types";
@@ -26,14 +26,15 @@ import { ICard } from "./types";
 const Activities: FC = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-
+  const isSubscribed = useSelector(
+    (state: RootState) => state.subscription.isSubscribed
+  );
   const [activeTab, setActiveTab] = useState("likes-me");
   const [cards, setCards] = useState<ICard[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [isSubscribed, setIsSubscribed] = useState(false);
-  const [isSubscriptionLoading, setIsSubscriptionLoading] = useState(true);
+
   const [tabCounts, setTabCounts] = useState({
     likesMe: 0,
     youLike: 0,
@@ -45,11 +46,10 @@ const Activities: FC = () => {
   );
 
   useEffect(() => {
-    // Clear badge when component mounts (user enters the route)
-    if (!isSubscriptionLoading && isSubscribed) {
+    if (isSubscribed) {
       dispatch(clearWhoLikesMeCount());
     }
-  }, [dispatch, isSubscribed, isSubscriptionLoading]);
+  }, [dispatch, isSubscribed]);
 
   const handleUndo = async (card: ICard) => {
     if (activeTab !== "you-like" && activeTab !== "viewed-profile") return;
@@ -231,32 +231,6 @@ const Activities: FC = () => {
   };
 
   useEffect(() => {
-    const loadSubscriptionStatus = async () => {
-      try {
-        setIsSubscriptionLoading(true);
-        const resp = await fetchSubscriptionStatus();
-        setIsSubscribed(Boolean(resp?.data?.is_premium));
-      } catch (error: any) {
-        setIsSubscribed(false);
-        showToast({
-          type: "error",
-          message:
-            error?.message ||
-            "Unable to load subscription status. Please try again."
-        });
-      } finally {
-        setIsSubscriptionLoading(false);
-      }
-    };
-
-    loadSubscriptionStatus();
-  }, []);
-
-  useEffect(() => {
-    if (isSubscriptionLoading) {
-      return;
-    }
-
     const fetchInitialCounts = async () => {
       try {
         const [likesMeResp, youLikeResp, dislikedResp, unseenMatchesResp] =
@@ -287,16 +261,14 @@ const Activities: FC = () => {
     };
 
     fetchInitialCounts();
-  }, [isSubscribed, isSubscriptionLoading]);
+  }, [isSubscribed]);
 
   useEffect(() => {
     setCards([]);
     setPage(1);
     setHasMore(true);
-    if (!isSubscriptionLoading) {
-      fetchActivities(1, false);
-    }
-  }, [activeTab, isSubscribed, isSubscriptionLoading]);
+    fetchActivities(1, false);
+  }, [activeTab, isSubscribed]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -353,7 +325,7 @@ const Activities: FC = () => {
               } ${
                 activeTab === tab.id
                   ? "bg-primary-500 text-white"
-                  : "border border-neutral-white text-light-grey2"
+                  : "border border-neutral-white text-light-grey2 bg-white"
               }`}
             >
               {tab.label}
@@ -381,8 +353,8 @@ const Activities: FC = () => {
             <Loader />
           </div>
         ) : cards.length === 0 ? (
-          <div className="flex items-center justify-center h-[480px] text-dark-grey">
-            No activities found.
+          <div className="flex items-center justify-center h-[480px]">
+            <NoState title="No activities found" />
           </div>
         ) : (
           <ActivityCard
@@ -416,7 +388,7 @@ const Activities: FC = () => {
           </div>
         )}
         {!isSubscribed && activeTab === "likes-me" && (
-          <div className="absolute top-0 backdrop-blur-lg w-full bg-white/80 h-inherit mt-20 flex items-center justify-center">
+          <div className="absolute top-0 backdrop-blur-lg w-full  h-inherit mt-20 flex items-center justify-center">
             <div className="text-center">
               <h4 className="display2_medium text-accent-900">
                 Unlock the Fun

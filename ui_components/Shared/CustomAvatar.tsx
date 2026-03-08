@@ -1,5 +1,6 @@
 "use client";
 
+import { getGenderColor } from "@/utils";
 import React, { useEffect, useState } from "react";
 
 export interface ICustomAvatarProps {
@@ -72,7 +73,7 @@ const CustomAvatar: React.FC<ICustomAvatarProps> = ({
               style={{
                 background: `conic-gradient(from 0deg, #FFB510 ${progress}deg, rgba(255,181,16,0.2) ${progress}deg)`,
                 WebkitMask:
-                  "radial-gradient(farthest-side, transparent calc(100% - 1.5px), white calc(100% - 1.5px))",
+                  "radial-gradient(farthest-side, transparent calc(100% - 2px), white calc(100% - 2px))",
                 mask: "radial-gradient(farthest-side, transparent calc(100% - 1.5px), white calc(100% - 1.5px))"
               }}
             />
@@ -80,9 +81,9 @@ const CustomAvatar: React.FC<ICustomAvatarProps> = ({
             <div
               className="w-full h-full rounded-full"
               style={{
-                background: gender === "female" ? "#ec4899" : "#3b82f6",
+                background: getGenderColor(gender || ""),
                 WebkitMask:
-                  "radial-gradient(farthest-side, transparent calc(100% - 1.5px), white calc(100% - 1.5px))",
+                  "radial-gradient(farthest-side, transparent calc(100% - 2px), white calc(100% - 2px))",
                 mask: "radial-gradient(farthest-side, transparent calc(100% - 1.5px), white calc(100% - 1.5px))"
               }}
             />

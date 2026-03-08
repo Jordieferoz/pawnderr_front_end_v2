@@ -1,10 +1,11 @@
-import { MobileHeader } from "@/ui_components/Dashboard";
+import { MobileHeader } from "@/ui_components/Discover";
 import { Header } from "@/ui_components/Shared";
-import ProfileLoader from "./dashboard/ProfileLoader";
+import { images } from "@/utils/images";
+import ProfileLoader from "./discover/ProfileLoader";
 
 export const metadata = {
-  title: "Pawnderr - Dashboard",
-  description: "Pawnderr - Dashboard"
+  title: "Pawnderr - Discover",
+  description: "Pawnderr - Discover"
 };
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -14,6 +15,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <MobileHeader />
       <main className="relative pt-22.5 min-h-[calc(100dvh-0px)]">
         {children}
+        <img
+          src={images.appPattern.src}
+          className="absolute top-0 left-0 w-full h-full object-cover pointer-events-none z-[-1]"
+          alt="appPattern"
+        />
       </main>
     </>
   );

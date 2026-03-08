@@ -11,9 +11,11 @@ import { FC, useEffect, useState } from "react";
 
 import { dropdownMenuItems } from "@/constants";
 import { useAuth } from "@/hooks";
+import { RootState } from "@/store";
+import { fetchMyPet } from "@/utils/api";
 import { images } from "@/utils/images";
 import { PETS_STORAGE_EVENT, petsStorage } from "@/utils/pets-storage";
-import { fetchMyPet } from "@/utils/api";
+import { useSelector } from "react-redux";
 
 interface UserProfile {
   id: number;
@@ -40,9 +42,12 @@ interface DropdownMenuProps {
 const DropdownMenu: FC<DropdownMenuProps> = ({ userProfile, isLoading }) => {
   const { logout } = useAuth();
   const [firstPetId, setFirstPetId] = useState<number | null>(null);
-  const [loading, setLoading] = useState(true);
+
   const [petData, setPetData] = useState<PetData | null>(null);
   const [open, setOpen] = useState(false);
+  const isSubscribed = useSelector(
+    (state: RootState) => state.subscription.isSubscribed
+  );
 
   const handleLogout = async () => {
     setOpen(false);
@@ -88,8 +93,6 @@ const DropdownMenu: FC<DropdownMenuProps> = ({ userProfile, isLoading }) => {
         setPetData(petDetails);
       } catch (error) {
         console.error("Error fetching pet:", error);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -104,7 +107,7 @@ const DropdownMenu: FC<DropdownMenuProps> = ({ userProfile, isLoading }) => {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <button className="rounded-full bg-light-grey w-11.5 h-11.5 flex items-center justify-center cursor-pointer">
+        <button className="relative rounded-full bg-light-grey w-11.5 h-11.5 flex items-center justify-center cursor-pointer">
           {isLoading ? (
             <div className="w-10.5 h-10.5 rounded-full bg-gray-200 animate-pulse" />
           ) : (
@@ -116,21 +119,34 @@ const DropdownMenu: FC<DropdownMenuProps> = ({ userProfile, isLoading }) => {
               />
             </div>
           )}
+          {isSubscribed && (
+            <img
+              src={images.crownYellowBg.src}
+              alt="Premium"
+              className="absolute -top-1 -right-1 w-5 h-5 z-10 border-2 border-white rounded-full"
+            />
+          )}
         </button>
       </PopoverTrigger>
 
       <PopoverContent className="w-56 p-2" align="end">
         <div className="flex flex-col gap-1">
-          {dropdownMenuItems.map((item) => {
+          {dropdownMenuItems.map((item, index) => {
             // Modify href for profile to include pet ID
-            const href =
-              item.href === "/profile" && firstPetId
-                ? `/profile/${firstPetId}`
-                : item.href;
+            let href = item.href;
+            if (firstPetId) {
+              if (item.href === "/profile") {
+                href = `/profile/${firstPetId}`;
+              } else if (item.href.startsWith("/profile/edit")) {
+                // Handle /profile/edit?query... -> /profile/edit/[id]?query...
+                const [path, query] = item.href.split("?");
+                href = `${path}/${firstPetId}${query ? `?${query}` : ""}`;
+              }
+            }
 
             return (
               <Link
-                key={item.href}
+                key={index}
                 href={href}
                 onClick={handleMenuItemClick}
                 className="flex items-center gap-3 px-3 py-2.5 rounded-md hover:bg-gray-100 transition-colors"

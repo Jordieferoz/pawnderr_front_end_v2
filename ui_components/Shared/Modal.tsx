@@ -3,8 +3,13 @@
 import { X } from "lucide-react";
 import { FC, ReactNode, useCallback } from "react";
 
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Drawer, DrawerContent, DrawerHeader } from "@/components/ui/drawer";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle
+} from "@/components/ui/drawer";
 import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface ModalProps {
@@ -26,6 +31,7 @@ const Modal: FC<ModalProps> = ({ open, setOpen, content, className }) => {
     return (
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerContent className={``}>
+          <DrawerTitle className="sr-only">Drawer</DrawerTitle>
           {/* Fixed Header */}
           <DrawerHeader
             className={`relative flex flex-shrink-0 justify-center`}
@@ -46,6 +52,7 @@ const Modal: FC<ModalProps> = ({ open, setOpen, content, className }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className={className}>
+        <DialogTitle className="sr-only">Dialog</DialogTitle>
         <div>{content}</div>
       </DialogContent>
     </Dialog>

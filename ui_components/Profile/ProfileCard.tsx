@@ -1,7 +1,8 @@
 import { FC } from "react";
 
-import { IProfileCardProps } from "./types";
+import { formatAgeText, getGenderColor } from "@/utils";
 import { images } from "@/utils/images";
+import { IProfileCardProps } from "./types";
 
 const ProfileCard: FC<IProfileCardProps> = ({
   name,
@@ -12,20 +13,33 @@ const ProfileCard: FC<IProfileCardProps> = ({
   image,
   isVerified,
   isPremium,
+  isFoundingDog,
   showActions,
   onLike,
   onDislike,
   disabled
 }) => {
+  const borderColor = getGenderColor(gender || "");
+
   return (
-    <div className="bg-white p-4 shadow-[0px_4px_10.6px_0px_#0000001A] rounded-xl relative">
+    <div
+      className="bg-white p-4 shadow-[0px_4px_10.6px_0px_#0000001A] rounded-xl relative border-2"
+      style={{ borderColor }}
+    >
       <div className="relative">
         <img src={image} className="w-full rounded-xl mb-4" alt="image" />
+        {isFoundingDog && (
+          <img
+            src={images.isFoundingDog.src}
+            alt="foundingDog"
+            className="w-14 h-14 absolute top-4.5 left-5 z-20"
+          />
+        )}
         {isPremium && (
           <img
-            src={images.premiumBadge.src}
-            className="absolute top-4 left-4"
-            alt="image"
+            src={images.crownYellowBg.src}
+            alt="premium"
+            className="w-10 h-10 absolute top-4.5 right-5 z-20"
           />
         )}
         {showActions && (
@@ -47,12 +61,12 @@ const ProfileCard: FC<IProfileCardProps> = ({
           </div>
         )}
       </div>
-      <div className="flex items-start lg:items-center justify-between flex-col lg:flex-row pb-2">
+      <div className="flex items-start justify-between flex-col pb-2">
         <h3 className="text-[32px] font_fredoka font-medium text-dark-grey2 flex items-baseline gap-2">
           {name}{" "}
           <div className="flex items-center gap-2">
             <span className="body_large_medium capitalize block">
-              {gender}, {age} Years
+              {formatAgeText(gender ?? "", age ?? 0)}
             </span>
             {isVerified && <img src={images.verified.src} alt="verified" />}
           </div>

@@ -38,13 +38,13 @@ const PricingCard: FC<PricingCardProps> = ({
     <div
       className={`p-8 rounded-4xl ${
         type === "annually"
-          ? "border bg-white border-primary-500"
-          : "bg-primary-500"
+          ? "bg-primary-500"
+          : "border bg-white border-primary-500"
       }`}
     >
       <div
         className={`flex items-center gap-2 pb-5 border-b border-dashed ${
-          type === "annually" ? "border-dark-grey" : " border-white"
+          type === "annually" ? " border-white" : "border-dark-grey"
         }`}
       >
         <img src={images.crownYellow.src} className="w-10" alt="pawnderr" />
@@ -52,7 +52,7 @@ const PricingCard: FC<PricingCardProps> = ({
         {price && (
           <h2
             className={`flex items-end gap-1 ${
-              type === "annually" ? "text-dark-grey" : "text-white"
+              type === "annually" ? "text-white" : "text-dark-grey"
             }`}
           >
             {/* Price */}
@@ -74,15 +74,15 @@ const PricingCard: FC<PricingCardProps> = ({
           <li
             key={idx}
             className={`heading4 flex items-center gap-2.5 ${
-              type === "annually" ? "text-dark-grey" : "text-white"
+              type === "annually" ? "text-white" : "text-dark-grey"
             }`}
           >
             <img
               className="w-5"
               src={
                 type === "annually"
-                  ? images.checkGrey.src
-                  : images.checkWhite.src
+                  ? images.checkWhite.src
+                  : images.checkGrey.src
               }
               alt="billing"
             />

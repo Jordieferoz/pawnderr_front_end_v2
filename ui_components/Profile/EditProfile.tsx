@@ -1,5 +1,6 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -35,13 +36,15 @@ const stepTitles: Record<number, string> = {
 
 const EditProfile: FC<EditProfileProps> = ({ petData, loading = false }) => {
   const dispatch = useDispatch();
+  const searchParams = useSearchParams();
   const step = useSelector((state: RootState) => state.profileInfo.step);
+  const activeTab = searchParams.get("activetab");
 
   const [metadata, setMetadata] = useState<RegistrationMetadata | null>(null);
   const [isLoadingMetadata, setIsLoadingMetadata] = useState(false);
 
   const stepDescriptions: Record<number, string> = {
-    3: "Drag photos to change their order"
+    3: "Click a photo to make it primary"
   };
 
   // Fetch metadata on mount
@@ -67,13 +70,20 @@ const EditProfile: FC<EditProfileProps> = ({ petData, loading = false }) => {
     fetchMetadata();
   }, []);
 
+  // Handle query param redirection
+  useEffect(() => {
+    if (activeTab === "match_preferences") {
+      dispatch(setStep(4));
+    }
+  }, [activeTab, dispatch]);
+
   // Set first item as default on desktop
   useEffect(() => {
     const isDesktop = window.innerWidth >= 768; // md breakpoint
-    if (isDesktop && step === 0) {
+    if (isDesktop && step === 0 && !activeTab) {
       dispatch(setStep(1));
     }
-  }, [step, dispatch]);
+  }, [step, dispatch, activeTab]);
 
   const currentTitle = stepTitles[step] || "Edit Profile";
   const currentDesc = stepDescriptions[step];
@@ -93,7 +103,7 @@ const EditProfile: FC<EditProfileProps> = ({ petData, loading = false }) => {
   }
 
   return (
-    <div className="edit_profile_wrapper common_container">
+    <div className="edit_profile_wrapper common_container pb-22">
       <div className="mb-7">
         {/* Mobile: Show dynamic title, Desktop: Always show "Edit Profile" */}
         <ProfileHeader

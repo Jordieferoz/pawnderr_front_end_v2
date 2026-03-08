@@ -27,7 +27,7 @@ export interface RegistrationData {
   petName: string;
   nicknames?: string;
   petGender: "male" | "female" | "";
-  age?: string;
+  birthDate?: string;
   breed?: number;
   attributes?: Record<number, number[]>;
   vaccinationStatus?: string;
@@ -72,7 +72,7 @@ const initialState: RegistrationData = {
   petName: "",
   nicknames: "",
   petGender: "",
-  age: "",
+  birthDate: undefined,
   breed: undefined,
   attributes: {},
   vaccinationStatus: "",

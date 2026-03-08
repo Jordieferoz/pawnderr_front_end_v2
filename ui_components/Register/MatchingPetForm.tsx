@@ -2,10 +2,10 @@
 "use client";
 
 import {
+  resetRegistration,
   setStep,
   updatePreference,
-  updateStepData,
-  resetRegistration
+  updateStepData
 } from "@/store/registrationSlice";
 import {
   matchingPetSchema,
@@ -184,7 +184,7 @@ const MatchingPetForm: FC = () => {
         dispatch(resetRegistration());
 
         // Navigate to dashboard
-        router.push("/dashboard");
+        router.push("/discover");
       }
     } catch (error: any) {
       console.error("Pet preferences error:", error);

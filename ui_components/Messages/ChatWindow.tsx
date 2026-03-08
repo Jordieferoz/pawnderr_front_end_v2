@@ -149,27 +149,13 @@ const ChatWindow: FC<ChatWindowProps> = ({
     }
   };
 
-  // Format timestamp
-  const formatTime = (timestamp: number) => {
-    const date = new Date(timestamp);
-    const now = new Date();
-    const isToday = date.toDateString() === now.toDateString();
-    return isToday
-      ? date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
-      : date.toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-          hour: "2-digit",
-          minute: "2-digit"
-        });
-  };
-  if (isInitializing) {
-    return (
-      <div className="bg-white flex-1 rounded-xl md:rounded-[0px] px-4 md:px-0 md:border-l md:border-black/10 md:h-full relative shadow-[0px_4px_16.4px_0px_#0000001A] h-[calc(75vh-120px)] md:shadow-none flex items-center justify-center">
-        <p className="text-grey-500">Loading messages...</p>
-      </div>
-    );
-  }
+  // if (isInitializing) {
+  //   return (
+  //     <div className="bg-white flex-1 rounded-xl md:rounded-[0px] px-4 md:px-0 md:border-l md:border-black/10 md:h-full relative shadow-[0px_4px_16.4px_0px_#0000001A] h-[calc(75vh-120px)] md:shadow-none flex items-center justify-center">
+  //       <p className="text-grey-500">Loading messages...</p>
+  //     </div>
+  //   );
+  // }
 
   if (!isAuthenticated) {
     return (

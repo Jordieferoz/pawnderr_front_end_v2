@@ -78,20 +78,20 @@ export const TAILS_OF_LOVE_CARDS = [
   {
     id: 1,
     image: images.meaningfulDogs.src,
-    title: "“We met at Chestnut Park—now they’re inseparable!”",
+    title: "“We met at Central Park-now they’re inseparable!”",
     description: "-Luna & Max"
   },
   {
     id: 2,
     image: images.reliableDogs.src,
-    title: "“We met at Chestnut Park—now they’re inseparable!”",
-    description: "-Luna & Max"
+    title: "“We met through Pawnderr-now best friends forever!”",
+    description: "-Bella & Rocky"
   },
   {
     id: 3,
     image: images.communityCares.src,
-    title: "“We met at Chestnut Park—now they’re inseparable!”",
-    description: "-Luna & Max"
+    title: "“We met during evening walks-now inseparable always!”",
+    description: "-Tommy & Daisy"
   }
 ];
 

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 
 import { images } from "@/utils/images";
 
