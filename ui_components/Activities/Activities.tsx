@@ -293,21 +293,19 @@ const Activities: FC = () => {
   }, [page, hasMore, isLoading, activeTab]);
 
   return (
-    <div className="activities_wrapper">
-      <div className="common_container">
-        <div className="flex items-center my-4 justify-between mb-7">
-          <div className="flex items-center gap-3">
-            <img
-              onClick={() => router.back()}
-              className="w-9 h-9"
-              src={images.backBtn.src}
-              alt=""
-            />
-            <h4 className="display4_medium text-accent-900 flex gap-2 items-center">
-              Activities
-              <img src={images.pawnderrPlus.src} className="w-8 h-8" alt="" />
-            </h4>
-          </div>
+    <div className="activities_wrapper common_container pb-35 md:pb-10">
+      <div className="flex items-center my-4 justify-between mb-7">
+        <div className="flex items-center gap-3">
+          <img
+            onClick={() => router.back()}
+            className="w-9 h-9"
+            src={images.backBtn.src}
+            alt=""
+          />
+          <h4 className="display4_medium text-accent-900 flex gap-2 items-center">
+            Activities
+            <img src={images.pawnderrPlus.src} className="w-8 h-8" alt="" />
+          </h4>
         </div>
       </div>
 
