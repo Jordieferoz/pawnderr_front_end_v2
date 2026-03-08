@@ -194,19 +194,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     );
   };
   return (
-<<<<<<< HEAD
     <div className="relative h-[calc(100dvh-190px)] md:h-[calc(100vh-90px)] common_container overflow-hidden">
-=======
-    <div
-      className={`common_container relative overflow-hidden md:h-[calc(100vh-90px)] ${
-        isMessageList
-          ? "h-[calc(100dvh-102px)]"
-          : isMessageDetail
-            ? "h-[calc(100dvh-190px)]"
-            : "h-[calc(100dvh-102px)]"
-      }`}
-    >
->>>>>>> 0e399bbcd94dd7fc7a187e174371d34925c9fac3
       <div className="container mx-auto h-full flex flex-col">
         {/* Mobile Header & Matches */}
         <div className="my-4 mb-0 md:hidden flex-none">
