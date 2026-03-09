@@ -6,6 +6,7 @@ import { FC } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { RootState } from "@/store";
+import { resetRegistration } from "@/store/registrationSlice";
 import { images } from "@/utils/images";
 
 import { IBackBtnRegisterProps } from "./types";
@@ -20,10 +21,18 @@ const BackBtnRegister: FC<IBackBtnRegisterProps> = ({
   const router = useRouter();
 
   const step = useSelector((state: RootState) => state.registration.step);
+  const name = useSelector((state: RootState) => state.registration.name);
+  const phoneNumber = useSelector(
+    (state: RootState) => state.registration.phoneNumber
+  );
 
   const handleBackClick = () => {
     if (step === 1) {
       router.back();
+    } else if (step === 3 && !name && !phoneNumber) {
+      dispatch(resetRegistration());
+      router.back();
+      // signOut({ callbackUrl: "/sign-in" });
     } else {
       dispatch({ type: "registration/setStep", payload: step - 1 });
     }

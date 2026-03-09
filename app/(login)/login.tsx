@@ -10,7 +10,7 @@ import { signIn } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
@@ -24,6 +24,7 @@ import { showToast } from "@/ui_components/Shared/ToastMessage";
 import {
   fetchMyPetsCollection,
   fetchPetRegistrationData,
+  googleAuth,
   loginWithPhone
 } from "@/utils/api";
 import { signupStorage } from "@/utils/auth-storage";
@@ -68,6 +69,10 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
   const [showOTPModal, setShowOTPModal] = useState(false);
   const [otpPhone, setOtpPhone] = useState<string>("");
   const [rememberMe, setRememberMe] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+
+  // Hidden div where GSI renders its button (used for the real OAuth popup flow)
+  const googleBtnRef = useRef<HTMLDivElement>(null);
 
   // Load remembered phone number
   useEffect(() => {
@@ -253,16 +258,98 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
     }
   };
 
-  // Handle Google Sign In
-  const handleGoogleSignIn = async () => {
+  // ── Google Identity Services ──────────────────────────────────────────────
+
+  /** Called by GSI with the signed-in credential (JWT id_token). */
+  const handleGoogleCredential = async (response: { credential: string }) => {
+    const idToken = response.credential;
+    setGoogleLoading(true);
+
     try {
+      const res = await googleAuth({ id_token: idToken });
+      const resData = res?.data?.data ?? res?.data ?? res;
+
+      if (!resData?.accessToken) {
+        throw new Error(res?.data?.message || "Google auth failed");
+      }
+
+      // Store tokens in sessionStorage (same pattern as phone login)
+      sessionStorage.setItem("accessToken", resData.accessToken);
+      sessionStorage.setItem("refreshToken", resData.refreshToken || "");
+      sessionStorage.setItem("firebaseToken", resData.firebaseToken || "");
+
       const callbackUrl = searchParams?.get("callbackUrl") || "/discover";
-      await signIn("google", { callbackUrl });
-    } catch (error) {
-      console.error("Google sign in error:", error);
+
+      // Create NextAuth server-side session
+      const result = await signIn("credentials", {
+        accessToken: resData.accessToken,
+        firebaseToken: resData.firebaseToken || "",
+        redirect: false,
+        callbackUrl
+      });
+
+      if (result?.ok) {
+        await completeLoginFlow(callbackUrl);
+      } else {
+        showToast({
+          type: "error",
+          message: "Failed to create session. Please try again."
+        });
+      }
+    } catch (error: any) {
+      console.error("Google auth error:", error);
       showToast({
         type: "error",
-        message: "Failed to sign in with Google. Please try again."
+        message:
+          error?.message || "Failed to sign in with Google. Please try again."
+      });
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
+
+  /** Initialize GSI and render its button into the hidden ref for the correct OAuth popup flow. */
+  useEffect(() => {
+    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+    if (!clientId) return;
+
+    const initGSI = () => {
+      if (!(window as any).google) {
+        setTimeout(initGSI, 100);
+        return;
+      }
+
+      (window as any).google.accounts.id.initialize({
+        client_id: clientId,
+        callback: handleGoogleCredential
+      });
+
+      // Render GSI's real button into hidden div — this uses the correct
+      // OAuth popup flow (prompt() uses FedCM/One Tap which fails in dev)
+      if (googleBtnRef.current) {
+        (window as any).google.accounts.id.renderButton(googleBtnRef.current, {
+          theme: "outline",
+          size: "large",
+          type: "standard"
+        });
+      }
+    };
+
+    initGSI();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /** Click the hidden GSI button to open the real Google OAuth popup. */
+  const handleGoogleSignIn = () => {
+    const btn = googleBtnRef.current?.querySelector(
+      "div[role='button']"
+    ) as HTMLElement | null;
+    if (btn) {
+      btn.click();
+    } else {
+      showToast({
+        type: "error",
+        message: "Google Sign-In not ready. Please try again."
       });
     }
   };
@@ -421,6 +508,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
               type="button"
               className="cursor-pointer hover:opacity-80 transition-opacity"
               onClick={handleGoogleSignIn}
+              disabled={googleLoading}
             >
               <Image
                 src={images.google.src}
@@ -429,6 +517,11 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
                 alt="Sign in with Google"
               />
             </button>
+            {/* Hidden div — GSI renders its real button here for the OAuth popup flow */}
+            <div
+              ref={googleBtnRef}
+              className="absolute invisible pointer-events-none"
+            />
           </div>
 
           <div className="relative mb-8">

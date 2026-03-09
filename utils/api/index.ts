@@ -27,6 +27,20 @@ export const registerAuth = (payload: {
   });
 };
 
+export const googleAuth = (payload: {
+  id_token: string;
+}): Promise<TResponse<any>> => {
+  return new Promise((resolve, reject) => {
+    globalPostService<any, any>(`auth/google`, payload)
+      .then((response) => {
+        resolve(response);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
 export const verifyOTP = (payload: {
   phone: string;
   otp: string;

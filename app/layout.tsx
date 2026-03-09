@@ -61,6 +61,13 @@ export default function RootLayout({
           src="https://checkout.razorpay.com/v1/checkout.js"
           strategy="lazyOnload"
         />
+
+        {/* Google Identity Services Script */}
+        <Script
+          id="google-gsi"
+          src="https://accounts.google.com/gsi/client"
+          strategy="lazyOnload"
+        />
       </body>
     </html>
   );
