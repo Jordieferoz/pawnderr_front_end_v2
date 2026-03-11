@@ -270,6 +270,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
       const resData = res?.data?.data ?? res?.data ?? res;
 
       if (!resData?.accessToken) {
+        console.log(resData, "resData");
         throw new Error(res?.data?.message || "Google auth failed");
       }
 
@@ -345,6 +346,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
       "div[role='button']"
     ) as HTMLElement | null;
     if (btn) {
+      setGoogleLoading(true);
       btn.click();
     } else {
       showToast({
@@ -458,362 +460,372 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
   };
 
   return (
-    <div className="relative min-h-[100dvh] px-5 py-6 md:px-8">
-      <div className="container">
-        <Link
-          href={"/"}
-          className="mb-7.5 md:inline-flex justify-start hidden relative z-20"
-        >
-          <Image
-            src={images.logoHorizontal.src}
-            className="logo w-[220px]"
-            width={147}
-            height={97}
-            alt="PAWnderr Logo"
-          />
-        </Link>
-      </div>
-      <div className="sm:mx-auto sm:w-full sm:max-w-[766px] md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] rounded-4xl md:px-20 md:py-7 relative z-20">
-        <Link
-          href={"/"}
-          className="mb-7.5 flex w-full justify-center md:hidden"
-        >
-          <Image
-            src={images.logoHorizontal.src}
-            className="md:h-13 w-[180px]"
-            width={212}
-            height={52}
-            alt="PAWnderr Logo"
-          />
-        </Link>
-        <h1 className="display3 text-accent-900 mb-3 px-2 md:px-18 text-center">
-          {isSignup ? "Create Your PAWnderr Profile" : "Welcome Back"}
-        </h1>
-        <p
-          className={`heading4_medium text-neutral-white px-7 md:px-30 text-center mb-10`}
-        >
-          {isSignup
-            ? "Because every connection starts with a simple hello."
-            : "Your dog's next meaningful connection could be just a few clicks away.."}
-        </p>
-        <div className="md:px-30 pb-23 md:pb-0">
-          <img
-            className="pointer-events-none absolute top-1/2 left-1/2 z-0 -translate-1/2 md:hidden"
-            src={images.authPattern.src}
-            alt="Decorative pattern"
-          />
-
-          <div className="mb-10 flex items-center justify-center gap-5">
-            <button
-              type="button"
-              className="cursor-pointer hover:opacity-80 transition-opacity"
-              onClick={handleGoogleSignIn}
-              disabled={googleLoading}
-            >
-              <Image
-                src={images.google.src}
-                width={70}
-                height={70}
-                alt="Sign in with Google"
-              />
-            </button>
-            {/* Hidden div — GSI renders its real button here for the OAuth popup flow */}
-            <div
-              ref={googleBtnRef}
-              className="absolute invisible pointer-events-none"
-            />
-          </div>
-
-          <div className="relative mb-8">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-neutral-white"></div>
-            </div>
-            <div className="relative flex justify-center">
-              <p className="bg-white px-4 text-grey-500 body_medium text-center uppercase">
-                {isSignup ? "Or use your Email" : "Or use your Phone Number"}
-              </p>
-            </div>
-          </div>
-
-          <form
-            className="mb-7 flex flex-col gap-6"
-            onSubmit={handleSubmit(onSubmit)}
-            noValidate
+    <>
+      <div className="relative min-h-[100dvh] px-5 py-6 md:px-8">
+        <div className="container">
+          <Link
+            href={"/"}
+            className="mb-7.5 md:inline-flex justify-start hidden relative z-20"
           >
-            {isSignup ? (
-              <>
-                <div className="relative">
-                  <Controller
-                    control={control}
-                    name={"email" as keyof SignUpValues}
-                    render={({ field }) => (
-                      <InputField
-                        label="Email Address"
-                        placeholder="Email"
-                        type="email"
-                        {...field}
-                        value={field.value ?? ""}
-                        onChange={(e) => {
-                          const sanitized = sanitizeInput(e.target.value);
-                          field.onChange(sanitized);
-                        }}
-                        aria-invalid={Boolean(
-                          "email" in errors && errors.email
-                        )}
-                        aria-describedby={
-                          "email" in errors && errors.email
-                            ? "email-error"
-                            : undefined
-                        }
-                      />
-                    )}
-                  />
-                  {"email" in errors && errors.email && (
-                    <p id="email-error" className="mt-1 text-sm text-red-500">
-                      {(errors.email as { message?: string })?.message}
-                    </p>
-                  )}
-                </div>
+            <Image
+              src={images.logoHorizontal.src}
+              className="logo w-[220px]"
+              width={147}
+              height={97}
+              alt="PAWnderr Logo"
+            />
+          </Link>
+        </div>
+        <div className="sm:mx-auto sm:w-full sm:max-w-[766px] md:bg-white md:shadow-[0px_4px_16.4px_0px_#0000001A] rounded-4xl md:px-20 md:py-7 relative z-20">
+          <Link
+            href={"/"}
+            className="mb-7.5 flex w-full justify-center md:hidden"
+          >
+            <Image
+              src={images.logoHorizontal.src}
+              className="md:h-13 w-[180px]"
+              width={212}
+              height={52}
+              alt="PAWnderr Logo"
+            />
+          </Link>
+          <h1 className="display3 text-accent-900 mb-3 px-2 md:px-18 text-center">
+            {isSignup ? "Create Your PAWnderr Profile" : "Welcome Back"}
+          </h1>
+          <p
+            className={`heading4_medium text-neutral-white px-7 md:px-30 text-center mb-10`}
+          >
+            {isSignup
+              ? "Because every connection starts with a simple hello."
+              : "Your dog's next meaningful connection could be just a few clicks away.."}
+          </p>
+          <div className="md:px-30 pb-23 md:pb-0">
+            <img
+              className="pointer-events-none absolute top-1/2 left-1/2 z-0 -translate-1/2 md:hidden"
+              src={images.authPattern.src}
+              alt="Decorative pattern"
+            />
 
-                <div className="relative">
-                  <Controller
-                    control={control}
-                    name={"password" as keyof SignUpValues}
-                    render={({ field }) => (
-                      <InputField
-                        isPassword
-                        label="Set Password"
-                        placeholder="Create a password"
-                        type="password"
-                        {...field}
-                        value={field.value ?? ""}
-                        aria-invalid={Boolean(
-                          "password" in errors && errors.password
-                        )}
-                        aria-describedby={
-                          "password" in errors && errors.password
-                            ? "password-error"
-                            : undefined
-                        }
-                      />
-                    )}
+            <div className="mb-10 flex items-center justify-center gap-5">
+              {/* Spinning ring wraps the Google logo while auth is in progress */}
+              <div className="relative inline-flex items-center justify-center">
+                {googleLoading && (
+                  <span className="absolute inset-0 rounded-full border-4 border-transparent border-t-primary-500 animate-spin" />
+                )}
+                <button
+                  type="button"
+                  className="cursor-pointer hover:opacity-80 transition-opacity"
+                  onClick={handleGoogleSignIn}
+                  disabled={googleLoading}
+                >
+                  <Image
+                    src={images.google.src}
+                    width={70}
+                    height={70}
+                    alt="Sign in with Google"
                   />
-                  {"password" in errors && errors.password && (
-                    <p
-                      id="password-error"
-                      className="mt-1 text-sm text-red-500"
-                    >
-                      {(errors.password as { message?: string })?.message}
-                    </p>
-                  )}
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="relative">
-                  <Controller
-                    control={control}
-                    name={"phone" as keyof SignInValues}
-                    render={({ field }) => (
-                      <InputField
-                        label="Phone Number"
-                        placeholder="+1234567890"
-                        type="tel"
-                        {...field}
-                        value={field.value ?? ""}
-                        onChange={(e) => {
-                          const sanitized = sanitizePhoneInput(e.target.value);
-                          field.onChange(sanitized);
-                        }}
-                        aria-invalid={Boolean(
-                          "phone" in errors && (errors as any).phone
-                        )}
-                        aria-describedby={
-                          "phone" in errors && (errors as any).phone
-                            ? "phone-error"
-                            : undefined
-                        }
-                      />
-                    )}
-                  />
-                  {"phone" in errors && (errors as any).phone && (
-                    <p id="phone-error" className="mt-1 text-sm text-red-500">
-                      {(errors as any).phone?.message}
-                    </p>
-                  )}
-                </div>
+                </button>
+              </div>
+              {/* Hidden div — GSI renders its real button here for the OAuth popup flow */}
+              <div
+                ref={googleBtnRef}
+                className="absolute invisible pointer-events-none"
+              />
+            </div>
 
-                <div className="relative">
-                  <Controller
-                    control={control}
-                    name={"password" as keyof SignInValues}
-                    render={({ field }) => (
-                      <InputField
-                        isPassword
-                        label="Password"
-                        placeholder="Password"
-                        type="password"
-                        {...field}
-                        value={field.value ?? ""}
-                        aria-invalid={Boolean(
-                          "password" in errors && (errors as any).password
-                        )}
-                        aria-describedby={
-                          "password" in errors && (errors as any).password
-                            ? "password-error"
-                            : undefined
-                        }
-                      />
+            <div className="relative mb-8">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-neutral-white"></div>
+              </div>
+              <div className="relative flex justify-center">
+                <p className="bg-white px-4 text-grey-500 body_medium text-center uppercase">
+                  {isSignup ? "Or use your Email" : "Or use your Phone Number"}
+                </p>
+              </div>
+            </div>
+
+            <form
+              className="mb-7 flex flex-col gap-6"
+              onSubmit={handleSubmit(onSubmit)}
+              noValidate
+            >
+              {isSignup ? (
+                <>
+                  <div className="relative">
+                    <Controller
+                      control={control}
+                      name={"email" as keyof SignUpValues}
+                      render={({ field }) => (
+                        <InputField
+                          label="Email Address"
+                          placeholder="Email"
+                          type="email"
+                          {...field}
+                          value={field.value ?? ""}
+                          onChange={(e) => {
+                            const sanitized = sanitizeInput(e.target.value);
+                            field.onChange(sanitized);
+                          }}
+                          aria-invalid={Boolean(
+                            "email" in errors && errors.email
+                          )}
+                          aria-describedby={
+                            "email" in errors && errors.email
+                              ? "email-error"
+                              : undefined
+                          }
+                        />
+                      )}
+                    />
+                    {"email" in errors && errors.email && (
+                      <p id="email-error" className="mt-1 text-sm text-red-500">
+                        {(errors.email as { message?: string })?.message}
+                      </p>
                     )}
-                  />
-                  {"password" in errors && (errors as any).password && (
-                    <p
-                      id="password-error"
-                      className="mt-1 text-sm text-red-500"
-                    >
-                      {(errors as any).password?.message}
-                    </p>
-                  )}
-                  <div className="flex justify-between mt-2 items-center">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="rememberMe"
-                        checked={rememberMe}
-                        onCheckedChange={(checked) =>
-                          setRememberMe(checked as boolean)
-                        }
-                      />
-                      <label
-                        htmlFor="rememberMe"
-                        className="text-xs font-semibold text-accent-900 cursor-pointer select-none"
+                  </div>
+
+                  <div className="relative">
+                    <Controller
+                      control={control}
+                      name={"password" as keyof SignUpValues}
+                      render={({ field }) => (
+                        <InputField
+                          isPassword
+                          label="Set Password"
+                          placeholder="Create a password"
+                          type="password"
+                          {...field}
+                          value={field.value ?? ""}
+                          aria-invalid={Boolean(
+                            "password" in errors && errors.password
+                          )}
+                          aria-describedby={
+                            "password" in errors && errors.password
+                              ? "password-error"
+                              : undefined
+                          }
+                        />
+                      )}
+                    />
+                    {"password" in errors && errors.password && (
+                      <p
+                        id="password-error"
+                        className="mt-1 text-sm text-red-500"
                       >
-                        Remember Me
-                      </label>
+                        {(errors.password as { message?: string })?.message}
+                      </p>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="relative">
+                    <Controller
+                      control={control}
+                      name={"phone" as keyof SignInValues}
+                      render={({ field }) => (
+                        <InputField
+                          label="Phone Number"
+                          placeholder="+1234567890"
+                          type="tel"
+                          {...field}
+                          value={field.value ?? ""}
+                          onChange={(e) => {
+                            const sanitized = sanitizePhoneInput(
+                              e.target.value
+                            );
+                            field.onChange(sanitized);
+                          }}
+                          aria-invalid={Boolean(
+                            "phone" in errors && (errors as any).phone
+                          )}
+                          aria-describedby={
+                            "phone" in errors && (errors as any).phone
+                              ? "phone-error"
+                              : undefined
+                          }
+                        />
+                      )}
+                    />
+                    {"phone" in errors && (errors as any).phone && (
+                      <p id="phone-error" className="mt-1 text-sm text-red-500">
+                        {(errors as any).phone?.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="relative">
+                    <Controller
+                      control={control}
+                      name={"password" as keyof SignInValues}
+                      render={({ field }) => (
+                        <InputField
+                          isPassword
+                          label="Password"
+                          placeholder="Password"
+                          type="password"
+                          {...field}
+                          value={field.value ?? ""}
+                          aria-invalid={Boolean(
+                            "password" in errors && (errors as any).password
+                          )}
+                          aria-describedby={
+                            "password" in errors && (errors as any).password
+                              ? "password-error"
+                              : undefined
+                          }
+                        />
+                      )}
+                    />
+                    {"password" in errors && (errors as any).password && (
+                      <p
+                        id="password-error"
+                        className="mt-1 text-sm text-red-500"
+                      >
+                        {(errors as any).password?.message}
+                      </p>
+                    )}
+                    <div className="flex justify-between mt-2 items-center">
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="rememberMe"
+                          checked={rememberMe}
+                          onCheckedChange={(checked) =>
+                            setRememberMe(checked as boolean)
+                          }
+                        />
+                        <label
+                          htmlFor="rememberMe"
+                          className="text-xs font-semibold text-accent-900 cursor-pointer select-none"
+                        >
+                          Remember Me
+                        </label>
+                      </div>
+                      <Link
+                        href="/forgot-password"
+                        className="text-xs font-semibold text-accent-900 hover:underline"
+                      >
+                        Forgot Password?
+                      </Link>
                     </div>
-                    <Link
-                      href="/forgot-password"
-                      className="text-xs font-semibold text-accent-900 hover:underline"
-                    >
-                      Forgot Password?
-                    </Link>
+                  </div>
+                </>
+              )}
+
+              {isSignup && (
+                <div className="relative">
+                  <Controller
+                    control={control}
+                    name="confirmPassword"
+                    render={({ field }) => (
+                      <InputField
+                        isPassword
+                        label="Confirm Password"
+                        placeholder="Re-enter password"
+                        type="password"
+                        {...field}
+                        value={field.value ?? ""}
+                        aria-invalid={Boolean(
+                          "confirmPassword" in errors && errors.confirmPassword
+                        )}
+                        aria-describedby={
+                          "confirmPassword" in errors && errors.confirmPassword
+                            ? "confirm-error"
+                            : undefined
+                        }
+                      />
+                    )}
+                  />
+                  {"confirmPassword" in errors && errors.confirmPassword && (
+                    <p id="confirm-error" className="mt-1 text-sm text-red-500">
+                      {errors.confirmPassword.message}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              <div className="fixed bottom-0 left-0 md:relative py-5 w-full bg-white shadow-[0px_-4px_12.8px_-3px_#00000012] md:shadow-none flex justify-center md:block">
+                <div className="w-full flex items-center flex-col">
+                  <Button
+                    type="submit"
+                    disabled={!isValid || isSubmitting}
+                    suppressHydrationWarning
+                    className="w-[calc(100%-40px)] md:w-full mb-4"
+                  >
+                    {isSubmitting ? (
+                      <span className="flex items-center gap-2">
+                        <svg
+                          className="animate-spin h-5 w-5"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                        {isSignup ? "Signing Up..." : "Signing In..."}
+                      </span>
+                    ) : (
+                      <>{isSignup ? "Sign Up" : "Sign In"}</>
+                    )}
+                  </Button>
+                  <div className="text-center">
+                    <p className="paragraph1_bold text-accent-1000">
+                      {isSignup
+                        ? "Already have an account?"
+                        : " New to PAWnderr?"}{" "}
+                      <Link
+                        href={isSignup ? "/sign-in" : "/sign-up"}
+                        className="text-primary-theme"
+                      >
+                        {isSignup ? "Sign In" : "Create an Account"}
+                      </Link>
+                    </p>
                   </div>
                 </div>
-              </>
-            )}
-
-            {isSignup && (
-              <div className="relative">
-                <Controller
-                  control={control}
-                  name="confirmPassword"
-                  render={({ field }) => (
-                    <InputField
-                      isPassword
-                      label="Confirm Password"
-                      placeholder="Re-enter password"
-                      type="password"
-                      {...field}
-                      value={field.value ?? ""}
-                      aria-invalid={Boolean(
-                        "confirmPassword" in errors && errors.confirmPassword
-                      )}
-                      aria-describedby={
-                        "confirmPassword" in errors && errors.confirmPassword
-                          ? "confirm-error"
-                          : undefined
-                      }
-                    />
-                  )}
-                />
-                {"confirmPassword" in errors && errors.confirmPassword && (
-                  <p id="confirm-error" className="mt-1 text-sm text-red-500">
-                    {errors.confirmPassword.message}
-                  </p>
-                )}
               </div>
-            )}
-
-            <div className="fixed bottom-0 left-0 md:relative py-5 w-full bg-white shadow-[0px_-4px_12.8px_-3px_#00000012] md:shadow-none flex justify-center md:block">
-              <div className="w-full flex items-center flex-col">
-                <Button
-                  type="submit"
-                  disabled={!isValid || isSubmitting}
-                  suppressHydrationWarning
-                  className="w-[calc(100%-40px)] md:w-full mb-4"
-                >
-                  {isSubmitting ? (
-                    <span className="flex items-center gap-2">
-                      <svg
-                        className="animate-spin h-5 w-5"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                      {isSignup ? "Signing Up..." : "Signing In..."}
-                    </span>
-                  ) : (
-                    <>{isSignup ? "Sign Up" : "Sign In"}</>
-                  )}
-                </Button>
-                <div className="text-center">
-                  <p className="paragraph1_bold text-accent-1000">
-                    {isSignup
-                      ? "Already have an account?"
-                      : " New to PAWnderr?"}{" "}
-                    <Link
-                      href={isSignup ? "/sign-in" : "/sign-up"}
-                      className="text-primary-theme"
-                    >
-                      {isSignup ? "Sign In" : "Create an Account"}
-                    </Link>
-                  </p>
-                </div>
-              </div>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
-      </div>
-      <img
-        src={isSignup ? images.loginBg.src : images.signupBg.src}
-        className="absolute -top-10 left-0 w-full z-10 pointer-events-none hidden md:block"
-        alt=""
-      />
+        <img
+          src={isSignup ? images.loginBg.src : images.signupBg.src}
+          className="absolute -top-10 left-0 w-full z-10 pointer-events-none hidden md:block"
+          alt=""
+        />
 
-      {/* OTP Verification Modal */}
-      <Modal
-        open={showOTPModal}
-        setOpen={(val) => {
-          if (!val) {
-            setShowOTPModal(false);
-            setOtpPhone("");
-          }
-        }}
-        content={
-          <OTPModal
-            phone={otpPhone}
-            onOTPVerified={handleOTPVerified}
-            onClose={() => {
+        {/* OTP Verification Modal */}
+        <Modal
+          open={showOTPModal}
+          setOpen={(val) => {
+            if (!val) {
               setShowOTPModal(false);
               setOtpPhone("");
-            }}
-          />
-        }
-        className="max-w-md"
-      />
-    </div>
+            }
+          }}
+          content={
+            <OTPModal
+              phone={otpPhone}
+              onOTPVerified={handleOTPVerified}
+              onClose={() => {
+                setShowOTPModal(false);
+                setOtpPhone("");
+              }}
+            />
+          }
+          className="max-w-md"
+        />
+      </div>
+    </>
   );
 }
