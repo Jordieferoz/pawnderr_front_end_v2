@@ -14,9 +14,9 @@ const PawpStars = () => {
   };
 
   return (
-    <section className="min-h-screen py-10 md:py-20 relative">
+    <section className="min-h-screen py-10 md:py-20 relative" id="community">
       <div className="container mx-auto px-5 md:px-10">
-        <h3 className="display4_medium text-center text-dark-brown mb-5">
+        <h3 className="display4_medium text-center text-dark-brown mb-5 mt-10">
           Pawp Stars
         </h3>
         <p className="text-center text-light-grey2 text-xl font-semibold mb-8">

@@ -20,14 +20,14 @@ const Header = () => {
   const menuItems = [
     { label: "How It Works", href: "#how-it-works" },
     { label: "Why PAWnderr", href: "#why-pawnderr" },
-    { label: "Reviews", href: "#reviews" },
     { label: "Community", href: "#community" },
+    { label: "Reviews", href: "#reviews" },
     { label: "Sign Up", href: "/sign-up" }
   ];
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ["how-it-works", "why-pawnderr", "reviews"];
+      const sections = ["how-it-works", "why-pawnderr", "reviews", "community"];
       const scrollPosition = window.scrollY + 150; // Offset for header
 
       for (const section of sections) {

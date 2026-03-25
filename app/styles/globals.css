@@ -19,6 +19,9 @@ html,
 body {
   height: 100%;
 }
+button {
+  @apply cursor-pointer;
+}
 .hide-scrollbar {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */

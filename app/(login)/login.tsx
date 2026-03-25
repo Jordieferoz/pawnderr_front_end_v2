@@ -393,7 +393,9 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
         const petsPayload = petsResponse?.data ?? petsResponse;
         const myPets = petsPayload?.my_pets ?? [];
         const incompletePets = petsPayload?.incomplete_pets ?? [];
-        const hasNoPets = myPets.length === 0 && incompletePets.length === 0;
+        const hasNoPets =
+          myPets.length === 0 &&
+          (incompletePets.length !== 0 || incompletePets.length === 0);
 
         if (hasNoPets) {
           const registrationResponse = await fetchPetRegistrationData();

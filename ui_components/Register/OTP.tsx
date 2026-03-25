@@ -54,7 +54,7 @@ const OTP: FC = () => {
         phone: formattedPhone,
         otp: data.otp
       });
-      console.log(verifyResponse, "verifyResponse");
+
       if (
         verifyResponse.statusCode === 200 ||
         verifyResponse.statusCode === 201

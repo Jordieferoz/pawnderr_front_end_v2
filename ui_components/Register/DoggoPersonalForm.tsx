@@ -69,6 +69,7 @@ const DoggoPersonalForm: FC = () => {
   const [selectedImageSrc, setSelectedImageSrc] = useState<string | null>(null);
   const [isCropperOpen, setIsCropperOpen] = useState(false);
   const [activeSlotIndex, setActiveSlotIndex] = useState<number | null>(null);
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
   const metadata = registrationData.metadata;
 
@@ -528,7 +529,9 @@ const DoggoPersonalForm: FC = () => {
         birth_date: format(data.birthDate, "yyyy-MM-dd"),
         bark_o_graphy: data.barkography || "",
         fun_fact_or_habit: data.funFact || "",
-        vaccination_status: data.vaccinationStatus || "",
+        ...(data.vaccinationStatus
+          ? { vaccination_status: data.vaccinationStatus }
+          : {}),
         is_spayed_neutered: false,
         attribute_selections: attributeSelections,
         temporary_photo_ids: temporaryPhotoIds
@@ -536,7 +539,7 @@ const DoggoPersonalForm: FC = () => {
 
       // Call API
       const response = await petRegisterInfo(payload);
-
+      console.log(response, "response");
       if (response.statusCode === 200 || response.statusCode === 201) {
         // Extract pet_id from nested response structure
         // Response structure: response.data.data.pet_id
@@ -573,6 +576,33 @@ const DoggoPersonalForm: FC = () => {
           type: "success",
           message: "Pet registered successfully!"
         });
+      } else {
+        const responseData = response.data;
+        let validationErrors = responseData?.data;
+
+        if (
+          validationErrors &&
+          validationErrors.data &&
+          typeof validationErrors.data === "object"
+        ) {
+          validationErrors = validationErrors.data;
+        }
+
+        if (
+          validationErrors &&
+          typeof validationErrors === "object" &&
+          Object.keys(validationErrors).length > 0
+        ) {
+          const firstErrorKey = Object.keys(validationErrors)[0];
+          const errorMessage = validationErrors[firstErrorKey];
+          if (typeof errorMessage === "string") {
+            throw new Error(errorMessage);
+          }
+        }
+
+        throw new Error(
+          response.data?.message || "Failed to register pet. Please try again."
+        );
       }
     } catch (error: any) {
       if (error?.response?.data?.message) {
@@ -717,8 +747,12 @@ const DoggoPersonalForm: FC = () => {
 
           <div className="text-center mb-2">
             <label className="block text-sm font-medium text-neutral-white mb-1">
-              Upload some cute photos (Size Max 10MB each)
+              Upload some cute photos (Max 10MB each){" "}
+              <span className="text-red-500">*</span>
               <br />
+              <span className="text-xs text-red-400 font-semibold mb-1 block">
+                Minimum 5 photos required to proceed.
+              </span>
               <span className="text-xs text-gray-400">
                 Click to select an image, then crop it.
               </span>
@@ -834,7 +868,10 @@ const DoggoPersonalForm: FC = () => {
             control={control}
             name="birthDate"
             render={({ field }) => (
-              <Popover>
+              <Popover
+                open={isDatePickerOpen}
+                onOpenChange={setIsDatePickerOpen}
+              >
                 <PopoverTrigger asChild>
                   <Button
                     className={cn(
@@ -857,17 +894,17 @@ const DoggoPersonalForm: FC = () => {
                     captionLayout="dropdown"
                     mode="single"
                     selected={field.value}
+                    defaultMonth={field.value}
                     onSelect={(date) => {
                       field.onChange(date);
                       if (date) {
                         dispatch(
                           updateStepData({ birthDate: date.toISOString() })
                         );
+                        setIsDatePickerOpen(false);
                       }
                     }}
-                    disabled={(date) =>
-                      date > new Date() || date < new Date("2000-01-01")
-                    }
+                    disabled={(date) => date > new Date()}
                   />
                 </PopoverContent>
               </Popover>
@@ -1014,9 +1051,9 @@ const DoggoPersonalForm: FC = () => {
         <div className="fixed bottom-0 left-0 md:relative py-5 w-full bg-white shadow-[0px_-4px_12.8px_-3px_#00000012] md:shadow-none flex justify-center md:block">
           <Button
             type="submit"
-            disabled={!hasMinimumImages || isUploading || isSubmitting}
+            className="w-[calc(100%-40px)] md:w-full mb-4 md:mb-0"
+            disabled={isUploading || isSubmitting}
             suppressHydrationWarning
-            className="w-[calc(100%-40px)] md:w-full"
           >
             {isSubmitting ? (
               <span className="flex items-center gap-2">
