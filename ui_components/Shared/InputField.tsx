@@ -20,6 +20,7 @@ const InputField: FC<IInputFieldProps> = (props) => {
     value,
     onChange,
     onBlur,
+    onKeyDown,
     errorMsg,
     autofocus,
     disabled,
@@ -47,6 +48,7 @@ const InputField: FC<IInputFieldProps> = (props) => {
           className={`${className ?? ""} ${rightIcon ? "pr-12" : ""} ${leftIcon ? "pl-12" : ""} pr-10`}
           placeholder={placeholder}
           onChange={onChange}
+          onKeyDown={onKeyDown}
           disabled={disabled}
           onBlur={onBlur}
           value={value as string | number}

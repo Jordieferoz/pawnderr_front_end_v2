@@ -2,6 +2,19 @@
 
 import { z } from "zod";
 
+const passwordSchema = z
+  .string()
+  .min(8, { message: "Use at least 8 characters" })
+  .regex(/[A-Z]/, { message: "Must contain at least one uppercase letter" })
+  .regex(/[a-z]/, { message: "Must contain at least one lowercase letter" })
+  .regex(/[0-9]/, { message: "Must contain at least one number" })
+  .regex(/[^A-Za-z0-9\s]/, {
+    message: "Must contain at least one special character"
+  })
+  .regex(/^\S*$/, {
+    message: "Password cannot contain spaces"
+  });
+
 // Sign-in schema with phone number and password
 export const signInSchema = z.object({
   phone: z
@@ -27,8 +40,14 @@ export const signInSchema = z.object({
 // Sign-up schema: Uses email and password (separate from sign-in)
 export const signUpSchema = z
   .object({
-    email: z.string().email({ message: "Enter a valid email" }).trim(),
-    password: z.string().min(8, { message: "Use at least 8 characters" }),
+    email: z
+      .string()
+      .email({ message: "Enter a valid email" })
+      .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, {
+        message: "Enter a valid email"
+      })
+      .trim(),
+    password: passwordSchema,
     confirmPassword: z.string().min(8, { message: "Confirm your password" })
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -60,7 +79,7 @@ export const forgotPasswordSchema = z.object({
 export const resetPasswordSchema = z
   .object({
     otp: z.string().min(6, "OTP is required"),
-    newPassword: z.string().min(8, { message: "Use at least 8 characters" }),
+    newPassword: passwordSchema,
     confirmPassword: z.string().min(8, { message: "Confirm your password" })
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
@@ -72,7 +91,7 @@ export const resetPasswordSchema = z
 export const changePasswordSchema = z
   .object({
     otp: z.string().min(6, "OTP is required"),
-    newPassword: z.string().min(8, { message: "Use at least 8 characters" }),
+    newPassword: passwordSchema,
     confirmPassword: z.string().min(8, { message: "Confirm your password" })
   })
   .refine((data) => data.newPassword === data.confirmPassword, {

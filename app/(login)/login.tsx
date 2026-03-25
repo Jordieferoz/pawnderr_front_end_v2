@@ -14,8 +14,16 @@ import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
+import { Info } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from "@/components/ui/tooltip";
 import { setMetadata, updateStepData } from "@/store/registrationSlice";
 import { setUser } from "@/store/userSlice";
 import { OTPModal } from "@/ui_components/Modals";
@@ -591,10 +599,49 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
                       render={({ field }) => (
                         <InputField
                           isPassword
-                          label="Set Password"
+                          label={
+                            <div className="flex items-center gap-1.5">
+                              Set Password
+                              <TooltipProvider delayDuration={100}>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <button
+                                      type="button"
+                                      className="focus:outline-none flex items-center justify-center"
+                                    >
+                                      <Info className="h-4 w-4 text-gray-500 hover:text-gray-700 transition-colors z-20" />
+                                    </button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <div className="text-sm">
+                                      <p className="font-semibold mb-1">
+                                        Password must contain:
+                                      </p>
+                                      <ul className="list-disc pl-4 text-left space-y-0.5">
+                                        <li>At least 8 characters</li>
+                                        <li>1 uppercase letter</li>
+                                        <li>1 lowercase letter</li>
+                                        <li>1 number</li>
+                                        <li>1 special character</li>
+                                      </ul>
+                                    </div>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            </div>
+                          }
                           placeholder="Create a password"
                           type="password"
                           {...field}
+                          onChange={(e) => {
+                            const val = e.target.value.replace(/\s/g, "");
+                            field.onChange(val);
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === " ") {
+                              e.preventDefault();
+                            }
+                          }}
                           value={field.value ?? ""}
                           aria-invalid={Boolean(
                             "password" in errors && errors.password
@@ -665,6 +712,15 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
                           placeholder="Password"
                           type="password"
                           {...field}
+                          onChange={(e) => {
+                            const val = e.target.value.replace(/\s/g, "");
+                            field.onChange(val);
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === " ") {
+                              e.preventDefault();
+                            }
+                          }}
                           value={field.value ?? ""}
                           aria-invalid={Boolean(
                             "password" in errors && (errors as any).password
@@ -724,6 +780,15 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
                         placeholder="Re-enter password"
                         type="password"
                         {...field}
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/\s/g, "");
+                          field.onChange(val);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === " ") {
+                            e.preventDefault();
+                          }
+                        }}
                         value={field.value ?? ""}
                         aria-invalid={Boolean(
                           "confirmPassword" in errors && errors.confirmPassword

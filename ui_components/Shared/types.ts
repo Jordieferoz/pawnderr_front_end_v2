@@ -7,6 +7,7 @@ export interface IInputFieldProps {
   labelClassName?: string;
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   className?: string;
   placeholder?: string;
   id?: string;
