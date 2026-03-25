@@ -19,6 +19,7 @@ interface MatchPreferencesProps {
   petData?: IPetData | null;
   loading?: boolean;
   metadata: RegistrationMetadata | null;
+  onSuccess?: () => Promise<void>;
 }
 
 // Schema for match preferences
@@ -36,7 +37,8 @@ type MatchPreferencesValues = z.infer<typeof matchPreferencesSchema>;
 const MatchPreferences: FC<MatchPreferencesProps> = ({
   petData,
   loading = false,
-  metadata
+  metadata,
+  onSuccess
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [initialValues, setInitialValues] =
@@ -277,6 +279,9 @@ const MatchPreferences: FC<MatchPreferencesProps> = ({
           type: "success",
           message: "Match preferences updated successfully"
         });
+
+        // Refetch pet data from server
+        if (onSuccess) await onSuccess();
       }
     } catch (error: any) {
       console.error("❌ Failed to update preferences:", error);

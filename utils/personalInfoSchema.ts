@@ -66,7 +66,9 @@ export const petProfileEditSchema = z.object({
   petName: z.string().min(1, "Pet's Name is required"),
   nicknames: z.string().max(100).optional(),
   petGender: z.enum(["male", "female"], { message: "Select pet gender" }),
-  age: z.string().min(1, "Age is required"),
+  birthDate: z.date({
+    message: "A date of birth is required"
+  }),
   breed: z.number({ message: "Please select a breed" }).optional(),
   // Dynamic attributes as Record<string, number[]>
   attributes: z.record(z.string(), z.array(z.number())).optional(),

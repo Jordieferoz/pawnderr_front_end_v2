@@ -398,7 +398,12 @@ const Activities: FC = () => {
                 With Premium, your pet doesn’t just <br /> match… they mingle!
                 Gain full access to <br /> the Activities Page
               </p>
-              <Button className="w-[calc(100%-72px)]">Try PAWNderr+</Button>
+              <Button
+                onClick={() => router.push("/upgrade")}
+                className="w-[calc(100%-72px)]"
+              >
+                Try PAWNderr+
+              </Button>
             </div>
           </div>
         )}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { EditProfile } from "@/ui_components/Profile";
 import { IPetData } from "@/ui_components/Profile/types";
@@ -14,30 +14,37 @@ export default function ProfileEditPage() {
   const [petData, setPetData] = useState<IPetData | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!petId) {
-        setLoading(false);
-        return;
+  const fetchData = useCallback(async () => {
+    if (!petId) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await fetchPetProfile(Number(petId));
+      // API response structure: { data: { data: {...pet data...}, message, status }, statusCode, message }
+      const petProfileData = response.data?.data || response.data;
+
+      if (petProfileData) {
+        setPetData(petProfileData);
       }
-
-      try {
-        const response = await fetchPetProfile(Number(petId));
-        // API response structure: { data: { data: {...pet data...}, message, status }, statusCode, message }
-        const petProfileData = response.data?.data || response.data;
-
-        if (petProfileData) {
-          setPetData(petProfileData);
-        }
-      } catch (error) {
-        console.error("Error fetching pet profile:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+    } catch (error) {
+      console.error("Error fetching pet profile:", error);
+    } finally {
+      setLoading(false);
+    }
   }, [petId]);
 
-  return <EditProfile petData={petData} loading={loading} />;
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  return (
+    <EditProfile
+      petData={petData}
+      loading={loading}
+      refetchPetData={fetchData}
+    />
+  );
 }

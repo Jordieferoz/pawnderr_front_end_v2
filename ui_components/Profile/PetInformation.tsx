@@ -1,5 +1,11 @@
 "use client";
 
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -11,6 +17,9 @@ import {
   petProfileEditSchema,
   PetProfileEditValues
 } from "@/utils/personalInfoSchema";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
 import { FC, useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
@@ -22,6 +31,7 @@ import { updateAttribute } from "@/store/registrationSlice";
 import { updatePetInfo } from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { vaccinationOptions } from "@/constants";
 import { Attribute, RegistrationMetadata } from "../Register/types";
 import { InputField } from "../Shared";
 import Loader from "../Shared/Loader";
@@ -32,19 +42,21 @@ interface PetInformationProps {
   petData?: IPetData | null;
   loading?: boolean;
   metadata: RegistrationMetadata | null;
+  onSuccess?: () => Promise<void>;
 }
 
 const PetInformation: FC<PetInformationProps> = ({
   petData,
   loading = false,
-  metadata
+  metadata,
+  onSuccess
 }) => {
   const dispatch = useDispatch();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [initialValues, setInitialValues] =
     useState<PetProfileEditValues | null>(null);
-
+  console.log(initialValues, "initialValues");
   // Sort attributes by display_order
   const sortedAttributes = useMemo(
     () =>
@@ -63,16 +75,7 @@ const PetInformation: FC<PetInformationProps> = ({
     [metadata, categoryId]
   );
 
-  // Get gender and vaccination options
-  const genderOptions = useMemo(
-    () => metadata?.pet_gender_options || [],
-    [metadata]
-  );
-
-  const vaccinationOptions = useMemo(
-    () => metadata?.vaccination_status_options || [],
-    [metadata]
-  );
+  // Get gender and vaccination options (using constants)
 
   // Prepare default values for attributes
   const getDefaultAttributeValues = (): Record<string, number[]> => {
@@ -82,6 +85,8 @@ const PetInformation: FC<PetInformationProps> = ({
     });
     return defaultAttrs;
   };
+
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
   const {
     control,
@@ -97,7 +102,7 @@ const PetInformation: FC<PetInformationProps> = ({
       petName: "",
       nicknames: "",
       petGender: undefined,
-      age: "",
+      birthDate: undefined,
       breed: undefined,
       attributes: getDefaultAttributeValues(),
       vaccinationStatus: "",
@@ -148,7 +153,9 @@ const PetInformation: FC<PetInformationProps> = ({
         petName: petData.name || "",
         nicknames: petData.nickname || "",
         petGender: (petData.gender as "male" | "female") || undefined,
-        age: petData.age?.toString() || "",
+        birthDate: petData.birth_date
+          ? new Date(petData.birth_date + "T00:00:00")
+          : new Date(),
         breed: petData.breed?.id || undefined,
         attributes: attributesForForm,
         vaccinationStatus: petData.vaccination_status || "",
@@ -178,7 +185,8 @@ const PetInformation: FC<PetInformationProps> = ({
       currentValues.petName !== initialValues.petName ||
       currentValues.nicknames !== initialValues.nicknames ||
       currentValues.petGender !== initialValues.petGender ||
-      currentValues.age !== initialValues.age ||
+      currentValues.birthDate?.toISOString() !==
+        initialValues.birthDate?.toISOString() ||
       currentValues.breed !== initialValues.breed ||
       currentValues.vaccinationStatus !== initialValues.vaccinationStatus ||
       currentValues.funFact !== initialValues.funFact ||
@@ -330,17 +338,21 @@ const PetInformation: FC<PetInformationProps> = ({
       const payload = {
         name: data.petName,
         nickname: data.nicknames || "",
-        age: parseInt(data.age),
+        ...(data.birthDate
+          ? { birth_date: format(data.birthDate, "yyyy-MM-dd") }
+          : {}),
         bark_o_graphy: data.barkography || "",
         fun_fact_or_habit: data.funFact || "",
-        vaccination_status: data.vaccinationStatus || "",
-        is_spayed_neutered: petData.is_spayed_neutered || false,
+        ...(data.vaccinationStatus
+          ? { vaccination_status: data.vaccinationStatus }
+          : {}),
+        is_spayed_neutered: petData?.is_spayed_neutered || false,
         attribute_selections: attributeSelections
       };
 
       // Call update API
       const response = await updatePetInfo(petData.id, payload);
-
+      console.log(response, "response");
       if (response.statusCode === 200 || response.statusCode === 201) {
         // Update initial values to reflect saved state
         setInitialValues(data);
@@ -349,6 +361,9 @@ const PetInformation: FC<PetInformationProps> = ({
           type: "success",
           message: "Pet profile updated successfully"
         });
+
+        // Refetch pet data from server
+        if (onSuccess) await onSuccess();
       }
     } catch (error: any) {
       console.error("❌ Failed to update pet profile:", error);
@@ -478,57 +493,69 @@ const PetInformation: FC<PetInformationProps> = ({
           )}
         </div>
 
-        {/* Gender */}
+        {/* Gender - Read Only */}
         <div className="flex flex-col gap-2">
           <label className="block text-sm font-medium text-dark-grey">
             Pet's a
           </label>
-          <Controller
-            control={control}
-            name="petGender"
-            render={({ field }) => (
-              <ToggleGroup
-                type="single"
-                value={field.value ?? ""}
-                onValueChange={field.onChange}
-                className="flex gap-4"
-                disabled={isSubmitting}
-              >
-                {genderOptions.map((option) => (
-                  <ToggleGroupItem key={option.value} value={option.value}>
-                    {option.label}
-                  </ToggleGroupItem>
-                ))}
-              </ToggleGroup>
-            )}
-          />
-          {errors.petGender && (
-            <p className="mt-1 text-sm text-red-500">
-              {errors.petGender.message}
-            </p>
-          )}
+          <div className="w-full px-3 py-3 border border-gray-200 rounded-2xl bg-gray-50 text-gray-600 capitalize">
+            {petData?.gender || "Not specified"}
+          </div>
+          <p className="text-xs text-gray-500">
+            Gender cannot be changed after registration
+          </p>
         </div>
 
-        {/* Age */}
-        <div className="relative">
+        {/* Date of Birth */}
+        <div className="relative flex flex-col gap-2">
+          <label className="block text-sm font-medium text-dark-grey">
+            Date of Birth
+          </label>
           <Controller
             control={control}
-            name="age"
+            name="birthDate"
             render={({ field }) => (
-              <InputField
-                label="Age"
-                placeholder="Enter your Pet's Age"
-                type="number"
-                {...field}
-                aria-invalid={!!errors.age}
-                aria-describedby={errors.age ? "age-error" : undefined}
-                disabled={isSubmitting}
-              />
+              <Popover
+                open={isDatePickerOpen}
+                onOpenChange={setIsDatePickerOpen}
+              >
+                <PopoverTrigger asChild>
+                  <Button
+                    type="button"
+                    className={cn(
+                      "w-full justify-start text-left text-sm font-normal border hover:bg-transparent shadow-none border-medium-grey bg-white h-[50px] rounded-[16px] px-5",
+                      !field.value && "text-muted-foreground"
+                    )}
+                    disabled={isSubmitting}
+                  >
+                    <CalendarIcon className="mr-3 h-5 w-5 opacity-70" />
+                    {field.value ? (
+                      format(field.value, "PPP")
+                    ) : (
+                      <span className="text-[#a0a0a0]">Pick a date</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 z-[100]" align="start">
+                  <Calendar
+                    className="!text-sm"
+                    captionLayout="dropdown"
+                    mode="single"
+                    selected={field.value}
+                    defaultMonth={field.value}
+                    onSelect={(date) => {
+                      field.onChange(date);
+                      setIsDatePickerOpen(false);
+                    }}
+                    disabled={(date) => date > new Date()}
+                  />
+                </PopoverContent>
+              </Popover>
             )}
           />
-          {errors.age && (
-            <p id="age-error" className="mt-1 text-sm text-red-500">
-              {errors.age.message}
+          {errors.birthDate && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.birthDate.message}
             </p>
           )}
         </div>

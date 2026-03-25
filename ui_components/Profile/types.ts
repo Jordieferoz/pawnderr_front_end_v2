@@ -55,6 +55,7 @@ export interface IPetData {
   nickname: string;
   gender: string;
   age: number;
+  birth_date: string;
   bark_o_graphy: string;
   fun_fact_or_habit: string;
   vaccination_status: string;

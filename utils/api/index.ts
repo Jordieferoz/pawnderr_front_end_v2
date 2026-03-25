@@ -235,7 +235,7 @@ export const updateUserProfile = (payload: {
   return new Promise((resolve, reject) => {
     globalPutService<any, any>(`user/profile`, payload)
       .then((response) => {
-        if (response.statusCode === 200 || response.statusCode === 201) {
+        if (response.data) {
           resolve(response);
         } else {
           reject(new Error(`Unexpected status code: ${response.statusCode}`));
@@ -254,7 +254,7 @@ export const updatePetInfo = (
   return new Promise((resolve, reject) => {
     globalPutService<any, any>(`pet/${id}`, payload)
       .then((response) => {
-        if (response.statusCode === 200 || response.statusCode === 201) {
+        if (response.data) {
           resolve(response);
         } else {
           reject(new Error(`Unexpected status code: ${response.statusCode}`));

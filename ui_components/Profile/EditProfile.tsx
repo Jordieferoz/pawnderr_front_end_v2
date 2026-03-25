@@ -24,6 +24,7 @@ import { IPetData } from "./types";
 interface EditProfileProps {
   petData?: IPetData | null;
   loading?: boolean;
+  refetchPetData?: () => Promise<void>;
 }
 
 const stepTitles: Record<number, string> = {
@@ -34,7 +35,11 @@ const stepTitles: Record<number, string> = {
   4: "Match Preferences"
 };
 
-const EditProfile: FC<EditProfileProps> = ({ petData, loading = false }) => {
+const EditProfile: FC<EditProfileProps> = ({
+  petData,
+  loading = false,
+  refetchPetData
+}) => {
   const dispatch = useDispatch();
   const searchParams = useSearchParams();
   const step = useSelector((state: RootState) => state.profileInfo.step);
@@ -194,16 +199,22 @@ const EditProfile: FC<EditProfileProps> = ({ petData, loading = false }) => {
                 petData={petData}
                 loading={loading}
                 metadata={metadata}
+                onSuccess={refetchPetData}
               />
             )}
             {step === 3 && (
-              <UpdateGallery petData={petData} loading={loading} />
+              <UpdateGallery
+                petData={petData}
+                loading={loading}
+                onSuccess={refetchPetData}
+              />
             )}
             {step === 4 && (
               <MatchPreferences
                 petData={petData}
                 loading={loading}
                 metadata={metadata}
+                onSuccess={refetchPetData}
               />
             )}
           </div>

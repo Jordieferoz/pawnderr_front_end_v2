@@ -85,11 +85,13 @@ const GalleryImageItem: FC<GalleryImageItemProps> = ({
 interface UpdateGalleryProps {
   petData?: IPetData | null;
   loading?: boolean;
+  onSuccess?: () => Promise<void>;
 }
 
 const UpdateGallery: FC<UpdateGalleryProps> = ({
   petData,
-  loading = false
+  loading = false,
+  onSuccess
 }) => {
   const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
   const [isReordering, setIsReordering] = useState(false);
@@ -157,6 +159,9 @@ const UpdateGallery: FC<UpdateGalleryProps> = ({
           message: "Primary photo updated"
         });
 
+        // Refetch pet data from server
+        if (onSuccess) await onSuccess();
+
         // Update display_order in local state
         setGalleryImages((prev) =>
           prev.map((img, index) => ({
@@ -204,6 +209,9 @@ const UpdateGallery: FC<UpdateGalleryProps> = ({
           type: "success",
           message: "Photo deleted successfully"
         });
+
+        // Refetch pet data from server
+        if (onSuccess) await onSuccess();
       }
     } catch (error: any) {
       console.error("❌ Failed to delete photo:", error);
@@ -276,6 +284,9 @@ const UpdateGallery: FC<UpdateGalleryProps> = ({
           type: "success",
           message: "Photo uploaded successfully"
         });
+
+        // Refetch pet data from server
+        if (onSuccess) await onSuccess();
       }
     } catch (error: any) {
       console.error("❌ Failed to upload photo:", error);
