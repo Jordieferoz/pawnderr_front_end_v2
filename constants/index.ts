@@ -13,7 +13,7 @@ import { images } from "@/utils/images";
 export const genderOptions = [
   { label: "Male", value: "male" },
   { label: "Female", value: "female" },
-  { label: "Other", value: "other" }
+  { label: "Prefer Not to Say", value: "prefer_not_to_say" }
 ];
 
 export const energyLevels = ["Chill", "Playful", "Zoomies All Day", "Balanced"];

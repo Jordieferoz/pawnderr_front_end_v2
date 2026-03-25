@@ -150,7 +150,7 @@ const OTP: FC = () => {
         <p className="text-sm text-gray-600">
           Code sent to{" "}
           <span className="font-semibold text-gray-900">
-            +91{registrationData.phoneNumber}
+            {registrationData.phoneNumber}
           </span>
         </p>
       </div>

@@ -3,12 +3,21 @@ import { z } from "zod";
 
 // Step 1: User details schema
 export const userDetailsSchema = z.object({
-  name: z.string().min(1, "Name is required"),
+  name: z
+    .string()
+    .min(3, "Name must be at least 3 characters")
+    .max(20, "Name must be at most 20 characters"),
   gender: z.preprocess(
     (val) => (val === "" ? undefined : val),
-    z.enum(["male", "female", "other", ""], "Please select a gender")
+    z.enum(
+      ["male", "female", "prefer_not_to_say", ""],
+      "Please select a gender"
+    )
   ),
-  phoneNumber: z.string().min(1, "Phone number is required")
+  phoneNumber: z
+    .string()
+    .min(1, "Phone number is required")
+    .regex(/^\+91 \d{10}$/, "Phone number must be exactly 10 digits")
   // location: z.string().min(1, "Location is required")
 });
 

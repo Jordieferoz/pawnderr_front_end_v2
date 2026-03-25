@@ -46,7 +46,7 @@ const UserDetailsForm: FC = () => {
     defaultValues: {
       name: "",
       gender: "",
-      phoneNumber: ""
+      phoneNumber: "+91 "
     }
   });
 
@@ -66,10 +66,8 @@ const UserDetailsForm: FC = () => {
         return;
       }
 
-      // Append +91 to phone number before sending to API
-      const formattedPhone = data.phoneNumber.startsWith("+")
-        ? data.phoneNumber
-        : `+91${data.phoneNumber}`;
+      // Format phone number cleanly before sending to API
+      const formattedPhone = data.phoneNumber.replace(/\s/g, "");
 
       const response = await registerAuth({
         email: credentials.email,
@@ -78,7 +76,7 @@ const UserDetailsForm: FC = () => {
         phone: formattedPhone, // Use formatted phone number
         gender: data.gender
       });
-
+      console.log(response, "response");
       if (response.statusCode === 200 || response.statusCode === 201) {
         const userData = response.data?.data;
 
@@ -134,19 +132,22 @@ const UserDetailsForm: FC = () => {
         ) {
           // Get the first error message
           const firstErrorKey = Object.keys(validationErrors)[0];
-          let errorMessage = validationErrors[firstErrorKey];
-
-          // Custom messages
-          if (firstErrorKey === "email") {
-            errorMessage = "Must be a valid email";
-          }
-
+          const errorMessage = validationErrors[firstErrorKey];
+          // Rely on original API messages
           if (typeof errorMessage === "string") {
             showToast({
               type: "error",
               message: errorMessage
             });
             setIsSubmitting(false);
+
+            if (
+              errorMessage.includes("already registered") ||
+              errorMessage ===
+                "This email address is already registered. Please sign in or use a different email."
+            ) {
+              setTimeout(() => router.push("/sign-in"), 1500);
+            }
             return;
           }
         }
@@ -202,6 +203,7 @@ const UserDetailsForm: FC = () => {
                 placeholder="Your full name"
                 type="text"
                 {...field}
+                maxLength={20}
                 aria-invalid={!!errors.name}
                 aria-describedby={errors.name ? "name-error" : undefined}
               />
@@ -253,9 +255,22 @@ const UserDetailsForm: FC = () => {
             render={({ field }) => (
               <InputField
                 label="Phone Number (Used for Verification Only)"
-                placeholder="+1234567890"
+                placeholder="+91 9876543210"
                 type="tel"
                 {...field}
+                onChange={(e) => {
+                  let val = e.target.value;
+                  if (!val.startsWith("+91 ")) {
+                    val = "+91 " + val.replace(/^\+91\s?/, "");
+                  }
+                  const prefix = "+91 ";
+                  let digits = val.slice(prefix.length).replace(/\D/g, "");
+                  if (digits.length > 10) {
+                    digits = digits.slice(0, 10);
+                  }
+                  field.onChange(prefix + digits);
+                }}
+                maxLength={15}
                 aria-invalid={!!errors.phoneNumber}
                 aria-describedby={
                   errors.phoneNumber ? "phone-error" : undefined
