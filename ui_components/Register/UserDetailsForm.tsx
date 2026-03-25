@@ -76,7 +76,7 @@ const UserDetailsForm: FC = () => {
         phone: formattedPhone, // Use formatted phone number
         gender: data.gender
       });
-      console.log(response, "response");
+
       if (response.statusCode === 200 || response.statusCode === 201) {
         const userData = response.data?.data;
 

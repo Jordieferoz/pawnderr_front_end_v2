@@ -27,7 +27,6 @@ const OTP: FC = () => {
   );
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [apiError, setApiError] = useState<string | null>(null);
 
   const {
     control,
@@ -42,7 +41,6 @@ const OTP: FC = () => {
   });
 
   const onSubmit = async (data: OtpValues) => {
-    setApiError(null);
     setIsSubmitting(true);
 
     try {
@@ -56,7 +54,7 @@ const OTP: FC = () => {
         phone: formattedPhone,
         otp: data.otp
       });
-
+      console.log(verifyResponse, "verifyResponse");
       if (
         verifyResponse.statusCode === 200 ||
         verifyResponse.statusCode === 201
@@ -114,6 +112,29 @@ const OTP: FC = () => {
           throw new Error("Failed to fetch registration data");
         }
       } else {
+        const responseData = verifyResponse.data;
+        let validationErrors = responseData?.data;
+
+        if (
+          validationErrors &&
+          validationErrors.data &&
+          typeof validationErrors.data === "object"
+        ) {
+          validationErrors = validationErrors.data;
+        }
+
+        if (
+          validationErrors &&
+          typeof validationErrors === "object" &&
+          Object.keys(validationErrors).length > 0
+        ) {
+          const firstErrorKey = Object.keys(validationErrors)[0];
+          const errorMessage = validationErrors[firstErrorKey];
+          if (typeof errorMessage === "string") {
+            throw new Error(errorMessage);
+          }
+        }
+
         throw new Error(
           verifyResponse.data?.message || "OTP verification failed"
         );
@@ -129,7 +150,6 @@ const OTP: FC = () => {
         errorMessage = error.message;
       }
 
-      setApiError(errorMessage);
       showToast({
         type: "error",
         message: errorMessage
@@ -154,12 +174,6 @@ const OTP: FC = () => {
           </span>
         </p>
       </div>
-
-      {apiError && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg md:mx-30">
-          <p className="text-sm text-red-600 text-center">{apiError}</p>
-        </div>
-      )}
 
       <form
         className="mb-7 flex flex-col gap-6 md:px-30"
