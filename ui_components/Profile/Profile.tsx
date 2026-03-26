@@ -6,12 +6,15 @@ import { FC, useState } from "react";
 import { images } from "@/utils/images";
 
 import { Button } from "@/components/ui/button";
+import { setStep } from "@/store/profileInfoSlice";
 import { swipePetAction } from "@/utils/api";
+import { useDispatch } from "react-redux";
 import { ImageCard, InfoCard, ProfileCard } from ".";
 import Loader from "../Shared/Loader";
 import { IProfileProps } from "./types";
 
 const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
+  const dispatch = useDispatch();
   const router = useRouter();
   const searchParams = useSearchParams();
   const showActions = searchParams.get("action") === "true";
@@ -141,6 +144,7 @@ const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
               onClick={() => {
                 if (petData?.id) {
                   router.push(`/profile/edit/${petData.id}`);
+                  dispatch(setStep(1));
                 }
               }}
               src={images.editIcon.src}
