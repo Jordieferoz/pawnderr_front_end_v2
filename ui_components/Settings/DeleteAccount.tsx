@@ -5,9 +5,12 @@ import { useAuth } from "@/hooks/useAuth";
 import { deleteUserAccount } from "@/utils/api";
 import { useState } from "react";
 import { showToast } from "../Shared/ToastMessage";
+import Modal from "../Shared/Modal";
+import { DeleteAccountModal } from "../Modals";
 
 const DeleteAccount = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { logout } = useAuth();
 
   const handleDeleteAccount = async () => {
@@ -19,6 +22,7 @@ const DeleteAccount = () => {
           type: "success",
           message: "Your account has been deleted successfully."
         });
+        setIsModalOpen(false);
         // Clear all user data and redirect to home
         await logout("/");
       } else {
@@ -48,13 +52,24 @@ const DeleteAccount = () => {
         </p>
 
         <Button
-          onClick={handleDeleteAccount}
-          disabled={isLoading}
+          onClick={() => setIsModalOpen(true)}
           className="w-full md:w-auto px-8"
         >
-          {isLoading ? "Deleting..." : "Yes, Delete My Account"}
+          Yes, Delete My Account
         </Button>
       </div>
+
+      <Modal
+        open={isModalOpen}
+        setOpen={setIsModalOpen}
+        content={
+          <DeleteAccountModal
+            onCancel={() => setIsModalOpen(false)}
+            onConfirm={handleDeleteAccount}
+            isLoading={isLoading}
+          />
+        }
+      />
     </div>
   );
 };

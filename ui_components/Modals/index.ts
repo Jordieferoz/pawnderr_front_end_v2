@@ -8,6 +8,7 @@ import OTPModal from "./OTPModal";
 import OutOfSwipesModal from "./OutOfSwipesModal";
 import ReportModal from "./ReportModal";
 import SubscribedModal from "./SubscribedModal";
+import DeleteAccountModal from "./DeleteAccountModal";
 
 export {
   BlockModal,
@@ -19,5 +20,6 @@ export {
   OTPModal,
   OutOfSwipesModal,
   ReportModal,
-  SubscribedModal
+  SubscribedModal,
+  DeleteAccountModal
 };
