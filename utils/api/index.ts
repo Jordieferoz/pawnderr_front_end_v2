@@ -113,10 +113,10 @@ export const requestChangePasswordOtp = (): Promise<TResponse<any>> => {
   return new Promise((resolve, reject) => {
     globalPostService<any, any>(`auth/change-password/request-otp`, {})
       .then((response) => {
-        if (response.statusCode === 200 || response.statusCode === 201) {
+        if (response) {
           resolve(response);
         } else {
-          reject(new Error(`Unexpected status code: ${response.statusCode}`));
+          reject();
         }
       })
       .catch((err) => {
@@ -132,7 +132,7 @@ export const confirmChangePassword = (payload: {
   return new Promise((resolve, reject) => {
     globalPostService<any, any>(`auth/change-password`, payload)
       .then((response) => {
-        if (response.statusCode === 200 || response.statusCode === 201) {
+        if (response.data) {
           resolve(response);
         } else {
           reject(new Error(`Unexpected status code: ${response.statusCode}`));

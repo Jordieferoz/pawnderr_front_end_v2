@@ -43,9 +43,17 @@ const ChangePassword = () => {
       if (response.statusCode === 200 || response.statusCode === 201) {
         showToast({
           type: "success",
-          message: "OTP sent successfully to your registered number."
+          message: `${response.data.data.message} Valid for ${response.data.data.expires_in_minutes} minutes.`
         });
         setStep(2);
+      } else if (
+        response.statusCode === 500 &&
+        response.data?.message === "OTP_COOLDOWN"
+      ) {
+        showToast({
+          type: "error",
+          message: "Please wait before requesting another OTP."
+        });
       } else {
         throw new Error(response.message || "Failed to send OTP");
       }
@@ -68,16 +76,19 @@ const ChangePassword = () => {
         newPassword: data.newPassword
       });
 
-      if (response.statusCode === 200 || response.statusCode === 201) {
+      if (response.statusCode === 200) {
         showToast({
           type: "success",
-          message: "Password changed successfully!"
+          message: response.data.data.message
         });
         // Reset form and go back to step 1
         reset();
         setStep(1);
-      } else {
-        throw new Error(response.message || "Failed to change password");
+      } else if (response.statusCode === 400) {
+        showToast({
+          type: "error",
+          message: response.data.data.otp || "Failed to change password"
+        });
       }
     } catch (error: any) {
       console.error("Failed to change password:", error);
@@ -200,7 +211,10 @@ const ChangePassword = () => {
             <Button
               type="button"
               variant="link"
-              onClick={() => setStep(1)}
+              onClick={() => {
+                setStep(1);
+                reset();
+              }}
               disabled={isLoading}
             >
               Back

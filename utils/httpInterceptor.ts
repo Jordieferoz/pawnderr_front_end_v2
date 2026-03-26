@@ -19,7 +19,7 @@ function axiosInstanceCreator(baseURL: string | undefined, accessKey?: string) {
     baseURL,
     validateStatus: (status) => {
       // ✅ Allow 2xx and 4xx responses
-      return status >= 200 && status < 500;
+      return status >= 200 && status <= 500;
     }
   });
 
