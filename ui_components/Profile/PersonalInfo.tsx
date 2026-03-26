@@ -107,7 +107,7 @@ const PersonalInfo: FC = () => {
         email: data.email,
         phone: data.phone
       });
-      console.log(response, "response");
+
       // API response structure: { status: "success", data: {...user data...}, message: "..." }
       const userData = response.data?.data;
 

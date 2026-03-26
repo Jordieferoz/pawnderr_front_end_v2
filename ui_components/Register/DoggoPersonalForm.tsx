@@ -539,7 +539,7 @@ const DoggoPersonalForm: FC = () => {
 
       // Call API
       const response = await petRegisterInfo(payload);
-      console.log(response, "response");
+
       if (response.statusCode === 200 || response.statusCode === 201) {
         // Extract pet_id from nested response structure
         // Response structure: response.data.data.pet_id

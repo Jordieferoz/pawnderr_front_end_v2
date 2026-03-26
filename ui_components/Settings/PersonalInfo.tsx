@@ -102,9 +102,9 @@ const PersonalInfo: FC = () => {
       });
 
       // API response structure: { status: "success", data: {...user data...}, message: "..." }
-      const userData = response.data?.data || response.data;
+      const userData = response.data?.data;
 
-      if (userData && userData.id) {
+      if (userData && userData.id && response.data.status) {
         // Update localStorage with the response data
         userStorage.set(userData);
 
@@ -124,7 +124,10 @@ const PersonalInfo: FC = () => {
           message: "Profile updated successfully"
         });
       } else {
-        throw new Error("Invalid response data");
+        showToast({
+          type: "error",
+          message: response.data.message
+        });
       }
     } catch (error: any) {
       console.error("❌ Failed to update profile:", error);

@@ -313,7 +313,7 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
         setIsLocationLoading(false);
 
         const response = await discoverNearbyPets(petData.id);
-        console.log(response, "response");
+
         // Transform API response to cards format
         if (
           response?.data?.data?.pets &&
@@ -384,7 +384,7 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
 
     initDiscovery();
   }, [petData?.id]);
-  console.log(containerHeight, "containerHeight");
+
   const MAX_HEIGHT = 560;
   const effectiveHeight = containerHeight
     ? Math.min(containerHeight, MAX_HEIGHT)

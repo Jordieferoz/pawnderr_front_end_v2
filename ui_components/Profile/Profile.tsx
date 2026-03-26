@@ -16,7 +16,7 @@ const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
   const searchParams = useSearchParams();
   const showActions = searchParams.get("action") === "true";
   const [processing, setProcessing] = useState(false);
-  console.log(petData, "petData");
+
   const handleAction = async (action: "like" | "pass") => {
     if (petData?.id && !processing) {
       try {

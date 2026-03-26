@@ -13,11 +13,11 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 import {
   petProfileEditSchema,
   PetProfileEditValues
 } from "@/utils/personalInfoSchema";
-import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { FC, useEffect, useMemo, useState } from "react";
@@ -56,7 +56,7 @@ const PetInformation: FC<PetInformationProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [initialValues, setInitialValues] =
     useState<PetProfileEditValues | null>(null);
-  console.log(initialValues, "initialValues");
+
   // Sort attributes by display_order
   const sortedAttributes = useMemo(
     () =>
@@ -352,7 +352,7 @@ const PetInformation: FC<PetInformationProps> = ({
 
       // Call update API
       const response = await updatePetInfo(petData.id, payload);
-      console.log(response, "response");
+
       if (response.statusCode === 200 || response.statusCode === 201) {
         // Update initial values to reflect saved state
         setInitialValues(data);

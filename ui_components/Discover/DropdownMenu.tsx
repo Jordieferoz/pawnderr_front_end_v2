@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/popover";
 import { LogOut } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 
 import { dropdownMenuItems } from "@/constants";
@@ -41,8 +42,8 @@ interface DropdownMenuProps {
 
 const DropdownMenu: FC<DropdownMenuProps> = ({ userProfile, isLoading }) => {
   const { logout } = useAuth();
+  const pathname = usePathname();
   const [firstPetId, setFirstPetId] = useState<number | null>(null);
-
   const [petData, setPetData] = useState<PetData | null>(null);
   const [open, setOpen] = useState(false);
   const isSubscribed = useSelector(
@@ -63,46 +64,36 @@ const DropdownMenu: FC<DropdownMenuProps> = ({ userProfile, isLoading }) => {
 
     const loadFirstPetId = () => {
       const id = petsStorage.getFirstPetId();
-      if (id) {
-        setFirstPetId(id);
-      } else {
-        setFirstPetId(null);
-      }
+      setFirstPetId(id ?? null);
     };
 
     loadFirstPetId();
-
-    const handlePetsChange = () => {
-      loadFirstPetId();
-    };
-
-    window.addEventListener(PETS_STORAGE_EVENT, handlePetsChange);
-
-    return () => {
-      window.removeEventListener(PETS_STORAGE_EVENT, handlePetsChange);
-    };
+    window.addEventListener(PETS_STORAGE_EVENT, loadFirstPetId);
+    return () => window.removeEventListener(PETS_STORAGE_EVENT, loadFirstPetId);
   }, []);
 
   useEffect(() => {
+    if (!firstPetId) return;
     const fetchData = async () => {
-      if (!firstPetId) return;
       try {
         const resp = await fetchMyPet(Number(firstPetId));
-
-        const petDetails = resp?.data;
-        setPetData(petDetails);
+        setPetData(resp?.data ?? null);
       } catch (error) {
         console.error("Error fetching pet:", error);
       }
     };
-
-    if (firstPetId) {
-      fetchData();
-    }
+    fetchData();
   }, [firstPetId]);
 
   const primaryImage = petData?.images?.find((img) => img.is_primary);
   const avatarUrl = primaryImage?.image_url || userProfile?.avatar;
+
+  // Returns true if the resolved href matches the current pathname
+  const isActive = (resolvedHref: string): boolean => {
+    // Strip query string for comparison
+    const hrefPath = resolvedHref.split("?")[0];
+    return pathname === hrefPath || pathname.startsWith(hrefPath + "/");
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -132,28 +123,33 @@ const DropdownMenu: FC<DropdownMenuProps> = ({ userProfile, isLoading }) => {
       <PopoverContent className="w-56 p-2" align="end">
         <div className="flex flex-col gap-1">
           {dropdownMenuItems.map((item, index) => {
-            // Modify href for profile to include pet ID
+            // Resolve dynamic href
             let href = item.href;
             if (firstPetId) {
               if (item.href === "/profile") {
                 href = `/profile/${firstPetId}`;
               } else if (item.href.startsWith("/profile/edit")) {
-                // Handle /profile/edit?query... -> /profile/edit/[id]?query...
                 const [path, query] = item.href.split("?");
                 href = `${path}/${firstPetId}${query ? `?${query}` : ""}`;
               }
             }
+
+            // Only highlight first 4 items
+            const highlightable = index < 4;
+            const active = highlightable && isActive(href);
 
             return (
               <Link
                 key={index}
                 href={href}
                 onClick={handleMenuItemClick}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-md hover:bg-gray-100 transition-colors"
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors ${
+                  active
+                    ? "bg-gray-100 text-primary font-semibold"
+                    : "hover:bg-gray-100 text-gray-700"
+                }`}
               >
-                <span className="text-sm font-medium text-gray-700">
-                  {item.label}
-                </span>
+                <span className="text-sm font-medium">{item.label}</span>
               </Link>
             );
           })}

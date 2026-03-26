@@ -13,7 +13,17 @@ export const userDetailsSchema = z.object({
 
 // Personal info schema for edit profile (name, email, phone only)
 export const personalInfoSchema = z.object({
-  name: z.string().min(1, "Name is required"),
+  name: z
+    .string()
+    .min(1, "Name is required")
+    .refine(
+      (val) => val.trim().length > 0,
+      "Name cannot be empty or contain only spaces."
+    )
+    .refine(
+      (val) => /^[a-zA-Z\s\-'.]+$/.test(val),
+      "Only letters, spaces, hyphens, apostrophes, and periods are allowed."
+    ),
   email: z.string().email("Please enter a valid email address"),
   phone: z
     .string()

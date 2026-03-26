@@ -278,7 +278,6 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
       const resData = res?.data?.data ?? res?.data ?? res;
 
       if (!resData?.accessToken) {
-        console.log(resData, "resData");
         throw new Error(res?.data?.message || "Google auth failed");
       }
 

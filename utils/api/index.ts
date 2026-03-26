@@ -621,7 +621,6 @@ export const updateUserLocation = (payload: {
   return new Promise((resolve, reject) => {
     globalPostService<any, any>(`discovery/location`, payload)
       .then((response) => {
-        console.log({ response });
         if (response.statusCode === 200 || response.statusCode === 201) {
           resolve(response);
         } else {
