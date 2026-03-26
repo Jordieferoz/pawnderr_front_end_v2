@@ -265,7 +265,7 @@ const Upgrade = () => {
       <div className="flex gap-5 my-6 mb-22">
         <img
           onClick={() => router.back()}
-          className="w-10 h-10 md:hidden cursor-pointer"
+          className="w-10 h-10 cursor-pointer"
           src={images.backBtn.src}
           alt="Go back"
         />
