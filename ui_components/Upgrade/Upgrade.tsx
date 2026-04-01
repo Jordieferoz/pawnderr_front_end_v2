@@ -74,13 +74,16 @@ const Upgrade = () => {
           fetchSubscriptionFeatures(),
           fetchSubscriptionStatus()
         ]);
-
+        console.log({ plansResp, featuresResp });
         if (plansResp.data?.plans) {
           const monthlyPlan = plansResp.data.plans.find(
-            (p: Plan) => p.duration_type === "monthly"
+            (p: Plan) => p.duration_type === "monthly" && p.duration_value === 1
           );
           const yearlyPlan = plansResp.data.plans.find(
-            (p: Plan) => p.duration_type === "yearly"
+            (p: Plan) =>
+              p.duration_type === "yearly" ||
+              p.duration_type === "annually" ||
+              (p.duration_type === "monthly" && p.duration_value > 1)
           );
 
           setPlans({
@@ -102,11 +105,17 @@ const Upgrade = () => {
         ) {
           const planDuration = (statusResp as any).data.subscription.plan
             .duration_type;
+          const durationValue =
+            (statusResp as any).data.subscription.plan.duration_value || 1;
 
-          if (planDuration === "monthly") {
+          if (planDuration === "monthly" && durationValue === 1) {
             setSubscriptionType("MONTHLY_PREMIUM");
             setIsAnnual(true);
-          } else if (planDuration === "yearly" || planDuration === "annually") {
+          } else if (
+            planDuration === "yearly" ||
+            planDuration === "annually" ||
+            (planDuration === "monthly" && durationValue > 1)
+          ) {
             setSubscriptionType("YEARLY_PREMIUM");
           }
         }

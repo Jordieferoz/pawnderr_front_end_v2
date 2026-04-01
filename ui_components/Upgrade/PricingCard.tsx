@@ -18,7 +18,12 @@ const PricingCard: FC<PricingCardProps> = ({
 
     const amount = parseFloat(plan.price);
     const currencySymbol = plan.currency === "INR" ? "₹" : plan.currency;
-    const period = type === "annually" ? "Year" : "Month";
+    const period =
+      type === "annually"
+        ? plan.duration_type === "monthly" && (plan.duration_value ?? 1) > 1
+          ? `${plan.duration_value} Months`
+          : "Year"
+        : "Month";
 
     return { currencySymbol, amount, period };
   };
