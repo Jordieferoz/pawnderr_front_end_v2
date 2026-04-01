@@ -74,7 +74,7 @@ const Upgrade = () => {
           fetchSubscriptionFeatures(),
           fetchSubscriptionStatus()
         ]);
-        console.log({ plansResp, featuresResp });
+
         if (plansResp.data?.plans) {
           const monthlyPlan = plansResp.data.plans.find(
             (p: Plan) => p.duration_type === "monthly" && p.duration_value === 1
