@@ -13,7 +13,6 @@ import { images } from "@/utils/images";
 
 import { RootState } from "@/store";
 import { getMatchIndicators } from "@/store/matchSlice";
-import { openNotificationModal } from "@/store/modalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { DropdownMenu } from "../Discover";
 import { Notifications } from "./Notifications";
@@ -118,7 +117,7 @@ const Header: FC = () => {
                 </Button>
               </Link>
             )}
-            <button
+            {/* <button
               className="relative p-2 cursor-pointer flex-1"
               onClick={() => dispatch(openNotificationModal())}
             >
@@ -129,7 +128,7 @@ const Header: FC = () => {
               />
 
               <span className="absolute top-1 right-0 w-2.5 h-2.5 bg-secondary-600 rounded-full"></span>
-            </button>
+            </button> */}
             <DropdownMenu userProfile={userProfile} isLoading={isLoading} />
           </ul>
         </nav>

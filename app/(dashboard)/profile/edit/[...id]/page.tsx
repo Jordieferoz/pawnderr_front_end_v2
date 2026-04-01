@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 import { EditProfile } from "@/ui_components/Profile";
 import { IPetData } from "@/ui_components/Profile/types";
 import { fetchPetProfile } from "@/utils/api";
+import { petsStorage } from "@/utils/pets-storage";
 
 export default function ProfileEditPage() {
   const params = useParams();
@@ -25,9 +26,9 @@ export default function ProfileEditPage() {
       const response = await fetchPetProfile(Number(petId));
       // API response structure: { data: { data: {...pet data...}, message, status }, statusCode, message }
       const petProfileData = response.data?.data || response.data;
-
       if (petProfileData) {
         setPetData(petProfileData);
+        petsStorage.updatePet(petProfileData);
       }
     } catch (error) {
       console.error("Error fetching pet profile:", error);

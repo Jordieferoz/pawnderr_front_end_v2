@@ -723,7 +723,7 @@ const DoggoPersonalForm: FC = () => {
               </div>
             ))}
 
-            {canAddMore && (
+            {/* {canAddMore && (
               <label
                 htmlFor="image-upload-multiple"
                 className={`cursor-pointer ${isUploading ? "opacity-50" : ""}`}
@@ -742,7 +742,7 @@ const DoggoPersonalForm: FC = () => {
                   disabled={isUploading || isSubmitting}
                 />
               </label>
-            )}
+            )} */}
           </div>
 
           <div className="text-center mb-2">

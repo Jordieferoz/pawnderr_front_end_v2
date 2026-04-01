@@ -8,7 +8,7 @@ import {
 import { LogOut } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FC, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 
 import { dropdownMenuItems } from "@/constants";
 import { useAuth } from "@/hooks";
@@ -29,6 +29,7 @@ interface PetImage {
   id: number;
   image_url: string;
   is_primary: boolean;
+  display_order: number;
 }
 
 interface PetData {
@@ -59,33 +60,33 @@ const DropdownMenu: FC<DropdownMenuProps> = ({ userProfile, isLoading }) => {
     setOpen(false);
   };
 
+  const fetchPetData = useCallback(async (id: number) => {
+    try {
+      const resp = await fetchMyPet(id);
+
+      setPetData(resp?.data ?? null);
+    } catch (error) {
+      console.error("Error fetching pet:", error);
+    }
+  }, []);
+
   useEffect(() => {
     if (typeof window === "undefined") return;
 
     const loadFirstPetId = () => {
       const id = petsStorage.getFirstPetId();
       setFirstPetId(id ?? null);
+      if (id) {
+        fetchPetData(id);
+      }
     };
 
     loadFirstPetId();
     window.addEventListener(PETS_STORAGE_EVENT, loadFirstPetId);
     return () => window.removeEventListener(PETS_STORAGE_EVENT, loadFirstPetId);
-  }, []);
+  }, [fetchPetData]);
 
-  useEffect(() => {
-    if (!firstPetId) return;
-    const fetchData = async () => {
-      try {
-        const resp = await fetchMyPet(Number(firstPetId));
-        setPetData(resp?.data ?? null);
-      } catch (error) {
-        console.error("Error fetching pet:", error);
-      }
-    };
-    fetchData();
-  }, [firstPetId]);
-
-  const primaryImage = petData?.images?.find((img) => img.is_primary);
+  const primaryImage = petData?.images?.find((img) => img.display_order === 0);
   const avatarUrl = primaryImage?.image_url || userProfile?.avatar;
 
   // Returns true if the resolved href matches the current pathname

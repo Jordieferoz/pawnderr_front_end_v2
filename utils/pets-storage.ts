@@ -56,5 +56,17 @@ export const petsStorage = {
     if (typeof window === "undefined") return;
     localStorage.removeItem("userPets");
     dispatchPetsEvent();
+  },
+
+  updatePet: (updatedPet: Pet) => {
+    if (typeof window === "undefined") return;
+    const petsData = petsStorage.get();
+    if (petsData?.my_pets) {
+      const index = petsData.my_pets.findIndex((p) => p.id === updatedPet.id);
+      if (index !== -1) {
+        petsData.my_pets[index] = { ...petsData.my_pets[index], ...updatedPet };
+        petsStorage.set(petsData);
+      }
+    }
   }
 };
