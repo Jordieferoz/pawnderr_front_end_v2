@@ -93,6 +93,7 @@ const CancelSubscriptionModal: FC<CancelSubscriptionModalProps> = ({
                 placeholder="e.g., Not using the app frequently"
                 type="text"
                 {...field}
+                maxLength={140}
                 aria-invalid={Boolean(errors.cancellation_reason)}
                 aria-describedby={
                   errors.cancellation_reason
