@@ -36,7 +36,7 @@ export const petProfileSchema = z.object({
     .min(5, "Upload at least 5 photos")
     .max(10, "You can upload up to 10 photos"),
   petName: z.string().min(1, "Pet's Name is required"),
-  nicknames: z.string().max(100).optional(),
+  nicknames: z.string().max(100, "Max limit 100 chars").optional(),
   petGender: z.enum(["male", "female"], { message: "Select pet gender" }),
   birthDate: z.date({
     message: "Date of birth is required"

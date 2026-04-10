@@ -1010,6 +1010,7 @@ const DoggoPersonalForm: FC = () => {
                   field.onChange(e);
                   dispatch(updateStepData({ funFact: e.target.value }));
                 }}
+                aria-invalid={!!errors.funFact}
                 disabled={isSubmitting}
               />
             )}
@@ -1038,6 +1039,7 @@ const DoggoPersonalForm: FC = () => {
                   field.onChange(e);
                   dispatch(updateStepData({ barkography: e.target.value }));
                 }}
+                aria-invalid={!!errors.barkography}
                 disabled={isSubmitting}
               />
             )}

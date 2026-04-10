@@ -59,22 +59,30 @@ export const petProfileSchema = z.object({
     .min(1, "Upload at least 1 photo")
     .max(10, "You can upload up to 10 photos"),
   petName: z.string().min(1, "Pet's Name is required"),
-  nicknames: z.string().max(100).optional(),
+  nicknames: z
+    .string()
+    .max(100, "Max limit 100 chars")
+    .regex(/^[a-zA-Z0-9\s]*$/, "Special characters are not allowed")
+    .optional(),
   petGender: z.enum(["male", "female"], { message: "Select pet gender" }),
   age: z.string().min(1, "Age is required"),
   breed: z.number({ message: "Please select a breed" }).optional(),
   // Dynamic attributes as Record<string, number[]>
   attributes: z.record(z.string(), z.array(z.number())).optional(),
   vaccinationStatus: z.string().optional(),
-  funFact: z.string().max(200).optional(),
-  barkography: z.string().max(300).optional()
+  funFact: z.string().max(200, "Max limit 200 chars").optional(),
+  barkography: z.string().max(300, "Max limit 300 chars").optional()
 });
 
 // Pet profile schema for edit (without images validation since they're read-only)
 export const petProfileEditSchema = z.object({
   images: z.array(z.string()).optional(), // Optional for edit
   petName: z.string().min(1, "Pet's Name is required"),
-  nicknames: z.string().max(100).optional(),
+  nicknames: z
+    .string()
+    .max(100, "Max limit 100 chars")
+    .regex(/^[a-zA-Z0-9\s]*$/, "Special characters are not allowed")
+    .optional(),
   petGender: z.enum(["male", "female"], { message: "Select pet gender" }),
   birthDate: z.date({
     message: "A date of birth is required"
@@ -83,8 +91,8 @@ export const petProfileEditSchema = z.object({
   // Dynamic attributes as Record<string, number[]>
   attributes: z.record(z.string(), z.array(z.number())).optional(),
   vaccinationStatus: z.string().optional(),
-  funFact: z.string().max(200).optional(),
-  barkography: z.string().max(300).optional()
+  funFact: z.string().max(200, "Max limit 200 chars").optional(),
+  barkography: z.string().max(300, "Max limit 300 chars").optional()
 });
 
 // Step 4: Matching preferences schema

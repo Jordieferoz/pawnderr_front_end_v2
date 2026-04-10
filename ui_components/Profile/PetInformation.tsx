@@ -621,10 +621,16 @@ const PetInformation: FC<PetInformationProps> = ({
                 {...field}
                 className="w-full"
                 placeholder="Fun Fact or Habit"
+                aria-invalid={!!errors.funFact}
                 disabled={isSubmitting}
               />
             )}
           />
+          {errors.funFact && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.funFact.message}
+            </p>
+          )}
         </div>
 
         {/* Barkography */}
@@ -640,10 +646,16 @@ const PetInformation: FC<PetInformationProps> = ({
                 {...field}
                 className="w-full"
                 placeholder="Short Bio (aka Bark-o-graphy)"
+                aria-invalid={!!errors.barkography}
                 disabled={isSubmitting}
               />
             )}
           />
+          {errors.barkography && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.barkography.message}
+            </p>
+          )}
         </div>
 
         <Button
