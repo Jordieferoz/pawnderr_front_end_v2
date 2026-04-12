@@ -9,6 +9,10 @@ export default withAuth(
       req.nextUrl.pathname.startsWith("/sign-in") ||
       req.nextUrl.pathname.startsWith("/sign-up") ||
       req.nextUrl.pathname.startsWith("/forgot-password");
+    const isPublicPage =
+      req.nextUrl.pathname.startsWith("/faqs") ||
+      req.nextUrl.pathname.startsWith("/privacy-policy") ||
+      req.nextUrl.pathname.startsWith("/terms-of-service");
     const isLandingPage = req.nextUrl.pathname === "/";
 
     // If user is authenticated and tries to access auth pages, redirect to dashboard
@@ -19,6 +23,11 @@ export default withAuth(
     // If user is authenticated and tries to access landing page, redirect to dashboard
     if (isLandingPage && isAuth) {
       return NextResponse.redirect(new URL("/discover", req.url));
+    }
+
+    // Allow public pages without redirect
+    if (isPublicPage) {
+      return NextResponse.next();
     }
 
     // For all other cases, continue
@@ -33,11 +42,16 @@ export default withAuth(
           req.nextUrl.pathname.startsWith("/forgot-password") ||
           req.nextUrl.pathname.startsWith("/register");
 
+        const isPublicPage =
+          req.nextUrl.pathname.startsWith("/faqs") ||
+          req.nextUrl.pathname.startsWith("/privacy-policy") ||
+          req.nextUrl.pathname.startsWith("/terms-of-service");
+
         // Allow access to root landing page
         const isLandingPage = req.nextUrl.pathname === "/";
 
         // Allow access to auth pages without token (middleware will handle redirect if authenticated)
-        if (isAuthPage || isLandingPage) {
+        if (isAuthPage || isLandingPage || isPublicPage) {
           return true;
         }
 

@@ -1,7 +1,7 @@
 "use client";
 import { Menu } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,8 @@ import { images } from "@/utils/images";
 
 const Header = () => {
   const router = useRouter();
+  const pathname = usePathname(); // add this hook
+
   const [open, setOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
 
@@ -18,10 +20,10 @@ const Header = () => {
   };
 
   const menuItems = [
-    { label: "How It Works", href: "#how-it-works" },
-    { label: "Why PAWnderr", href: "#why-pawnderr" },
-    { label: "Community", href: "#community" },
-    { label: "Reviews", href: "#reviews" },
+    { label: "How It Works", href: "/#how-it-works" },
+    { label: "Why PAWnderr", href: "/#why-pawnderr" },
+    { label: "Community", href: "/#community" },
+    { label: "Reviews", href: "/#reviews" },
     { label: "Sign Up", href: "/sign-up" }
   ];
 
@@ -69,7 +71,7 @@ const Header = () => {
                 key={item.label}
                 href={item.href}
                 className={`menu_link_medium transition-colors ${
-                  activeSection === item.href.slice(1)
+                  pathname === "/" && activeSection === item.href.slice(2)
                     ? "text-blue-600"
                     : "text-grey-900 hover:text-blue-600"
                 }`}
@@ -103,7 +105,7 @@ const Header = () => {
                     href={item.href}
                     onClick={() => setOpen(false)}
                     className={`menu_link_medium transition-colors py-2 px-4 rounded-md hover:bg-gray-100 ${
-                      activeSection === item.href.slice(1)
+                      pathname === "/" && activeSection === item.href.slice(2)
                         ? "text-blue-600 font-bold"
                         : "text-grey-900"
                     }`}

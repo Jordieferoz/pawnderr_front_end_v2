@@ -120,19 +120,18 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
     trigger
   } = useForm<SignInValues | SignUpValues>({
     resolver: zodResolver(schema),
-    mode: "onChange",
+    mode: "onTouched",
     reValidateMode: "onChange",
-    defaultValues: async () => {
+    defaultValues: (() => {
       let savedPhone = "";
       if (!isSignup && typeof window !== "undefined") {
-        // Check window for SSR safety
         savedPhone = localStorage.getItem("rememberedPhone") || "";
       }
 
       return isSignup
         ? { email: "", password: "", confirmPassword: "" }
         : { phone: savedPhone, password: "" };
-    }
+    })()
   });
 
   const password = watch("password" as keyof (SignInValues | SignUpValues));

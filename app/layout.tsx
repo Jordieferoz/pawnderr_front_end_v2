@@ -23,8 +23,9 @@ export default function RootLayout({
 }) {
   const pathname = usePathname();
 
-  // Show Header and Footer only on home route
-  const isHomeRoute = pathname === "/";
+  // Show Header and Footer on home and public legal pages
+  const publicRoutes = ["/", "/faqs", "/privacy-policy", "/terms-of-service"];
+  const showHeaderFooter = publicRoutes.includes(pathname);
 
   // Define routes where MobileMenu should NOT appear
   const hideMobileMenuRoutes = [
@@ -32,7 +33,10 @@ export default function RootLayout({
     "/sign-in",
     "/register",
     "/",
-    "/messages"
+    "/messages",
+    "/faqs",
+    "/privacy-policy",
+    "/terms-of-service"
   ];
   const shouldHideMobileMenu =
     hideMobileMenuRoutes.includes(pathname) || pathname.startsWith("/messages");
@@ -74,11 +78,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <SessionProvider>
           <ReduxProvider>
             <TooltipProvider>
-              {isHomeRoute && <Header />}
+              {showHeaderFooter && <Header />}
 
               {children}
               {!shouldHideMobileMenu && <MobileMenu />}
-              {isHomeRoute && <Footer />}
+              {showHeaderFooter && <Footer />}
             </TooltipProvider>
           </ReduxProvider>
         </SessionProvider>
