@@ -135,6 +135,9 @@ const ChatWindow: FC<ChatWindowProps> = ({
       });
     } finally {
       setIsSending(false);
+      setTimeout(() => {
+        document.getElementById("chat-message-input")?.focus();
+      }, 50);
     }
   };
 
@@ -326,6 +329,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
               </div>
             )}
             <InputField
+              id="chat-message-input"
               placeholder="Type message.."
               className="w-full bg-white border border-black/10 rounded-xl h-12 pl-4 pr-12 placeholder:text-light-grey2"
               value={messageText}

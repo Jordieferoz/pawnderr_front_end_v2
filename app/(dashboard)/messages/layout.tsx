@@ -66,6 +66,24 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     loadMatches(1, false);
   }, [loadMatches]);
 
+  useEffect(() => {
+    const handleMatchBlocked = () => {
+      setMatchesPage(1);
+      loadMatches(1, false);
+    };
+
+    window.addEventListener(
+      "MATCH_BLOCKED",
+      handleMatchBlocked as EventListener
+    );
+    return () => {
+      window.removeEventListener(
+        "MATCH_BLOCKED",
+        handleMatchBlocked as EventListener
+      );
+    };
+  }, [loadMatches]);
+
   const handleMatchesScroll = (container: HTMLDivElement | null) => {
     if (!container || isLoadingMatches || !hasMoreMatches) return;
     const threshold = 80;
@@ -226,12 +244,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className="flex-1 min-h-0 pb-4">
           <div className="flex gap-0 bg-white border border-black/10 rounded-2xl md:rounded-[32px] overflow-hidden h-full">
             {/* Desktop Sidebar */}
-            <div className="hidden md:flex md:basis-[340px] border-r border-black/10">
+            <div className="hidden md:flex md:w-[340px] shrink-0 border-r border-black/10 overflow-hidden">
               <Messages />
             </div>
 
             {/* Main Content (Chat or Mobile List) */}
-            <div className="flex-1 w-full relative">{children}</div>
+            <div className="flex-1 min-w-0 w-full relative">{children}</div>
           </div>
         </div>
       </div>

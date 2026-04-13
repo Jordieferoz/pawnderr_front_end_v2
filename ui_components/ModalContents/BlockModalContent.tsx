@@ -32,11 +32,19 @@ const BlockModalContent: FC = () => {
       showToast({ type: "error", message: "User blocked successfully" });
 
       if (blockData.chatId && blockData.myPetId) {
-        await blockChat(blockData.chatId, blockData.myPetId);
+        try {
+          await blockChat(blockData.chatId, blockData.myPetId);
+        } catch (firebaseError: any) {
+          console.warn(
+            "Failed to block chat in Firebase directly, but API succeeded:",
+            firebaseError
+          );
+        }
       }
 
       dispatch(closeBlockModal());
       dispatch(closeMessageActionModal());
+      window.dispatchEvent(new CustomEvent("MATCH_BLOCKED"));
       router.push("/messages");
     } catch (error: any) {
       showToast({

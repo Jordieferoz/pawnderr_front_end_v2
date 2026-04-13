@@ -116,7 +116,10 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
         onClick={() => setIsFlipped(!isFlipped)}
       >
         {/* Front Face */}
-        <div className="absolute inset-0 rounded-[24px] [backface-visibility:hidden]">
+        <div
+          className="absolute inset-0 rounded-[24px] [backface-visibility:hidden]"
+          style={{ pointerEvents: isFlipped ? "none" : "auto" }}
+        >
           {/* {card.indicator && (
             <div className="absolute top-6 left-6 z-20 bg-black text-white px-3 py-1 rounded-lg border-[1.5px] border-white text-sm font-bold tracking-wider">
               {card.indicator}
@@ -163,19 +166,22 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
         </div>
 
         {/* Back Face */}
-        <div className="absolute inset-0 rounded-[24px] bg-white [backface-visibility:hidden] [transform:rotateY(180deg)] flex flex-col justify-start items-start text-left p-8 overflow-hidden">
+        <div
+          className="absolute inset-0 rounded-[24px] bg-white [backface-visibility:hidden] [transform:rotateY(180deg)] flex flex-col justify-start items-start text-left p-8 overflow-hidden"
+          style={{ pointerEvents: isFlipped ? "auto" : "none" }}
+        >
           <img
             src={images.pawYellow.src}
             alt="paw"
-            className="absolute top-4 right-4 w-12 h-12 opacity-80"
+            className="absolute top-4 right-4 w-12 h-12 opacity-80 pointer-events-none"
           />
           <img
             src={images.flipOverlay.src}
             alt="paw"
-            className="absolute inset-0"
+            className="absolute inset-0 pointer-events-none"
           />
 
-          <div className="flex flex-col gap-6 mt-4 w-full">
+          <div className="flex flex-col gap-6 mt-4 w-full relative z-10">
             {/* Fun Fact */}
             {card.funFact && (
               <div className="text-left w-full">
@@ -187,10 +193,13 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
                 </p>
                 {card.funFact.length > 50 && (
                   <button
+                    type="button"
                     onClick={(e) => {
+                      e.preventDefault();
                       e.stopPropagation();
                       router.push(`/profile/${card.petId}?action=false`);
                     }}
+                    onPointerDown={(e) => e.stopPropagation()}
                     className="text-yellow-500 underline text-sm font-medium hover:text-yellow-600 mt-1"
                   >
                     Read More
@@ -211,10 +220,13 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
                 {(card.barkography.length > 100 ||
                   card.barkography.split("\n").length > 3) && (
                   <button
+                    type="button"
                     onClick={(e) => {
+                      e.preventDefault();
                       e.stopPropagation();
                       router.push(`/profile/${card.petId}?action=false`);
                     }}
+                    onPointerDown={(e) => e.stopPropagation()}
                     className="text-yellow-500 underline text-sm font-medium hover:text-yellow-600 mt-1"
                   >
                     Read More

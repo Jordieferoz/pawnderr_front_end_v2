@@ -1,19 +1,19 @@
 // utils/firebase-chat.ts
+import { getFirebaseFirestore } from "@/lib/firebase";
 import {
   addDoc,
   collection,
+  doc,
+  limit as firestoreLimit,
+  getDocs,
   onSnapshot,
   orderBy,
   query,
   serverTimestamp,
-  where,
-  limit as firestoreLimit,
-  Timestamp,
-  doc,
   setDoc,
-  getDocs
+  Timestamp,
+  where
 } from "firebase/firestore";
-import { getFirebaseFirestore } from "@/lib/firebase";
 
 export interface ChatMessage {
   id: string;
@@ -50,15 +50,16 @@ const normalizeId = (value: unknown): number | null => {
 };
 
 const getTimestampMillis = (
-  timestamp?: Timestamp | { seconds?: number } | number | null
+  timestamp?: Timestamp | { seconds?: number } | number | null,
+  fallback: number = 0
 ): number => {
-  if (!timestamp) return 0;
+  if (!timestamp) return fallback;
   if (typeof timestamp === "number") return timestamp;
   if (timestamp instanceof Timestamp) {
     return timestamp.toMillis();
   }
   const seconds = (timestamp as { seconds?: number }).seconds;
-  return seconds ? seconds * 1000 : 0;
+  return seconds ? seconds * 1000 : fallback;
 };
 
 /**
@@ -174,7 +175,10 @@ export const subscribeToMessages = (
       hasReceivedInitialData.q1 = true;
       snapshot.forEach((docSnap) => {
         const data = docSnap.data() as any;
-        const timestamp = getTimestampMillis(data.timestamp as Timestamp);
+        const timestamp = getTimestampMillis(
+          data.timestamp as Timestamp,
+          Date.now()
+        );
         messagesMap.set(docSnap.id, {
           id: docSnap.id,
           text: data.message ?? data.text ?? "",
@@ -201,7 +205,10 @@ export const subscribeToMessages = (
       hasReceivedInitialData.q2 = true;
       snapshot.forEach((docSnap) => {
         const data = docSnap.data() as any;
-        const timestamp = getTimestampMillis(data.timestamp as Timestamp);
+        const timestamp = getTimestampMillis(
+          data.timestamp as Timestamp,
+          Date.now()
+        );
         messagesMap.set(docSnap.id, {
           id: docSnap.id,
           text: data.message ?? data.text ?? "",
@@ -337,6 +344,7 @@ export const getUserConversations = (
     }
   >();
   const lastReadMap: Record<string, Timestamp> = {};
+  const receivedTimestampsMap = new Map<string, number[]>();
   const chatListeners: Array<() => void> = [];
   const readListeners: Array<() => void> = [];
   const lastMessageListeners = new Map<string, () => void>();
@@ -386,7 +394,9 @@ export const getUserConversations = (
         }
 
         const lastMsg = lastMessageMap.get(chat.chatId);
-        const lastMessageTime = getTimestampMillis(lastMsg?.timestamp);
+        const lastMessageTime = lastMsg
+          ? getTimestampMillis(lastMsg.timestamp, Date.now())
+          : 0;
         const lastMessage = lastMsg
           ? {
               id: "",
@@ -401,14 +411,11 @@ export const getUserConversations = (
         const lastRead = lastReadMap[chat.chatId];
         const lastReadTime = getTimestampMillis(lastRead);
         let unreadCount = 0;
-        const lastSenderId = normalizeId(lastMsg?.fromPetId);
-        if (
-          lastMessageTime &&
-          lastSenderId &&
-          lastSenderId !== normalizedMyPetId
-        ) {
-          if (!lastReadTime || lastMessageTime > lastReadTime) {
-            unreadCount = 1;
+
+        const recentTimestamps = receivedTimestampsMap.get(chat.chatId) || [];
+        for (const ts of recentTimestamps) {
+          if (!lastReadTime || ts > lastReadTime) {
+            unreadCount++;
           }
         }
 
@@ -472,48 +479,70 @@ export const getUserConversations = (
       where("toPetId", "==", String(petId)),
       where("isDisabled", "==", false),
       orderBy("timestamp", "desc"),
-      firestoreLimit(1)
+      firestoreLimit(20)
     );
-
-    const updateFromSnapshot = (snapshot: any, shouldCompare: boolean) => {
-      if (snapshot.empty) return;
-      const docSnap = snapshot.docs[0];
-      const data = docSnap.data() as any;
-      const timestamp = data.timestamp as Timestamp | null;
-      const newTimestamp = getTimestampMillis(timestamp);
-      const current = lastMessageMap.get(chatId);
-      const currentTimestamp = getTimestampMillis(current?.timestamp);
-
-      if (!shouldCompare || newTimestamp > currentTimestamp) {
-        lastMessageMap.set(chatId, {
-          message: data.message ?? data.text ?? "",
-          timestamp,
-          fromPetId: normalizeId(data.fromPetId),
-          toPetId: normalizeId(data.toPetId)
-        });
-        updateChatList();
-      }
-    };
 
     const unsub1 = onSnapshot(
       msgQuery1,
-      (snapshot) => updateFromSnapshot(snapshot, false),
+      (snapshot) => {
+        if (snapshot.empty) return;
+        const docSnap = snapshot.docs[0];
+        const data = docSnap.data() as any;
+        const timestamp = data.timestamp as Timestamp | null;
+        const newTimestamp = getTimestampMillis(timestamp, Date.now());
+        const current = lastMessageMap.get(chatId);
+        const currentTimestamp = current
+          ? getTimestampMillis(current.timestamp, Date.now())
+          : 0;
+
+        if (newTimestamp > currentTimestamp) {
+          lastMessageMap.set(chatId, {
+            message: data.message ?? data.text ?? "",
+            timestamp,
+            fromPetId: normalizeId(data.fromPetId),
+            toPetId: normalizeId(data.toPetId)
+          });
+          updateChatList();
+        }
+      },
       (error) => {
-        console.warn(
-          `Error listening to last message (sent) ${chatId}:`,
-          error
-        );
+        console.warn(`Error listening to sent messages ${chatId}:`, error);
       }
     );
 
     const unsub2 = onSnapshot(
       msgQuery2,
-      (snapshot) => updateFromSnapshot(snapshot, true),
+      (snapshot) => {
+        const timestamps: number[] = [];
+        if (!snapshot.empty) {
+          snapshot.docs.forEach((doc) => {
+            timestamps.push(
+              getTimestampMillis(doc.data().timestamp as Timestamp, Date.now())
+            );
+          });
+          const docSnap = snapshot.docs[0];
+          const data = docSnap.data() as any;
+          const timestamp = data.timestamp as Timestamp | null;
+          const newTimestamp = getTimestampMillis(timestamp, Date.now());
+          const current = lastMessageMap.get(chatId);
+          const currentTimestamp = current
+            ? getTimestampMillis(current.timestamp, Date.now())
+            : 0;
+
+          if (newTimestamp > currentTimestamp) {
+            lastMessageMap.set(chatId, {
+              message: data.message ?? data.text ?? "",
+              timestamp,
+              fromPetId: normalizeId(data.fromPetId),
+              toPetId: normalizeId(data.toPetId)
+            });
+          }
+        }
+        receivedTimestampsMap.set(chatId, timestamps);
+        updateChatList();
+      },
       (error) => {
-        console.warn(
-          `Error listening to last message (received) ${chatId}:`,
-          error
-        );
+        console.warn(`Error listening to received messages ${chatId}:`, error);
       }
     );
 

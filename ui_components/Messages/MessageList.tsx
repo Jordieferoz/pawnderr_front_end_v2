@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { FC, useMemo } from "react";
 
 import { useChatConversations, useFirebaseChat } from "@/hooks/useFirebaseChat";
@@ -14,6 +14,7 @@ interface MessageListProps {
 
 const MessageList: FC<MessageListProps> = ({ searchTerm = "" }) => {
   const router = useRouter();
+  const pathname = usePathname();
 
   // Initialize Firebase
   const { isAuthenticated, isInitializing, error } = useFirebaseChat();
@@ -145,37 +146,46 @@ const MessageList: FC<MessageListProps> = ({ searchTerm = "" }) => {
         const displayName =
           conversation.otherPetName ||
           (otherPetId ? `Pet ${otherPetId}` : "Pet");
-        const displayImage = conversation.otherPetPrimaryPhoto;
+        const displayImage =
+          conversation.otherPetPrimaryPhoto ||
+          images.doggoProfilePlaceholder.src;
         const lastMessage = conversation.lastMessage?.text || "No messages yet";
+
+        const isActive = pathname === `/messages/${conversation.chatId}`;
 
         return (
           <div
             key={conversation.chatId}
             onClick={() => openChat(conversation.chatId)}
-            className="relative py-4 px-3 cursor-pointer hover:bg-black/5 transition rounded-xl"
+            className={`relative py-4 px-3 cursor-pointer hover:bg-black/5 transition rounded-xl ${
+              isActive ? "bg-black/5" : ""
+            }`}
           >
             <div className="flex items-start gap-3">
               <div className="relative shrink-0">
                 <img
                   src={displayImage}
-                  className="w-14 h-14 object-cover rounded-full border border-black/5"
-                  alt="user"
+                  onError={(e) => {
+                    e.currentTarget.src = images.doggoProfilePlaceholder.src;
+                  }}
+                  className="w-14 h-14 object-cover rounded-full border border-black/5 bg-gray-100"
+                  alt={displayName}
                 />
                 {/* Online Indicator - Optional based on design */}
                 {/* <span className="absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full bg-green-500 border-2 border-white" /> */}
               </div>
               <div className="flex-1 min-w-0">
-                <div className="flex items-baseline justify-between mb-1">
-                  <h3 className="text-[16px] font-semibold text-accent-900 truncate">
+                <div className="flex items-baseline justify-between gap-2 mb-1">
+                  <h3 className="flex-1 min-w-0 text-[16px] font-semibold text-accent-900 truncate">
                     {displayName}
                   </h3>
-                  <span className="text-xs text-grey-500 shrink-0">
+                  <span className="text-xs text-grey-500 shrink-0 whitespace-nowrap">
                     {formatTimestamp(conversation.lastMessageTime)}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between gap-2">
-                  <p className="text-sm text-grey-500 truncate max-w-[85%]">
+                  <p className="flex-1 min-w-0 text-sm text-grey-500 truncate">
                     {lastMessage}
                   </p>
 
