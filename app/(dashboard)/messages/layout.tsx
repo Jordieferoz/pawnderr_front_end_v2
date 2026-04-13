@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { Messages } from "@/ui_components/Messages";
@@ -16,9 +16,7 @@ import { petsStorage } from "@/utils/pets-storage";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const pathname = usePathname();
-  const isMessageList = pathname === "/messages";
-  const isMessageDetail = /^\/messages\/[^/]+$/.test(pathname);
+
   const [matches, setMatches] = useState<any[]>([]);
   const [isLoadingMatches, setIsLoadingMatches] = useState(false);
   const [matchesPage, setMatchesPage] = useState(1);
