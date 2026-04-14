@@ -28,7 +28,7 @@ const MessageActionContent: FC = () => {
   return (
     <div className="w-full bg-white rounded-2xl p-4">
       {/* Report */}
-      <div
+      {/* <div
         className="flex items-center justify-between py-3 cursor-pointer"
         onClick={handleOpenReportModal}
       >
@@ -42,10 +42,10 @@ const MessageActionContent: FC = () => {
           alt="arrow"
           className="w-7 h-7"
         />
-      </div>
+      </div> */}
 
       {/* Divider */}
-      <div className="w-full h-[1px] bg-gray-200 my-1"></div>
+      {/* <div className="w-full h-[1px] bg-gray-200 my-1"></div> */}
 
       {/* Block */}
       <div
