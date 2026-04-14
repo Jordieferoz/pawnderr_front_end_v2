@@ -175,10 +175,10 @@ export const dropdownMenuItems = [
   },
   { icon: CreditCard, label: "My Subscription", href: "/my-subscription" },
   { icon: Settings, label: "Account Settings", href: "/settings" },
-  { icon: Shield, label: "Privacy Policy", href: "/" },
-  { icon: FileText, label: "Terms of Service", href: "/" },
-  { icon: FileText, label: "Community", href: "/" },
-  { icon: FileText, label: "FAQ's", href: "/" },
-  { icon: FileText, label: "Safety Tips", href: "/" },
-  { icon: FileText, label: "Support", href: "/" }
+  { icon: Shield, label: "Privacy Policy", href: "/privacy-policy" },
+  { icon: FileText, label: "Terms of Service", href: "/terms-of-service" },
+  // { icon: FileText, label: "Community", href: "/community" },
+  { icon: FileText, label: "FAQ's", href: "/faqs" },
+  // { icon: FileText, label: "Safety Tips", href: "/" },
+  { icon: FileText, label: "Support", href: "/support" }
 ];

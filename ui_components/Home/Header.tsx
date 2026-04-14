@@ -150,15 +150,6 @@ const Header = () => {
                       />
                     </Link>
                   </li>
-                  <li>
-                    <Link href={"/"} target="_blank">
-                      <img
-                        src={images.linkedin.src}
-                        alt="linkedin"
-                        className="w-10"
-                      />
-                    </Link>
-                  </li>
                 </ul>
               </div>
             </SheetContent>

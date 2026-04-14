@@ -36,21 +36,12 @@ const Footer = () => {
                 />
               </Link>
             </li>
-            <li>
-              <Link href={"/"} target="_blank">
-                <img
-                  src={images.linkedin.src}
-                  alt="linkedin"
-                  className="w-10"
-                />
-              </Link>
-            </li>
           </ul>
 
           <div className="flex gap-3 flex-wrap items-center justify-center px-8 text-light-grey2 font-medium text-base md:text-xl font_fredoka mb-8">
             <Link href={"/privacy-policy"}>Privacy Policy</Link> •
             <Link href={"/terms-of-service"}> Terms of Service</Link> •
-            <Link href={"/"}> Safety Tips</Link>•
+            {/* <Link href={"/"}> Safety Tips</Link>• */}
             <Link href={"/faqs"}> FAQ's</Link>
           </div>
           <p className="text-xs text-light-grey2 mb-10">
