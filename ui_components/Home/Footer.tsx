@@ -14,7 +14,10 @@ const Footer = () => {
           </Link>
           <ul className="flex items-center gap-3 justify-center mb-7 md:mb-20">
             <li>
-              <Link href={"/"} target="_blank">
+              <Link
+                href={"https://www.facebook.com/profile.php?id=61577859763210"}
+                target="_blank"
+              >
                 <img
                   src={images.facebookGrey.src}
                   alt="facebook"
@@ -23,12 +26,15 @@ const Footer = () => {
               </Link>
             </li>
             <li>
-              <Link href={"/"} target="_blank">
+              <Link href={"https://x.com/PAWnderr"} target="_blank">
                 <img src={images.twitter.src} alt="twitter" className="w-10" />
               </Link>
             </li>
             <li>
-              <Link href={"/"} target="_blank">
+              <Link
+                href={"https://www.instagram.com/pawnderr/"}
+                target="_blank"
+              >
                 <img
                   src={images.instagram.src}
                   alt="instagram"

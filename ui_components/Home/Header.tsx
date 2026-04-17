@@ -124,7 +124,12 @@ const Header = () => {
                 </Button>
                 <ul className="flex items-center gap-5 justify-center absolute bottom-5 left-1/2 -translate-x-1/2 w-[calc(100%-40px)]">
                   <li>
-                    <Link href={"/"} target="_blank">
+                    <Link
+                      href={
+                        "https://www.facebook.com/profile.php?id=61577859763210"
+                      }
+                      target="_blank"
+                    >
                       <img
                         src={images.facebookGrey.src}
                         alt="facebook"
@@ -133,7 +138,7 @@ const Header = () => {
                     </Link>
                   </li>
                   <li>
-                    <Link href={"/"} target="_blank">
+                    <Link href={"https://x.com/PAWnderr"} target="_blank">
                       <img
                         src={images.twitter.src}
                         alt="twitter"
@@ -142,7 +147,10 @@ const Header = () => {
                     </Link>
                   </li>
                   <li>
-                    <Link href={"/"} target="_blank">
+                    <Link
+                      href={"https://www.instagram.com/pawnderr/"}
+                      target="_blank"
+                    >
                       <img
                         src={images.instagram.src}
                         alt="instagram"
