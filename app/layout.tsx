@@ -99,7 +99,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <Script
           id="google-gsi"
           src="https://accounts.google.com/gsi/client"
-          strategy="lazyOnload"
+          strategy="afterInteractive"
         />
       </body>
     </html>
