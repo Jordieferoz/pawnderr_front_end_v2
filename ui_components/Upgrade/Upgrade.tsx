@@ -15,13 +15,11 @@ import { useDispatch } from "react-redux";
 import { openSubscribedModal } from "@/store/modalSlice";
 
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
 import { images } from "@/utils/images";
 import { petsStorage } from "@/utils/pets-storage";
 import { initiateRazorpayPayment } from "@/utils/razorPay";
 
-import { PricingCard } from ".";
-import { SubscribedModal } from "../Modals";
+import { NoState } from "../Shared";
 import { showToast } from "../Shared/ToastMessage";
 import { PricingType } from "./types";
 
@@ -293,7 +291,7 @@ const Upgrade = () => {
           </span>
         </h4>
       </div>
-      {subscriptionType !== "MONTHLY_PREMIUM" && (
+      {/* {subscriptionType !== "MONTHLY_PREMIUM" && (
         <div className="flex items-center gap-3 mb-4 md:hidden">
           <h3 className="heading3 text-dark-brown">Annually</h3>
           <Switch
@@ -368,7 +366,11 @@ const Upgrade = () => {
             ? "Upgrade to Annual Plan"
             : "Go Premium"}
       </Button>
-      <SubscribedModal primaryImage={petImage} gender={petGender} />
+      <SubscribedModal primaryImage={petImage} gender={petGender} /> */}
+      <NoState
+        title="Upgrade is coming soon."
+        desc="We’re putting the final touches on our upgrade plans. You’ll be the first to know when it’s ready."
+      />
     </div>
   );
 };
