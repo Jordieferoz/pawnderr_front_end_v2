@@ -64,7 +64,10 @@ export const PrivacyPolicy = () => {
             <p>
               If you have any questions about this Privacy Policy, you can
               contact us through{" "}
-              <Link href="/contact" className="text-blue-600 hover:underline">
+              <Link
+                href="mailto:pawnderr@gmail.com"
+                className="text-blue-600 hover:underline"
+              >
                 PAWnderr Support
               </Link>
               .
@@ -257,10 +260,10 @@ export const PrivacyPolicy = () => {
               You can request deletion of your entire PAWnderr account by making
               a request on your app or through an email sent to{" "}
               <a
-                href="mailto:support@pawnderr.com"
+                href="mailto:pawnderr@gmail.com "
                 className="text-blue-600 hover:underline"
               >
-                support@pawnderr.com
+                pawnderr@gmail.com
               </a>
               .
             </p>
@@ -441,10 +444,10 @@ export const PrivacyPolicy = () => {
                   You can request full account deletion via the app or by
                   emailing{" "}
                   <a
-                    href="mailto:support@pawnderr.com"
+                    href="mailto:pawnderr@gmail.com "
                     className="text-blue-600 hover:underline"
                   >
-                    support@pawnderr.com
+                    pawnderr@gmail.com
                   </a>
                   .
                 </p>

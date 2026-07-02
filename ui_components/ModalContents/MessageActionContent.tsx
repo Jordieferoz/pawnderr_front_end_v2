@@ -62,7 +62,7 @@ const MessageActionContent: FC = () => {
       <div className="w-full h-[1px] bg-gray-200 my-1"></div>
 
       <a
-        href="mailto:support@pawnderr.com?subject=Report%20an%20Issue"
+        href="mailto:pawnderr@gmail.com ?subject=Report%20an%20Issue"
         className="flex items-center justify-between py-3 cursor-pointer"
       >
         <div className="flex flex-col gap-1">
@@ -71,7 +71,7 @@ const MessageActionContent: FC = () => {
             <span className="text-dark-grey body_large_medium">Report</span>
           </div>
           <span className="text-gray-500 text-sm pl-10">
-            Contact us through support@pawnderr.com
+            Contact us through pawnderr@gmail.com
           </span>
         </div>
 

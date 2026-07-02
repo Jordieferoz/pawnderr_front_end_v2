@@ -70,7 +70,7 @@ export const FAQs = () => {
           <p className="text-white/80 text-lg md:text-xl max-w-2xl mx-auto">
             Everything you need to know about PAWnderr. Can't find an answer?{" "}
             <Link
-              href="mailto:support@pawnderr.com"
+              href="mailto:pawnderr@gmail.com "
               className="underline text-white font-semibold"
             >
               Contact our team.

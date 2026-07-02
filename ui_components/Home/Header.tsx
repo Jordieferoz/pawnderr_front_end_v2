@@ -6,17 +6,28 @@ import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useAuth } from "@/hooks";
 import { images } from "@/utils/images";
 
 const Header = () => {
   const router = useRouter();
   const pathname = usePathname(); // add this hook
+  const { isAuthenticated } = useAuth();
+  const [mounted, setMounted] = useState(false);
 
   const [open, setOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const handleLogin = () => {
-    router.push("/sign-in");
+    if (mounted && isAuthenticated) {
+      router.push("/discover");
+    } else {
+      router.push("/sign-in");
+    }
   };
 
   const menuItems = [
@@ -26,6 +37,11 @@ const Header = () => {
     { label: "Reviews", href: "/#reviews" },
     { label: "Sign Up", href: "/sign-up" }
   ];
+
+  const filteredMenuItems =
+    mounted && isAuthenticated
+      ? menuItems.filter((item) => item.href !== "/sign-up")
+      : menuItems;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -66,7 +82,7 @@ const Header = () => {
         <div className="flex items-center gap-8 md:gap-12 justify-between">
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6 lg:gap-8">
-            {menuItems.map((item) => (
+            {filteredMenuItems.map((item) => (
               <Link
                 key={item.label}
                 href={item.href}
@@ -86,7 +102,7 @@ const Header = () => {
             className="hidden md:flex font-medium px-12"
             onClick={handleLogin}
           >
-            Log In
+            {mounted && isAuthenticated ? "Open App" : "Log In"}
           </Button>
 
           {/* Mobile Menu */}
@@ -99,7 +115,7 @@ const Header = () => {
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] sm:w-[400px]">
               <div className="flex flex-col gap-4 mt-8 px-5 h-full relative">
-                {menuItems.map((item) => (
+                {filteredMenuItems.map((item) => (
                   <Link
                     key={item.label}
                     href={item.href}
@@ -120,7 +136,7 @@ const Header = () => {
                     handleLogin();
                   }}
                 >
-                  Log In
+                  {mounted && isAuthenticated ? "Open App" : "Log In"}
                 </Button>
                 <ul className="flex items-center gap-5 justify-center absolute bottom-5 left-1/2 -translate-x-1/2 w-[calc(100%-40px)]">
                   <li>

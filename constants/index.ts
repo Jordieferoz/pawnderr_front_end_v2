@@ -180,5 +180,5 @@ export const dropdownMenuItems = [
   // { icon: FileText, label: "Community", href: "/community" },
   { icon: FileText, label: "FAQ's", href: "/faqs" },
   // { icon: FileText, label: "Safety Tips", href: "/" },
-  { icon: FileText, label: "Support", href: "/support" }
+  { icon: FileText, label: "Support", href: "mailto:pawnderr@gmail.com" }
 ];

@@ -83,7 +83,7 @@ export const TermsOfService = () => {
               If you have any questions, comments, or concerns regarding these
               terms or the Services, please{" "}
               <Link
-                href="mailto:support@pawnderr.com"
+                href="mailto:pawnderr@gmail.com "
                 className="text-blue-600 hover:underline"
               >
                 contact us
