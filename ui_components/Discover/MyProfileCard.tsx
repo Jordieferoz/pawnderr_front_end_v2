@@ -61,7 +61,7 @@ const MyProfileCard: FC<IMyProfileCardProps> = ({
           </div>
         </h3>
         <p className="text-grey-500 text-base font_fredoka leading-snug">
-          {breed}, {location}
+          {breed}
         </p>
       </div>
       <h5 className="font-medium text-xl font_fredoka text-dark-grey line-clamp-2 text-ellipsis overflow-hidden my-3.5">

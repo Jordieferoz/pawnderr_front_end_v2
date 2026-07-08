@@ -72,7 +72,7 @@ const ProfileCard: FC<IProfileCardProps> = ({
           </div>
         </h3>
         <p className="text-grey-500 text-base font_fredoka leading-snug">
-          {breed}, {location}
+          {breed}
         </p>
       </div>
     </div>

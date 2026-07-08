@@ -6,7 +6,6 @@ import { FC } from "react";
 import { useUserProfileFromStorage } from "@/hooks";
 import { images } from "@/utils/images";
 
-import { openNotificationModal } from "@/store/modalSlice";
 import { useDispatch } from "react-redux";
 import { DropdownMenu } from ".";
 import { Notifications } from "../Shared/Notifications";
@@ -28,15 +27,14 @@ const MobileHeader: FC = () => {
           </Link>
 
           <div className="flex items-center gap-3">
-            {/* Notification Bell */}
-            <button
+            {/* <button
               className="relative p-2 rounded-full hover:bg-gray-100 transition-colors"
               onClick={() => dispatch(openNotificationModal())}
             >
               <img src={images.bellIcon.src} alt="bell" />
 
               <span className="absolute top-1 right-0 w-2.5 h-2.5 bg-secondary-600 rounded-full"></span>
-            </button>
+            </button> */}
             <DropdownMenu userProfile={userProfile} isLoading={isLoading} />
           </div>
         </nav>
