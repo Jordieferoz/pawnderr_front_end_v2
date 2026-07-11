@@ -31,7 +31,6 @@ import { updateAttribute } from "@/store/registrationSlice";
 import { updatePetInfo } from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { vaccinationOptions } from "@/constants";
 import { Attribute, RegistrationMetadata } from "../Register/types";
 import { InputField } from "../Shared";
 import Loader from "../Shared/Loader";
@@ -75,7 +74,11 @@ const PetInformation: FC<PetInformationProps> = ({
     [metadata, categoryId]
   );
 
-  // Get gender and vaccination options (using constants)
+  // Get gender and vaccination options
+  const vaccinationOptions = useMemo(
+    () => metadata?.vaccination_status_options || [],
+    [metadata]
+  );
 
   // Prepare default values for attributes
   const getDefaultAttributeValues = (): Record<string, number[]> => {
@@ -88,16 +91,63 @@ const PetInformation: FC<PetInformationProps> = ({
 
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
+  // Prepare dynamic form values when data is available
+  const formValues = useMemo(() => {
+    if (!petData || !metadata || sortedAttributes.length === 0) {
+      return undefined;
+    }
+
+    const attributesForForm: Record<string, number[]> = {};
+
+    sortedAttributes.forEach((attr) => {
+      attributesForForm[attr.id.toString()] = [];
+    });
+
+    petData.attributes?.forEach((petAttr) => {
+      const metadataAttr = sortedAttributes.find(
+        (attr) => attr.name === petAttr.attribute_name
+      );
+
+      if (metadataAttr) {
+        const selectedOptionIds = petAttr.selected_options
+          .map((selected) => {
+            const matchingOption = metadataAttr.options.find(
+              (opt) => opt.value === selected.value
+            );
+            return matchingOption?.id;
+          })
+          .filter((id): id is number => id !== undefined);
+
+        attributesForForm[metadataAttr.id.toString()] = selectedOptionIds;
+      }
+    });
+
+    return {
+      images: petData.images?.map((img) => img.image_url) || [],
+      petName: petData.name || "",
+      nicknames: petData.nickname || "",
+      petGender: (petData.gender as "male" | "female") || undefined,
+      birthDate: petData.birth_date
+        ? new Date(petData.birth_date + "T00:00:00")
+        : new Date(),
+      breed: petData.breed?.id || undefined,
+      attributes: attributesForForm,
+      vaccinationStatus: petData.vaccination_status || "",
+      funFact: petData.fun_fact_or_habit || "",
+      barkography: petData.bark_o_graphy || ""
+    };
+  }, [petData, metadata, sortedAttributes]);
+
   const {
     control,
     handleSubmit,
     formState: { errors, isValid },
-    reset,
     watch
   } = useForm<PetProfileEditValues>({
     resolver: zodResolver(petProfileEditSchema),
     mode: "onChange",
-    defaultValues: {
+    values: formValues,
+    defaultValues: formValues || {
       images: [],
       petName: "",
       nicknames: "",
@@ -114,59 +164,12 @@ const PetInformation: FC<PetInformationProps> = ({
   // Watch form values
   const currentValues = watch();
 
-  // Pre-populate form when petData and metadata are available
+  // Set initial values once formValues are loaded
   useEffect(() => {
-    if (petData && !loading && metadata && sortedAttributes.length > 0) {
-      // Map attributes from API to form structure
-      const attributesForForm: Record<string, number[]> = {};
-
-      // Initialize all attributes with empty arrays
-      sortedAttributes.forEach((attr) => {
-        attributesForForm[attr.id.toString()] = [];
-      });
-
-      // Populate with pet's attribute selections
-      petData.attributes?.forEach((petAttr) => {
-        // Find matching attribute in metadata by name
-        const metadataAttr = sortedAttributes.find(
-          (attr) => attr.name === petAttr.attribute_name
-        );
-
-        if (metadataAttr) {
-          // Find option IDs that match the selected values
-          const selectedOptionIds = petAttr.selected_options
-            .map((selected) => {
-              const matchingOption = metadataAttr.options.find(
-                (opt) => opt.value === selected.value
-              );
-              return matchingOption?.id;
-            })
-            .filter((id): id is number => id !== undefined);
-
-          attributesForForm[metadataAttr.id.toString()] = selectedOptionIds;
-        }
-      });
-
-      // Map API response to form values
-      const formValues: PetProfileEditValues = {
-        images: petData.images?.map((img) => img.image_url) || [],
-        petName: petData.name || "",
-        nicknames: petData.nickname || "",
-        petGender: (petData.gender as "male" | "female") || undefined,
-        birthDate: petData.birth_date
-          ? new Date(petData.birth_date + "T00:00:00")
-          : new Date(),
-        breed: petData.breed?.id || undefined,
-        attributes: attributesForForm,
-        vaccinationStatus: petData.vaccination_status || "",
-        funFact: petData.fun_fact_or_habit || "",
-        barkography: petData.bark_o_graphy || ""
-      };
-
-      reset(formValues);
+    if (formValues) {
       setInitialValues(formValues);
     }
-  }, [petData, loading, metadata, sortedAttributes, reset]);
+  }, [formValues]);
 
   // Check if form values have changed from initial values
   const hasChanges = useMemo(() => {
@@ -585,26 +588,28 @@ const PetInformation: FC<PetInformationProps> = ({
           <Controller
             control={control}
             name="vaccinationStatus"
-            render={({ field }) => (
-              <Select
-                value={field.value}
-                onValueChange={(value) => {
-                  field.onChange(value);
-                }}
-                disabled={isSubmitting}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select vaccination status" />
-                </SelectTrigger>
-                <SelectContent>
-                  {vaccinationOptions.map((opt) => (
-                    <SelectItem key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
+            render={({ field }) => {
+              return (
+                <Select
+                  value={field.value}
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                  }}
+                  disabled={isSubmitting}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select vaccination status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {vaccinationOptions.map((opt) => (
+                      <SelectItem key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              );
+            }}
           />
         </div>
 
