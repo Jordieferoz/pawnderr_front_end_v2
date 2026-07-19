@@ -43,6 +43,7 @@ const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
     name: petData?.name ?? "",
     gender: petData?.gender ?? "",
     age: petData?.age ?? 0,
+    birthDate: petData?.birth_date,
     breed: petData?.breed?.name ?? "",
     location: "Gurugram",
     image: primaryImage,
@@ -50,6 +51,8 @@ const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
     isPremium: petData?.user?.is_premium_user,
     isFoundingDog: petData?.is_founding_dog
   };
+  console.log(profileData, "profileData");
+  console.log(petData, "petData");
 
   // Dynamically map all attributes for Floof's Story
   const floofStoryList = [
@@ -62,7 +65,14 @@ const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
 
   // Dynamically map all preferences for What's Pup looking for
   const preferences = petData?.preferences;
+  const interestedInSelection = preferences?.selections?.find(
+    (selection: any) => selection.type_name.toLowerCase() === "interested in"
+  );
   const pupLookingForList = [
+    {
+      left: "Interested in",
+      right: interestedInSelection?.selected_option?.value || ""
+    },
     {
       left: "Age Limit",
       right: `${preferences?.min_age || 0} Yrs - ${preferences?.max_age || 0} Yrs`
@@ -70,12 +80,8 @@ const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
     {
       left: "Preferred Breeds",
       right: preferences?.breed_match_type || ""
-    },
-    ...(preferences?.selections?.map((selection: any) => ({
-      left: selection.type_name,
-      right: selection.selected_option?.value || ""
-    })) || [])
-  ];
+    }
+  ].filter((item) => item.right);
 
   if (loading) {
     return (

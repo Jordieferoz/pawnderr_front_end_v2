@@ -2,6 +2,7 @@ export interface IProfileCardProps {
   name?: string;
   gender?: string;
   age?: number;
+  birthDate?: string | Date;
   breed?: string;
   location?: string;
   image?: string;
@@ -17,6 +18,7 @@ export interface IMyProfileCardProps {
   name?: string;
   gender?: string;
   age?: number;
+  birthDate?: string | Date;
   petId?: number;
   breed?: string;
   location?: string;

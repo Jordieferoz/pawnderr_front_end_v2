@@ -927,7 +927,8 @@ const DoggoPersonalForm: FC = () => {
             name="breed"
             render={({ field }) => (
               <Select
-                value={field.value?.toString()}
+                key={field.value || "empty"}
+                value={field.value?.toString() || undefined}
                 onValueChange={(value) => {
                   const breedId = parseInt(value);
                   field.onChange(breedId);
@@ -971,7 +972,8 @@ const DoggoPersonalForm: FC = () => {
             name="vaccinationStatus"
             render={({ field }) => (
               <Select
-                value={field.value}
+                key={field.value || "empty"}
+                value={field.value || undefined}
                 onValueChange={(value) => {
                   field.onChange(value);
                   dispatch(updateStepData({ vaccinationStatus: value }));

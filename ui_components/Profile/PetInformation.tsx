@@ -415,7 +415,7 @@ const PetInformation: FC<PetInformationProps> = ({
         noValidate
       >
         {/* Image Preview Thumbnails */}
-        {petData?.images && petData.images.length > 0 && (
+        {/* {petData?.images && petData.images.length > 0 && (
           <div>
             <label className="block text-sm font-medium text-dark-grey mb-3">
               Pet Photos
@@ -445,7 +445,7 @@ const PetInformation: FC<PetInformationProps> = ({
               To update photos, go to Update Gallery
             </p>
           </div>
-        )}
+        )} */}
 
         {/* Pet Name */}
         <div className="relative">
@@ -591,7 +591,8 @@ const PetInformation: FC<PetInformationProps> = ({
             render={({ field }) => {
               return (
                 <Select
-                  value={field.value}
+                  key={field.value || "empty"}
+                  value={field.value || undefined}
                   onValueChange={(value) => {
                     field.onChange(value);
                   }}

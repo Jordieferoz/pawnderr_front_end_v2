@@ -6,6 +6,7 @@ export type NearbyPet = {
   nickname: string;
   age: number;
   gender: string;
+  birth_date?: string;
   bark_o_graphy: string;
   is_founding_dog: boolean;
   is_verified: boolean;

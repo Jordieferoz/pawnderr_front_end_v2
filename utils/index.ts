@@ -93,7 +93,52 @@ export const ensureUserLocationAndUpdate = async (): Promise<{
   return locationUpdatePromise;
 };
 
-export const formatAgeText = (gender: string, age: number) => {
-  const yearText = age === 1 ? "Year" : "Years";
-  return `${gender}, ${age} ${yearText}`;
+export const calculateAge = (birthDateInput?: string | Date) => {
+  if (!birthDateInput) return null;
+  const birthDate = new Date(birthDateInput);
+  if (isNaN(birthDate.getTime())) return null;
+
+  const today = new Date();
+  let years = today.getFullYear() - birthDate.getFullYear();
+  let months = today.getMonth() - birthDate.getMonth();
+
+  if (today.getDate() < birthDate.getDate()) {
+    months--;
+  }
+
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+
+  return { years, months };
 };
+
+export const getAgeDisplay = (ageInYears: number, birthDate?: string | Date): string => {
+  const ageObj = calculateAge(birthDate);
+  if (ageObj) {
+    const { years, months } = ageObj;
+    const parts: string[] = [];
+    if (years > 0) {
+      parts.push(`${years} ${years === 1 ? "Year" : "Years"}`);
+    }
+    if (months > 0) {
+      parts.push(`${months} ${months === 1 ? "Month" : "Months"}`);
+    }
+    if (parts.length === 0) {
+      return "Less than 1 Month";
+    }
+    return parts.join(", ");
+  }
+
+  if (ageInYears === 0) {
+    return "Less than 1 Year";
+  }
+  return `${ageInYears} ${ageInYears === 1 ? "Year" : "Years"}`;
+};
+
+export const formatAgeText = (gender: string, age: number, birthDate?: string | Date) => {
+  const ageStr = getAgeDisplay(age, birthDate);
+  return gender ? `${gender}, ${ageStr}` : ageStr;
+};
+

@@ -8,6 +8,7 @@ const ProfileCard: FC<IProfileCardProps> = ({
   name,
   gender,
   age,
+  birthDate,
   breed,
   location,
   image,
@@ -66,7 +67,7 @@ const ProfileCard: FC<IProfileCardProps> = ({
           {name}{" "}
           <div className="flex items-center gap-2">
             <span className="body_large_medium capitalize block">
-              {formatAgeText(gender ?? "", age ?? 0)}
+              {formatAgeText(gender ?? "", age ?? 0, birthDate)}
             </span>
             {isVerified && <img src={images.verified.src} alt="verified" />}
           </div>

@@ -15,6 +15,7 @@ import {
   swipePetAction
 } from "@/utils/api";
 import { images } from "@/utils/images";
+import { getAgeDisplay } from "@/utils";
 
 import { RootState } from "@/store";
 import { clearWhoLikesMeCount } from "@/store/matchSlice";
@@ -140,11 +141,7 @@ const Activities: FC = () => {
       const ageValue = pet?.age ?? pet?.age_in_years;
       const hasAge = ageValue !== undefined && ageValue !== null;
       const ageText = hasAge
-        ? ageValue === 0
-          ? "Less than 1 Year"
-          : ageValue === 1
-            ? "1 Year"
-            : `${ageValue} Years`
+        ? getAgeDisplay(ageValue, pet?.birth_date || pet?.birthDate)
         : "";
       const infoParts = [gender, ageText].filter(Boolean);
 
@@ -402,7 +399,7 @@ const Activities: FC = () => {
                 onClick={() => router.push("/upgrade")}
                 className="w-[calc(100%-72px)]"
               >
-                Try PAWNderr+
+                Try Premium
               </Button>
             </div>
           </div>

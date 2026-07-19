@@ -62,7 +62,7 @@ export const petProfileSchema = z.object({
   nicknames: z
     .string()
     .max(100, "Max limit 100 chars")
-    .regex(/^[a-zA-Z0-9\s]*$/, "Special characters are not allowed")
+    .regex(/^[a-zA-Z0-9\s,-]*$/, "Special characters are not allowed")
     .optional(),
   petGender: z.enum(["male", "female"], { message: "Select pet gender" }),
   age: z.string().min(1, "Age is required"),
@@ -81,7 +81,7 @@ export const petProfileEditSchema = z.object({
   nicknames: z
     .string()
     .max(100, "Max limit 100 chars")
-    .regex(/^[a-zA-Z0-9\s]*$/, "Special characters are not allowed")
+    .regex(/^[a-zA-Z0-9\s,-]*$/, "Special characters are not allowed")
     .optional(),
   petGender: z.enum(["male", "female"], { message: "Select pet gender" }),
   birthDate: z.date({

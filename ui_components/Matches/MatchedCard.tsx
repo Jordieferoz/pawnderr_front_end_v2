@@ -4,6 +4,7 @@ import { FC, useState } from "react";
 
 import { NoState } from "@/ui_components/Shared";
 import { showToast } from "@/ui_components/Shared/ToastMessage";
+import { getAgeDisplay } from "@/utils";
 import { checkCanChat, messageInitiated } from "@/utils/api";
 import { images } from "@/utils/images";
 import { petsStorage } from "@/utils/pets-storage";
@@ -328,7 +329,16 @@ const MatchedCard: FC<MatchedCardProps> = ({
                 id: chatId,
                 petId: match.pet.id,
                 name: match.pet?.name,
-                info: `(${match.pet?.gender}, ${match.pet?.age || match.age || "?"} Years)`,
+                info: (() => {
+                  const ageVal = match.pet?.age ?? match.age;
+                  const birthDateVal =
+                    match.pet?.birth_date ?? match.pet?.birthDate;
+                  const ageText =
+                    ageVal !== undefined && ageVal !== null
+                      ? getAgeDisplay(ageVal, birthDateVal)
+                      : "? Years";
+                  return `(${match.pet?.gender}, ${ageText})`;
+                })(),
                 url: primaryImage,
                 desc: match.pet?.bark_o_graphy || match.pet.fun_fact_or_habit,
                 details: [

@@ -163,6 +163,7 @@ const Discover: FC = () => {
     name: petData?.name ?? "",
     gender: petData?.gender ?? "",
     age: petData?.age ?? 0,
+    birthDate: petData?.birth_date,
     barkoGraphy: petData?.bark_o_graphy ?? "",
     funFactOrHabit: petData?.fun_fact_or_habit ?? "",
     breed: petData?.breed?.name ?? "",
@@ -254,7 +255,8 @@ const Discover: FC = () => {
 
       <div className="flex flex-col lg:flex-row gap-6 justify-center w-full h-full items-start mt-10 lg:mt-0">
         {/* Left Column - Your Stats */}
-        {!isGeoRestricted && <YourStats borderColor={borderColor} />}
+        {/* {!isGeoRestricted &&} */}
+        <YourStats borderColor={borderColor} />
 
         {/* Middle Column - Swiping Cards */}
         <div
@@ -277,9 +279,10 @@ const Discover: FC = () => {
         </div>
 
         {/* Right Column - Featured Profile */}
-        {!isGeoRestricted && (
+        {/* {!isGeoRestricted && (
           <MyProfileCard {...profileData} borderColor={borderColor} />
-        )}
+        )} */}
+        <MyProfileCard {...profileData} borderColor={borderColor} />
       </div>
     </div>
   );

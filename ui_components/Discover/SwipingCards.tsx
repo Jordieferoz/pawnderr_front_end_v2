@@ -9,7 +9,7 @@ import {
   openMatchModal,
   openOutOfSwipesModal
 } from "@/store/modalSlice";
-import { ensureUserLocationAndUpdate } from "@/utils";
+import { ensureUserLocationAndUpdate, getAgeDisplay } from "@/utils";
 import { discoverNearbyPets, swipePetAction } from "@/utils/api";
 import { images } from "@/utils/images";
 import { useDrag } from "@use-gesture/react";
@@ -328,12 +328,7 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
                 genderDisplay = "Female";
               }
 
-              let ageText = `${pet.age} Years`;
-              if (pet.age === 0) {
-                ageText = "Less than 1 Year";
-              } else if (pet.age === 1) {
-                ageText = "1 Year";
-              }
+              const ageText = getAgeDisplay(pet.age, pet.birth_date);
 
               return {
                 id: pet.id,
