@@ -28,8 +28,9 @@ type Card = {
 
 const FlipCard: FC<{ card: Card }> = ({ card }) => {
   const router = useRouter();
-
   const [isFlipped, setIsFlipped] = useState(false);
+
+  const profileHref = `/profile/${card.petId}?action=false`;
 
   const handleOpenChat = async (toPetId: string | number) => {
     const fromPetId = petsStorage.getFirstPetId();
@@ -198,7 +199,7 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      router.push(`/profile/${card.petId}?action=false`);
+                      router.push(profileHref);
                     }}
                     onPointerDown={(e) => e.stopPropagation()}
                     className="text-yellow-500 underline text-sm font-medium hover:text-yellow-600 mt-1"
@@ -225,7 +226,7 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      router.push(`/profile/${card.petId}?action=false`);
+                      router.push(profileHref);
                     }}
                     onPointerDown={(e) => e.stopPropagation()}
                     className="text-yellow-500 underline text-sm font-medium hover:text-yellow-600 mt-1"
@@ -257,7 +258,7 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
         <button
           onClick={(e) => {
             e.stopPropagation();
-            router.push(`/profile/${card.petId}?action=false`);
+            router.push(profileHref);
           }}
           className={largeButton}
         >
@@ -354,8 +355,8 @@ const MatchedCard: FC<MatchedCardProps> = ({
                 matchId: match.match_id || match.id,
                 funFact: match.pet?.fun_fact_or_habit,
                 barkography: match.pet?.bark_o_graphy,
-                isFoundingDog: match.pet?.is_founding_dog,
-                isVerified: match.pet?.is_verified,
+                isFoundingDog: Boolean(match.pet?.is_founding_dog),
+                isVerified: Boolean(match.pet?.is_verified),
                 isPremiumUser: match.user?.is_premium_user
               }}
             />

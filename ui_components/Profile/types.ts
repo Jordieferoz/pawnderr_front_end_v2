@@ -63,6 +63,7 @@ export interface IPetData {
   vaccination_status: string;
   is_spayed_neutered: boolean;
   is_founding_dog: boolean;
+  verification_status?: string;
   breed: {
     id: number;
     name: string;

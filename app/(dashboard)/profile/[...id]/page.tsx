@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import { Profile } from "@/ui_components/Profile";
 import { IPetData } from "@/ui_components/Profile/types";
-import { fetchMyPet } from "@/utils/api";
+import { fetchMyPet, fetchPetProfile } from "@/utils/api";
 
 export default function ProfilePage() {
   const params = useParams();
@@ -16,27 +16,46 @@ export default function ProfilePage() {
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!petId) {
+        setLoading(false);
+        return;
+      }
+
       try {
         setError(false);
-        const resp = await fetchMyPet(Number(petId));
-        const petDetails = resp?.data;
+        const id = Number(petId);
+        let petDetails: IPetData | null = null;
+
+        // Own pet → GET /pet/:id (full details + badges)
+        try {
+          const ownResp = await fetchMyPet(id);
+          if (ownResp?.data?.id) {
+            petDetails = ownResp.data;
+          }
+        } catch {
+          // Not owned by current user
+        }
+
+        // Other pet (or own fetch failed) → GET /pet/:id/profile
+        if (!petDetails) {
+          const profileResp = await fetchPetProfile(id);
+          petDetails = profileResp?.data?.data ?? null;
+        }
 
         if (!petDetails) {
           setError(true);
         } else {
           setPetData(petDetails);
         }
-      } catch (error) {
-        console.error("Error fetching pet:", error);
+      } catch (err) {
+        console.error("Error fetching pet:", err);
         setError(true);
       } finally {
         setLoading(false);
       }
     };
 
-    if (petId) {
-      fetchData();
-    }
+    fetchData();
   }, [petId]);
 
   return <Profile petData={petData} loading={loading} error={error} />;

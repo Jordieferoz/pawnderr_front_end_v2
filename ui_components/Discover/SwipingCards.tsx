@@ -329,7 +329,7 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
               }
 
               const ageText = getAgeDisplay(pet.age, pet.birth_date);
-
+              debugger
               return {
                 id: pet.id,
                 name: pet.name || pet.nickname || "Unknown",
@@ -337,8 +337,8 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
                 url: pet.primary_image?.image_url || "",
                 desc: pet.bark_o_graphy || "",
                 gender: pet.gender,
-                isFoundingDog: pet.is_founding_dog,
-                isVerified: pet.is_verified,
+                isFoundingDog: Boolean(pet.is_founding_dog),
+                isVerified: Boolean(pet.is_verified),
                 isPremium: pet.is_premium_user,
                 matchPercentage: 98
               };
@@ -565,7 +565,9 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
           <button
             onClick={() => {
               if (cards[currentIndex]?.id) {
-                router.push(`/profile/${cards[currentIndex].id}?action=true`);
+                router.push(
+                  `/profile/${cards[currentIndex].id}?action=true`
+                );
               }
             }}
             className="bg-primary-500 rounded-full w-[68px] h-[68px] flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-transform"
