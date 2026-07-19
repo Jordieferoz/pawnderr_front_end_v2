@@ -51,8 +51,6 @@ const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
     isPremium: petData?.user?.is_premium_user,
     isFoundingDog: petData?.is_founding_dog
   };
-  console.log(profileData, "profileData");
-  console.log(petData, "petData");
 
   // Dynamically map all attributes for Floof's Story
   const floofStoryList = [
@@ -144,7 +142,7 @@ const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
             />
             <h4 className="display4_medium text-accent-900">Profile</h4>
           </div>
-          {petData?.preferences?.id && (
+          {petData?.preferences?.preference_id && (
             <img
               className="cursor-pointer"
               onClick={() => {
