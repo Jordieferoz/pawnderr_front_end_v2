@@ -86,7 +86,9 @@ const DropdownMenu: FC<DropdownMenuProps> = ({ userProfile, isLoading }) => {
     return () => window.removeEventListener(PETS_STORAGE_EVENT, loadFirstPetId);
   }, [fetchPetData]);
 
-  const primaryImage = petData?.images?.find((img) => img.display_order === 0);
+  const primaryImage =
+    petData?.images?.find((img) => img.is_primary) ||
+    petData?.images?.find((img) => img.display_order === 0);
   const avatarUrl = primaryImage?.image_url || userProfile?.avatar;
 
   // Returns true if the resolved href matches the current pathname

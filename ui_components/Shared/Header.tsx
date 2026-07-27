@@ -28,6 +28,9 @@ const Header: FC = () => {
   const whoLikesMeCount = useSelector(
     (state: RootState) => state.match.whoLikesMeCount
   );
+  const unreadMessageCount = useSelector(
+    (state: RootState) => state.match.unreadMessageCount
+  );
   const isSubscribed = useSelector(
     (state: RootState) => state.subscription.isSubscribed
   );
@@ -84,6 +87,9 @@ const Header: FC = () => {
                         <span className="absolute -top-1 -right-2 w-2.5 h-2.5 bg-secondary-600 rounded-full"></span>
                       )}
                       {item.key === "activities" && whoLikesMeCount > 0 && (
+                        <span className="absolute -top-1 -right-2 w-2.5 h-2.5 bg-secondary-600 rounded-full"></span>
+                      )}
+                      {item.key === "messages" && unreadMessageCount > 0 && (
                         <span className="absolute -top-1 -right-2 w-2.5 h-2.5 bg-secondary-600 rounded-full"></span>
                       )}
                     </div>

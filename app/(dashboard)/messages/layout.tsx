@@ -191,6 +191,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     const petImage =
       pet?.image_url ||
       pet?.primary_image?.image_url ||
+      pet?.images?.find((image: any) => image.is_primary)?.image_url ||
       pet?.images?.[0]?.image_url;
 
     return (

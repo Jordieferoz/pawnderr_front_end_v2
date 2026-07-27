@@ -4,11 +4,13 @@ import { fetchUnseenMatchCount } from "@/utils/api";
 interface MatchState {
   unseenMatchCount: number;
   whoLikesMeCount: number;
+  unreadMessageCount: number;
 }
 
 const initialState: MatchState = {
   unseenMatchCount: 0,
-  whoLikesMeCount: 0
+  whoLikesMeCount: 0,
+  unreadMessageCount: 0
 };
 
 export const getMatchIndicators = createAsyncThunk(
@@ -53,10 +55,17 @@ const matchSlice = createSlice({
     },
     clearWhoLikesMeCount: (state) => {
       state.whoLikesMeCount = 0;
+    },
+    setUnreadMessageCount: (state, action: PayloadAction<number>) => {
+      state.unreadMessageCount = action.payload;
     }
   }
 });
 
-export const { setUnseenMatchCount, setMatchIndicators, clearWhoLikesMeCount } =
-  matchSlice.actions;
+export const {
+  setUnseenMatchCount,
+  setMatchIndicators,
+  clearWhoLikesMeCount,
+  setUnreadMessageCount
+} = matchSlice.actions;
 export default matchSlice.reducer;

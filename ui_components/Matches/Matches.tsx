@@ -2,8 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { FC, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 
-import { fetchActiveMatches } from "@/utils/api";
+import { getMatchIndicators } from "@/store/matchSlice";
+import { fetchActiveMatches, markMatchAsSeen } from "@/utils/api";
 
 import { images } from "@/utils/images";
 
@@ -12,6 +14,7 @@ import { Loader } from "../Shared";
 
 const Matches: FC = () => {
   const router = useRouter();
+  const dispatch = useDispatch<any>();
   const [matches, setMatches] = useState<any[]>([]);
   const [indicators, setIndicators] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -31,6 +34,21 @@ const Matches: FC = () => {
         // Assuming response.data contains the array or a paginated object
         const matchesData = matchesResponse.data?.data.matches || [];
         setMatches(matchesData ?? []);
+
+        // Viewing the Matches page acknowledges only the matches this user has
+        // actually been shown. The backend endpoint is idempotent.
+        const unseenMatchIds = matchesData
+          .filter((match: any) => match.is_unseen)
+          .map((match: any) => Number(match.match_id || match.id))
+          .filter(Number.isFinite);
+
+        if (unseenMatchIds.length > 0) {
+          await Promise.all(unseenMatchIds.map(markMatchAsSeen));
+          setMatches((current) =>
+            current.map((match) => ({ ...match, is_unseen: false }))
+          );
+          dispatch(getMatchIndicators());
+        }
       } catch (error) {
         console.error("Failed to fetch matches data:", error);
       } finally {

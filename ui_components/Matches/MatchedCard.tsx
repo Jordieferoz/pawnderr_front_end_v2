@@ -316,7 +316,7 @@ const MatchedCard: FC<MatchedCardProps> = ({
           const minPetId = Math.min(Number(fromPetId), Number(match.pet.id));
           const maxPetId = Math.max(Number(fromPetId), Number(match.pet.id));
           const chatId = `pet${minPetId}_pet${maxPetId}_match${matchId}`;
-          const hasIndicator = indicatorSet.has(matchId);
+          const hasIndicator = indicatorSet.has(matchId) || Boolean(match.is_unseen);
 
           // Find primary image
           const primaryImage = match.pet?.images?.find(

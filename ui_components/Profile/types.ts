@@ -87,7 +87,34 @@ export interface IPetData {
     is_primary: boolean;
     display_order: number;
   }>;
-  preferences: any;
+  preferences: {
+    /** Present when fetched via getPetDetailsByIdService (owner viewing their own pet) */
+    preference_id?: number;
+    /** Present when fetched via getPetProfileService (owner viewing their own pet profile) */
+    id?: number;
+    max_distance?: number | null;
+    min_age?: number | null;
+    max_age?: number | null;
+    interested_in?: string | null;
+    breed_match_type?: string | null;
+    preferred_breed_ids?: number[] | null;
+    preferred_breeds?: Array<{ id: number; name: string }> | null;
+    /** Raw selections map (getPetProfileService) */
+    preference_selections?: Record<string, number> | null;
+    preferred_gender?: string | null;
+    has_vaccination_required?: boolean | null;
+    is_spayed_neutered_required?: boolean | null;
+    /** Resolved selections array (getPetDetailsByIdService) */
+    selections?: Array<{
+      type_id: number;
+      type_name: string;
+      type_description?: string | null;
+      selected_option: {
+        option_id: number;
+        value: string;
+      };
+    }>;
+  } | null;
   user: {
     id: number;
     name: string;

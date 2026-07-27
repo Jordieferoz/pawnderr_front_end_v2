@@ -595,6 +595,20 @@ export const fetchActiveMatches = (params: {
   });
 };
 
+export const markMatchAsSeen = (matchId: number): Promise<TResponse<any>> => {
+  return new Promise((resolve, reject) => {
+    globalPostService<any, any>(`match/unseen/mark-seen`, { match_id: matchId })
+      .then((response) => {
+        if (response.statusCode === 200 || response.statusCode === 201) {
+          resolve(response);
+        } else {
+          reject(new Error(`Unexpected status code: ${response.statusCode}`));
+        }
+      })
+      .catch(reject);
+  });
+};
+
 export const discoverNearbyPets = (
   petId: number,
   params?: { is_premium?: boolean }

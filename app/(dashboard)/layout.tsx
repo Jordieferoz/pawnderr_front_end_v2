@@ -1,5 +1,5 @@
 import { MobileHeader } from "@/ui_components/Discover";
-import { Header } from "@/ui_components/Shared";
+import { Header, MessageIndicatorListener } from "@/ui_components/Shared";
 import { images } from "@/utils/images";
 import ProfileLoader from "./discover/ProfileLoader";
 
@@ -11,6 +11,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <ProfileLoader />
+      <MessageIndicatorListener />
       <Header />
       <MobileHeader />
       <main className="relative pt-22.5 min-h-[calc(100dvh-0px)]">

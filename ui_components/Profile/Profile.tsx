@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { FC, useState } from "react";
+import { FC, useMemo, useState } from "react";
 
 import { images } from "@/utils/images";
 
@@ -61,25 +61,56 @@ const Profile: FC<IProfileProps> = ({ petData, loading, error }) => {
     })) || [])
   ];
 
-  // Dynamically map all preferences for What's Pup looking for
-  const preferences = petData?.preferences;
-  const interestedInSelection = preferences?.selections?.find(
-    (selection: any) => selection.type_name.toLowerCase() === "interested in"
-  );
-  const pupLookingForList = [
-    {
-      left: "Interested in",
-      right: interestedInSelection?.selected_option?.value || ""
-    },
-    {
-      left: "Age Limit",
-      right: `${preferences?.min_age || 0} Yrs - ${preferences?.max_age || 0} Yrs`
-    },
-    {
-      left: "Preferred Breeds",
-      right: preferences?.breed_match_type || ""
+  // Both owned and public profile endpoints expose these same three values.
+  const pupLookingForList = useMemo(() => {
+    const prefs = petData?.preferences;
+    if (!prefs) return [];
+
+    const list: { left: string; right: string }[] = [];
+
+    // ── 1. Interested In ─────────────────────────────────────────────────────
+    // Own profile: extract from selections[] by type_name
+    const interestedInSelection = prefs.selections?.find(
+      (s) => s.type_name.toLowerCase() === "interested in"
+    );
+    if (interestedInSelection?.selected_option?.value) {
+      list.push({
+        left: "Interested In",
+        right: interestedInSelection.selected_option.value
+      });
+    } else if (prefs.interested_in) {
+      list.push({ left: "Interested In", right: prefs.interested_in });
     }
-  ].filter((item) => item.right);
+
+    // ── 2. Age Limit ─────────────────────────────────────────────────────────
+    // Handle cases: both set, only max_age set (min_age is null), or only min_age
+    if (prefs.min_age != null && prefs.max_age != null) {
+      list.push({
+        left: "Age Limit",
+        right: `${prefs.min_age} – ${prefs.max_age} Yrs`
+      });
+    } else if (prefs.max_age != null) {
+      list.push({ left: "Age Limit", right: `Up to ${prefs.max_age} Yrs` });
+    } else if (prefs.min_age != null) {
+      list.push({ left: "Age Limit", right: `${prefs.min_age}+ Yrs` });
+    }
+
+    // ── 3. Preferred Breeds ──────────────────────────────────────────────────
+    // Prefer the resolved option from the owner response, then the public value.
+    const breedsSelection = prefs.selections?.find(
+      (s) => s.type_name.toLowerCase() === "preferred breeds"
+    );
+    if (breedsSelection?.selected_option?.value) {
+      list.push({
+        left: "Preferred Breeds",
+        right: breedsSelection.selected_option.value
+      });
+    } else if (prefs.breed_match_type) {
+      list.push({ left: "Preferred Breeds", right: prefs.breed_match_type });
+    }
+
+    return list;
+  }, [petData?.preferences]);
 
   if (loading) {
     return (

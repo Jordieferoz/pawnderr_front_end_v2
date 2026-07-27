@@ -37,6 +37,9 @@ export default function ProfilePage() {
         }
 
         // Other pet (or own fetch failed) → GET /pet/:id/profile
+        // Response chain: axios → globalGetService wraps as { data: responseBody, statusCode }
+        // responseBody is the JSend body: { status: "success", data: petObject }
+        // So the pet lives at profileResp.data.data
         if (!petDetails) {
           const profileResp = await fetchPetProfile(id);
           petDetails = profileResp?.data?.data ?? null;

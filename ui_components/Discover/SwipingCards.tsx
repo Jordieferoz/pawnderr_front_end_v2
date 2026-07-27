@@ -110,7 +110,11 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
             // It's a match!
             dispatch(
               openMatchModal({
-                userImage: petData?.images?.[0]?.image_url || "",
+                userImage:
+                  petData?.images?.find((image) => image.is_primary)
+                    ?.image_url ||
+                  petData?.images?.[0]?.image_url ||
+                  "",
                 matchImage: swipedCard.url,
                 userGender: petData?.gender || "male",
                 matchGender: swipedCard.gender,
@@ -127,7 +131,11 @@ const SwipingCards: FC<ISwipingCardsProps> = ({
           ) {
             dispatch(
               openHangTightModal({
-                userImage: petData?.images?.[0]?.image_url || "",
+                userImage:
+                  petData?.images?.find((image) => image.is_primary)
+                    ?.image_url ||
+                  petData?.images?.[0]?.image_url ||
+                  "",
                 matchImage: swipedCard.url,
                 userGender: petData?.gender || "male",
                 matchGender: swipedCard.gender
