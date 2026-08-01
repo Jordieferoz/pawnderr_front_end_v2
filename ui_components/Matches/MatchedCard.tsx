@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { FC, useState } from "react";
+import { FC, useRef, useState } from "react";
 
 import { NoState } from "@/ui_components/Shared";
 import { showToast } from "@/ui_components/Shared/ToastMessage";
@@ -18,6 +18,7 @@ type Card = {
   desc: string;
   details: string;
   indicator?: string;
+  isUnseen?: boolean;
   matchId?: string | number;
   funFact?: string;
   barkography?: string;
@@ -26,13 +27,32 @@ type Card = {
   isPremiumUser?: boolean;
 };
 
-const FlipCard: FC<{ card: Card }> = ({ card }) => {
+const FlipCard: FC<{
+  card: Card;
+  onMarkSeen?: (matchId: string | number) => void;
+}> = ({ card, onMarkSeen }) => {
   const router = useRouter();
   const [isFlipped, setIsFlipped] = useState(false);
+  const hasBeenSeenRef = useRef(false);
 
   const profileHref = `/profile/${card.petId}?action=false`;
 
+  // Marks this match as seen exactly once when the user interacts with it.
+  const markSeenOnce = () => {
+    if (hasBeenSeenRef.current) return;
+    if (!card.isUnseen) return;
+    if (card.matchId === undefined || card.matchId === null) return;
+    hasBeenSeenRef.current = true;
+    onMarkSeen?.(card.matchId);
+  };
+
+  const handleViewProfile = () => {
+    markSeenOnce();
+    router.push(profileHref);
+  };
+
   const handleOpenChat = async (toPetId: string | number) => {
+    markSeenOnce();
     const fromPetId = petsStorage.getFirstPetId();
 
     if (!fromPetId) {
@@ -115,18 +135,21 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
       <div
         className="relative w-full h-[420px] rounded-[24px] border-[3px] border-white shadow-[0px_4px_10px_rgba(0,0,0,0.1)] transition-all duration-700 ease-in-out hover:shadow-[0px_8px_25px_rgba(0,0,0,0.2)] [transform-style:preserve-3d] cursor-pointer group"
         style={{ transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)" }}
-        onClick={() => setIsFlipped(!isFlipped)}
+        onClick={() => {
+          if (!isFlipped) markSeenOnce();
+          setIsFlipped(!isFlipped);
+        }}
       >
         {/* Front Face */}
         <div
           className="absolute inset-0 rounded-[24px] [backface-visibility:hidden]"
           style={{ pointerEvents: isFlipped ? "none" : "auto" }}
         >
-          {/* {card.indicator && (
-            <div className="absolute top-6 left-6 z-20 bg-black text-white px-3 py-1 rounded-lg border-[1.5px] border-white text-sm font-bold tracking-wider">
-              {card.indicator}
+          {card.isUnseen && (
+            <div className="absolute top-4.5 left-5 z-20 bg-secondary-600 text-white px-3 py-1 rounded-full text-xs font-semibold tracking-wide shadow-[0px_2px_8px_rgba(0,0,0,0.25)]">
+              New
             </div>
-          )} */}
+          )}
           {card.isFoundingDog && (
             <img
               src={images.isFoundingDog.src}
@@ -175,15 +198,15 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
           <img
             src={images.pawYellow.src}
             alt="paw"
-            className="absolute top-4 right-4 w-12 h-12 opacity-80 pointer-events-none"
+            className="absolute top-4 right-4 w-12 h-12 opacity-80 pointer-events-none z-0"
           />
           <img
             src={images.flipOverlay.src}
             alt="paw"
-            className="absolute inset-0 pointer-events-none"
+            className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none"
           />
 
-          <div className="flex flex-col gap-6 mt-4 w-full relative z-10">
+          <div className="flex flex-col gap-6 mt-4 w-full relative z-20">
             {/* Fun Fact */}
             {card.funFact && (
               <div className="text-left w-full">
@@ -199,7 +222,7 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      router.push(profileHref);
+                      handleViewProfile();
                     }}
                     onPointerDown={(e) => e.stopPropagation()}
                     className="text-yellow-500 underline text-sm font-medium hover:text-yellow-600 mt-1"
@@ -226,7 +249,7 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      router.push(profileHref);
+                      handleViewProfile();
                     }}
                     onPointerDown={(e) => e.stopPropagation()}
                     className="text-yellow-500 underline text-sm font-medium hover:text-yellow-600 mt-1"
@@ -258,7 +281,7 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
         <button
           onClick={(e) => {
             e.stopPropagation();
-            router.push(profileHref);
+            handleViewProfile();
           }}
           className={largeButton}
         >
@@ -267,6 +290,7 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
         <button
           onClick={(e) => {
             e.stopPropagation();
+            if (!isFlipped) markSeenOnce();
             setIsFlipped(!isFlipped);
           }}
           className="bg-white rounded-full w-[55px] h-[55px] flex items-center justify-center shadow-[0px_4px_28px_0px_#00000040] hover:scale-105 active:scale-95 transition-transform"
@@ -281,11 +305,13 @@ const FlipCard: FC<{ card: Card }> = ({ card }) => {
 interface MatchedCardProps {
   matches?: any[];
   indicators?: any[];
+  onMarkSeen?: (matchId: string | number) => void;
 }
 
 const MatchedCard: FC<MatchedCardProps> = ({
   matches = [],
-  indicators = []
+  indicators = [],
+  onMarkSeen
 }) => {
   if (!matches || matches.length === 0) {
     return (
@@ -326,9 +352,11 @@ const MatchedCard: FC<MatchedCardProps> = ({
           return (
             <FlipCard
               key={match.id || index}
+              onMarkSeen={onMarkSeen}
               card={{
                 id: chatId,
                 petId: match.pet.id,
+                isUnseen: Boolean(match.is_unseen),
                 name: match.pet?.name,
                 info: (() => {
                   const ageVal = match.pet?.age ?? match.age;

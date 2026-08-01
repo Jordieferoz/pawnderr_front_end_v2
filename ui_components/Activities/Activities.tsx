@@ -18,7 +18,11 @@ import { images } from "@/utils/images";
 import { getAgeDisplay } from "@/utils";
 
 import { RootState } from "@/store";
-import { clearWhoLikesMeCount } from "@/store/matchSlice";
+import {
+  clearWhoLikesMeCount,
+  getMatchIndicators,
+  setMatchIndicators
+} from "@/store/matchSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 import ActivityCard from "./ActivityCard";
@@ -26,7 +30,7 @@ import { ICard } from "./types";
 
 const Activities: FC = () => {
   const router = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<any>();
   const isSubscribed = useSelector(
     (state: RootState) => state.subscription.isSubscribed
   );
@@ -46,11 +50,36 @@ const Activities: FC = () => {
     (state: RootState) => state.match.whoLikesMeCount
   );
 
+  // Opening the Activities screen (or switching tabs) immediately clears the
+  // unseen activity indicator regardless of subscription status. The nav dot is
+  // driven by `whoLikesMeCount`, so zeroing it here hides the dot right away.
+  // We then reconcile against the freshest backend total and acknowledge it so
+  // that background polling cannot re-show the dot for likes already viewed.
   useEffect(() => {
-    if (isSubscribed) {
-      dispatch(clearWhoLikesMeCount());
-    }
-  }, [dispatch, isSubscribed]);
+    dispatch(clearWhoLikesMeCount());
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const resp = await fetchUnseenMatchCount();
+        if (cancelled) return;
+        const counts = resp?.data || {};
+        dispatch(
+          setMatchIndicators({
+            new_matches: Number(counts.new_matches ?? 0),
+            who_likes_me: Number(counts.who_likes_me ?? 0)
+          })
+        );
+        dispatch(clearWhoLikesMeCount());
+      } catch {
+        // Non-fatal: the instant clear above already hid the dot.
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [dispatch, activeTab]);
 
   const handleUndo = async (card: ICard) => {
     if (activeTab !== "you-like" && activeTab !== "viewed-profile") return;
@@ -59,6 +88,11 @@ const Activities: FC = () => {
       const action = activeTab === "you-like" ? "pass" : "like";
       await swipePetAction({ pet_id: card.id, action });
       setCards((prev) => prev.filter((item) => item.id !== card.id));
+      // Undoing a dislike re-likes the pet, which can create a match and bump the
+      // unseen match count. Refresh indicators so the Matches nav dot updates.
+      if (action === "like") {
+        dispatch(getMatchIndicators());
+      }
       setTabCounts((prev) => ({
         ...prev,
         youLike:
@@ -95,6 +129,12 @@ const Activities: FC = () => {
         }
         return prev;
       });
+      // Liking a pet that already liked us creates a match, which increments the
+      // unseen match count on the backend. Refresh the indicators so the Matches
+      // nav dot shows up right away.
+      if (action === "like") {
+        dispatch(getMatchIndicators());
+      }
     } catch (error: any) {
       showToast({
         type: "error",
