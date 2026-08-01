@@ -146,8 +146,12 @@ const FlipCard: FC<{
           style={{ pointerEvents: isFlipped ? "none" : "auto" }}
         >
           {card.isUnseen && (
-            <div className="absolute top-4.5 left-5 z-20 bg-secondary-600 text-white px-3 py-1 rounded-full text-xs font-semibold tracking-wide shadow-[0px_2px_8px_rgba(0,0,0,0.25)]">
-              New
+            <div className="absolute top-0 left-0 z-30 h-[72px] w-[72px] overflow-hidden rounded-tl-[21px] pointer-events-none">
+              <div className="absolute top-[14px] -left-[28px] w-[110px] rotate-[-45deg] bg-[#E11D48] py-[5px] text-center shadow-[0_3px_10px_rgba(0,0,0,0.35)]">
+                <span className="block text-[10px] font-extrabold uppercase tracking-[0.2em] text-white">
+                  New
+                </span>
+              </div>
             </div>
           )}
           {card.isFoundingDog && (
