@@ -6,11 +6,7 @@ import { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 
 import { setMatchIndicators } from "@/store/matchSlice";
-import {
-  resetRegistration,
-  setMetadata,
-  updateStepData
-} from "@/store/registrationSlice";
+import { setMetadata, updateStepData } from "@/store/registrationSlice";
 import { getSubscriptionStatus } from "@/store/subscriptionSlice";
 import { setUser } from "@/store/userSlice";
 import {
@@ -130,8 +126,7 @@ export default function ProfileLoader() {
                 if (metadata) {
                   dispatch(setMetadata(metadata));
                   dispatch(updateStepData({ step: 3 }));
-                  dispatch(resetRegistration());
-                  router.push("/sign-in");
+                  router.push("/register");
                 }
               } catch (error) {
                 console.error(

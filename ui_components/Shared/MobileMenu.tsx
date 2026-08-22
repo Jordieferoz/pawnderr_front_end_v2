@@ -6,6 +6,7 @@ import { FC, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
 import { mobileMenuItems } from "@/constants";
+import { isAuthRoute } from "@/constants/authRoutes";
 import { RootState } from "@/store";
 
 const MobileMenu: FC = () => {
@@ -25,13 +26,7 @@ const MobileMenu: FC = () => {
   const itemRefs = useRef<(HTMLAnchorElement | null)[]>([]);
 
   // Hide footer on authentication pages
-  const hiddenRoutes = [
-    "/sign-in",
-    "/sign-up",
-    "/register",
-    "/forgot-password"
-  ];
-  if (hiddenRoutes.includes(pathname)) {
+  if (isAuthRoute(pathname)) {
     return null;
   }
 

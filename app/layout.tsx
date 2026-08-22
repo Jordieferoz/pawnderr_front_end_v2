@@ -32,6 +32,7 @@ export default function RootLayout({
     "/sign-up",
     "/sign-in",
     "/register",
+    "/forgot-password",
     "/",
     "/messages",
     "/faqs",

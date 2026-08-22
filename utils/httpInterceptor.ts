@@ -7,8 +7,9 @@ import axios, {
   AxiosResponse,
   InternalAxiosRequestConfig
 } from "axios";
-import { getSession } from "next-auth/react";
+import { getSession, signOut } from "next-auth/react";
 
+import { forcedSignOutFlag } from "./auth-storage";
 import { tokenStorage } from "./token-storage";
 import { TApiResponse } from "./types";
 
@@ -35,11 +36,54 @@ const processQueue = (error: unknown, token: string | null) => {
   failedQueue = [];
 };
 
-const redirectToSignIn = () => {
-  tokenStorage.clearTokens();
-  if (typeof window !== "undefined") {
-    window.location.href = "/sign-in";
+// ── Session access token ────────────────────────────────────────────────────
+// Resolved once per tab instead of per request: every `getSession()` call hits
+// /api/auth/session, which re-issues the session cookie, so calling it for each
+// request both floods the server and can revive a session we just signed out of.
+let sessionTokenPromise: Promise<string | null> | null = null;
+
+const resolveSessionAccessToken = (): Promise<string | null> => {
+  if (!sessionTokenPromise) {
+    sessionTokenPromise = getSession()
+      .then((session) => {
+        const token = (session as { accessToken?: string } | null)?.accessToken;
+        if (!token) {
+          return null;
+        }
+        tokenStorage.setAccessToken(token);
+        return token;
+      })
+      .catch((error) => {
+        console.error("❌ Error getting session:", error);
+        sessionTokenPromise = null;
+        return null;
+      });
   }
+
+  return sessionTokenPromise;
+};
+
+let isSigningOut = false;
+
+// The NextAuth cookie outlives the API access token, so the session has to be
+// torn down as well. Leaving it in place makes the app treat the user as signed
+// in and send them back to the page whose request just failed.
+const redirectToSignIn = async () => {
+  if (typeof window === "undefined" || isSigningOut) {
+    return;
+  }
+  isSigningOut = true;
+  sessionTokenPromise = null;
+  tokenStorage.clearTokens();
+  forcedSignOutFlag.set();
+
+  try {
+    await signOut({ redirect: false });
+  } catch (error) {
+    console.error("❌ Failed to clear session:", error);
+  }
+
+  window.location.replace("/sign-in");
 };
 
 // Calls the refresh endpoint with a bare axios client (no interceptors) to
@@ -102,7 +146,9 @@ function axiosInstanceCreator(baseURL: string | undefined, accessKey?: string) {
         "auth/register",
         "auth/verify-registration",
         "auth/resend-otp",
-        "auth/send-otp"
+        "auth/send-otp",
+        "auth/forgot-password",
+        "auth/reset-password"
       ];
 
       const isPublicEndpoint = publicEndpoints.some((endpoint) =>
@@ -110,18 +156,10 @@ function axiosInstanceCreator(baseURL: string | undefined, accessKey?: string) {
       );
 
       if (!isPublicEndpoint) {
-        const sessionToken = tokenStorage.getAccessToken();
-        if (sessionToken) {
-          config.headers.Authorization = `Bearer ${sessionToken}`;
-        } else {
-          try {
-            const session = await getSession();
-            if (session && (session as any).accessToken) {
-              config.headers.Authorization = `Bearer ${(session as any).accessToken}`;
-            }
-          } catch (error) {
-            console.error("❌ Error getting session:", error);
-          }
+        const token =
+          tokenStorage.getAccessToken() || (await resolveSessionAccessToken());
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
         }
       }
 
@@ -146,12 +184,12 @@ function axiosInstanceCreator(baseURL: string | undefined, accessKey?: string) {
 
       // Never try to refresh the refresh call itself, and never retry twice.
       if (isRefreshCall || originalRequest._retry) {
-        redirectToSignIn();
+        void redirectToSignIn();
         return response;
       }
 
       if (!tokenStorage.getRefreshToken()) {
-        redirectToSignIn();
+        void redirectToSignIn();
         return response;
       }
 
@@ -183,7 +221,7 @@ function axiosInstanceCreator(baseURL: string | undefined, accessKey?: string) {
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError, null);
-        redirectToSignIn();
+        void redirectToSignIn();
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;

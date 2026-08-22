@@ -234,7 +234,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
             });
           }
         } catch (error: any) {
-          console.error("❌ Login error:", error);
+          console.error("? Login error:", error);
           const errorMessage =
             error?.response?.data?.message ||
             error?.message ||
@@ -247,7 +247,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
         }
       }
     } catch (error: any) {
-      console.error("❌ Authentication error:", error);
+      console.error("? Authentication error:", error);
 
       if (error?.message) {
         showToast({
@@ -265,7 +265,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
     }
   };
 
-  // ── Google Identity Services ──────────────────────────────────────────────
+  // ?? Google Identity Services ??????????????????????????????????????????????
 
   /** Called by GSI with the signed-in credential (JWT id_token). */
   const handleGoogleCredential = async (response: { credential: string }) => {
@@ -331,7 +331,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
         callback: handleGoogleCredential
       });
 
-      // Render GSI's real button into hidden div — this uses the correct
+      // Render GSI's real button into hidden div ? this uses the correct
       // OAuth popup flow (prompt() uses FedCM/One Tap which fails in dev)
       if (googleBtnRef.current) {
         (window as any).google.accounts.id.renderButton(googleBtnRef.current, {
@@ -382,7 +382,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
     }
 
     if (!(session as any)?.accessToken) {
-      console.error("❌ No accessToken in session!");
+      console.error("? No accessToken in session!");
     }
 
     const redirectAfterLogin = async () => {
@@ -412,7 +412,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
           }
         }
       } catch (error) {
-        console.error("❌ Login redirect check failed:", error);
+        console.error("? Login redirect check failed:", error);
       }
 
       router.push(callbackUrl);
@@ -450,7 +450,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
       });
 
       if (result?.error) {
-        console.error("❌ Sign in error after OTP:", result.error);
+        console.error("? Sign in error after OTP:", result.error);
         showToast({
           type: "error",
           message: "Failed to create session. Please try again.!!!"
@@ -459,7 +459,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
         await completeLoginFlow(callbackUrl);
       }
     } catch (error: any) {
-      console.error("❌ Error completing login after OTP:", error);
+      console.error("? Error completing login after OTP:", error);
       showToast({
         type: "error",
         message: "Failed to complete login. Please try again."
@@ -534,7 +534,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
                   />
                 </button>
               </div>
-              {/* Hidden div — GSI renders its real button here for the OAuth popup flow */}
+              {/* Hidden div ? GSI renders its real button here for the OAuth popup flow */}
               <div
                 ref={googleBtnRef}
                 className="absolute invisible pointer-events-none"
@@ -757,12 +757,13 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
                           Remember Me
                         </label>
                       </div>
-                      <Link
-                        href="/forgot-password"
-                        className="text-xs font-semibold text-accent-900 hover:underline"
+                      <button
+                        type="button"
+                        onClick={() => router.push("/forgot-password")}
+                        className="hidden md:inline text-xs font-semibold text-accent-900 hover:underline"
                       >
                         Forgot Password?
-                      </Link>
+                      </button>
                     </div>
                   </div>
                 </>
@@ -809,7 +810,7 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
                 </div>
               )}
 
-              <div className="fixed bottom-0 left-0 md:relative py-5 w-full bg-white shadow-[0px_-4px_12.8px_-3px_#00000012] md:shadow-none flex justify-center md:block">
+              <div className="fixed bottom-0 left-0 z-30 md:relative py-5 w-full bg-white shadow-[0px_-4px_12.8px_-3px_#00000012] md:shadow-none flex justify-center md:block">
                 <div className="w-full flex items-center flex-col">
                   <Button
                     type="submit"
@@ -845,17 +846,29 @@ export function Login({ mode = "signin" }: { mode?: Mode }) {
                       <>{isSignup ? "Sign Up" : "Sign In"}</>
                     )}
                   </Button>
+                  {!isSignup && (
+                    <button
+                      type="button"
+                      onClick={() => router.push("/forgot-password")}
+                      className="md:hidden mb-3 text-xs font-semibold text-accent-900 hover:underline"
+                    >
+                      Forgot Password?
+                    </button>
+                  )}
                   <div className="text-center">
                     <p className="paragraph1_bold text-accent-1000">
                       {isSignup
                         ? "Already have an account?"
                         : " New to PAWnderr?"}{" "}
-                      <Link
-                        href={isSignup ? "/sign-in" : "/sign-up"}
-                        className="text-primary-theme"
+                      <button
+                        type="button"
+                        onClick={() =>
+                          router.push(isSignup ? "/sign-in" : "/sign-up")
+                        }
+                        className="text-primary-theme hover:underline"
                       >
                         {isSignup ? "Sign In" : "Create an Account"}
-                      </Link>
+                      </button>
                     </p>
                   </div>
                 </div>

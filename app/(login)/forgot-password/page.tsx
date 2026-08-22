@@ -265,12 +265,13 @@ export default function ForgotPassword() {
                     )}
                   </Button>
                   <div className="text-center">
-                    <Link
-                      href="/sign-in"
-                      className="text-primary-theme paragraph1_bold"
+                    <button
+                      type="button"
+                      onClick={() => router.push("/sign-in")}
+                      className="text-primary-theme paragraph1_bold hover:underline"
                     >
                       Back to Login
-                    </Link>
+                    </button>
                   </div>
                 </div>
               </div>
